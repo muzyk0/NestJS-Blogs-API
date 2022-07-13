@@ -5,6 +5,7 @@ import { HttpExceptionFilter } from './filters';
 import { ErrorExceptionFilter } from './filters';
 
 (async function bootstrap() {
+  console.log(process.env.MONGO_URI);
   const app = await NestFactory.create(AppModule);
 
   app.enableCors();
