@@ -26,7 +26,7 @@ export class CreateInputModel {
 @Injectable()
 export class TestUsersService {
   constructor(protected usersRepository: TestUsersRepository) {}
-  findUsers(term: string) {
+  findUsers(term?: string) {
     return this.usersRepository.findUsers(term);
   }
 

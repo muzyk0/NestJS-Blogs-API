@@ -8,9 +8,12 @@ import {
   Post,
   Put,
   Query,
+  UseGuards,
 } from '@nestjs/common';
 import { CreateInputModel, TestUsersService } from './test-users.service';
+import { AuthGuard } from '../guards/auth-guard';
 
+@UseGuards(AuthGuard)
 @Controller('users')
 export class TestUsersController {
   constructor(protected usersService: TestUsersService) {}
@@ -27,7 +30,6 @@ export class TestUsersController {
 
   @Post()
   async createUser(@Body() inputModel: CreateInputModel) {
-    inputModel.name = '';
     await this.usersService.createUser(inputModel);
     return inputModel;
   }

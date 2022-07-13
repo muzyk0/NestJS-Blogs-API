@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 
 @Injectable()
 export class TestUsersRepository {
-  findUsers(term: string) {
+  findUsers(term?: string) {
     return [
       { id: 1, name: 'Dimych' },
       { id: 2, name: 'Vlad' },
