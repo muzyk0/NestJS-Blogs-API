@@ -4,11 +4,12 @@ import {
   Delete,
   Get,
   Param,
+  ParseIntPipe,
   Post,
   Put,
   Query,
 } from '@nestjs/common';
-import { TestUsersService } from './test-users.service';
+import { CreateInputModel, TestUsersService } from './test-users.service';
 
 @Controller('users')
 export class TestUsersController {
@@ -20,30 +21,27 @@ export class TestUsersController {
   }
 
   @Get(':id')
-  getUser(@Param('id') id: string) {
+  getUser(@Param('id') id: number) {
     return [{ id: 1 }, { id: 2 }].find((u) => u.id === +id);
   }
 
   @Post()
-  createUser(@Body() inputModel: CreateInputModel) {
-    return { id: 1, name: inputModel.name, children: inputModel.children };
+  async createUser(@Body() inputModel: CreateInputModel) {
+    inputModel.name = '';
+    await this.usersService.createUser(inputModel);
+    return inputModel;
   }
 
   @Delete(':id')
-  deleteUser(@Param('id') id: string) {
+  deleteUser(@Param('id') id: number) {
     return 'OK';
   }
 
   @Put(':id')
-  updateUser(@Param('id') id: string, @Body() model: CreateInputModel) {
+  updateUser(@Param('id') id: number, @Body() model: CreateInputModel) {
     return {
       id,
       model,
     };
   }
-}
-
-interface CreateInputModel {
-  name: string;
-  children: number;
 }
