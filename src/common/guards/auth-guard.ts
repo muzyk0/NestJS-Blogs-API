@@ -1,7 +1,7 @@
 import { CanActivate, ExecutionContext, Injectable } from '@nestjs/common';
 import { Request } from 'express';
 import { Observable } from 'rxjs';
-import { TestUsersService } from '../test-users/test-users.service';
+import { TestUsersService } from '../../test-users/test-users.service';
 
 @Injectable()
 export class AuthGuard implements CanActivate {

@@ -11,10 +11,10 @@ import {
   UseGuards,
 } from '@nestjs/common';
 import { CreateInputModel, TestUsersService } from './test-users.service';
-import { AuthGuard } from '../guards/auth-guard';
+import { AuthGuard } from '../common/guards/auth-guard';
 
 @UseGuards(AuthGuard)
-@Controller('users')
+@Controller('test-users')
 export class TestUsersController {
   constructor(protected usersService: TestUsersService) {}
 

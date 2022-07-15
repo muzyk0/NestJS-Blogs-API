@@ -1,4 +1,3 @@
-import { PostDto } from './post.dto';
 import { IsNotEmpty, IsString, Length } from 'class-validator';
 import { Blogger } from '../../bloggers/schemas/bloggers.schema';
 

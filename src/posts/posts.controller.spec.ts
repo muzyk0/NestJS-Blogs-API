@@ -12,6 +12,7 @@ import { BloggersController } from '../bloggers/bloggers.controller';
 import { PostDto } from './dto/post.dto';
 import { PostsRepository } from './posts.repository';
 import { Post, PostSchema } from './schemas/posts.schema';
+import { AuthModule } from '../auth/auth.module';
 
 describe('PostsController', () => {
   let blogger: BloggerDto;
@@ -30,6 +31,7 @@ describe('PostsController', () => {
     bloggerModel = mongoConnection.model(Blogger.name, BloggerSchema);
     postModel = mongoConnection.model(Post.name, PostSchema);
     const app: TestingModule = await Test.createTestingModule({
+      imports: [AuthModule],
       controllers: [PostsController],
       providers: [
         PostsService,

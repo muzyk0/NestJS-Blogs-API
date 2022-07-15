@@ -6,6 +6,8 @@ import { BloggersModule } from './bloggers/bloggers.module';
 import { MongooseModule } from '@nestjs/mongoose';
 import { ConfigModule } from '@nestjs/config';
 import { PostsModule } from './posts/posts.module';
+import { UsersModule } from './users/users.module';
+import { AuthModule } from './auth/auth.module';
 
 @Module({
   imports: [
@@ -14,6 +16,8 @@ import { PostsModule } from './posts/posts.module';
     TestModule,
     BloggersModule,
     PostsModule,
+    AuthModule,
+    UsersModule,
   ],
   controllers: [AppController],
   providers: [AppService],

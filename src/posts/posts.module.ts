@@ -6,9 +6,11 @@ import { Post, PostSchema } from './schemas/posts.schema';
 import { PostsRepository } from './posts.repository';
 import { BloggersRepository } from '../bloggers/bloggers.repository';
 import { Blogger, BloggerSchema } from '../bloggers/schemas/bloggers.schema';
+import { AuthModule } from '../auth/auth.module';
 
 @Module({
   imports: [
+    AuthModule,
     MongooseModule.forFeature([{ name: Post.name, schema: PostSchema }]),
     MongooseModule.forFeature([{ name: Blogger.name, schema: BloggerSchema }]),
   ],

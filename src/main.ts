@@ -1,8 +1,8 @@
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
 import { BadRequestException, ValidationPipe } from '@nestjs/common';
-import { HttpExceptionFilter } from './filters';
-import { ErrorExceptionFilter } from './filters';
+import { HttpExceptionFilter } from './common/filters';
+import { ErrorExceptionFilter } from './common/filters';
 
 (async function bootstrap() {
   console.log(process.env.MONGO_URI);

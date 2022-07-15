@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { TestUsersRepository } from './test-users.repository';
 import { IsEmail, IsInt, IsString, Length, Min } from 'class-validator';
-import { validateOrRejectModel } from '../utils/validate-or-reject-model';
+import { validateOrRejectModel } from '../common/utils/validate-or-reject-model';
 
 export class CreateInputModel {
   @IsEmail()

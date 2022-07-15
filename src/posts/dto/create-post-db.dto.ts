@@ -1,9 +1,7 @@
 import { IsNotEmpty, IsString, Length } from 'class-validator';
+import { Blogger } from '../../bloggers/schemas/bloggers.schema';
 
-export class PostDto {
-  @IsString()
-  id: string;
-
+export class CreatePostDbDto {
   @Length(1, 30)
   @IsNotEmpty()
   title: string;
@@ -15,7 +13,7 @@ export class PostDto {
   content: string;
 
   @IsString()
-  bloggerId: string;
+  bloggerId: Blogger['id'];
 
   @Length(1)
   bloggerName: string;
