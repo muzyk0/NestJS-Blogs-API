@@ -10,11 +10,15 @@ import { UsersModule } from './users/users.module';
 import { AuthModule } from './auth/auth.module';
 import { TestingModule } from './testing/testing.module';
 import { CommentsModule } from './comments/comments.module';
+import configuration from './config/configuration';
 
 @Module({
   imports: [
-    ConfigModule.forRoot(),
-    MongooseModule.forRoot(process.env.MONGO_URI),
+    ConfigModule.forRoot({
+      isGlobal: true,
+      load: [configuration],
+    }),
+    MongooseModule.forRoot(configuration().MONGO_URI),
     TestModule,
     BloggersModule,
     PostsModule,
