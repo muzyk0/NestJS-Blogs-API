@@ -1,26 +1,85 @@
 import { Injectable } from '@nestjs/common';
 import { CreateUserDto } from './dto/create-user.dto';
-import { UpdateUserDto } from './dto/update-user.dto';
+import { UsersRepository } from './users.repository';
+import { UserAccountDBType } from './schemas/users.schema';
+import { v4 } from 'uuid';
+import { addDays } from 'date-fns';
+import { UserDto } from './dto/user.dto';
+
+interface IUsersService {
+  create(createUserDto: CreateUserDto): Promise<any>;
+}
 
 @Injectable()
 export class UsersService {
-  create(createUserDto: CreateUserDto) {
-    return 'This action adds a new user';
+  constructor(private readonly usersRepository: UsersRepository) {}
+
+  async create({ login, email }: CreateUserDto) {
+    // const passwordHash = await this.authService.generateHashPassword(
+    //   password
+    // );
+
+    const newUser: UserAccountDBType = {
+      accountData: {
+        id: v4(),
+        login,
+        email,
+        password: '', //passwordHash,
+        createdAt: new Date(),
+      },
+      loginAttempts: [],
+      emailConfirmation: {
+        sentEmails: [],
+        confirmationCode: v4(),
+        expirationDate: addDays(new Date(), 1),
+        isConfirmed: false,
+      },
+    };
+
+    const createdUser = await this.usersRepository.create(newUser);
+
+    if (!createdUser) {
+      return null;
+    }
+
+    try {
+      // const emailTemplate =
+      //   emailTemplateManager.getEmailConfirmationMessage(newUser);
+      //
+      // await this.emailService.sendEmail(
+      //   email,
+      //   `Thanks for registration ${createdUser.accountData.login}`,
+      //   emailTemplate,
+      // );
+    } catch (e) {
+      console.error(e);
+    }
+
+    const { id, login: userLogin } = createdUser.accountData;
+
+    return {
+      id,
+      login: userLogin,
+    };
   }
 
-  findAll() {
-    return `This action returns all users`;
+  async findAll(searchNameTerm?: string): Promise<UserDto[]> {
+    const users = await this.usersRepository.findAll({ searchNameTerm });
+    return users.map((u) => ({
+      id: u.accountData.id,
+      login: u.accountData.login,
+    }));
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} user`;
+  async findOneByLogin(login: string) {
+    return this.usersRepository.findOneByLogin(login);
   }
 
-  update(id: number, updateUserDto: UpdateUserDto) {
-    return `This action updates a #${id} user`;
+  async findOneByEmail(email: string) {
+    return this.usersRepository.findOneByEmail(email);
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} user`;
+  async remove(id: string) {
+    return this.usersRepository.remove(id);
   }
 }

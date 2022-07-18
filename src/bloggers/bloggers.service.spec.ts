@@ -42,7 +42,7 @@ describe('BloggersService', () => {
     }
   });
 
-  it('bloggerController should be defined', async () => {
+  it('BloggersService should be defined', async () => {
     expect(bloggerService).toBeDefined();
   });
 

@@ -1,22 +1,29 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { TestingService } from './testing.service';
 import { MongoMemoryServer } from 'mongodb-memory-server';
-import { connect, Connection, Model, Promise } from 'mongoose';
+import { connect, Connection, Model } from 'mongoose';
 import { Blogger, BloggerSchema } from '../bloggers/schemas/bloggers.schema';
 import { getModelToken } from '@nestjs/mongoose';
 import { Post, PostSchema } from '../posts/schemas/posts.schema';
 import { TestingRepository } from './testing.repository';
 import { v4 } from 'uuid';
-import { BloggerDto } from '../bloggers/dto/blogger.dto';
+import {
+  User,
+  UserAccountDBType,
+  UserSchema,
+} from '../users/schemas/users.schema';
+import { addDays } from 'date-fns';
 
 describe('TestingService', () => {
   let countAll = 0;
 
-  let service: TestingService;
+  let testingService: TestingService;
+
   let mongod: MongoMemoryServer;
   let mongoConnection: Connection;
   let postModel: Model<Post>;
   let bloggerModel: Model<Blogger>;
+  let userModel: Model<User>;
 
   beforeAll(async () => {
     mongod = await MongoMemoryServer.create();
@@ -24,6 +31,7 @@ describe('TestingService', () => {
     mongoConnection = (await connect(uri)).connection;
     postModel = mongoConnection.model(Post.name, PostSchema);
     bloggerModel = mongoConnection.model(Blogger.name, BloggerSchema);
+    userModel = mongoConnection.model(User.name, UserSchema);
     const app: TestingModule = await Test.createTestingModule({
       controllers: [],
       providers: [
@@ -31,9 +39,10 @@ describe('TestingService', () => {
         TestingRepository,
         { provide: getModelToken(Post.name), useValue: postModel },
         { provide: getModelToken(Blogger.name), useValue: bloggerModel },
+        { provide: getModelToken(User.name), useValue: userModel },
       ],
     }).compile();
-    service = app.get<TestingService>(TestingService);
+    testingService = app.get<TestingService>(TestingService);
   });
 
   afterAll(async () => {
@@ -74,6 +83,29 @@ describe('TestingService', () => {
 
     expect(postCount).toBe(countCreatedPosts);
 
+    const newUser: UserAccountDBType = {
+      accountData: {
+        id: v4(),
+        login: 'Test',
+        email: 'test@9art.ru',
+        password: '', //passwordHash,
+        createdAt: new Date(),
+      },
+      loginAttempts: [],
+      emailConfirmation: {
+        sentEmails: [],
+        confirmationCode: v4(),
+        expirationDate: addDays(new Date(), 1),
+        isConfirmed: false,
+      },
+    };
+
+    await userModel.create(newUser);
+
+    const usersCount = await userModel.countDocuments({});
+
+    expect(postCount).toBe(countCreatedPosts);
+
     const collections = mongoConnection.collections;
     for (const key in collections) {
       const collection = collections[key];
@@ -100,12 +132,17 @@ describe('TestingService', () => {
       countAll += await collection.countDocuments({});
     }
 
-    const result = await service.clearDatabase();
+    const result = await testingService.clearDatabase();
 
-    const postCountAfterClearDb = await postModel.countDocuments({});
+    let countDocumentsAfterClearDb = 0;
+
+    for (const key in collections) {
+      const collection = collections[key];
+      countDocumentsAfterClearDb += await collection.countDocuments({});
+    }
 
     expect(result).toBeTruthy();
-    expect(postCountAfterClearDb).not.toBe(countAll);
-    expect(postCountAfterClearDb).toBe(0);
+    expect(countDocumentsAfterClearDb).not.toBe(countAll);
+    expect(countDocumentsAfterClearDb).toBe(0);
   });
 });
