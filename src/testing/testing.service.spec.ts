@@ -13,6 +13,7 @@ import {
   UserSchema,
 } from '../users/schemas/users.schema';
 import { addDays } from 'date-fns';
+import { Comment, CommentSchema } from '../comments/schemas/comments.schema';
 
 describe('TestingService', () => {
   let countAll = 0;
@@ -24,6 +25,7 @@ describe('TestingService', () => {
   let postModel: Model<Post>;
   let bloggerModel: Model<Blogger>;
   let userModel: Model<User>;
+  let commentModel: Model<Comment>;
 
   beforeAll(async () => {
     mongod = await MongoMemoryServer.create();
@@ -32,6 +34,7 @@ describe('TestingService', () => {
     postModel = mongoConnection.model(Post.name, PostSchema);
     bloggerModel = mongoConnection.model(Blogger.name, BloggerSchema);
     userModel = mongoConnection.model(User.name, UserSchema);
+    commentModel = mongoConnection.model(Comment.name, CommentSchema);
     const app: TestingModule = await Test.createTestingModule({
       controllers: [],
       providers: [
@@ -40,6 +43,7 @@ describe('TestingService', () => {
         { provide: getModelToken(Post.name), useValue: postModel },
         { provide: getModelToken(Blogger.name), useValue: bloggerModel },
         { provide: getModelToken(User.name), useValue: userModel },
+        { provide: getModelToken(Comment.name), useValue: commentModel },
       ],
     }).compile();
     testingService = app.get<TestingService>(TestingService);
@@ -102,7 +106,14 @@ describe('TestingService', () => {
 
     await userModel.create(newUser);
 
-    const usersCount = await userModel.countDocuments({});
+    await commentModel.create({
+      id: 'some id',
+      postId: 'some post id',
+      content: 'some content',
+      addedAt: new Date(),
+      userId: 'some user id',
+      userLogin: 'some user login',
+    });
 
     expect(postCount).toBe(countCreatedPosts);
 
@@ -111,9 +122,6 @@ describe('TestingService', () => {
       const collection = collections[key];
       countAll += await collection.countDocuments({});
     }
-
-    expect(countAll).toBe(countAll);
-    expect(countAll).not.toBe(0);
   });
 
   afterEach(async () => {

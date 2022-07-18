@@ -1,26 +1,19 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { PostsController } from './posts.controller';
-import { PostsService } from './posts.service';
+import { CommentsController } from './comments.controller';
+import { CommentsService } from './comments.service';
 import { MongoMemoryServer } from 'mongodb-memory-server';
 import { connect, Connection, Model } from 'mongoose';
 import { Blogger, BloggerSchema } from '../bloggers/schemas/bloggers.schema';
-import { BloggersRepository } from '../bloggers/bloggers.repository';
-import { getModelToken } from '@nestjs/mongoose';
-import { BloggerDto } from '../bloggers/dto/blogger.dto';
-import { PostDto } from './dto/post.dto';
-import { PostsRepository } from './posts.repository';
-import { Post, PostSchema } from './schemas/posts.schema';
+import { Post, PostSchema } from '../posts/schemas/posts.schema';
+import { Comment, CommentSchema } from './schemas/comments.schema';
 import { AuthModule } from '../auth/auth.module';
-import { CommentsService } from '../comments/comments.service';
-import { CommentsRepository } from '../comments/comments.repository';
-import { Comment, CommentSchema } from '../comments/schemas/comments.schema';
-import { BloggersService } from '../bloggers/bloggers.service';
+import { PostsRepository } from '../posts/posts.repository';
+import { BloggersRepository } from '../bloggers/bloggers.repository';
+import { CommentsRepository } from './comments.repository';
+import { getModelToken } from '@nestjs/mongoose';
 
-describe('PostsController', () => {
-  let blogger: BloggerDto;
-  let post: PostDto;
-
-  let postsController: PostsController;
+describe('CommentsController', () => {
+  let commentController: CommentsController;
   let mongod: MongoMemoryServer;
   let mongoConnection: Connection;
   let bloggerModel: Model<Blogger>;
@@ -36,11 +29,9 @@ describe('PostsController', () => {
     commentModel = mongoConnection.model(Comment.name, CommentSchema);
     const app: TestingModule = await Test.createTestingModule({
       imports: [AuthModule],
-      controllers: [PostsController],
+      controllers: [CommentsController],
       providers: [
-        PostsService,
         PostsRepository,
-        BloggersService,
         BloggersRepository,
         CommentsService,
         CommentsRepository,
@@ -49,7 +40,7 @@ describe('PostsController', () => {
         { provide: getModelToken(Comment.name), useValue: commentModel },
       ],
     }).compile();
-    postsController = app.get<PostsController>(PostsController);
+    commentController = app.get<CommentsController>(CommentsController);
   });
 
   afterAll(async () => {
@@ -58,7 +49,7 @@ describe('PostsController', () => {
     await mongod.stop();
   });
 
-  it('postsController should be defined', async () => {
-    expect(postsController).toBeDefined();
+  it('commentController should be defined', async () => {
+    expect(commentController).toBeDefined();
   });
 });
