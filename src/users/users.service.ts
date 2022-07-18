@@ -11,7 +11,7 @@ interface IUsersService {
 }
 
 @Injectable()
-export class UsersService implements IUsersService {
+export class UsersService {
   constructor(private readonly usersRepository: UsersRepository) {}
 
   async create({ login, email }: CreateUserDto) {
