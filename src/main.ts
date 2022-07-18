@@ -1,11 +1,10 @@
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
 import { BadRequestException, ValidationPipe } from '@nestjs/common';
-import { HttpExceptionFilter } from './common/filters';
-import { ErrorExceptionFilter } from './common/filters';
+import { ErrorExceptionFilter, HttpExceptionFilter } from './common/filters';
+import configuration from './config/configuration';
 
 (async function bootstrap() {
-  console.log(process.env.MONGO_URI);
   const app = await NestFactory.create(AppModule);
 
   app.enableCors();
@@ -26,5 +25,5 @@ import { ErrorExceptionFilter } from './common/filters';
   );
   app.useGlobalFilters(new ErrorExceptionFilter(), new HttpExceptionFilter());
 
-  await app.listen(5000);
+  await app.listen(configuration().PORT);
 })();
