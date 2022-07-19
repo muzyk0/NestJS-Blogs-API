@@ -1,11 +1,13 @@
 import { Injectable } from '@nestjs/common';
-import { CreatePostDto } from './dto/create-post.dto';
-import { UpdatePostDto } from './dto/update-post.dto';
-import { PostDto } from './dto/post.dto';
 import { v4 } from 'uuid';
-import { PostsRepository } from './posts.repository';
+
 import { BloggersRepository } from '../bloggers/bloggers.repository';
+
+import { CreatePostDto } from './dto/create-post.dto';
+import { PostDto } from './dto/post.dto';
 import { UpdatePostDbDto } from './dto/update-post-db.dto';
+import { UpdatePostDto } from './dto/update-post.dto';
+import { PostsRepository } from './posts.repository';
 
 interface IPostService {
   create(createPostDto: Omit<CreatePostDto, 'id'>): Promise<PostDto>;

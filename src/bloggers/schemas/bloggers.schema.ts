@@ -1,5 +1,6 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { Document } from 'mongoose';
+
 import { BloggerDto } from '../dto/blogger.dto';
 
 export type BloggerDocument = Blogger & Document;

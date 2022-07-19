@@ -1,12 +1,14 @@
 import { Module } from '@nestjs/common';
-import { CommentsService } from './comments.service';
-import { CommentsController } from './comments.controller';
 import { MongooseModule } from '@nestjs/mongoose';
-import { Comment, CommentSchema } from './schemas/comments.schema';
-import { CommentsRepository } from './comments.repository';
-import { PostsRepository } from '../posts/posts.repository';
+
 import { Blogger, BloggerSchema } from '../bloggers/schemas/bloggers.schema';
+import { PostsRepository } from '../posts/posts.repository';
 import { Post, PostSchema } from '../posts/schemas/posts.schema';
+
+import { CommentsController } from './comments.controller';
+import { CommentsRepository } from './comments.repository';
+import { CommentsService } from './comments.service';
+import { Comment, CommentSchema } from './schemas/comments.schema';
 
 @Module({
   imports: [

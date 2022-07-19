@@ -12,16 +12,18 @@ import {
   HttpStatus,
   BadRequestException,
 } from '@nestjs/common';
-import { PostsService } from './posts.service';
+import { Response } from 'express';
+import { v4 } from 'uuid';
+
+import { BloggersService } from '../bloggers/bloggers.service';
+import { CommentsService } from '../comments/comments.service';
+import { CommentInput } from '../comments/dto/comment.input';
+import { CreateCommentDto } from '../comments/dto/create-comment.dto';
+import { BaseAuthGuard } from '../common/guards/base-auth-guard';
+
 import { CreatePostDto } from './dto/create-post.dto';
 import { UpdatePostDto } from './dto/update-post.dto';
-import { BaseAuthGuard } from '../common/guards/base-auth-guard';
-import { BloggersService } from '../bloggers/bloggers.service';
-import { Response } from 'express';
-import { CommentsService } from '../comments/comments.service';
-import { CreateCommentDto } from '../comments/dto/create-comment.dto';
-import { v4 } from 'uuid';
-import { CommentInput } from '../comments/dto/comment.input';
+import { PostsService } from './posts.service';
 
 @Controller('posts')
 export class PostsController {

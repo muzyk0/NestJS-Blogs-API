@@ -1,10 +1,11 @@
 import { Injectable } from '@nestjs/common';
-import { CreateUserDto } from './dto/create-user.dto';
-import { UsersRepository } from './users.repository';
-import { UserAccountDBType } from './schemas/users.schema';
-import { v4 } from 'uuid';
 import { addDays } from 'date-fns';
+import { v4 } from 'uuid';
+
+import { CreateUserDto } from './dto/create-user.dto';
 import { UserDto } from './dto/user.dto';
+import { UserAccountDBType } from './schemas/users.schema';
+import { UsersRepository } from './users.repository';
 
 interface IUsersService {
   create(createUserDto: CreateUserDto): Promise<any>;

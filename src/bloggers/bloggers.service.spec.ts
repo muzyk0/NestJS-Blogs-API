@@ -1,11 +1,12 @@
-import { Test, TestingModule } from '@nestjs/testing';
-import { BloggersService } from './bloggers.service';
-import { BloggersRepository } from './bloggers.repository';
 import { getModelToken } from '@nestjs/mongoose';
-import { Blogger, BloggerSchema } from './schemas/bloggers.schema';
-import { BloggerDto } from './dto/blogger.dto';
+import { Test, TestingModule } from '@nestjs/testing';
 import { MongoMemoryServer } from 'mongodb-memory-server';
 import { connect, Connection, Model, Promise } from 'mongoose';
+
+import { BloggersRepository } from './bloggers.repository';
+import { BloggersService } from './bloggers.service';
+import { BloggerDto } from './dto/blogger.dto';
+import { Blogger, BloggerSchema } from './schemas/bloggers.schema';
 
 describe('BloggersService', () => {
   let bloggerService: BloggersService;

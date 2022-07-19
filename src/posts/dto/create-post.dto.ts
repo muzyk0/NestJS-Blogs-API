@@ -1,4 +1,5 @@
 import { IsNotEmpty, IsString, Length } from 'class-validator';
+
 import { Blogger } from '../../bloggers/schemas/bloggers.schema';
 
 export class CreatePostDto {

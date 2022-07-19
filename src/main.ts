@@ -1,6 +1,7 @@
-import { NestFactory } from '@nestjs/core';
-import { AppModule } from './app.module';
 import { BadRequestException, ValidationPipe } from '@nestjs/common';
+import { NestFactory } from '@nestjs/core';
+
+import { AppModule } from './app.module';
 import { ErrorExceptionFilter, HttpExceptionFilter } from './common/filters';
 import configuration from './config/configuration';
 

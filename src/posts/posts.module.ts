@@ -1,16 +1,18 @@
 import { Module } from '@nestjs/common';
-import { PostsService } from './posts.service';
-import { PostsController } from './posts.controller';
 import { MongooseModule } from '@nestjs/mongoose';
-import { Post, PostSchema } from './schemas/posts.schema';
-import { PostsRepository } from './posts.repository';
-import { BloggersRepository } from '../bloggers/bloggers.repository';
-import { Blogger, BloggerSchema } from '../bloggers/schemas/bloggers.schema';
+
 import { AuthModule } from '../auth/auth.module';
+import { BloggersRepository } from '../bloggers/bloggers.repository';
 import { BloggersService } from '../bloggers/bloggers.service';
+import { Blogger, BloggerSchema } from '../bloggers/schemas/bloggers.schema';
+import { CommentsRepository } from '../comments/comments.repository';
 import { CommentsService } from '../comments/comments.service';
 import { Comment, CommentSchema } from '../comments/schemas/comments.schema';
-import { CommentsRepository } from '../comments/comments.repository';
+
+import { PostsController } from './posts.controller';
+import { PostsRepository } from './posts.repository';
+import { PostsService } from './posts.service';
+import { Post, PostSchema } from './schemas/posts.schema';
 
 @Module({
   imports: [

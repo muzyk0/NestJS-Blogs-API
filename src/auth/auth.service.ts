@@ -1,10 +1,15 @@
 import { Injectable } from '@nestjs/common';
+
+import { BaseAuthPayload } from '../constants';
+import { EmailService } from '../email/email.service';
+
 import { CreateAuthDto } from './dto/create-auth.dto';
 import { UpdateAuthDto } from './dto/update-auth.dto';
-import { BaseAuthPayload } from '../constants';
 
 @Injectable()
 export class AuthService {
+  constructor(private readonly emailService: EmailService) {}
+
   async decodeBaseAuth(token: string) {
     const buff = Buffer.from(token, 'base64');
 

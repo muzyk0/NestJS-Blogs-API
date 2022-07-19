@@ -1,8 +1,9 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { Document } from 'mongoose';
-import { PostDto } from '../dto/post.dto';
+
 import { BloggerDto } from '../../bloggers/dto/blogger.dto';
 import { Blogger } from '../../bloggers/schemas/bloggers.schema';
+import { PostDto } from '../dto/post.dto';
 
 export type PostDocument = Post & Document;
 

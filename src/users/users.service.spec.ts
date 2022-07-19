@@ -1,10 +1,11 @@
+import { getModelToken } from '@nestjs/mongoose';
 import { Test, TestingModule } from '@nestjs/testing';
-import { UsersService } from './users.service';
 import { MongoMemoryServer } from 'mongodb-memory-server';
 import { connect, Connection, Model } from 'mongoose';
-import { getModelToken } from '@nestjs/mongoose';
+
 import { User, UserSchema } from './schemas/users.schema';
 import { UsersRepository } from './users.repository';
+import { UsersService } from './users.service';
 
 describe('UsersService', () => {
   let userService: UsersService;

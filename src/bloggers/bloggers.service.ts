@@ -1,9 +1,10 @@
 import { Injectable } from '@nestjs/common';
+import { v4 } from 'uuid';
+
+import { BloggersRepository } from './bloggers.repository';
+import { BloggerDto } from './dto/blogger.dto';
 import { CreateBloggerDto } from './dto/create-blogger.dto';
 import { UpdateBloggerDto } from './dto/update-blogger.dto';
-import { BloggersRepository } from './bloggers.repository';
-import { v4 } from 'uuid';
-import { BloggerDto } from './dto/blogger.dto';
 
 interface IBloggersService {
   create(createBloggerDto: Omit<CreateBloggerDto, 'id'>): Promise<BloggerDto>;

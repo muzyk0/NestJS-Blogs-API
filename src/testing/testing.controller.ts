@@ -1,6 +1,7 @@
 import { Controller, Delete, HttpStatus, Res } from '@nestjs/common';
-import { TestingService } from './testing.service';
 import { Response } from 'express';
+
+import { TestingService } from './testing.service';
 
 @Controller('testing')
 export class TestingController {

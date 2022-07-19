@@ -1,10 +1,11 @@
 import { Injectable } from '@nestjs/common';
-import { UpdateUserDto } from './dto/update-user.dto';
-import { Options, UpdateConfirmationType } from './users.interface';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
-import { User, UserAccountDBType, UserDocument } from './schemas/users.schema';
+
+import { UpdateUserDto } from './dto/update-user.dto';
 import { UserDto } from './dto/user.dto';
+import { User, UserAccountDBType, UserDocument } from './schemas/users.schema';
+import { Options, UpdateConfirmationType } from './users.interface';
 
 @Injectable()
 export class UsersRepository {

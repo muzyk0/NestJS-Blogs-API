@@ -1,8 +1,9 @@
 import { Module } from '@nestjs/common';
-import { BloggersService } from './bloggers.service';
+import { MongooseModule } from '@nestjs/mongoose';
+
 import { BloggersController } from './bloggers.controller';
 import { BloggersRepository } from './bloggers.repository';
-import { MongooseModule } from '@nestjs/mongoose';
+import { BloggersService } from './bloggers.service';
 import { Blogger, BloggerSchema } from './schemas/bloggers.schema';
 
 @Module({
