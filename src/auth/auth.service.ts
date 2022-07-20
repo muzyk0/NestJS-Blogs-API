@@ -1,14 +1,19 @@
 import { Injectable } from '@nestjs/common';
+import bcrypt from 'bcrypt';
 
 import { BaseAuthPayload } from '../constants';
 import { EmailService } from '../email/email.service';
+import { UsersService } from '../users/users.service';
 
 import { CreateAuthDto } from './dto/create-auth.dto';
 import { UpdateAuthDto } from './dto/update-auth.dto';
 
 @Injectable()
 export class AuthService {
-  constructor(private readonly emailService: EmailService) {}
+  constructor(
+    private readonly emailService: EmailService,
+    private usersService: UsersService,
+  ) {}
 
   async decodeBaseAuth(token: string) {
     const buff = Buffer.from(token, 'base64');
@@ -40,6 +45,36 @@ export class AuthService {
     }
 
     return true;
+  }
+
+  async validateUser(login: string, password: string): Promise<string | null> {
+    const user = await this.usersService.findOneByLogin(login);
+
+    if (!user) {
+      return null;
+    }
+
+    const { password: userPassword, id, login: userLogin } = user.accountData;
+
+    const isEqual = await this.comparePassword(password, userPassword);
+
+    if (!isEqual) {
+      return null;
+    }
+
+    // const token = this.createJWT({ userId: id, login: userLogin });
+
+    const token = '';
+
+    return token;
+  }
+
+  async comparePassword(password: string, userPassword: string) {
+    try {
+      return bcrypt.compare(password, userPassword);
+    } catch {
+      return false;
+    }
   }
 
   create(createAuthDto: CreateAuthDto) {
