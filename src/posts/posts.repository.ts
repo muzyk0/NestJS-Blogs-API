@@ -27,10 +27,7 @@ export class PostsRepository {
 
     const post = await this.postModel.create(createPostDto);
 
-    return await this.postModel.findOne(
-      { id: post.id },
-      { _id: false, __v: false },
-    );
+    return this.postModel.findOne({ id: post.id }, { _id: false, __v: false });
   }
 
   async findAll(searchNameTerm?: string) {
