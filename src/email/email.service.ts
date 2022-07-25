@@ -1,14 +1,11 @@
-import { MailerService } from '@nestjs-modules/mailer';
+import { ISendMailOptions, MailerService } from '@nestjs-modules/mailer';
 import { Injectable } from '@nestjs/common';
-import nodemailer from 'nodemailer';
-
-import { MailType } from './email.interface';
 
 @Injectable()
 export class EmailService {
   constructor(private readonly mailerService: MailerService) {}
 
-  private async send(mail: MailType) {
+  private async send(mail: ISendMailOptions) {
     return this.mailerService.sendMail(mail);
   }
 
@@ -22,7 +19,6 @@ export class EmailService {
       });
 
       console.log('Message sent: %s', info);
-      console.log('Preview URL: %s', nodemailer.getTestMessageUrl(info));
     } catch (e) {
       console.log(`email isn't send. Error: ${e}`);
     }

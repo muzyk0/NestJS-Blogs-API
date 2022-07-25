@@ -1,18 +1,19 @@
 import { Injectable } from '@nestjs/common';
 import bcrypt from 'bcrypt';
+import { addDays, isAfter } from 'date-fns';
+import { v4 } from 'uuid';
 
 import { BaseAuthPayload } from '../constants';
+import { EmailTemplateManager } from '../email/email-template-manager';
 import { EmailService } from '../email/email.service';
 import { UsersService } from '../users/users.service';
-
-import { CreateAuthDto } from './dto/create-auth.dto';
-import { UpdateAuthDto } from './dto/update-auth.dto';
 
 @Injectable()
 export class AuthService {
   constructor(
     private readonly emailService: EmailService,
-    private usersService: UsersService,
+    private readonly usersService: UsersService,
+    private readonly emailTemplateManager: EmailTemplateManager,
   ) {}
 
   async decodeBaseAuth(token: string) {
@@ -77,23 +78,57 @@ export class AuthService {
     }
   }
 
-  create(createAuthDto: CreateAuthDto) {
-    return 'This action adds a new auth';
+  async generateHashedPassword(password: string) {
+    return bcrypt.hash(password, 10);
   }
 
-  findAll() {
-    return `This action returns all auth`;
+  async confirmAccount(code: string): Promise<boolean> {
+    const user = await this.usersService.findOneByConfirmationCode(code);
+    if (!user || user.emailConfirmation.isConfirmed) {
+      return false;
+    }
+
+    const isExpired = isAfter(
+      new Date(),
+      user.emailConfirmation.expirationDate,
+    );
+
+    if (isExpired) {
+      return false;
+    }
+
+    if (code !== user.emailConfirmation.confirmationCode) {
+      return false;
+    }
+
+    return this.usersService.setIsConfirmed(user.accountData.id);
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} auth`;
-  }
+  async resendConfirmationCode(email: string): Promise<boolean> {
+    const user = await this.usersService.findOneByEmail(email);
 
-  update(id: number, updateAuthDto: UpdateAuthDto) {
-    return `This action updates a #${id} auth`;
-  }
+    if (!user || user.emailConfirmation.isConfirmed) {
+      return false;
+    }
 
-  remove(id: number) {
-    return `This action removes a #${id} auth`;
+    const updatedUser = await this.usersService.updateConfirmationCode({
+      id: user.accountData.id,
+      code: v4(),
+      expirationDate: addDays(new Date(), 1),
+    });
+
+    if (!updatedUser) {
+      return false;
+    }
+
+    const emailTemplate =
+      this.emailTemplateManager.getEmailConfirmationMessage(updatedUser);
+
+    await this.emailService.sendEmail(
+      updatedUser.accountData.email,
+      'Confirm your account ✔',
+      emailTemplate,
+    );
+    return true;
   }
 }

@@ -1,37 +1,52 @@
+import { join } from 'path';
+
 import { MailerModule } from '@nestjs-modules/mailer';
-import { Module } from '@nestjs/common';
+import { HandlebarsAdapter } from '@nestjs-modules/mailer/dist/adapters/handlebars.adapter';
+import { Global, Module } from '@nestjs/common';
+import { ConfigService } from '@nestjs/config';
 
 import configuration from '../config/configuration';
 
+import { EmailTemplateManager } from './email-template-manager';
 import { EmailService } from './email.service';
 
+@Global()
 @Module({
   imports: [
-    MailerModule.forRoot({
-      transport: {
-        host: 'localhost',
-        port: 1025,
-        ignoreTLS: true,
-        secure: false,
-        auth: {
-          user: configuration().SMTP.EMAIL_FROM,
-          pass: configuration().SMTP.EMAIL_FROM_PASSWORD,
+    MailerModule.forRootAsync({
+      useFactory: async (config: ConfigService) => ({
+        // or transport: config.get("MAIL_TRANSPORT"),
+        transport: {
+          service: 'Gmail',
+          auth: {
+            user: config.get('EMAIL_FROM'),
+            pass: config.get('EMAIL_FROM_PASSWORD'),
+          },
         },
-      },
-      defaults: {
-        from: '"No Reply" <no-reply@localhost>',
-      },
-      preview: true,
-      template: {
-        dir: process.cwd() + '/template/',
-        // adapter: new HandlebarsAdapter(), // or new PugAdapter() or new EjsAdapter()
-        options: {
-          strict: true,
+        defaults: {
+          from: `"No Reply" <${config.get('EMAIL_FROM')}>`,
         },
-      },
+        // preview: true,
+        template: {
+          dir: join(__dirname, 'templates'), // or process.cwd() + '/template/'
+          adapter: new HandlebarsAdapter(), // or new PugAdapter() or new EjsAdapter()
+          options: {
+            strict: true,
+          },
+        },
+      }),
+      inject: [ConfigService],
     }),
   ],
-  providers: [EmailService],
-  exports: [EmailService],
+  providers: [
+    EmailService,
+    EmailTemplateManager,
+    { provide: 'BASE_URL', useValue: configuration().BASE_URL },
+  ],
+  exports: [
+    EmailService,
+    EmailTemplateManager,
+    { provide: 'BASE_URL', useValue: configuration().BASE_URL },
+  ],
 })
 export class EmailModule {}

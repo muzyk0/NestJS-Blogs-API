@@ -42,7 +42,7 @@ export class UsersRepository {
     return user;
   }
 
-  async findOneByEmail(email: string): Promise<UserDto> {
+  async findOneByEmail(email: string): Promise<User> {
     return this.userModel.findOne({ 'accountData.email': email });
   }
 
@@ -55,13 +55,13 @@ export class UsersRepository {
     return result.deletedCount === 1;
   }
 
-  async findUneByConfirmationCode(code: string) {
+  async findOneByConfirmationCode(code: string) {
     return this.userModel.findOne({
       'emailConfirmation.confirmationCode': code,
     });
   }
 
-  async setIsConfirmed(id: string): Promise<boolean> {
+  async setIsConfirmedById(id: string): Promise<boolean> {
     const result = await this.userModel.updateOne(
       { id },
       {

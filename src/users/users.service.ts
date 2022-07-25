@@ -2,9 +2,13 @@ import { Injectable } from '@nestjs/common';
 import { addDays } from 'date-fns';
 import { v4 } from 'uuid';
 
+import { EmailTemplateManager } from '../email/email-template-manager';
+import { EmailService } from '../email/email.service';
+
 import { CreateUserDto } from './dto/create-user.dto';
 import { UserDto } from './dto/user.dto';
 import { UserAccountDBType } from './schemas/users.schema';
+import { UpdateConfirmationType } from './users.interface';
 import { UsersRepository } from './users.repository';
 
 interface IUsersService {
@@ -13,7 +17,11 @@ interface IUsersService {
 
 @Injectable()
 export class UsersService {
-  constructor(private readonly usersRepository: UsersRepository) {}
+  constructor(
+    private readonly usersRepository: UsersRepository,
+    private readonly emailService: EmailService,
+    private readonly emailTemplateManager: EmailTemplateManager,
+  ) {}
 
   async create({ login, email }: CreateUserDto) {
     // const passwordHash = await this.authService.generateHashPassword(
@@ -44,14 +52,14 @@ export class UsersService {
     }
 
     try {
-      // const emailTemplate =
-      //   emailTemplateManager.getEmailConfirmationMessage(newUser);
-      //
-      // await this.emailService.sendEmail(
-      //   email,
-      //   `Thanks for registration ${createdUser.accountData.login}`,
-      //   emailTemplate,
-      // );
+      const emailTemplate =
+        this.emailTemplateManager.getEmailConfirmationMessage(newUser);
+
+      await this.emailService.sendEmail(
+        email,
+        `Thanks for registration ${createdUser.accountData.login}`,
+        emailTemplate,
+      );
     } catch (e) {
       console.error(e);
     }
@@ -82,5 +90,17 @@ export class UsersService {
 
   async remove(id: string) {
     return this.usersRepository.remove(id);
+  }
+
+  async findOneByConfirmationCode(code: string) {
+    return this.usersRepository.findOneByConfirmationCode(code);
+  }
+
+  async setIsConfirmed(id: string) {
+    return this.usersRepository.setIsConfirmedById(id);
+  }
+
+  async updateConfirmationCode(updateConfirmation: UpdateConfirmationType) {
+    return this.usersRepository.updateConfirmationCode(updateConfirmation);
   }
 }
