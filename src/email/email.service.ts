@@ -20,7 +20,7 @@ export class EmailService {
 
       console.log('Message sent: %s', info);
     } catch (e) {
-      console.log(`email isn't send. Error: ${e}`);
+      throw new Error(`Email isn't send. Error: ${e}`);
     }
   }
 }

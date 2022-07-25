@@ -11,7 +11,7 @@ import { Options, UpdateConfirmationType } from './users.interface';
 export class UsersRepository {
   constructor(@InjectModel(User.name) private userModel: Model<UserDocument>) {}
 
-  async create(createUserDto: UserAccountDBType) {
+  async create(createUserDto: UserAccountDBType): Promise<User> {
     const userWithLoginOrEmail = await this.userModel.findOne({
       $or: [
         { 'accountData.login': createUserDto.accountData.login },

@@ -62,6 +62,10 @@ export class UsersService {
       );
     } catch (e) {
       console.error(e);
+
+      await this.usersRepository.remove(createdUser.accountData.id);
+
+      throw new Error("User isn't created");
     }
 
     const { id, login: userLogin } = createdUser.accountData;
