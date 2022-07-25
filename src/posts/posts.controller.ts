@@ -11,17 +11,20 @@ import {
   Res,
   HttpStatus,
   BadRequestException,
+  NotFoundException,
+  HttpCode,
 } from '@nestjs/common';
-import { PostsService } from './posts.service';
+import { Response } from 'express';
+
+import { BloggersService } from '../bloggers/bloggers.service';
+import { CommentsService } from '../comments/comments.service';
+import { CommentInput } from '../comments/dto/comment.input';
+import { CreateCommentDto } from '../comments/dto/create-comment.dto';
+import { BaseAuthGuard } from '../common/guards/base-auth-guard';
+
 import { CreatePostDto } from './dto/create-post.dto';
 import { UpdatePostDto } from './dto/update-post.dto';
-import { BaseAuthGuard } from '../common/guards/base-auth-guard';
-import { BloggersService } from '../bloggers/bloggers.service';
-import { Response } from 'express';
-import { CommentsService } from '../comments/comments.service';
-import { CreateCommentDto } from '../comments/dto/create-comment.dto';
-import { v4 } from 'uuid';
-import { CommentInput } from '../comments/dto/comment.input';
+import { PostsService } from './posts.service';
 
 @Controller('posts')
 export class PostsController {
@@ -33,15 +36,15 @@ export class PostsController {
 
   @UseGuards(BaseAuthGuard)
   @Post()
-  async create(@Body() createPostDto: CreatePostDto, @Res() res: Response) {
+  @HttpCode(HttpStatus.CREATED)
+  async create(@Body() createPostDto: CreatePostDto) {
     const blogger = await this.bloggersService.findOne(createPostDto.bloggerId);
 
     if (!blogger) {
-      return res.status(HttpStatus.NO_CONTENT).send();
+      throw new NotFoundException();
     }
 
-    const post = await this.postsService.create(createPostDto);
-    return post;
+    return this.postsService.create(createPostDto);
   }
 
   @Get()
@@ -56,11 +59,8 @@ export class PostsController {
 
   @UseGuards(BaseAuthGuard)
   @Put(':id')
-  async update(
-    @Param('id') id: string,
-    @Body() updatePostDto: UpdatePostDto,
-    @Res() res: Response,
-  ) {
+  @HttpCode(HttpStatus.CREATED)
+  async update(@Param('id') id: string, @Body() updatePostDto: UpdatePostDto) {
     const blogger = await this.bloggersService.findOne(updatePostDto.bloggerId);
 
     if (!blogger) {
@@ -73,10 +73,10 @@ export class PostsController {
       throw new BadRequestException();
     }
 
-    return res.status(HttpStatus.NO_CONTENT).send();
+    return;
   }
 
-  @Put(':id')
+  @Patch(':id')
   async updatePatch(
     @Param('id') id: string,
     @Body() updatePostDto: UpdatePostDto,
