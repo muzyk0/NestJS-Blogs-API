@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import bcrypt from 'bcrypt';
+import * as bcrypt from 'bcrypt';
 import { addDays, isAfter } from 'date-fns';
 import { v4 } from 'uuid';
 
@@ -7,6 +7,8 @@ import { BaseAuthPayload } from '../constants';
 import { EmailTemplateManager } from '../email/email-template-manager';
 import { EmailService } from '../email/email.service';
 import { UsersService } from '../users/users.service';
+
+import { LoginDto } from './dto/login.dto';
 
 @Injectable()
 export class AuthService {
@@ -33,6 +35,26 @@ export class AuthService {
     return BaseAuthPayload;
   }
 
+  async login({ login, password }: LoginDto): Promise<string | null> {
+    const user = await this.usersService.findOneByLogin(login);
+
+    if (!user) {
+      return null;
+    }
+
+    const { password: userPassword, id, login: userLogin } = user.accountData;
+
+    const isEqual = await this.comparePassword(password, userPassword);
+
+    if (!isEqual) {
+      return null;
+    }
+
+    const token = 'token'; //this.createJWT({ userId: id, login: userLogin });
+
+    return token;
+  }
+
   async compareBaseAuth(token: string) {
     const decodedBaseData = await this.decodeBaseAuth(token);
 
@@ -46,6 +68,10 @@ export class AuthService {
     }
 
     return true;
+  }
+
+  async generateHashPassword(password: string) {
+    return bcrypt.hash(password, 10);
   }
 
   async validateUser(login: string, password: string): Promise<string | null> {

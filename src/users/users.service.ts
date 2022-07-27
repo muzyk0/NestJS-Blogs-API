@@ -1,7 +1,9 @@
 import { Injectable } from '@nestjs/common';
+import * as bcrypt from 'bcrypt';
 import { addDays } from 'date-fns';
 import { v4 } from 'uuid';
 
+import { AuthService } from '../auth/auth.service';
 import { EmailTemplateManager } from '../email/email-template-manager';
 import { EmailService } from '../email/email.service';
 
@@ -11,10 +13,6 @@ import { UserAccountDBType } from './schemas/users.schema';
 import { UpdateConfirmationType } from './users.interface';
 import { UsersRepository } from './users.repository';
 
-interface IUsersService {
-  create(createUserDto: CreateUserDto): Promise<any>;
-}
-
 @Injectable()
 export class UsersService {
   constructor(
@@ -23,17 +21,17 @@ export class UsersService {
     private readonly emailTemplateManager: EmailTemplateManager,
   ) {}
 
-  async create({ login, email }: CreateUserDto) {
-    // const passwordHash = await this.authService.generateHashPassword(
-    //   password
-    // );
+  async create({ login, email, password }: CreateUserDto) {
+    // const passwordHash = await this.authService.generateHashPassword(password);
+
+    const passwordHash = await bcrypt.hash(password, 10);
 
     const newUser: UserAccountDBType = {
       accountData: {
         id: v4(),
         login,
         email,
-        password: '', //passwordHash,
+        password: passwordHash,
         createdAt: new Date(),
       },
       loginAttempts: [],
