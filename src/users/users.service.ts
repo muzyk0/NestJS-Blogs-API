@@ -105,4 +105,8 @@ export class UsersService {
   async updateConfirmationCode(updateConfirmation: UpdateConfirmationType) {
     return this.usersRepository.updateConfirmationCode(updateConfirmation);
   }
+
+  async findOneById(id: string) {
+    return this.usersRepository.findOneById(id);
+  }
 }

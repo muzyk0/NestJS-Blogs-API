@@ -5,10 +5,16 @@ import {
   Delete,
   forwardRef,
   Get,
+  HttpCode,
+  HttpStatus,
   Inject,
+  NotFoundException,
   Param,
   Post,
+  UseGuards,
 } from '@nestjs/common';
+
+import { BaseAuthGuard } from '../common/guards/base-auth-guard';
 
 import { CreateUserDto } from './dto/create-user.dto';
 import { UsersService } from './users.service';
@@ -17,6 +23,7 @@ import { UsersService } from './users.service';
 export class UsersController {
   constructor(private readonly usersService: UsersService) {}
 
+  @UseGuards(BaseAuthGuard)
   @Post()
   async create(@Body() { login, email, password }: CreateUserDto) {
     const userAlreadyExistByLogin = await this.usersService.findOneByLogin(
@@ -43,8 +50,16 @@ export class UsersController {
     return this.usersService.findAll();
   }
 
+  @UseGuards(BaseAuthGuard)
   @Delete(':id')
+  @HttpCode(HttpStatus.NO_CONTENT)
   async remove(@Param('id') id: string) {
+    const user = await this.usersService.findOneById(id);
+
+    if (!user) {
+      throw new NotFoundException();
+    }
+
     return this.usersService.remove(id);
   }
 }

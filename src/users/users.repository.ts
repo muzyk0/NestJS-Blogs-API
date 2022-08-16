@@ -90,4 +90,8 @@ export class UsersRepository {
       { returnDocument: 'after' },
     );
   }
+
+  findOneById(id: string) {
+    return this.userModel.findOne({ 'accountData.id': id });
+  }
 }
