@@ -1,30 +1,37 @@
 import { Injectable } from '@nestjs/common';
-import { CreateUserDto } from './dto/create-user.dto';
-import { UsersRepository } from './users.repository';
-import { UserAccountDBType } from './schemas/users.schema';
-import { v4 } from 'uuid';
+import * as bcrypt from 'bcrypt';
 import { addDays } from 'date-fns';
-import { UserDto } from './dto/user.dto';
+import { v4 } from 'uuid';
 
-interface IUsersService {
-  create(createUserDto: CreateUserDto): Promise<any>;
-}
+import { AuthService } from '../auth/auth.service';
+import { EmailTemplateManager } from '../email/email-template-manager';
+import { EmailService } from '../email/email.service';
+
+import { CreateUserDto } from './dto/create-user.dto';
+import { UserDto } from './dto/user.dto';
+import { UserAccountDBType } from './schemas/users.schema';
+import { UpdateConfirmationType } from './users.interface';
+import { UsersRepository } from './users.repository';
 
 @Injectable()
 export class UsersService {
-  constructor(private readonly usersRepository: UsersRepository) {}
+  constructor(
+    private readonly usersRepository: UsersRepository,
+    private readonly emailService: EmailService,
+    private readonly emailTemplateManager: EmailTemplateManager,
+  ) {}
 
-  async create({ login, email }: CreateUserDto) {
-    // const passwordHash = await this.authService.generateHashPassword(
-    //   password
-    // );
+  async create({ login, email, password }: CreateUserDto) {
+    // const passwordHash = await this.authService.generateHashPassword(password);
+
+    const passwordHash = await bcrypt.hash(password, 10);
 
     const newUser: UserAccountDBType = {
       accountData: {
         id: v4(),
         login,
         email,
-        password: '', //passwordHash,
+        password: passwordHash,
         createdAt: new Date(),
       },
       loginAttempts: [],
@@ -43,16 +50,20 @@ export class UsersService {
     }
 
     try {
-      // const emailTemplate =
-      //   emailTemplateManager.getEmailConfirmationMessage(newUser);
-      //
-      // await this.emailService.sendEmail(
-      //   email,
-      //   `Thanks for registration ${createdUser.accountData.login}`,
-      //   emailTemplate,
-      // );
+      const emailTemplate =
+        this.emailTemplateManager.getEmailConfirmationMessage(newUser);
+
+      await this.emailService.sendEmail(
+        email,
+        `Thanks for registration ${createdUser.accountData.login}`,
+        emailTemplate,
+      );
     } catch (e) {
       console.error(e);
+
+      await this.usersRepository.remove(createdUser.accountData.id);
+
+      throw new Error("User isn't created");
     }
 
     const { id, login: userLogin } = createdUser.accountData;
@@ -81,5 +92,17 @@ export class UsersService {
 
   async remove(id: string) {
     return this.usersRepository.remove(id);
+  }
+
+  async findOneByConfirmationCode(code: string) {
+    return this.usersRepository.findOneByConfirmationCode(code);
+  }
+
+  async setIsConfirmed(id: string) {
+    return this.usersRepository.setIsConfirmedById(id);
+  }
+
+  async updateConfirmationCode(updateConfirmation: UpdateConfirmationType) {
+    return this.usersRepository.updateConfirmationCode(updateConfirmation);
   }
 }

@@ -1,11 +1,12 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { Document } from 'mongoose';
-import { IUser, UserData } from './user-data.schema';
-import { LoginAttempt, LoginAttemptType } from './login-attempt.schema';
+
 import {
   EmailConfirmation,
   EmailConfirmationType,
 } from './email-confirmation.schema';
+import { LoginAttempt, LoginAttemptType } from './login-attempt.schema';
+import { IUser, UserData } from './user-data.schema';
 
 export type UserAccountDBType = {
   accountData: IUser;

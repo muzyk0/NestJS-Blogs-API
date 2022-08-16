@@ -1,16 +1,17 @@
 import { Injectable } from '@nestjs/common';
-import { UpdateUserDto } from './dto/update-user.dto';
-import { Options, UpdateConfirmationType } from './users.interface';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
-import { User, UserAccountDBType, UserDocument } from './schemas/users.schema';
+
+import { UpdateUserDto } from './dto/update-user.dto';
 import { UserDto } from './dto/user.dto';
+import { User, UserAccountDBType, UserDocument } from './schemas/users.schema';
+import { Options, UpdateConfirmationType } from './users.interface';
 
 @Injectable()
 export class UsersRepository {
   constructor(@InjectModel(User.name) private userModel: Model<UserDocument>) {}
 
-  async create(createUserDto: UserAccountDBType) {
+  async create(createUserDto: UserAccountDBType): Promise<User> {
     const userWithLoginOrEmail = await this.userModel.findOne({
       $or: [
         { 'accountData.login': createUserDto.accountData.login },
@@ -41,7 +42,7 @@ export class UsersRepository {
     return user;
   }
 
-  async findOneByEmail(email: string): Promise<UserDto> {
+  async findOneByEmail(email: string): Promise<User> {
     return this.userModel.findOne({ 'accountData.email': email });
   }
 
@@ -54,13 +55,13 @@ export class UsersRepository {
     return result.deletedCount === 1;
   }
 
-  async findUneByConfirmationCode(code: string) {
+  async findOneByConfirmationCode(code: string) {
     return this.userModel.findOne({
       'emailConfirmation.confirmationCode': code,
     });
   }
 
-  async setIsConfirmed(id: string): Promise<boolean> {
+  async setIsConfirmedById(id: string): Promise<boolean> {
     const result = await this.userModel.updateOne(
       { id },
       {

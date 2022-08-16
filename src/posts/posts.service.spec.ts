@@ -1,12 +1,14 @@
+import { getModelToken } from '@nestjs/mongoose';
 import { Test, TestingModule } from '@nestjs/testing';
-import { PostsService } from './posts.service';
 import { MongoMemoryServer } from 'mongodb-memory-server';
 import { connect, Connection, Model } from 'mongoose';
-import { getModelToken } from '@nestjs/mongoose';
-import { Post, PostSchema } from './schemas/posts.schema';
-import { PostsRepository } from './posts.repository';
+
 import { BloggersRepository } from '../bloggers/bloggers.repository';
 import { Blogger, BloggerSchema } from '../bloggers/schemas/bloggers.schema';
+
+import { PostsRepository } from './posts.repository';
+import { PostsService } from './posts.service';
+import { Post, PostSchema } from './schemas/posts.schema';
 
 describe('PostsService', () => {
   let postsService: PostsService;

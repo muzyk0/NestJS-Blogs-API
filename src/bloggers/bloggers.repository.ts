@@ -1,9 +1,10 @@
 import { Injectable } from '@nestjs/common';
-import { UpdateBloggerDto } from './dto/update-blogger.dto';
 import { InjectModel } from '@nestjs/mongoose';
-import { Blogger, BloggerDocument } from './schemas/bloggers.schema';
 import { Model } from 'mongoose';
+
 import { BloggerDto } from './dto/blogger.dto';
+import { UpdateBloggerDto } from './dto/update-blogger.dto';
+import { Blogger, BloggerDocument } from './schemas/bloggers.schema';
 
 @Injectable()
 export class BloggersRepository {

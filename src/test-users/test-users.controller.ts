@@ -10,8 +10,10 @@ import {
   Query,
   UseGuards,
 } from '@nestjs/common';
-import { CreateInputModel, TestUsersService } from './test-users.service';
+
 import { AuthGuard } from '../common/guards/auth-guard';
+
+import { CreateInputModel, TestUsersService } from './test-users.service';
 
 @UseGuards(AuthGuard)
 @Controller('test-users')

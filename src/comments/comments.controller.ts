@@ -10,8 +10,9 @@ import {
   Put,
   Res,
 } from '@nestjs/common';
-import { CommentsService } from './comments.service';
 import { Response } from 'express';
+
+import { CommentsService } from './comments.service';
 import { CommentInput } from './dto/comment.input';
 
 @Controller('comments')

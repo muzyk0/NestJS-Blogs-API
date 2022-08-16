@@ -1,20 +1,22 @@
+import { getModelToken } from '@nestjs/mongoose';
 import { Test, TestingModule } from '@nestjs/testing';
-import { PostsController } from './posts.controller';
-import { PostsService } from './posts.service';
 import { MongoMemoryServer } from 'mongodb-memory-server';
 import { connect, Connection, Model } from 'mongoose';
-import { Blogger, BloggerSchema } from '../bloggers/schemas/bloggers.schema';
-import { BloggersRepository } from '../bloggers/bloggers.repository';
-import { getModelToken } from '@nestjs/mongoose';
-import { BloggerDto } from '../bloggers/dto/blogger.dto';
-import { PostDto } from './dto/post.dto';
-import { PostsRepository } from './posts.repository';
-import { Post, PostSchema } from './schemas/posts.schema';
+
 import { AuthModule } from '../auth/auth.module';
-import { CommentsService } from '../comments/comments.service';
-import { CommentsRepository } from '../comments/comments.repository';
-import { Comment, CommentSchema } from '../comments/schemas/comments.schema';
+import { BloggersRepository } from '../bloggers/bloggers.repository';
 import { BloggersService } from '../bloggers/bloggers.service';
+import { BloggerDto } from '../bloggers/dto/blogger.dto';
+import { Blogger, BloggerSchema } from '../bloggers/schemas/bloggers.schema';
+import { CommentsRepository } from '../comments/comments.repository';
+import { CommentsService } from '../comments/comments.service';
+import { Comment, CommentSchema } from '../comments/schemas/comments.schema';
+
+import { PostDto } from './dto/post.dto';
+import { PostsController } from './posts.controller';
+import { PostsRepository } from './posts.repository';
+import { PostsService } from './posts.service';
+import { Post, PostSchema } from './schemas/posts.schema';
 
 describe('PostsController', () => {
   let blogger: BloggerDto;

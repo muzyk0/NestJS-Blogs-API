@@ -8,10 +8,11 @@ import {
   Delete,
   Put,
 } from '@nestjs/common';
+
 import { BloggersService } from './bloggers.service';
+import { BloggerDto } from './dto/blogger.dto';
 import { CreateBloggerDto } from './dto/create-blogger.dto';
 import { UpdateBloggerDto } from './dto/update-blogger.dto';
-import { BloggerDto } from './dto/blogger.dto';
 
 @Controller('bloggers')
 export class BloggersController {

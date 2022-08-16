@@ -1,10 +1,23 @@
 import { Injectable } from '@nestjs/common';
-import { CreateAuthDto } from './dto/create-auth.dto';
-import { UpdateAuthDto } from './dto/update-auth.dto';
+import * as bcrypt from 'bcrypt';
+import { addDays, isAfter } from 'date-fns';
+import { v4 } from 'uuid';
+
 import { BaseAuthPayload } from '../constants';
+import { EmailTemplateManager } from '../email/email-template-manager';
+import { EmailService } from '../email/email.service';
+import { UsersService } from '../users/users.service';
+
+import { LoginDto } from './dto/login.dto';
 
 @Injectable()
 export class AuthService {
+  constructor(
+    private readonly emailService: EmailService,
+    private readonly usersService: UsersService,
+    private readonly emailTemplateManager: EmailTemplateManager,
+  ) {}
+
   async decodeBaseAuth(token: string) {
     const buff = Buffer.from(token, 'base64');
 
@@ -22,6 +35,26 @@ export class AuthService {
     return BaseAuthPayload;
   }
 
+  async login({ login, password }: LoginDto): Promise<string | null> {
+    const user = await this.usersService.findOneByLogin(login);
+
+    if (!user) {
+      return null;
+    }
+
+    const { password: userPassword, id, login: userLogin } = user.accountData;
+
+    const isEqual = await this.comparePassword(password, userPassword);
+
+    if (!isEqual) {
+      return null;
+    }
+
+    const token = 'token'; //this.createJWT({ userId: id, login: userLogin });
+
+    return token;
+  }
+
   async compareBaseAuth(token: string) {
     const decodedBaseData = await this.decodeBaseAuth(token);
 
@@ -37,23 +70,91 @@ export class AuthService {
     return true;
   }
 
-  create(createAuthDto: CreateAuthDto) {
-    return 'This action adds a new auth';
+  async generateHashPassword(password: string) {
+    return bcrypt.hash(password, 10);
   }
 
-  findAll() {
-    return `This action returns all auth`;
+  async validateUser(login: string, password: string): Promise<string | null> {
+    const user = await this.usersService.findOneByLogin(login);
+
+    if (!user) {
+      return null;
+    }
+
+    const { password: userPassword, id, login: userLogin } = user.accountData;
+
+    const isEqual = await this.comparePassword(password, userPassword);
+
+    if (!isEqual) {
+      return null;
+    }
+
+    // const token = this.createJWT({ userId: id, login: userLogin });
+
+    const token = '';
+
+    return token;
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} auth`;
+  async comparePassword(password: string, userPassword: string) {
+    try {
+      return bcrypt.compare(password, userPassword);
+    } catch {
+      return false;
+    }
   }
 
-  update(id: number, updateAuthDto: UpdateAuthDto) {
-    return `This action updates a #${id} auth`;
+  async generateHashedPassword(password: string) {
+    return bcrypt.hash(password, 10);
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} auth`;
+  async confirmAccount(code: string): Promise<boolean> {
+    const user = await this.usersService.findOneByConfirmationCode(code);
+    if (!user || user.emailConfirmation.isConfirmed) {
+      return false;
+    }
+
+    const isExpired = isAfter(
+      new Date(),
+      user.emailConfirmation.expirationDate,
+    );
+
+    if (isExpired) {
+      return false;
+    }
+
+    if (code !== user.emailConfirmation.confirmationCode) {
+      return false;
+    }
+
+    return this.usersService.setIsConfirmed(user.accountData.id);
+  }
+
+  async resendConfirmationCode(email: string): Promise<boolean> {
+    const user = await this.usersService.findOneByEmail(email);
+
+    if (!user || user.emailConfirmation.isConfirmed) {
+      return false;
+    }
+
+    const updatedUser = await this.usersService.updateConfirmationCode({
+      id: user.accountData.id,
+      code: v4(),
+      expirationDate: addDays(new Date(), 1),
+    });
+
+    if (!updatedUser) {
+      return false;
+    }
+
+    const emailTemplate =
+      this.emailTemplateManager.getEmailConfirmationMessage(updatedUser);
+
+    await this.emailService.sendEmail(
+      updatedUser.accountData.email,
+      'Confirm your account ✔',
+      emailTemplate,
+    );
+    return true;
   }
 }

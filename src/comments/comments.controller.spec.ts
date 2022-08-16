@@ -1,16 +1,18 @@
+import { getModelToken } from '@nestjs/mongoose';
 import { Test, TestingModule } from '@nestjs/testing';
-import { CommentsController } from './comments.controller';
-import { CommentsService } from './comments.service';
 import { MongoMemoryServer } from 'mongodb-memory-server';
 import { connect, Connection, Model } from 'mongoose';
-import { Blogger, BloggerSchema } from '../bloggers/schemas/bloggers.schema';
-import { Post, PostSchema } from '../posts/schemas/posts.schema';
-import { Comment, CommentSchema } from './schemas/comments.schema';
+
 import { AuthModule } from '../auth/auth.module';
-import { PostsRepository } from '../posts/posts.repository';
 import { BloggersRepository } from '../bloggers/bloggers.repository';
+import { Blogger, BloggerSchema } from '../bloggers/schemas/bloggers.schema';
+import { PostsRepository } from '../posts/posts.repository';
+import { Post, PostSchema } from '../posts/schemas/posts.schema';
+
+import { CommentsController } from './comments.controller';
 import { CommentsRepository } from './comments.repository';
-import { getModelToken } from '@nestjs/mongoose';
+import { CommentsService } from './comments.service';
+import { Comment, CommentSchema } from './schemas/comments.schema';
 
 describe('CommentsController', () => {
   let commentController: CommentsController;

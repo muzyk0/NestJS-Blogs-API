@@ -1,11 +1,13 @@
 import { Injectable } from '@nestjs/common';
-import { CreateCommentDto } from './dto/create-comment.dto';
-import { UpdateCommentDto } from './dto/update-comment.dto';
+import { v4 } from 'uuid';
+
+import { PostsRepository } from '../posts/posts.repository';
+
 import { CommentsRepository } from './comments.repository';
 import { CommentDto, IComment } from './dto/comment.dto';
-import { PostsRepository } from '../posts/posts.repository';
-import { v4 } from 'uuid';
 import { CommentInput } from './dto/comment.input';
+import { CreateCommentDto } from './dto/create-comment.dto';
+import { UpdateCommentDto } from './dto/update-comment.dto';
 
 interface ICommentsService {
   create(createCommentDto: CreateCommentDto): Promise<CommentDto | null>;
