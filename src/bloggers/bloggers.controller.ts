@@ -11,6 +11,7 @@ import {
   HttpStatus,
   UseGuards,
   NotFoundException,
+  BadRequestException,
 } from '@nestjs/common';
 
 import { BaseAuthGuard } from '../common/guards/base-auth-guard';
@@ -102,7 +103,7 @@ export class BloggersController {
     const blogger = await this.bloggersService.findOne(bloggerId);
 
     if (!blogger) {
-      throw new NotFoundException();
+      throw new BadRequestException();
     }
 
     return this.postsService.create({

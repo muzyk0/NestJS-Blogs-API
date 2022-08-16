@@ -35,19 +35,24 @@ export class PostsRepository {
     return this.postModel.findOne({ id: post.id }, { _id: false, __v: false });
   }
 
-  async findAll(options: FindAllPostsOptions) {
+  async findAll(options?: FindAllPostsOptions) {
     const filter = {
-      ...(options.searchNameTerm
+      ...(options?.searchNameTerm
         ? { title: { $regex: options.searchNameTerm } }
         : {}),
-      bloggerId: options.bloggerId,
+      ...(options?.bloggerId ? { bloggerId: options.bloggerId } : {}),
     };
 
-    return this.postModel.find(filter, { projection: { _id: false } });
+    return this.postModel.find(filter, {
+      projection: { _id: false, __v: false },
+    });
   }
 
   async findOne(id: string) {
-    return this.postModel.findOne({ id }, { projection: { _id: false } });
+    return this.postModel.findOne(
+      { id },
+      { projection: { _id: false, __v: false } },
+    );
   }
 
   async update(
@@ -65,7 +70,7 @@ export class PostsRepository {
       {
         $set: updatePostDbDto,
       },
-      { returnDocument: 'after', projection: { _id: false } },
+      { returnDocument: 'after', projection: { _id: false, __v: false } },
     );
 
     return modifyPost;

@@ -40,7 +40,7 @@ export class PostsController {
     const blogger = await this.bloggersService.findOne(createPostDto.bloggerId);
 
     if (!blogger) {
-      throw new NotFoundException();
+      throw new BadRequestException();
     }
 
     return this.postsService.create(createPostDto);
@@ -53,12 +53,18 @@ export class PostsController {
 
   @Get(':id')
   async findOne(@Param('id') id: string) {
-    return this.postsService.findOne(id);
+    const post = await this.postsService.findOne(id);
+
+    if (!post) {
+      throw new NotFoundException();
+    }
+
+    return post;
   }
 
   @UseGuards(BaseAuthGuard)
   @Put(':id')
-  @HttpCode(HttpStatus.CREATED)
+  @HttpCode(HttpStatus.NO_CONTENT)
   async update(@Param('id') id: string, @Body() updatePostDto: UpdatePostDto) {
     const blogger = await this.bloggersService.findOne(updatePostDto.bloggerId);
 
@@ -69,38 +75,31 @@ export class PostsController {
     const post = await this.postsService.update(id, updatePostDto);
 
     if (!post) {
-      throw new BadRequestException();
+      throw new NotFoundException();
     }
 
     return;
   }
 
-  @Patch(':id')
-  async updatePatch(
-    @Param('id') id: string,
-    @Body() updatePostDto: UpdatePostDto,
-  ) {
-    return this.postsService.update(id, updatePostDto);
-  }
-
   @UseGuards(BaseAuthGuard)
   @Delete(':id')
-  async remove(@Param('id') id: string, @Res() res: Response) {
+  @HttpCode(HttpStatus.NO_CONTENT)
+  async remove(@Param('id') id: string) {
     const isDeleted = await this.postsService.remove(id);
 
     if (!isDeleted) {
-      throw new BadRequestException();
+      throw new NotFoundException();
     }
 
-    return res.status(HttpStatus.NO_CONTENT).send();
+    return;
   }
 
   @Get(':id/comments')
-  async findPostComments(@Param('id') id: string, @Res() res: Response) {
+  async findPostComments(@Param('id') id: string) {
     const post = await this.postsService.findOne(id);
 
     if (!post) {
-      throw new BadRequestException({
+      throw new NotFoundException({
         field: '',
         message: "Post doesn't exist",
       });
@@ -108,22 +107,22 @@ export class PostsController {
 
     const comments = await this.commentsService.findPostComments(post.id);
 
-    if (!post) {
-      throw new BadRequestException({
-        field: '',
-        message: "Comments doesn't exist",
-      });
-    }
-
-    res.status(200).send(comments);
+    return comments;
   }
 
+  // TODO: Bearer Auth
   @Post(':id/comments')
+  @HttpCode(HttpStatus.CREATED)
   async createPostComment(
     @Param('id') id: string,
     @Body() createCommentDto: CommentInput,
-    @Res() res: Response,
   ) {
+    const post = await this.postsService.findOne(id);
+
+    if (!post) {
+      throw new NotFoundException();
+    }
+
     const comment = await this.commentsService.create({
       postId: id,
       content: createCommentDto.content,
@@ -138,6 +137,6 @@ export class PostsController {
       });
     }
 
-    res.status(HttpStatus.OK).send(comment);
+    return comment;
   }
 }

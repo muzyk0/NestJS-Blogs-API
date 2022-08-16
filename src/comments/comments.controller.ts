@@ -4,6 +4,7 @@ import {
   Controller,
   Delete,
   Get,
+  HttpCode,
   HttpStatus,
   NotFoundException,
   Param,
@@ -30,16 +31,32 @@ export class CommentsController {
     return comment;
   }
 
+  // TODO: Bearer Auth
   @Put(':id')
+  @HttpCode(HttpStatus.NO_CONTENT)
   async update(
     @Param('id') id: string,
     @Body() updateCommentDto: CommentInput,
   ) {
-    return this.commentsService.update(id, updateCommentDto);
+    const comment = await this.commentsService.update(id, updateCommentDto);
+
+    if (!comment) {
+      throw new NotFoundException();
+    }
+
+    return comment;
   }
 
+  // TODO: Bearer Auth
   @Delete(':id')
+  @HttpCode(HttpStatus.NO_CONTENT)
   async remove(@Res() res: Response, @Param('id') id: string) {
+    const comment = await this.commentsService.findOne(id);
+
+    if (!comment) {
+      throw new NotFoundException();
+    }
+
     const isDeleted = await this.commentsService.remove(id);
 
     if (!isDeleted) {
