@@ -1,6 +1,9 @@
 import { Injectable } from '@nestjs/common';
 import { v4 } from 'uuid';
 
+import { PageOptionsDto } from '../common/paginator/page-options.dto';
+import { PageDto } from '../common/paginator/page.dto';
+
 import { BloggersRepository } from './bloggers.repository';
 import { BloggerDto } from './dto/blogger.dto';
 import { CreateBloggerDto } from './dto/create-blogger.dto';
@@ -8,7 +11,7 @@ import { UpdateBloggerDto } from './dto/update-blogger.dto';
 
 interface IBloggersService {
   create(createBloggerDto: Omit<CreateBloggerDto, 'id'>): Promise<BloggerDto>;
-  findAll(): Promise<BloggerDto[]>;
+  findAll(pageOptionsDto: PageOptionsDto): Promise<PageDto<BloggerDto>>;
   findOne(id: string): Promise<BloggerDto>;
   update(id: string, updateBloggerDto: UpdateBloggerDto): Promise<BloggerDto>;
   remove(id: string): Promise<boolean>;
@@ -27,8 +30,8 @@ export class BloggersService implements IBloggersService {
     return this.bloggersRepository.create(newBlogger);
   }
 
-  async findAll() {
-    return this.bloggersRepository.findAll();
+  async findAll(pageOptionsDto: PageOptionsDto) {
+    return this.bloggersRepository.findAll(pageOptionsDto);
   }
 
   async findOne(id: string) {

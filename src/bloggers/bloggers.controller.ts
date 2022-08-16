@@ -12,9 +12,11 @@ import {
   UseGuards,
   NotFoundException,
   BadRequestException,
+  Query,
 } from '@nestjs/common';
 
 import { BaseAuthGuard } from '../common/guards/base-auth-guard';
+import { PageOptionsDto } from '../common/paginator/page-options.dto';
 import { CreatePostDto } from '../posts/dto/create-post.dto';
 import { PostsService } from '../posts/posts.service';
 
@@ -37,8 +39,8 @@ export class BloggersController {
   }
 
   @Get()
-  findAll() {
-    return this.bloggersService.findAll();
+  findAll(@Query() pageOptionsDto: PageOptionsDto) {
+    return this.bloggersService.findAll(pageOptionsDto);
   }
 
   @Get(':id')
@@ -81,7 +83,10 @@ export class BloggersController {
   }
 
   @Get(':id/posts')
-  async findBloggerPosts(@Param('id') id: string) {
+  async findBloggerPosts(
+    @Query() pageOptionsDto: PageOptionsDto,
+    @Param('id') id: string,
+  ) {
     const blogger = await this.bloggersService.findOne(id);
 
     if (!blogger) {
