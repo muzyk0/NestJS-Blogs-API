@@ -30,5 +30,6 @@ import { Post, PostSchema } from './schemas/posts.schema';
     CommentsService,
     CommentsRepository,
   ],
+  exports: [PostsService, PostsRepository],
 })
 export class PostsModule {}

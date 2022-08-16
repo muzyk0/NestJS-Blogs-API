@@ -19,7 +19,6 @@ import { Response } from 'express';
 import { BloggersService } from '../bloggers/bloggers.service';
 import { CommentsService } from '../comments/comments.service';
 import { CommentInput } from '../comments/dto/comment.input';
-import { CreateCommentDto } from '../comments/dto/create-comment.dto';
 import { BaseAuthGuard } from '../common/guards/base-auth-guard';
 
 import { CreatePostDto } from './dto/create-post.dto';

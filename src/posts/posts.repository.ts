@@ -9,6 +9,11 @@ import { PostDto } from './dto/post.dto';
 import { UpdatePostDbDto } from './dto/update-post-db.dto';
 import { Post, PostDocument } from './schemas/posts.schema';
 
+export interface FindAllPostsOptions {
+  bloggerId?: string;
+  searchNameTerm?: string;
+}
+
 @Injectable()
 export class PostsRepository {
   constructor(
@@ -30,9 +35,12 @@ export class PostsRepository {
     return this.postModel.findOne({ id: post.id }, { _id: false, __v: false });
   }
 
-  async findAll(searchNameTerm?: string) {
+  async findAll(options: FindAllPostsOptions) {
     const filter = {
-      ...(searchNameTerm ? { title: { $regex: searchNameTerm } } : {}),
+      ...(options.searchNameTerm
+        ? { title: { $regex: options.searchNameTerm } }
+        : {}),
+      bloggerId: options.bloggerId,
     };
 
     return this.postModel.find(filter, { projection: { _id: false } });
