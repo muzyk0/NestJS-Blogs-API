@@ -28,4 +28,4 @@ jobs:
         run: yarn
 
       - name: Test
-        run: eslint:check
+        run: lint:check
