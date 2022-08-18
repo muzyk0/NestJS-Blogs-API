@@ -1,7 +1,12 @@
+import { MailerService } from '@nestjs-modules/mailer';
 import { getModelToken } from '@nestjs/mongoose';
 import { Test, TestingModule } from '@nestjs/testing';
 import { MongoMemoryServer } from 'mongodb-memory-server';
 import { connect, Connection, Model } from 'mongoose';
+
+import { AuthService } from '../auth/auth.service';
+import { EmailTemplateManager } from '../email/email-template-manager';
+import { EmailService } from '../email/email.service';
 
 import { User, UserSchema } from './schemas/users.schema';
 import { UsersController } from './users.controller';
@@ -27,6 +32,11 @@ describe('UsersController', () => {
         UsersService,
         UsersRepository,
         { provide: getModelToken(User.name), useValue: userModel },
+        AuthService,
+        EmailService,
+        EmailTemplateManager,
+        { provide: 'BASE_URL', useValue: 'empty_url' },
+        { provide: MailerService, useValue: jest.fn() },
       ],
     }).compile();
     usersController = app.get<UsersController>(UsersController);
