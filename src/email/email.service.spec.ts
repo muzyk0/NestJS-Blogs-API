@@ -6,7 +6,7 @@ import { EmailService } from './email.service';
 describe('EmailService', () => {
   let service: EmailService;
 
-  beforeEach(async () => {
+  beforeAll(async () => {
     const module: TestingModule = await Test.createTestingModule({
       providers: [
         EmailService,

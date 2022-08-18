@@ -19,7 +19,7 @@ describe('AuthService', () => {
 
   let userModel: Model<User>;
 
-  beforeEach(async () => {
+  beforeAll(async () => {
     mongod = await MongoMemoryServer.create();
     const uri = mongod.getUri();
     mongoConnection = (await connect(uri)).connection;
@@ -39,6 +39,12 @@ describe('AuthService', () => {
     }).compile();
 
     service = module.get<AuthService>(AuthService);
+  });
+
+  afterAll(async () => {
+    await mongoConnection.dropDatabase();
+    await mongoConnection.close();
+    await mongod.stop();
   });
 
   it('should be defined', () => {

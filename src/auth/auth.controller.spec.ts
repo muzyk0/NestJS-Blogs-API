@@ -17,11 +17,10 @@ describe('AuthController', () => {
   let controller: AuthController;
   let mongod: MongoMemoryServer;
   let mongoConnection: Connection;
-  let service: AuthService;
 
   let userModel: Model<User>;
 
-  beforeEach(async () => {
+  beforeAll(async () => {
     mongod = await MongoMemoryServer.create();
     const uri = mongod.getUri();
     mongoConnection = (await connect(uri)).connection;
@@ -43,6 +42,12 @@ describe('AuthController', () => {
     }).compile();
 
     controller = module.get<AuthController>(AuthController);
+  });
+
+  afterAll(async () => {
+    await mongoConnection.dropDatabase();
+    await mongoConnection.close();
+    await mongod.stop();
   });
 
   it('should be defined', () => {
