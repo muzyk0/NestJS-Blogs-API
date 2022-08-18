@@ -1,9 +1,11 @@
+import { MailerService } from '@nestjs-modules/mailer';
 import { getModelToken } from '@nestjs/mongoose';
 import { Test, TestingModule } from '@nestjs/testing';
 import { MongoMemoryServer } from 'mongodb-memory-server';
 import { connect, Connection, Model } from 'mongoose';
 
 import { AuthModule } from '../auth/auth.module';
+import { AuthService } from '../auth/auth.service';
 import { BloggersRepository } from '../bloggers/bloggers.repository';
 import { BloggersService } from '../bloggers/bloggers.service';
 import { BloggerDto } from '../bloggers/dto/blogger.dto';
@@ -11,6 +13,11 @@ import { Blogger, BloggerSchema } from '../bloggers/schemas/bloggers.schema';
 import { CommentsRepository } from '../comments/comments.repository';
 import { CommentsService } from '../comments/comments.service';
 import { Comment, CommentSchema } from '../comments/schemas/comments.schema';
+import { EmailTemplateManager } from '../email/email-template-manager';
+import { EmailService } from '../email/email.service';
+import { User, UserSchema } from '../users/schemas/users.schema';
+import { UsersRepository } from '../users/users.repository';
+import { UsersService } from '../users/users.service';
 
 import { PostDto } from './dto/post.dto';
 import { PostsController } from './posts.controller';
@@ -28,6 +35,7 @@ describe('PostsController', () => {
   let bloggerModel: Model<Blogger>;
   let postModel: Model<Post>;
   let commentModel: Model<Comment>;
+  let userModel: Model<User>;
 
   beforeAll(async () => {
     mongod = await MongoMemoryServer.create();
@@ -36,8 +44,10 @@ describe('PostsController', () => {
     bloggerModel = mongoConnection.model(Blogger.name, BloggerSchema);
     postModel = mongoConnection.model(Post.name, PostSchema);
     commentModel = mongoConnection.model(Comment.name, CommentSchema);
+    userModel = mongoConnection.model(User.name, UserSchema);
+
     const app: TestingModule = await Test.createTestingModule({
-      imports: [AuthModule],
+      // imports: [AuthModule],
       controllers: [PostsController],
       providers: [
         PostsService,
@@ -49,6 +59,14 @@ describe('PostsController', () => {
         { provide: getModelToken(Blogger.name), useValue: bloggerModel },
         { provide: getModelToken(Post.name), useValue: postModel },
         { provide: getModelToken(Comment.name), useValue: commentModel },
+        { provide: getModelToken(User.name), useValue: userModel },
+        AuthService,
+        UsersService,
+        UsersRepository,
+        EmailService,
+        EmailTemplateManager,
+        { provide: 'BASE_URL', useValue: 'empty_url' },
+        { provide: MailerService, useValue: jest.fn() },
       ],
     }).compile();
     postsController = app.get<PostsController>(PostsController);

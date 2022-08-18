@@ -1,3 +1,4 @@
+import { MailerService } from '@nestjs-modules/mailer';
 import { getModelToken } from '@nestjs/mongoose';
 import { Test, TestingModule } from '@nestjs/testing';
 import { MongoMemoryServer } from 'mongodb-memory-server';
@@ -5,6 +6,7 @@ import { connect, Connection, Model } from 'mongoose';
 
 import { BloggersRepository } from '../bloggers/bloggers.repository';
 import { Blogger, BloggerSchema } from '../bloggers/schemas/bloggers.schema';
+import { EmailService } from '../email/email.service';
 
 import { PostsRepository } from './posts.repository';
 import { PostsService } from './posts.service';
@@ -30,6 +32,8 @@ describe('PostsService', () => {
         BloggersRepository,
         { provide: getModelToken(Post.name), useValue: postModel },
         { provide: getModelToken(Blogger.name), useValue: bloggerModel },
+        EmailService,
+        { provide: MailerService, useValue: jest.fn() },
       ],
     }).compile();
     postsService = app.get<PostsService>(PostsService);
