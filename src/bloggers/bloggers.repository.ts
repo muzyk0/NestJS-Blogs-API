@@ -2,6 +2,9 @@ import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 
+import { PageOptionsDto } from '../common/paginator/page-options.dto';
+import { PageDto } from '../common/paginator/page.dto';
+
 import { BloggerDto } from './dto/blogger.dto';
 import { UpdateBloggerDto } from './dto/update-blogger.dto';
 import { Blogger, BloggerDocument } from './schemas/bloggers.schema';
@@ -16,8 +19,25 @@ export class BloggersRepository {
     return this.bloggerModel.create(createBloggerDto);
   }
 
-  async findAll() {
-    return this.bloggerModel.find({});
+  async findAll(pageOptionsDto: PageOptionsDto): Promise<PageDto<BloggerDto>> {
+    const filter = {
+      ...(pageOptionsDto?.SearchNameTerm
+        ? { name: { $regex: pageOptionsDto.SearchNameTerm } }
+        : {}),
+    };
+
+    const itemsCount = await this.bloggerModel.countDocuments(filter);
+
+    const items = await this.bloggerModel
+      .find(filter)
+      .skip(pageOptionsDto.skip)
+      .limit(pageOptionsDto.PageSize);
+
+    return new PageDto({
+      items,
+      itemsCount,
+      pageOptionsDto,
+    });
   }
 
   async findOne(id: string): Promise<BloggerDto> {

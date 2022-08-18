@@ -11,10 +11,12 @@ import {
   NotFoundException,
   Param,
   Post,
+  Query,
   UseGuards,
 } from '@nestjs/common';
 
 import { BaseAuthGuard } from '../common/guards/base-auth-guard';
+import { PageOptionsDto } from '../common/paginator/page-options.dto';
 
 import { CreateUserDto } from './dto/create-user.dto';
 import { UsersService } from './users.service';
@@ -46,8 +48,8 @@ export class UsersController {
   }
 
   @Get()
-  async findAll() {
-    return this.usersService.findAll();
+  async findAll(@Query() pageOptionsDto: PageOptionsDto) {
+    return this.usersService.findAll(pageOptionsDto);
   }
 
   @UseGuards(BaseAuthGuard)

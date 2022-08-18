@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { v4 } from 'uuid';
 
 import { BloggersRepository } from '../bloggers/bloggers.repository';
+import { PageDto } from '../common/paginator/page.dto';
 
 import { CreatePostDto } from './dto/create-post.dto';
 import { PostDto } from './dto/post.dto';
@@ -11,7 +12,7 @@ import { FindAllPostsOptions, PostsRepository } from './posts.repository';
 
 interface IPostService {
   create(createPostDto: Omit<CreatePostDto, 'id'>): Promise<PostDto>;
-  findAll(options: FindAllPostsOptions): Promise<PostDto[]>;
+  findAll(options: FindAllPostsOptions): Promise<PageDto<PostDto>>;
   findOne(id: string): Promise<PostDto>;
   update(id: string, updatePostDto: UpdatePostDto): Promise<PostDto>;
   remove(id: string): Promise<boolean>;
@@ -45,7 +46,7 @@ export class PostsService implements IPostService {
     return this.postRepository.create(newPostInput);
   }
 
-  async findAll(options?: FindAllPostsOptions) {
+  async findAll(options: FindAllPostsOptions) {
     return this.postRepository.findAll(options);
   }
 

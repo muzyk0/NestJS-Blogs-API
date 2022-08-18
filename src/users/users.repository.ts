@@ -2,6 +2,9 @@ import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 
+import { PageOptionsDto } from '../common/paginator/page-options.dto';
+import { PageDto } from '../common/paginator/page.dto';
+
 import { UpdateUserDto } from './dto/update-user.dto';
 import { UserDto } from './dto/user.dto';
 import { User, UserAccountDBType, UserDocument } from './schemas/users.schema';
@@ -33,8 +36,25 @@ export class UsersRepository {
     );
   }
 
-  async findAll({}: Options): Promise<User[]> {
-    return this.userModel.find({});
+  async findAll(pageOptionsDto: PageOptionsDto): Promise<PageDto<User>> {
+    const filter = {
+      ...(pageOptionsDto?.SearchNameTerm
+        ? { 'accountData.login': { $regex: pageOptionsDto.SearchNameTerm } }
+        : {}),
+    };
+
+    const itemsCount = await this.userModel.countDocuments(filter);
+
+    const items = await this.userModel
+      .find(filter)
+      .skip(pageOptionsDto.skip)
+      .limit(pageOptionsDto.PageSize);
+
+    return new PageDto({
+      items,
+      itemsCount,
+      pageOptionsDto,
+    });
   }
 
   async findOneByLogin(login: string): Promise<User> {

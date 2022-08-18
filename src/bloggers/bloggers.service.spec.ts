@@ -3,9 +3,10 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { MongoMemoryServer } from 'mongodb-memory-server';
 import { connect, Connection, Model, Promise } from 'mongoose';
 
+import { PageOptionsDto } from '../common/paginator/page-options.dto';
+
 import { BloggersRepository } from './bloggers.repository';
 import { BloggersService } from './bloggers.service';
-import { BloggerDto } from './dto/blogger.dto';
 import { Blogger, BloggerSchema } from './schemas/bloggers.schema';
 
 describe('BloggersService', () => {
@@ -61,9 +62,9 @@ describe('BloggersService', () => {
   });
 
   it('bloggers is empty', async () => {
-    const bloggers = await bloggerService.findAll();
+    const bloggers = await bloggerService.findAll(new PageOptionsDto());
 
-    expect(bloggers!.length).toBe(0);
+    expect(bloggers!.items.length).toBe(0);
   });
 
   it('blogger should be removed', async () => {
@@ -73,10 +74,10 @@ describe('BloggersService', () => {
     });
 
     const isRemoved = await bloggerService.remove(newBlogger.id);
-    const bloggers = await bloggerService.findAll();
+    const bloggers = await bloggerService.findAll(new PageOptionsDto());
 
     expect(isRemoved).toBeTruthy();
-    expect(bloggers!.length).toBe(0);
+    expect(bloggers!.items.length).toBe(0);
   });
 
   it('bloggers should be removed', async () => {
@@ -89,14 +90,16 @@ describe('BloggersService', () => {
       }),
     );
 
-    const bloggers = await bloggerService.findAll();
+    const bloggers = await bloggerService.findAll(new PageOptionsDto());
 
-    expect(bloggers!.length).toBe(10);
+    expect(bloggers!.items.length).toBe(10);
 
-    await Promise.all(bloggers.map(({ id }) => bloggerService.remove(id)));
+    await Promise.all(
+      bloggers!.items.map(({ id }) => bloggerService.remove(id)),
+    );
 
-    const bloggersIsEmpty = await bloggerService.findAll();
+    const bloggersIsEmpty = await bloggerService.findAll(new PageOptionsDto());
 
-    expect(bloggersIsEmpty!.length).toBe(0);
+    expect(bloggersIsEmpty!.items.length).toBe(0);
   });
 });
