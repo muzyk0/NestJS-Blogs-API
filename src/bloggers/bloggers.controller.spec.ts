@@ -5,6 +5,7 @@ import { MongoMemoryServer } from 'mongodb-memory-server';
 import { connect, Connection, Model } from 'mongoose';
 
 import { AuthService } from '../auth/auth.service';
+import { PageOptionsDto } from '../common/paginator/page-options.dto';
 import { EmailTemplateManager } from '../email/email-template-manager';
 import { EmailService } from '../email/email.service';
 import { PostsRepository } from '../posts/posts.repository';
@@ -110,26 +111,28 @@ describe('BloggersController', () => {
   });
 
   it('bloggers should be equal 3 length', async () => {
-    const bloggers = await bloggerController.findAll();
+    const bloggers = await bloggerController.findAll(new PageOptionsDto());
 
-    expect(bloggers!.length).toBe(2);
+    expect(bloggers!.items.length).toBe(2);
   });
 
   it('blogger should be removed', async () => {
     const isRemoved = await bloggerController.remove(blogger.id);
-    const bloggers = await bloggerController.findAll();
+    const bloggers = await bloggerController.findAll(new PageOptionsDto());
 
     expect(isRemoved).toBeTruthy();
-    expect(bloggers!.length).toBe(1);
-    expect(bloggers![0].name).not.toBe(blogger.name);
+    expect(bloggers!.items.length).toBe(1);
+    expect(bloggers!.items[0].name).not.toBe(blogger.name);
   });
 
   it('bloggers should be removed', async () => {
-    const bloggers = await bloggerController.findAll();
-    const isRemoved = await bloggerController.remove(bloggers[0].id);
-    const bloggersIsEmpty = await bloggerController.findAll();
+    const bloggers = await bloggerController.findAll(new PageOptionsDto());
+    const isRemoved = await bloggerController.remove(bloggers.items[0].id);
+    const bloggersIsEmpty = await bloggerController.findAll(
+      new PageOptionsDto(),
+    );
 
     expect(isRemoved).toBeTruthy();
-    expect(bloggersIsEmpty!.length).toBe(0);
+    expect(bloggersIsEmpty!.items.length).toBe(0);
   });
 });
