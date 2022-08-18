@@ -94,6 +94,7 @@ export class BloggersController {
     }
 
     return this.postsService.findAll({
+      ...pageOptionsDto,
       bloggerId: id,
     });
   }

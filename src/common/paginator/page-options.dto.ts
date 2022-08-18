@@ -4,6 +4,17 @@ import { IsEnum, IsInt, IsOptional, IsString, Max, Min } from 'class-validator';
 import { Order } from '../../constants';
 
 export class PageOptionsDto {
+  constructor() {
+    Object.defineProperty(this, 'val', {
+      get() {
+        return (this.PageNumber - 1) * this.PageSize;
+      },
+      set(_val: string) {
+        throw Error('Property "skip" are only getter. Don\'t set value');
+      },
+    });
+  }
+
   @IsEnum(Order)
   @IsOptional()
   readonly order?: Order = Order.ASC;
@@ -25,7 +36,8 @@ export class PageOptionsDto {
   @IsOptional()
   readonly PageSize?: number = 10;
 
-  get skip(): number {
-    return (this.PageNumber - 1) * this.PageSize;
-  }
+  /**
+   * Property "skip" are only getter. Don\'t set value
+   */
+  skip?: number;
 }

@@ -3,23 +3,21 @@ import {
   Get,
   Post,
   Body,
-  Patch,
   Param,
   Delete,
   Put,
   UseGuards,
-  Res,
   HttpStatus,
   BadRequestException,
   NotFoundException,
   HttpCode,
 } from '@nestjs/common';
-import { Response } from 'express';
 
 import { BloggersService } from '../bloggers/bloggers.service';
 import { CommentsService } from '../comments/comments.service';
 import { CommentInput } from '../comments/dto/comment.input';
 import { BaseAuthGuard } from '../common/guards/base-auth-guard';
+import { PageOptionsDto } from '../common/paginator/page-options.dto';
 
 import { CreatePostDto } from './dto/create-post.dto';
 import { UpdatePostDto } from './dto/update-post.dto';
@@ -47,8 +45,8 @@ export class PostsController {
   }
 
   @Get()
-  async findAll() {
-    return this.postsService.findAll();
+  async findAll(pageOptionsDto: PageOptionsDto) {
+    return this.postsService.findAll(pageOptionsDto);
   }
 
   @Get(':id')
