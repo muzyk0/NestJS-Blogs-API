@@ -1,9 +1,9 @@
 name: Test & Deploy #Название pipeline который будет выполнять github actions
 
-on: [push]
-#  push:
-#    branches:
-#      - staging # названия ветки в которую хотим пушить и запускать наш деплой
+on:
+  push:
+    branches:
+      - staging # названия ветки в которую хотим пушить и запускать наш деплой
 
 jobs:
   tests:
