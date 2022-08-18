@@ -39,7 +39,7 @@ export class PostsRepository {
     return this.postModel.findOne({ id: post.id }, { _id: false, __v: false });
   }
 
-  async findAll(options?: FindAllPostsOptions) {
+  async findAll(options: FindAllPostsOptions) {
     const filter = {
       ...(options?.SearchNameTerm
         ? { title: { $regex: options.SearchNameTerm } }

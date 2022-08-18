@@ -11,6 +11,7 @@ import {
   BadRequestException,
   NotFoundException,
   HttpCode,
+  Query,
 } from '@nestjs/common';
 
 import { BloggersService } from '../bloggers/bloggers.service';
@@ -45,7 +46,7 @@ export class PostsController {
   }
 
   @Get()
-  async findAll(pageOptionsDto: PageOptionsDto) {
+  async findAll(@Query() pageOptionsDto: PageOptionsDto) {
     return this.postsService.findAll(pageOptionsDto);
   }
 

@@ -4,12 +4,14 @@ import { addDays } from 'date-fns';
 import { v4 } from 'uuid';
 
 import { AuthService } from '../auth/auth.service';
+import { PageOptionsDto } from '../common/paginator/page-options.dto';
+import { PageDto } from '../common/paginator/page.dto';
 import { EmailTemplateManager } from '../email/email-template-manager';
 import { EmailService } from '../email/email.service';
 
 import { CreateUserDto } from './dto/create-user.dto';
 import { UserDto } from './dto/user.dto';
-import { UserAccountDBType } from './schemas/users.schema';
+import { User, UserAccountDBType } from './schemas/users.schema';
 import { UpdateConfirmationType } from './users.interface';
 import { UsersRepository } from './users.repository';
 
@@ -74,12 +76,15 @@ export class UsersService {
     };
   }
 
-  async findAll(searchNameTerm?: string): Promise<UserDto[]> {
-    const users = await this.usersRepository.findAll({ searchNameTerm });
-    return users.map((u) => ({
-      id: u.accountData.id,
-      login: u.accountData.login,
-    }));
+  async findAll(pageOptionsDto: PageOptionsDto): Promise<PageDto<UserDto>> {
+    const users = await this.usersRepository.findAll(pageOptionsDto);
+    return {
+      ...users,
+      items: users.items.map((u) => ({
+        id: u.accountData.id,
+        login: u.accountData.login,
+      })),
+    };
   }
 
   async findOneByLogin(login: string) {
