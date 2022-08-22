@@ -10,8 +10,11 @@ import {
   Param,
   Put,
   Res,
+  UseGuards,
 } from '@nestjs/common';
 import { Response } from 'express';
+
+import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 
 import { CommentsService } from './comments.service';
 import { CommentInput } from './dto/comment.input';
@@ -31,7 +34,7 @@ export class CommentsController {
     return comment;
   }
 
-  // TODO: Bearer Auth
+  @UseGuards(JwtAuthGuard)
   @Put(':id')
   @HttpCode(HttpStatus.NO_CONTENT)
   async update(
@@ -47,7 +50,7 @@ export class CommentsController {
     return comment;
   }
 
-  // TODO: Bearer Auth
+  @UseGuards(JwtAuthGuard)
   @Delete(':id')
   @HttpCode(HttpStatus.NO_CONTENT)
   async remove(@Res() res: Response, @Param('id') id: string) {

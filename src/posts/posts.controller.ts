@@ -14,10 +14,11 @@ import {
   Query,
 } from '@nestjs/common';
 
+import { BaseAuthGuard } from '../auth/guards/base-auth-guard';
+import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 import { BloggersService } from '../bloggers/bloggers.service';
 import { CommentsService } from '../comments/comments.service';
 import { CommentInput } from '../comments/dto/comment.input';
-import { BaseAuthGuard } from '../common/guards/base-auth-guard';
 import { PageOptionsDto } from '../common/paginator/page-options.dto';
 
 import { CreatePostDto } from './dto/create-post.dto';
@@ -109,7 +110,7 @@ export class PostsController {
     return comments;
   }
 
-  // TODO: Bearer Auth
+  @UseGuards(JwtAuthGuard)
   @Post(':id/comments')
   @HttpCode(HttpStatus.CREATED)
   async createPostComment(
