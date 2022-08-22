@@ -83,7 +83,7 @@ export class UsersRepository {
 
   async setIsConfirmedById(id: string): Promise<boolean> {
     const result = await this.userModel.updateOne(
-      { id },
+      { 'accountData.id': id },
       {
         $set: {
           'emailConfirmation.isConfirmed': true,
