@@ -15,7 +15,7 @@ import {
   UseGuards,
 } from '@nestjs/common';
 
-import { BaseAuthGuard } from '../common/guards/base-auth-guard';
+import { BaseAuthGuard } from '../auth/guards/base-auth-guard';
 import { PageOptionsDto } from '../common/paginator/page-options.dto';
 
 import { CreateUserDto } from './dto/create-user.dto';

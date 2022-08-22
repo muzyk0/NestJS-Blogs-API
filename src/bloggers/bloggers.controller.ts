@@ -15,7 +15,7 @@ import {
   Query,
 } from '@nestjs/common';
 
-import { BaseAuthGuard } from '../common/guards/base-auth-guard';
+import { BaseAuthGuard } from '../auth/guards/base-auth-guard';
 import { PageOptionsDto } from '../common/paginator/page-options.dto';
 import { CreatePostDto } from '../posts/dto/create-post.dto';
 import { PostsService } from '../posts/posts.service';

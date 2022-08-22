@@ -1,4 +1,6 @@
 import { MailerService } from '@nestjs-modules/mailer';
+import { ConfigModule, ConfigService } from '@nestjs/config';
+import { JwtService } from '@nestjs/jwt';
 import { getModelToken } from '@nestjs/mongoose';
 import { Test, TestingModule } from '@nestjs/testing';
 import { MongoMemoryServer } from 'mongodb-memory-server';
@@ -27,8 +29,10 @@ describe('UsersController', () => {
     mongoConnection = (await connect(uri)).connection;
     userModel = mongoConnection.model(User.name, UserSchema);
     const app: TestingModule = await Test.createTestingModule({
+      imports: [ConfigModule.forRoot({})],
       controllers: [UsersController],
       providers: [
+        ConfigService,
         UsersService,
         UsersRepository,
         { provide: getModelToken(User.name), useValue: userModel },
@@ -37,6 +41,7 @@ describe('UsersController', () => {
         EmailTemplateManager,
         { provide: 'BASE_URL', useValue: 'empty_url' },
         { provide: MailerService, useValue: jest.fn() },
+        JwtService,
       ],
     }).compile();
     usersController = app.get<UsersController>(UsersController);

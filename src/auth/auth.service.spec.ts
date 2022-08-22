@@ -1,4 +1,6 @@
 import { MailerService } from '@nestjs-modules/mailer';
+import { ConfigModule, ConfigService } from '@nestjs/config';
+import { JwtModule, JwtService } from '@nestjs/jwt';
 import { getModelToken } from '@nestjs/mongoose';
 import { Test, TestingModule } from '@nestjs/testing';
 import { MongoMemoryServer } from 'mongodb-memory-server';
@@ -11,6 +13,7 @@ import { UsersRepository } from '../users/users.repository';
 import { UsersService } from '../users/users.service';
 
 import { AuthService } from './auth.service';
+import { AtJwtStrategy } from './strategies/at.jwt.strategy';
 
 describe('AuthService', () => {
   let mongod: MongoMemoryServer;
@@ -26,6 +29,13 @@ describe('AuthService', () => {
     userModel = mongoConnection.model(User.name, UserSchema);
 
     const module: TestingModule = await Test.createTestingModule({
+      imports: [
+        JwtModule.register({
+          secret: 'access_token_secret',
+          signOptions: { expiresIn: '60s' },
+        }),
+        // ConfigModule.forRoot({}),
+      ],
       providers: [
         AuthService,
         EmailService,
@@ -35,6 +45,20 @@ describe('AuthService', () => {
         UsersRepository,
         { provide: getModelToken(User.name), useValue: userModel },
         { provide: MailerService, useValue: jest.fn() },
+        JwtService,
+        {
+          provide: ConfigService,
+          useValue: {
+            get: jest.fn((key: string) => {
+              if (key === 'ACCESS_TOKEN_SECRET') {
+                return 'ACCESS_TOKEN_SECRET';
+              }
+
+              return null;
+            }),
+          },
+        },
+        AtJwtStrategy,
       ],
     }).compile();
 

@@ -1,4 +1,6 @@
 import { Injectable } from '@nestjs/common';
+import { ConfigService } from '@nestjs/config';
+import { JwtService } from '@nestjs/jwt';
 import * as bcrypt from 'bcrypt';
 import { addDays, isAfter } from 'date-fns';
 import { v4 } from 'uuid';
@@ -6,6 +8,7 @@ import { v4 } from 'uuid';
 import { BaseAuthPayload } from '../constants';
 import { EmailTemplateManager } from '../email/email-template-manager';
 import { EmailService } from '../email/email.service';
+import { User } from '../users/schemas/users.schema';
 import { UsersService } from '../users/users.service';
 
 import { LoginDto } from './dto/login.dto';
@@ -16,6 +19,8 @@ export class AuthService {
     private readonly emailService: EmailService,
     private readonly usersService: UsersService,
     private readonly emailTemplateManager: EmailTemplateManager,
+    private readonly jwtService: JwtService,
+    private config: ConfigService,
   ) {}
 
   async decodeBaseAuth(token: string) {
@@ -35,14 +40,17 @@ export class AuthService {
     return BaseAuthPayload;
   }
 
-  async login({ login, password }: LoginDto): Promise<string | null> {
+  async login({
+    login,
+    password,
+  }: LoginDto): Promise<{ accessToken: string } | null> {
     const user = await this.usersService.findOneByLogin(login);
 
     if (!user) {
       return null;
     }
 
-    const { password: userPassword, id, login: userLogin } = user.accountData;
+    const { password: userPassword, id: userId } = user.accountData;
 
     const isEqual = await this.comparePassword(password, userPassword);
 
@@ -50,9 +58,14 @@ export class AuthService {
       return null;
     }
 
-    const token = 'token'; //this.createJWT({ userId: id, login: userLogin });
+    const payload = { userId };
 
-    return token;
+    return {
+      accessToken: this.jwtService.sign(payload, {
+        secret: this.config.get<string>('ACCESS_TOKEN_SECRET'),
+        expiresIn: '15m',
+      }),
+    };
   }
 
   async compareBaseAuth(token: string) {
@@ -74,7 +87,7 @@ export class AuthService {
     return bcrypt.hash(password, 10);
   }
 
-  async validateUser(login: string, password: string): Promise<string | null> {
+  async validateUser(login: string, password: string): Promise<User> {
     const user = await this.usersService.findOneByLogin(login);
 
     if (!user) {
@@ -89,11 +102,7 @@ export class AuthService {
       return null;
     }
 
-    // const token = this.createJWT({ userId: id, login: userLogin });
-
-    const token = '';
-
-    return token;
+    return user;
   }
 
   async comparePassword(password: string, userPassword: string) {
