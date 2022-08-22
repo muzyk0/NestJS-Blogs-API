@@ -38,6 +38,7 @@ export class AuthController {
   }
 
   @Post('/registration')
+  @HttpCode(HttpStatus.NO_CONTENT)
   async registerUser(@Body() { login, email, password }: CreateUserDto) {
     const userAlreadyExistByLogin = await this.usersService.findOneByLogin(
       login,

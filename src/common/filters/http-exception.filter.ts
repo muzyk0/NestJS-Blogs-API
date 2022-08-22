@@ -19,7 +19,7 @@ export class HttpExceptionFilter implements ExceptionFilter {
       const errors = Array.isArray(message) ? message.flat(1) : message;
 
       response.status(status).json({
-        errors,
+        errorsMessages: errors,
       });
     } else {
       response.status(status).json({
