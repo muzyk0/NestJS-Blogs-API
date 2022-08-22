@@ -1,5 +1,5 @@
 import { MailerService } from '@nestjs-modules/mailer';
-import { ConfigModule } from '@nestjs/config';
+import { ConfigModule, ConfigService } from '@nestjs/config';
 import { JwtModule, JwtService } from '@nestjs/jwt';
 import { getModelToken } from '@nestjs/mongoose';
 import { Test, TestingModule } from '@nestjs/testing';
@@ -34,7 +34,7 @@ describe('AuthService', () => {
           secret: 'access_token_secret',
           signOptions: { expiresIn: '60s' },
         }),
-        ConfigModule.forRoot({}),
+        // ConfigModule.forRoot({}),
       ],
       providers: [
         AuthService,
@@ -46,7 +46,18 @@ describe('AuthService', () => {
         { provide: getModelToken(User.name), useValue: userModel },
         { provide: MailerService, useValue: jest.fn() },
         JwtService,
+        {
+          provide: ConfigService,
+          useValue: {
+            get: jest.fn((key: string) => {
+              if (key === 'ACCESS_TOKEN_SECRET') {
+                return 'ACCESS_TOKEN_SECRET';
+              }
 
+              return null;
+            }),
+          },
+        },
         AtJwtStrategy,
       ],
     }).compile();
