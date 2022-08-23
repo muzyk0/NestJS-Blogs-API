@@ -45,7 +45,9 @@ export class AuthController {
     );
 
     if (userAlreadyExistByLogin) {
-      throw new BadRequestException();
+      throw new BadRequestException([
+        { message: 'Login already exist', field: 'login' },
+      ]);
     }
 
     const userAlreadyExistByEmail = await this.usersService.findOneByEmail(
@@ -53,7 +55,9 @@ export class AuthController {
     );
 
     if (userAlreadyExistByEmail) {
-      throw new BadRequestException();
+      throw new BadRequestException([
+        { message: 'Email already exist', field: 'email' },
+      ]);
     }
 
     return this.usersService.create({ login, email, password });
@@ -65,7 +69,9 @@ export class AuthController {
     const isConfirmed = await this.authService.confirmAccount(code);
 
     if (!isConfirmed) {
-      throw new BadRequestException();
+      throw new BadRequestException([
+        { message: 'Email already confirm', field: 'email' },
+      ]);
     }
 
     return;
@@ -77,7 +83,9 @@ export class AuthController {
     const isConfirmed = await this.authService.resendConfirmationCode(email);
 
     if (!isConfirmed) {
-      throw new BadRequestException();
+      throw new BadRequestException([
+        { message: 'Email already confirm', field: 'email' },
+      ]);
     }
 
     return;
