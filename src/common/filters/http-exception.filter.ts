@@ -23,7 +23,9 @@ export class HttpExceptionFilter implements ExceptionFilter {
           errorsMessages: errors,
         });
         break;
-      case 423:
+      case 429:
+        response.sendStatus(status);
+        break;
       default:
         response.status(status).json({
           statusCode: status,

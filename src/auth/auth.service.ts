@@ -43,7 +43,7 @@ export class AuthService {
   async login({
     login,
     password,
-  }: LoginDto): Promise<{ accessToken: string } | null> {
+  }: LoginDto): Promise<{ token: string } | null> {
     const user = await this.usersService.findOneByLogin(login);
 
     if (!user) {
@@ -61,7 +61,7 @@ export class AuthService {
     const payload = { userId };
 
     return {
-      accessToken: this.jwtService.sign(payload, {
+      token: this.jwtService.sign(payload, {
         secret: this.config.get<string>('ACCESS_TOKEN_SECRET'),
         expiresIn: '15m',
       }),

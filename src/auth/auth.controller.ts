@@ -30,13 +30,13 @@ export class AuthController {
   @UseGuards(LocalAuthGuard)
   @Post('/login')
   async login(@Body() loginDto: LoginDto) {
-    const token = await this.authService.login(loginDto);
+    const tokens = await this.authService.login(loginDto);
 
-    if (!token) {
+    if (!tokens) {
       throw new UnauthorizedException();
     }
 
-    return token;
+    return tokens;
   }
 
   @Post('/registration')
