@@ -13,6 +13,7 @@ import { PostsModule } from './posts/posts.module';
 import { TestModule } from './test-users/test-users.module';
 import { TestingModule } from './testing/testing.module';
 import { UsersModule } from './users/users.module';
+import { LimitsModule } from './limits/limits.module';
 
 @Module({
   imports: [
@@ -29,6 +30,7 @@ import { UsersModule } from './users/users.module';
     TestingModule,
     CommentsModule,
     EmailModule,
+    LimitsModule,
   ],
   controllers: [AppController],
   providers: [AppService],

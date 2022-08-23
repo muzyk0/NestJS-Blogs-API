@@ -9,6 +9,8 @@ import {
   UseGuards,
 } from '@nestjs/common';
 
+import { LimitsControlGuard } from '../limits/guards/limits-controll.guard';
+import { LimitsModule } from '../limits/limits.module';
 import { CreateUserDto } from '../users/dto/create-user.dto';
 import { EmailConfirmationCodeDto } from '../users/dto/email-confirmation-code.dto';
 import { Email } from '../users/dto/email.dto';
@@ -37,6 +39,7 @@ export class AuthController {
     return token;
   }
 
+  @UseGuards(LimitsControlGuard)
   @Post('/registration')
   @HttpCode(HttpStatus.NO_CONTENT)
   async registerUser(@Body() { login, email, password }: CreateUserDto) {
