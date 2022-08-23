@@ -1,11 +1,6 @@
-import {
-  CanActivate,
-  ExecutionContext,
-  ForbiddenException,
-  Injectable,
-} from '@nestjs/common';
-import { HttpException } from '@nestjs/common/exceptions/http.exception';
+import { CanActivate, ExecutionContext, Injectable } from '@nestjs/common';
 
+import { ToManyRequestsException } from '../../common/exceptions/to-many-requests.exception';
 import { LimitsService } from '../limits.service';
 
 @Injectable()
@@ -25,15 +20,9 @@ export class LimitsControlGuard implements CanActivate {
     );
 
     if (!isContinue) {
-      throw new PasswordInvalidException();
+      throw new ToManyRequestsException();
     }
 
     return true;
-  }
-}
-
-export class PasswordInvalidException extends HttpException {
-  constructor() {
-    super({}, 423);
   }
 }

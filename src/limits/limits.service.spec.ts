@@ -1,12 +1,32 @@
+import { getModelToken } from '@nestjs/mongoose';
 import { Test, TestingModule } from '@nestjs/testing';
+import { MongoMemoryServer } from 'mongodb-memory-server';
+import { connect, Connection, Model } from 'mongoose';
+
+import { LimitsRepository } from './limits.repository';
 import { LimitsService } from './limits.service';
+import { Limit, LimitSchema } from './schemas/limits.schema';
 
 describe('LimitsService', () => {
-  let service: LimitsService;
+  let mongod: MongoMemoryServer;
+  let mongoConnection: Connection;
 
-  beforeEach(async () => {
+  let service: LimitsService;
+  let limitsModel: Model<Limit>;
+
+  beforeAll(async () => {
+    mongod = await MongoMemoryServer.create();
+    const uri = mongod.getUri();
+    mongoConnection = (await connect(uri)).connection;
+
+    limitsModel = mongoConnection.model(Limit.name, LimitSchema);
+
     const module: TestingModule = await Test.createTestingModule({
-      providers: [LimitsService],
+      providers: [
+        LimitsService,
+        LimitsRepository,
+        { provide: getModelToken(Limit.name), useValue: limitsModel },
+      ],
     }).compile();
 
     service = module.get<LimitsService>(LimitsService);

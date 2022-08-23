@@ -8,6 +8,10 @@ import { connect, Connection, Model } from 'mongoose';
 
 import { EmailTemplateManager } from '../email/email-template-manager';
 import { EmailService } from '../email/email.service';
+import { LimitsModule } from '../limits/limits.module';
+import { LimitsRepository } from '../limits/limits.repository';
+import { LimitsService } from '../limits/limits.service';
+import { Limit, LimitSchema } from '../limits/schemas/limits.schema';
 import { User, UserSchema } from '../users/schemas/users.schema';
 import { UsersRepository } from '../users/users.repository';
 import { UsersService } from '../users/users.service';
@@ -22,6 +26,7 @@ describe('AuthController', () => {
   let mongoConnection: Connection;
 
   let userModel: Model<User>;
+  let limitModel: Model<Limit>;
 
   beforeAll(async () => {
     mongod = await MongoMemoryServer.create();
@@ -29,6 +34,7 @@ describe('AuthController', () => {
     mongoConnection = (await connect(uri)).connection;
 
     userModel = mongoConnection.model(User.name, UserSchema);
+    limitModel = mongoConnection.model(Limit.name, LimitSchema);
 
     const module: TestingModule = await Test.createTestingModule({
       imports: [
@@ -39,10 +45,13 @@ describe('AuthController', () => {
       ],
       controllers: [AuthController],
       providers: [
+        LimitsService,
+        LimitsRepository,
         AuthService,
         UsersService,
         UsersRepository,
         { provide: getModelToken(User.name), useValue: userModel },
+        { provide: getModelToken(Limit.name), useValue: limitModel },
         EmailService,
         EmailTemplateManager,
         { provide: 'BASE_URL', useValue: 'empty_url' },
