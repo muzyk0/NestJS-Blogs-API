@@ -29,6 +29,7 @@ export class AuthController {
 
   @UseGuards(LocalAuthGuard)
   @Post('/login')
+  @HttpCode(HttpStatus.OK)
   async login(@Body() loginDto: LoginDto) {
     const tokens = await this.authService.login(loginDto);
 

@@ -19,6 +19,8 @@ export class LimitsControlGuard implements CanActivate {
       maxRequest,
     );
 
+    console.log(ip);
+
     if (!isContinue) {
       throw new ToManyRequestsException();
     }
