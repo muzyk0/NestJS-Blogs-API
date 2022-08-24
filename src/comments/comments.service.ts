@@ -1,9 +1,16 @@
 import { Injectable } from '@nestjs/common';
 import { v4 } from 'uuid';
 
-import { PostsRepository } from '../posts/posts.repository';
+import { PageDto } from '../common/paginator/page.dto';
+import {
+  FindAllPostsOptions,
+  PostsRepository,
+} from '../posts/posts.repository';
 
-import { CommentsRepository } from './comments.repository';
+import {
+  CommentsRepository,
+  FindAllCommentsOptions,
+} from './comments.repository';
 import { CommentDto, IComment } from './dto/comment.dto';
 import { CommentInput } from './dto/comment.input';
 import { CreateCommentDto } from './dto/create-comment.dto';
@@ -14,7 +21,7 @@ interface ICommentsService {
 
   findOne(id: string): Promise<CommentDto>;
 
-  findPostComments(postId: string): Promise<CommentDto[]>;
+  findPostComments(options: FindAllPostsOptions): Promise<PageDto<CommentDto>>;
 
   update(id: string, updateCommentDto: CommentInput): Promise<CommentDto>;
 
@@ -53,8 +60,8 @@ export class CommentsService implements ICommentsService {
     return this.commentsRepository.findOne(id);
   }
 
-  async findPostComments(postId: string) {
-    return this.commentsRepository.findPostComments(postId);
+  async findPostComments(options: FindAllCommentsOptions) {
+    return this.commentsRepository.findPostComments(options);
   }
 
   async update(id: string, updateCommentDto: CommentInput) {

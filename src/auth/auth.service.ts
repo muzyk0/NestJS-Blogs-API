@@ -12,6 +12,7 @@ import { User } from '../users/schemas/users.schema';
 import { UsersService } from '../users/users.service';
 
 import { LoginDto } from './dto/login.dto';
+import { JwtPayload } from './types/jwtPayload.type';
 
 @Injectable()
 export class AuthService {
@@ -50,7 +51,7 @@ export class AuthService {
       return null;
     }
 
-    const { password: userPassword, id: userId } = user.accountData;
+    const { password: userPassword, id, email } = user.accountData;
 
     const isEqual = await this.comparePassword(password, userPassword);
 
@@ -58,7 +59,13 @@ export class AuthService {
       return null;
     }
 
-    const payload = { userId };
+    const payload: JwtPayload = {
+      user: {
+        id,
+        login,
+        email,
+      },
+    };
 
     return {
       token: this.jwtService.sign(payload, {

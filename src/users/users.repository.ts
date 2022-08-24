@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 
+import { BASE_PROJECTION } from '../common/mongoose/constants';
 import { PageOptionsDto } from '../common/paginator/page-options.dto';
 import { PageDto } from '../common/paginator/page.dto';
 
@@ -9,6 +10,8 @@ import { UpdateUserDto } from './dto/update-user.dto';
 import { UserDto } from './dto/user.dto';
 import { User, UserAccountDBType, UserDocument } from './schemas/users.schema';
 import { Options, UpdateConfirmationType } from './users.interface';
+
+const projectionFields = { ...BASE_PROJECTION, postId: 0 };
 
 @Injectable()
 export class UsersRepository {
@@ -28,11 +31,9 @@ export class UsersRepository {
 
     const result = await this.userModel.create(createUserDto);
 
-    console.log(result);
-
     return this.userModel.findOne(
       { 'accountData.id': createUserDto.accountData.id },
-      { projection: { _id: false, __v: false, password: false } },
+      { projection: projectionFields },
     );
   }
 
@@ -46,7 +47,7 @@ export class UsersRepository {
     const itemsCount = await this.userModel.countDocuments(filter);
 
     const items = await this.userModel
-      .find(filter)
+      .find(filter, projectionFields)
       .skip(pageOptionsDto.skip)
       .limit(pageOptionsDto.PageSize);
 
@@ -58,27 +59,35 @@ export class UsersRepository {
   }
 
   async findOneByLogin(login: string): Promise<User> {
-    const user = await this.userModel.findOne({ 'accountData.login': login });
+    const user = await this.userModel.findOne(
+      { 'accountData.login': login },
+      BASE_PROJECTION,
+    );
     return user;
   }
 
   async findOneByEmail(email: string): Promise<User> {
-    return this.userModel.findOne({ 'accountData.email': email });
+    return this.userModel.findOne(
+      { 'accountData.email': email },
+      BASE_PROJECTION,
+    );
   }
 
-  async update(id: string, updateUserDto: UpdateUserDto) {
-    return `This action updates a #${id} user`;
+  async findOneByConfirmationCode(code: string) {
+    return this.userModel.findOne(
+      {
+        'emailConfirmation.confirmationCode': code,
+      },
+      BASE_PROJECTION,
+    );
+  }
+  async findOneById(id: string) {
+    return this.userModel.findOne({ 'accountData.id': id }, BASE_PROJECTION);
   }
 
   async remove(id: string) {
     const result = await this.userModel.deleteOne({ 'accountData.id': id });
     return result.deletedCount === 1;
-  }
-
-  async findOneByConfirmationCode(code: string) {
-    return this.userModel.findOne({
-      'emailConfirmation.confirmationCode': code,
-    });
   }
 
   async setIsConfirmedById(id: string): Promise<boolean> {
@@ -107,11 +116,7 @@ export class UsersRepository {
           'emailConfirmation.expirationDate': expirationDate,
         },
       },
-      { returnDocument: 'after' },
+      { returnDocument: 'after', projection: projectionFields },
     );
-  }
-
-  findOneById(id: string) {
-    return this.userModel.findOne({ 'accountData.id': id });
   }
 }

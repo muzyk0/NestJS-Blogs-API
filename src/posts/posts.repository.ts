@@ -4,6 +4,7 @@ import { IsInt, IsOptional } from 'class-validator';
 import { Model } from 'mongoose';
 
 import { Blogger, BloggerDocument } from '../bloggers/schemas/bloggers.schema';
+import { BASE_PROJECTION } from '../common/mongoose/constants';
 import { PageOptionsDto } from '../common/paginator/page-options.dto';
 import { PageDto } from '../common/paginator/page.dto';
 
@@ -36,7 +37,7 @@ export class PostsRepository {
 
     const post = await this.postModel.create(createPostDto);
 
-    return this.postModel.findOne({ id: post.id }, { _id: false, __v: false });
+    return this.postModel.findOne({ id: post.id }, BASE_PROJECTION);
   }
 
   async findAll(options: FindAllPostsOptions) {
@@ -50,9 +51,13 @@ export class PostsRepository {
     const itemsCount = await this.postModel.countDocuments(filter);
 
     const items = await this.postModel
-      .find(filter, {
-        projection: { _id: false, __v: false },
-      })
+      .find(
+        filter,
+        {
+          projection: BASE_PROJECTION,
+        },
+        { _id: 0, __v: 0 },
+      )
       .skip(options.skip)
       .limit(options.PageSize);
 
@@ -64,10 +69,7 @@ export class PostsRepository {
   }
 
   async findOne(id: string) {
-    return this.postModel.findOne(
-      { id },
-      { projection: { _id: false, __v: false } },
-    );
+    return this.postModel.findOne({ id }, { projection: BASE_PROJECTION });
   }
 
   async update(
@@ -85,7 +87,7 @@ export class PostsRepository {
       {
         $set: updatePostDbDto,
       },
-      { returnDocument: 'after', projection: { _id: false, __v: false } },
+      { returnDocument: 'after', projection: BASE_PROJECTION },
     );
 
     return modifyPost;
