@@ -27,7 +27,7 @@ export class AuthController {
     private readonly usersService: UsersService,
   ) {}
 
-  @UseGuards(LimitsControlGuard, LocalAuthGuard)
+  @UseGuards(LimitsControlWithIpAndLoginGuard, LocalAuthGuard)
   @Post('/login')
   @HttpCode(HttpStatus.OK)
   async login(@Body() loginDto: LoginDto) {
@@ -40,7 +40,7 @@ export class AuthController {
     return tokens;
   }
 
-  @UseGuards(LimitsControlWithIpAndLoginGuard)
+  @UseGuards(LimitsControlGuard)
   @Post('/registration')
   @HttpCode(HttpStatus.NO_CONTENT)
   async registerUser(@Body() { login, email, password }: CreateUserDto) {
