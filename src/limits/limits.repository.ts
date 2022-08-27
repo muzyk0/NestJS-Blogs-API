@@ -9,7 +9,12 @@ import { Limit, LimitDocument } from './schemas/limits.schema';
 
 export interface ILimitsRepository {
   addAttempt(requestAttempt: LimitDto): Promise<boolean>;
-  getAttempts(ip: string, url: string, fromDate: Date): Promise<number>;
+  getAttempts(options: {
+    ip: string;
+    login: string | undefined;
+    url: string;
+    fromDate: Date;
+  }): Promise<number>;
   removeLatestAttempts(toDate: Date): Promise<boolean>;
 }
 
@@ -19,21 +24,32 @@ export class LimitsRepository implements ILimitsRepository {
     @InjectModel(Limit.name) private limitsModel: Model<LimitDocument>,
   ) {}
 
-  async addAttempt({ url, ip }: CreateLimitsDto) {
+  async addAttempt({ login, url, ip }: CreateLimitsDto) {
     await this.limitsModel.create({
       id: v4(),
       url,
       ip,
+      login,
       createdAt: new Date(),
     });
 
     return true;
   }
 
-  async getAttempts(ip: string, url: string, fromDate: Date): Promise<number> {
+  async getAttempts({
+    ip,
+    login,
+    url,
+    fromDate,
+  }: {
+    ip: string;
+    login: string | undefined;
+    url: string;
+    fromDate: Date;
+  }): Promise<number> {
     return this.limitsModel.countDocuments({
-      ip,
       url,
+      $or: [{ ip }, { login }],
       createdAt: { $gt: fromDate },
     });
   }

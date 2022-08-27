@@ -1,8 +1,13 @@
-import { IsString } from 'class-validator';
+import { IsOptional, IsString } from 'class-validator';
 
 export class CreateLimitsDto {
+  @IsOptional()
   @IsString()
-  ip: string;
+  ip?: string;
+
+  @IsString()
+  @IsOptional()
+  login?: string;
 
   @IsString()
   url: string;

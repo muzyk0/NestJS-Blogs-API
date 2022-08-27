@@ -13,6 +13,9 @@ export class Limit implements LimitDto {
   @Prop({ required: true })
   ip: string;
 
+  @Prop({ required: false })
+  login?: string;
+
   @Prop({ required: true })
   url: string;
 

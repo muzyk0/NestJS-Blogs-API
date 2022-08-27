@@ -1,12 +1,11 @@
 import { Injectable } from '@nestjs/common';
 import { addMilliseconds } from 'date-fns';
-import { v4 } from 'uuid';
 
 import { CreateLimitsDto } from './dto/create-limits.dto';
 import { LimitDto } from './dto/limitDto';
 import { LimitsRepository } from './limits.repository';
 
-export interface ILimitsControl {
+export interface ILimitsService {
   checkLimits(
     requestAttempt: LimitDto,
     limitMs: number,
@@ -15,22 +14,23 @@ export interface ILimitsControl {
 }
 
 @Injectable()
-export class LimitsService {
+export class LimitsService implements ILimitsService {
   constructor(private limitsRepository: LimitsRepository) {}
 
   async checkLimits(
-    { ip, url }: CreateLimitsDto,
+    { ip, login, url }: CreateLimitsDto,
     limitMs: number,
     maxRequest: number,
   ) {
     const currentDate = new Date();
     const dateFrom = addMilliseconds(currentDate, -limitMs);
-    const countRequestAttempts = await this.limitsRepository.getAttempts(
+    const countRequestAttempts = await this.limitsRepository.getAttempts({
       ip,
+      login,
       url,
-      dateFrom,
-    );
-    const limitObj: CreateLimitsDto = { ip, url };
+      fromDate: dateFrom,
+    });
+    const limitObj: CreateLimitsDto = { ip, login, url };
 
     await this.limitsRepository.addAttempt(limitObj);
 

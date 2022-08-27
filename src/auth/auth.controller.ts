@@ -9,7 +9,8 @@ import {
   UseGuards,
 } from '@nestjs/common';
 
-import { LimitsControlGuard } from '../limits/guards/limits-controll.guard';
+import { LimitsControlWithIpAndLoginGuard } from '../limits/guards/limits-control-with-ip-and-login-guard.service';
+import { LimitsControlGuard } from '../limits/guards/limits-control.guard';
 import { CreateUserDto } from '../users/dto/create-user.dto';
 import { EmailConfirmationCodeDto } from '../users/dto/email-confirmation-code.dto';
 import { Email } from '../users/dto/email.dto';
@@ -19,7 +20,6 @@ import { AuthService } from './auth.service';
 import { LoginDto } from './dto/login.dto';
 import { LocalAuthGuard } from './guards/local-auth.guard';
 
-@UseGuards(LimitsControlGuard)
 @Controller('auth')
 export class AuthController {
   constructor(
@@ -27,7 +27,7 @@ export class AuthController {
     private readonly usersService: UsersService,
   ) {}
 
-  @UseGuards(LocalAuthGuard)
+  @UseGuards(LimitsControlGuard, LocalAuthGuard)
   @Post('/login')
   @HttpCode(HttpStatus.OK)
   async login(@Body() loginDto: LoginDto) {
@@ -40,6 +40,7 @@ export class AuthController {
     return tokens;
   }
 
+  @UseGuards(LimitsControlWithIpAndLoginGuard)
   @Post('/registration')
   @HttpCode(HttpStatus.NO_CONTENT)
   async registerUser(@Body() { login, email, password }: CreateUserDto) {
@@ -66,6 +67,7 @@ export class AuthController {
     return this.usersService.create({ login, email, password });
   }
 
+  @UseGuards(LimitsControlGuard)
   @Post('/registration-confirmation')
   @HttpCode(HttpStatus.NO_CONTENT)
   async confirmAccount(@Body() { code }: EmailConfirmationCodeDto) {
@@ -80,6 +82,7 @@ export class AuthController {
     return;
   }
 
+  @UseGuards(LimitsControlGuard)
   @Post('/registration-email-resending')
   @HttpCode(HttpStatus.NO_CONTENT)
   async resendConfirmationCode(@Body() { email }: Email) {
