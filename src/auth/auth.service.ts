@@ -12,6 +12,7 @@ import { User } from '../users/schemas/users.schema';
 import { UsersService } from '../users/users.service';
 
 import { LoginDto } from './dto/login.dto';
+import { JwtPayload } from './types/jwtPayload.type';
 
 @Injectable()
 export class AuthService {
@@ -43,14 +44,14 @@ export class AuthService {
   async login({
     login,
     password,
-  }: LoginDto): Promise<{ accessToken: string } | null> {
+  }: LoginDto): Promise<{ token: string } | null> {
     const user = await this.usersService.findOneByLogin(login);
 
     if (!user) {
       return null;
     }
 
-    const { password: userPassword, id: userId } = user.accountData;
+    const { password: userPassword, id, email } = user.accountData;
 
     const isEqual = await this.comparePassword(password, userPassword);
 
@@ -58,10 +59,16 @@ export class AuthService {
       return null;
     }
 
-    const payload = { userId };
+    const payload: JwtPayload = {
+      user: {
+        id,
+        login,
+        email,
+      },
+    };
 
     return {
-      accessToken: this.jwtService.sign(payload, {
+      token: this.jwtService.sign(payload, {
         secret: this.config.get<string>('ACCESS_TOKEN_SECRET'),
         expiresIn: '15m',
       }),
@@ -94,7 +101,7 @@ export class AuthService {
       return null;
     }
 
-    const { password: userPassword, id, login: userLogin } = user.accountData;
+    const { password: userPassword } = user.accountData;
 
     const isEqual = await this.comparePassword(password, userPassword);
 

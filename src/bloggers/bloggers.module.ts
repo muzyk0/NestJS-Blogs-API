@@ -3,8 +3,6 @@ import { MongooseModule } from '@nestjs/mongoose';
 
 import { AuthModule } from '../auth/auth.module';
 import { PostsModule } from '../posts/posts.module';
-import { PostsRepository } from '../posts/posts.repository';
-import { PostsService } from '../posts/posts.service';
 
 import { BloggersController } from './bloggers.controller';
 import { BloggersRepository } from './bloggers.repository';

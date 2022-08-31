@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 
+import { BASE_PROJECTION } from '../common/mongoose/constants';
 import { PageOptionsDto } from '../common/paginator/page-options.dto';
 import { PageDto } from '../common/paginator/page.dto';
 
@@ -16,7 +17,8 @@ export class BloggersRepository {
   ) {}
 
   async create(createBloggerDto: BloggerDto) {
-    return this.bloggerModel.create(createBloggerDto);
+    const blogger = await this.bloggerModel.create(createBloggerDto);
+    return this.bloggerModel.findOne({ id: blogger.id }, BASE_PROJECTION);
   }
 
   async findAll(pageOptionsDto: PageOptionsDto): Promise<PageDto<BloggerDto>> {
@@ -29,7 +31,7 @@ export class BloggersRepository {
     const itemsCount = await this.bloggerModel.countDocuments(filter);
 
     const items = await this.bloggerModel
-      .find(filter)
+      .find(filter, BASE_PROJECTION)
       .skip(pageOptionsDto.skip)
       .limit(pageOptionsDto.PageSize);
 
@@ -41,13 +43,14 @@ export class BloggersRepository {
   }
 
   async findOne(id: string): Promise<BloggerDto> {
-    return this.bloggerModel.findOne({ id });
+    return this.bloggerModel.findOne({ id }, BASE_PROJECTION);
   }
 
   async update(id: string, updateBloggerDto: UpdateBloggerDto) {
     return this.bloggerModel.findOneAndUpdate(
       { id },
       { $set: updateBloggerDto },
+      { returnDocument: 'after', projection: BASE_PROJECTION },
     );
   }
 

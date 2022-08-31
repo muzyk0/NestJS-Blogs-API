@@ -9,6 +9,7 @@ import { BloggersModule } from './bloggers/bloggers.module';
 import { CommentsModule } from './comments/comments.module';
 import configuration from './config/configuration';
 import { EmailModule } from './email/email.module';
+import { LimitsModule } from './limits/limits.module';
 import { PostsModule } from './posts/posts.module';
 import { TestModule } from './test-users/test-users.module';
 import { TestingModule } from './testing/testing.module';
@@ -29,6 +30,7 @@ import { UsersModule } from './users/users.module';
     TestingModule,
     CommentsModule,
     EmailModule,
+    LimitsModule,
   ],
   controllers: [AppController],
   providers: [AppService],

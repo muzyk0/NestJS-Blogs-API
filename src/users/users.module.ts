@@ -2,10 +2,7 @@ import { forwardRef, Module } from '@nestjs/common';
 import { MongooseModule } from '@nestjs/mongoose';
 
 import { AuthModule } from '../auth/auth.module';
-import { AuthService } from '../auth/auth.service';
-import { EmailTemplateManager } from '../email/email-template-manager';
 import { EmailModule } from '../email/email.module';
-import { EmailService } from '../email/email.service';
 
 import { User, UserSchema } from './schemas/users.schema';
 import { UsersController } from './users.controller';

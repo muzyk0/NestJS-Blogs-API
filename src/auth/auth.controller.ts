@@ -9,6 +9,8 @@ import {
   UseGuards,
 } from '@nestjs/common';
 
+import { LimitsControlWithIpAndLoginGuard } from '../limits/guards/limits-control-with-ip-and-login-guard.service';
+import { LimitsControlGuard } from '../limits/guards/limits-control.guard';
 import { CreateUserDto } from '../users/dto/create-user.dto';
 import { EmailConfirmationCodeDto } from '../users/dto/email-confirmation-code.dto';
 import { Email } from '../users/dto/email.dto';
@@ -25,26 +27,31 @@ export class AuthController {
     private readonly usersService: UsersService,
   ) {}
 
-  @UseGuards(LocalAuthGuard)
+  @UseGuards(LimitsControlWithIpAndLoginGuard, LocalAuthGuard)
   @Post('/login')
+  @HttpCode(HttpStatus.OK)
   async login(@Body() loginDto: LoginDto) {
-    const token = await this.authService.login(loginDto);
+    const tokens = await this.authService.login(loginDto);
 
-    if (!token) {
+    if (!tokens) {
       throw new UnauthorizedException();
     }
 
-    return token;
+    return tokens;
   }
 
+  @UseGuards(LimitsControlGuard)
   @Post('/registration')
+  @HttpCode(HttpStatus.NO_CONTENT)
   async registerUser(@Body() { login, email, password }: CreateUserDto) {
     const userAlreadyExistByLogin = await this.usersService.findOneByLogin(
       login,
     );
 
     if (userAlreadyExistByLogin) {
-      throw new BadRequestException();
+      throw new BadRequestException([
+        { message: 'Login already exist', field: 'login' },
+      ]);
     }
 
     const userAlreadyExistByEmail = await this.usersService.findOneByEmail(
@@ -52,31 +59,39 @@ export class AuthController {
     );
 
     if (userAlreadyExistByEmail) {
-      throw new BadRequestException();
+      throw new BadRequestException([
+        { message: 'Email already exist', field: 'email' },
+      ]);
     }
 
     return this.usersService.create({ login, email, password });
   }
 
+  @UseGuards(LimitsControlGuard)
   @Post('/registration-confirmation')
   @HttpCode(HttpStatus.NO_CONTENT)
   async confirmAccount(@Body() { code }: EmailConfirmationCodeDto) {
     const isConfirmed = await this.authService.confirmAccount(code);
 
     if (!isConfirmed) {
-      throw new BadRequestException();
+      throw new BadRequestException([
+        { message: 'Code isn"t correct', field: 'code' },
+      ]);
     }
 
     return;
   }
 
+  @UseGuards(LimitsControlGuard)
   @Post('/registration-email-resending')
   @HttpCode(HttpStatus.NO_CONTENT)
   async resendConfirmationCode(@Body() { email }: Email) {
     const isConfirmed = await this.authService.resendConfirmationCode(email);
 
     if (!isConfirmed) {
-      throw new BadRequestException();
+      throw new BadRequestException([
+        { message: 'Email already confirm', field: 'email' },
+      ]);
     }
 
     return;

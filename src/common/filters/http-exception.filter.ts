@@ -14,19 +14,25 @@ export class HttpExceptionFilter implements ExceptionFilter {
     const request = ctx.getRequest<Request>();
     const status = exception.getStatus();
 
-    if (status === 400) {
-      const message = (exception.getResponse() as any).message;
-      const errors = Array.isArray(message) ? message.flat(1) : message;
+    switch (status) {
+      case 400:
+        const message = (exception.getResponse() as any).message;
+        const errors = Array.isArray(message) ? message.flat(1) : message;
 
-      response.status(status).json({
-        errors,
-      });
-    } else {
-      response.status(status).json({
-        statusCode: status,
-        timestamp: new Date().toISOString(),
-        path: request.url,
-      });
+        response.status(status).json({
+          errorsMessages: errors,
+        });
+        break;
+      case 429:
+        response.sendStatus(status);
+        break;
+      default:
+        response.status(status).json({
+          statusCode: status,
+          timestamp: new Date().toISOString(),
+          path: request.url,
+        });
+        break;
     }
   }
 }

@@ -16,8 +16,6 @@ import { UsersRepository } from './users.repository';
 import { UsersService } from './users.service';
 
 describe('UsersController', () => {
-  let user: User;
-
   let usersController: UsersController;
   let mongod: MongoMemoryServer;
   let mongoConnection: Connection;

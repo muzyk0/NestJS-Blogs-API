@@ -6,7 +6,6 @@ import { connect, Connection, Model } from 'mongoose';
 import { BloggersRepository } from '../bloggers/bloggers.repository';
 import { Blogger, BloggerSchema } from '../bloggers/schemas/bloggers.schema';
 import { PostsRepository } from '../posts/posts.repository';
-import { PostsService } from '../posts/posts.service';
 import { Post, PostSchema } from '../posts/schemas/posts.schema';
 
 import { CommentsRepository } from './comments.repository';

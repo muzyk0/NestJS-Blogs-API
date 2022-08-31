@@ -1,23 +1,21 @@
 import {
-  Controller,
-  Get,
-  Post,
+  BadRequestException,
   Body,
-  Patch,
-  Param,
+  Controller,
   Delete,
-  Put,
+  Get,
   HttpCode,
   HttpStatus,
-  UseGuards,
   NotFoundException,
-  BadRequestException,
+  Param,
+  Post,
+  Put,
   Query,
+  UseGuards,
 } from '@nestjs/common';
 
 import { BaseAuthGuard } from '../auth/guards/base-auth-guard';
 import { PageOptionsDto } from '../common/paginator/page-options.dto';
-import { CreatePostDto } from '../posts/dto/create-post.dto';
 import { PostsService } from '../posts/posts.service';
 
 import { BloggersService } from './bloggers.service';

@@ -3,7 +3,6 @@ import * as bcrypt from 'bcrypt';
 import { addDays } from 'date-fns';
 import { v4 } from 'uuid';
 
-import { AuthService } from '../auth/auth.service';
 import { PageOptionsDto } from '../common/paginator/page-options.dto';
 import { PageDto } from '../common/paginator/page.dto';
 import { EmailTemplateManager } from '../email/email-template-manager';
@@ -11,7 +10,7 @@ import { EmailService } from '../email/email.service';
 
 import { CreateUserDto } from './dto/create-user.dto';
 import { UserDto } from './dto/user.dto';
-import { User, UserAccountDBType } from './schemas/users.schema';
+import { UserAccountDBType } from './schemas/users.schema';
 import { UpdateConfirmationType } from './users.interface';
 import { UsersRepository } from './users.repository';
 
@@ -24,8 +23,6 @@ export class UsersService {
   ) {}
 
   async create({ login, email, password }: CreateUserDto) {
-    // const passwordHash = await this.authService.generateHashPassword(password);
-
     const passwordHash = await bcrypt.hash(password, 10);
 
     const newUser: UserAccountDBType = {

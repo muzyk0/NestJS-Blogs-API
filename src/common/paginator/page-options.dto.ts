@@ -5,12 +5,12 @@ import { Order } from '../../constants';
 
 export class PageOptionsDto {
   constructor() {
-    Object.defineProperty(this, 'val', {
+    Object.defineProperty(this, 'skip', {
       get() {
         return (this.PageNumber - 1) * this.PageSize;
       },
       set(_val: string) {
-        throw Error('Property "skip" are only getter. Don\'t set value');
+        throw Error(`Property "skip" are only getter. Don't set value ${_val}`);
       },
     });
   }
@@ -39,5 +39,8 @@ export class PageOptionsDto {
   /**
    * Property "skip" are only getter. Don\'t set value
    */
-  skip?: number;
+  skip?: number = 0;
+  // get skip() {
+  //   return (this.PageNumber - 1) * this.PageSize;
+  // }
 }

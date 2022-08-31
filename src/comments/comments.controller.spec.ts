@@ -3,7 +3,6 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { MongoMemoryServer } from 'mongodb-memory-server';
 import { connect, Connection, Model } from 'mongoose';
 
-import { AuthModule } from '../auth/auth.module';
 import { BloggersRepository } from '../bloggers/bloggers.repository';
 import { Blogger, BloggerSchema } from '../bloggers/schemas/bloggers.schema';
 import { PostsRepository } from '../posts/posts.repository';
