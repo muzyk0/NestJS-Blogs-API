@@ -1,6 +1,10 @@
 name: Test & Lint #Название pipeline который будет выполнять github actions
 
-on: [push]
+on:
+  push:
+    branches:
+      - '*'
+      - '!staging'
 
 jobs:
   tests:
