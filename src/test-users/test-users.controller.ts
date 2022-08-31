@@ -4,18 +4,13 @@ import {
   Delete,
   Get,
   Param,
-  ParseIntPipe,
   Post,
   Put,
   Query,
-  UseGuards,
 } from '@nestjs/common';
-
-import { AuthGuard } from '../auth/guards/auth-guard';
 
 import { CreateInputModel, TestUsersService } from './test-users.service';
 
-@UseGuards(AuthGuard)
 @Controller('test-users')
 export class TestUsersController {
   constructor(protected usersService: TestUsersService) {}
@@ -38,7 +33,7 @@ export class TestUsersController {
 
   @Delete(':id')
   deleteUser(@Param('id') id: number) {
-    return 'OK';
+    return { status: 'OK', userId: id };
   }
 
   @Put(':id')

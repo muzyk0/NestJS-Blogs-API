@@ -101,7 +101,7 @@ export class AuthService {
       return null;
     }
 
-    const { password: userPassword, id, login: userLogin } = user.accountData;
+    const { password: userPassword } = user.accountData;
 
     const isEqual = await this.comparePassword(password, userPassword);
 

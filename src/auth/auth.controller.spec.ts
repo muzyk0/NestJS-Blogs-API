@@ -1,5 +1,5 @@
 import { MailerService } from '@nestjs-modules/mailer';
-import { ConfigModule, ConfigService } from '@nestjs/config';
+import { ConfigService } from '@nestjs/config';
 import { JwtModule } from '@nestjs/jwt';
 import { getModelToken } from '@nestjs/mongoose';
 import { Test, TestingModule } from '@nestjs/testing';
@@ -8,7 +8,6 @@ import { connect, Connection, Model } from 'mongoose';
 
 import { EmailTemplateManager } from '../email/email-template-manager';
 import { EmailService } from '../email/email.service';
-import { LimitsModule } from '../limits/limits.module';
 import { LimitsRepository } from '../limits/limits.repository';
 import { LimitsService } from '../limits/limits.service';
 import { Limit, LimitSchema } from '../limits/schemas/limits.schema';

@@ -14,7 +14,6 @@ import {
 import { CommentDto, IComment } from './dto/comment.dto';
 import { CommentInput } from './dto/comment.input';
 import { CreateCommentDto } from './dto/create-comment.dto';
-import { UpdateCommentDto } from './dto/update-comment.dto';
 
 interface ICommentsService {
   create(createCommentDto: CreateCommentDto): Promise<CommentDto | null>;

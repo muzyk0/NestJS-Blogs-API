@@ -10,7 +10,7 @@ export class PageOptionsDto {
         return (this.PageNumber - 1) * this.PageSize;
       },
       set(_val: string) {
-        throw Error('Property "skip" are only getter. Don\'t set value');
+        throw Error(`Property "skip" are only getter. Don't set value ${_val}`);
       },
     });
   }

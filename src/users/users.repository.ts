@@ -6,10 +6,8 @@ import { BASE_PROJECTION } from '../common/mongoose/constants';
 import { PageOptionsDto } from '../common/paginator/page-options.dto';
 import { PageDto } from '../common/paginator/page.dto';
 
-import { UpdateUserDto } from './dto/update-user.dto';
-import { UserDto } from './dto/user.dto';
 import { User, UserAccountDBType, UserDocument } from './schemas/users.schema';
-import { Options, UpdateConfirmationType } from './users.interface';
+import { UpdateConfirmationType } from './users.interface';
 
 const projectionFields = { ...BASE_PROJECTION, postId: 0 };
 
@@ -29,7 +27,7 @@ export class UsersRepository {
       return null;
     }
 
-    const result = await this.userModel.create(createUserDto);
+    await this.userModel.create(createUserDto);
 
     return this.userModel.findOne(
       { 'accountData.id': createUserDto.accountData.id },
