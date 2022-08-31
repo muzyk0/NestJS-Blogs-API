@@ -7,6 +7,7 @@ import { v4 } from 'uuid';
 
 import { Blogger, BloggerSchema } from '../bloggers/schemas/bloggers.schema';
 import { Comment, CommentSchema } from '../comments/schemas/comments.schema';
+import { Limit, LimitSchema } from '../limits/schemas/limits.schema';
 import { Post, PostSchema } from '../posts/schemas/posts.schema';
 import {
   User,
@@ -28,6 +29,7 @@ describe('TestingService', () => {
   let bloggerModel: Model<Blogger>;
   let userModel: Model<User>;
   let commentModel: Model<Comment>;
+  let limitModel: Model<Limit>;
 
   beforeAll(async () => {
     mongod = await MongoMemoryServer.create();
@@ -37,6 +39,7 @@ describe('TestingService', () => {
     bloggerModel = mongoConnection.model(Blogger.name, BloggerSchema);
     userModel = mongoConnection.model(User.name, UserSchema);
     commentModel = mongoConnection.model(Comment.name, CommentSchema);
+    limitModel = mongoConnection.model(Limit.name, LimitSchema);
     const app: TestingModule = await Test.createTestingModule({
       controllers: [],
       providers: [
@@ -46,6 +49,7 @@ describe('TestingService', () => {
         { provide: getModelToken(Blogger.name), useValue: bloggerModel },
         { provide: getModelToken(User.name), useValue: userModel },
         { provide: getModelToken(Comment.name), useValue: commentModel },
+        { provide: getModelToken(Limit.name), useValue: limitModel },
       ],
     }).compile();
     testingService = app.get<TestingService>(TestingService);
@@ -94,7 +98,7 @@ describe('TestingService', () => {
         id: v4(),
         login: 'Test',
         email: 'test@9art.ru',
-        password: '', //passwordHash,
+        password: '',
         createdAt: new Date(),
       },
       loginAttempts: [],
@@ -115,6 +119,14 @@ describe('TestingService', () => {
       addedAt: new Date(),
       userId: 'some user id',
       userLogin: 'some user login',
+    });
+
+    await limitModel.create({
+      login: 'user',
+      createdAt: new Date(),
+      id: v4(),
+      url: 'https://github.com/muzyk0/NestJS-Bloggers-API',
+      ip: '127.0.0.1',
     });
 
     expect(postCount).toBe(countCreatedPosts);
