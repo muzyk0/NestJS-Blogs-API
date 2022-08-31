@@ -32,6 +32,12 @@ describe('LimitsService', () => {
     service = module.get<LimitsService>(LimitsService);
   });
 
+  afterAll(async () => {
+    await mongoConnection.dropDatabase();
+    await mongoConnection.close();
+    await mongod.stop();
+  });
+
   it('should be defined', () => {
     expect(service).toBeDefined();
   });
