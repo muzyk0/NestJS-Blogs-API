@@ -4,6 +4,7 @@ import { Model } from 'mongoose';
 
 import { Blogger, BloggerDocument } from '../bloggers/schemas/bloggers.schema';
 import { Comment, CommentDocument } from '../comments/schemas/comments.schema';
+import { Limit, LimitDocument } from '../limits/schemas/limits.schema';
 import { Post, PostDocument } from '../posts/schemas/posts.schema';
 import { User, UserDocument } from '../users/schemas/users.schema';
 
@@ -14,6 +15,7 @@ export class TestingRepository {
     @InjectModel(Blogger.name) private bloggerModel: Model<BloggerDocument>,
     @InjectModel(User.name) private userModel: Model<UserDocument>,
     @InjectModel(Comment.name) private commentModel: Model<CommentDocument>,
+    @InjectModel(Limit.name) private limitModel: Model<LimitDocument>,
   ) {}
 
   async clearDatabase(): Promise<boolean> {
@@ -21,6 +23,7 @@ export class TestingRepository {
     await this.postModel.deleteMany({});
     await this.userModel.deleteMany({});
     await this.commentModel.deleteMany({});
+    await this.limitModel.deleteMany({});
 
     return true;
   }
