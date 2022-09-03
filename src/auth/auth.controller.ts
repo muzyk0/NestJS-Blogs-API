@@ -2,6 +2,7 @@ import {
   BadRequestException,
   Body,
   Controller,
+  Get,
   HttpCode,
   HttpStatus,
   Post,
@@ -9,6 +10,7 @@ import {
   UseGuards,
 } from '@nestjs/common';
 
+import { GetCurrentUserId } from '../common/decorators/get-current-user-id.decorator';
 import { LimitsControlWithIpAndLoginGuard } from '../limits/guards/limits-control-with-ip-and-login-guard.service';
 import { LimitsControlGuard } from '../limits/guards/limits-control.guard';
 import { CreateUserDto } from '../users/dto/create-user.dto';
@@ -18,6 +20,7 @@ import { UsersService } from '../users/users.service';
 
 import { AuthService } from './auth.service';
 import { LoginDto } from './dto/login.dto';
+import { JwtAuthGuard } from './guards/jwt-auth.guard';
 import { LocalAuthGuard } from './guards/local-auth.guard';
 
 @Controller('auth')
@@ -95,5 +98,17 @@ export class AuthController {
     }
 
     return;
+  }
+
+  @Get('/me')
+  @UseGuards(JwtAuthGuard)
+  async me(@GetCurrentUserId() userId: string) {
+    const user = await this.usersService.findOneById(userId);
+
+    return {
+      email: user.accountData.email,
+      login: user.accountData.login,
+      userId,
+    };
   }
 }
