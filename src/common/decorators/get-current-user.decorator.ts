@@ -1,9 +1,10 @@
 import { createParamDecorator, ExecutionContext } from '@nestjs/common';
 
+import { JwtPayloadWithRt } from '../../auth/types/jwt-payload-with-rt.type';
 import { JwtPayload } from '../../auth/types/jwtPayload.type';
 
 export const GetCurrentJwtContext = createParamDecorator(
-  (_: unknown, context: ExecutionContext): JwtPayload => {
+  (data: keyof JwtPayloadWithRt, context: ExecutionContext): JwtPayload => {
     const request = context.switchToHttp().getRequest();
     const ctx = request.user as JwtPayload;
 
@@ -11,6 +12,10 @@ export const GetCurrentJwtContext = createParamDecorator(
       throw new Error('JWTGuard must be used');
     }
 
-    return ctx;
+    if (!data) {
+      return ctx;
+    }
+
+    return ctx[data];
   },
 );

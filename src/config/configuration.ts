@@ -11,4 +11,5 @@ export default () => ({
     EMAIL_FROM: process.env.EMAIL_FROM || '',
     EMAIL_FROM_PASSWORD: process.env.EMAIL_FROM_PASSWORD || '',
   },
+  IS_DEV: process.env.NODE_ENV === 'development',
 });

@@ -1,6 +1,7 @@
 import { BadRequestException, ValidationPipe } from '@nestjs/common';
 import { NestFactory } from '@nestjs/core';
 import { NestExpressApplication } from '@nestjs/platform-express';
+import * as cookieParser from 'cookie-parser';
 
 import { AppModule } from './app.module';
 import { ErrorExceptionFilter, HttpExceptionFilter } from './common/filters';
@@ -11,6 +12,8 @@ import configuration from './config/configuration';
 
   app.set('trust proxy');
   app.enableCors();
+  app.use(cookieParser());
+
   app.useGlobalPipes(
     new ValidationPipe({
       transform: true,

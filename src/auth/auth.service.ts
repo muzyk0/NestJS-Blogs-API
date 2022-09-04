@@ -14,6 +14,11 @@ import { UsersService } from '../users/users.service';
 import { LoginDto } from './dto/login.dto';
 import { JwtPayload } from './types/jwtPayload.type';
 
+interface TokenDto {
+  accessToken: string;
+  refreshToken: string;
+}
+
 @Injectable()
 export class AuthService {
   constructor(
@@ -41,10 +46,7 @@ export class AuthService {
     return BaseAuthPayload;
   }
 
-  async login({
-    login,
-    password,
-  }: LoginDto): Promise<{ token: string } | null> {
+  async login({ login, password }: LoginDto): Promise<TokenDto | null> {
     const user = await this.usersService.findOneByLogin(login);
 
     if (!user) {
@@ -67,11 +69,24 @@ export class AuthService {
       },
     };
 
+    return this.createJwtTokens(payload);
+  }
+
+  async createJwtTokens(payload: JwtPayload) {
+    const isDev = this.config.get<string>('IS_DEV');
+
+    const accessToken = this.jwtService.sign(payload, {
+      secret: this.config.get<string>('ACCESS_TOKEN_SECRET'),
+      expiresIn: isDev ? '30s' : '10s',
+    });
+
+    const refreshToken = this.jwtService.sign(payload, {
+      secret: this.config.get<string>('REFRESH_TOKEN_SECRET'),
+      expiresIn: isDev ? '60m' : '20s',
+    });
     return {
-      token: this.jwtService.sign(payload, {
-        secret: this.config.get<string>('ACCESS_TOKEN_SECRET'),
-        expiresIn: '15m',
-      }),
+      accessToken,
+      refreshToken,
     };
   }
 

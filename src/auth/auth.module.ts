@@ -10,6 +10,7 @@ import { AuthController } from './auth.controller';
 import { AuthService } from './auth.service';
 import { AtJwtStrategy } from './strategies/at.jwt.strategy';
 import { LocalStrategy } from './strategies/local.strategy';
+import { RtJwtStrategy } from './strategies/rt.jwt.strategy';
 
 @Module({
   imports: [
@@ -20,7 +21,7 @@ import { LocalStrategy } from './strategies/local.strategy';
     LimitsModule,
   ],
   controllers: [AuthController],
-  providers: [AuthService, LocalStrategy, AtJwtStrategy],
+  providers: [AuthService, LocalStrategy, AtJwtStrategy, RtJwtStrategy],
   exports: [AuthService],
 })
 export class AuthModule {}

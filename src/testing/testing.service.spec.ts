@@ -108,6 +108,7 @@ describe('TestingService', () => {
         expirationDate: addDays(new Date(), 1),
         isConfirmed: false,
       },
+      revokedTokens: [],
     };
 
     await userModel.create(newUser);
