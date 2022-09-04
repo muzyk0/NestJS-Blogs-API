@@ -117,4 +117,8 @@ export class UsersService {
   async revokeRefreshToken(userId: string, revokeToken: RevokedTokenType) {
     return this.usersRepository.revokeRefreshToken(userId, revokeToken);
   }
+
+  async checkRefreshToken(userId: string, revokeToken: RevokedTokenType) {
+    return this.usersRepository.checkRefreshToken(userId, revokeToken);
+  }
 }

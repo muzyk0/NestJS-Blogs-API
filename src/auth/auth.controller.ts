@@ -132,6 +132,7 @@ export class AuthController {
 
   @Post('/refresh-token')
   @UseGuards(JwtRefreshAuthGuard)
+  @HttpCode(HttpStatus.OK)
   async refreshToken(
     @Req() req: Request,
     @Res({ passthrough: true }) res,
@@ -140,9 +141,18 @@ export class AuthController {
     const userAgent = req.get('User-Agent');
 
     const revokedToken: RevokedTokenType = {
-      token: '',
+      token: ctx.refreshToken,
       userAgent,
     };
+
+    const isRevokedBefore = await this.usersService.checkRefreshToken(
+      ctx.user.id,
+      revokedToken,
+    );
+
+    if (isRevokedBefore) {
+      throw new UnauthorizedException();
+    }
 
     const isRevoked = await this.usersService.revokeRefreshToken(
       ctx.user.id,
@@ -181,6 +191,15 @@ export class AuthController {
       token: ctx.refreshToken,
       userAgent,
     };
+
+    const isRevokedBefore = await this.usersService.checkRefreshToken(
+      ctx.user.id,
+      revokedToken,
+    );
+
+    if (isRevokedBefore) {
+      throw new UnauthorizedException();
+    }
 
     const isRevoked = await this.usersService.revokeRefreshToken(
       ctx.user.id,

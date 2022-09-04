@@ -119,12 +119,23 @@ export class UsersRepository {
     );
   }
 
+  async checkRefreshToken(id: string, revokeToken: RevokedTokenType) {
+    const user = await this.userModel.findOne(
+      {
+        'accountData.id': id,
+        revokedTokens: { $elemMatch: revokeToken },
+      },
+      BASE_PROJECTION,
+    );
+    return !!user;
+  }
+
   async revokeRefreshToken(id: string, revokeToken: RevokedTokenType) {
     const result = await this.userModel.updateOne(
       { 'accountData.id': id },
       {
         $push: {
-          'accountData.revokedTokens': revokeToken,
+          revokedTokens: revokeToken,
         },
       },
       { returnDocument: 'after', projection: projectionFields },
