@@ -19,7 +19,7 @@ import { UsersModule } from './users/users.module';
   imports: [
     ConfigModule.forRoot({
       isGlobal: true,
-      // load: [configuration],
+      load: [configuration],
     }),
     MongooseModule.forRoot(configuration().MONGO_URI),
     TestModule,

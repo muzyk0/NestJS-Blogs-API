@@ -6,6 +6,7 @@ import { BASE_PROJECTION } from '../common/mongoose/constants';
 import { PageOptionsDto } from '../common/paginator/page-options.dto';
 import { PageDto } from '../common/paginator/page.dto';
 
+import { RevokedTokenType } from './schemas/revoked-tokens.schema';
 import { User, UserAccountDBType, UserDocument } from './schemas/users.schema';
 import { UpdateConfirmationType } from './users.interface';
 
@@ -116,5 +117,18 @@ export class UsersRepository {
       },
       { returnDocument: 'after', projection: projectionFields },
     );
+  }
+
+  async revokeRefreshToken(id: string, revokeToken: RevokedTokenType) {
+    const result = await this.userModel.updateOne(
+      { 'accountData.id': id },
+      {
+        $push: {
+          'accountData.revokedTokens': revokeToken,
+        },
+      },
+      { returnDocument: 'after', projection: projectionFields },
+    );
+    return !!result.modifiedCount;
   }
 }

@@ -10,6 +10,7 @@ import { EmailService } from '../email/email.service';
 
 import { CreateUserDto } from './dto/create-user.dto';
 import { UserDto } from './dto/user.dto';
+import { RevokedTokenType } from './schemas/revoked-tokens.schema';
 import { UserAccountDBType } from './schemas/users.schema';
 import { UpdateConfirmationType } from './users.interface';
 import { UsersRepository } from './users.repository';
@@ -40,6 +41,7 @@ export class UsersService {
         expirationDate: addDays(new Date(), 1),
         isConfirmed: false,
       },
+      revokedTokens: [],
     };
 
     const createdUser = await this.usersRepository.create(newUser);
@@ -110,5 +112,9 @@ export class UsersService {
 
   async findOneById(id: string) {
     return this.usersRepository.findOneById(id);
+  }
+
+  async revokeRefreshToken(userId: string, revokeToken: RevokedTokenType) {
+    return this.usersRepository.revokeRefreshToken(userId, revokeToken);
   }
 }
