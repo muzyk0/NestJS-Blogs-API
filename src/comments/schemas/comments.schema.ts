@@ -20,7 +20,7 @@ export class Comment implements CommentDto {
   userLogin: string;
 
   @Prop({ required: true })
-  addedAt: Date;
+  createdAt: Date;
 
   @Prop({ required: true })
   postId: string;

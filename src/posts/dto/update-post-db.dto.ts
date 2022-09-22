@@ -5,5 +5,5 @@ import { CreatePostDto } from './create-post.dto';
 
 export class UpdatePostDbDto extends PartialType(CreatePostDto) {
   @Length(1)
-  bloggerName?: string;
+  blogName?: string;
 }

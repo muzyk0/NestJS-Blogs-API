@@ -26,9 +26,7 @@ export class PostsService implements IPostService {
   ) {}
 
   async create(createPostDto: CreatePostDto) {
-    const blogger = await this.bloggerRepository.findOne(
-      createPostDto.bloggerId,
-    );
+    const blogger = await this.bloggerRepository.findOne(createPostDto.blogId);
 
     if (!blogger) {
       return null;
@@ -36,8 +34,8 @@ export class PostsService implements IPostService {
 
     const newPostInput: PostDto = {
       id: v4(),
-      bloggerId: blogger.id,
-      bloggerName: blogger.name,
+      blogId: blogger.id,
+      blogName: blogger.name,
       title: createPostDto.title,
       content: createPostDto.content,
       shortDescription: createPostDto.shortDescription,
@@ -55,16 +53,14 @@ export class PostsService implements IPostService {
   }
 
   async update(id: string, updatePostDto: UpdatePostDto) {
-    const blogger = await this.bloggerRepository.findOne(
-      updatePostDto.bloggerId,
-    );
+    const blogger = await this.bloggerRepository.findOne(updatePostDto.blogId);
 
     if (!blogger) {
       return null;
     }
 
     const updatedPost: UpdatePostDbDto = {
-      bloggerName: blogger.name,
+      blogName: blogger.name,
       title: updatePostDto.title,
       content: updatePostDto.content,
       shortDescription: updatePostDto.shortDescription,

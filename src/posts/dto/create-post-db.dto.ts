@@ -14,8 +14,8 @@ export class CreatePostDbDto {
   content: string;
 
   @IsString()
-  bloggerId: Blogger['id'];
+  blogId: Blogger['id'];
 
   @Length(1)
-  bloggerName: string;
+  blogName: string;
 }

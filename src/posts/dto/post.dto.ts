@@ -15,8 +15,8 @@ export class PostDto {
   content: string;
 
   @IsString()
-  bloggerId: string;
+  blogId: string;
 
   @Length(1)
-  bloggerName: string;
+  blogName: string;
 }

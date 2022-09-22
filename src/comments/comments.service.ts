@@ -49,7 +49,7 @@ export class CommentsService implements ICommentsService {
       userId: createCommentDto.userId,
       userLogin: createCommentDto.userLogin,
       postId: post.id,
-      addedAt: new Date(),
+      createdAt: new Date(),
     };
 
     return this.commentsRepository.create(newComment);

@@ -39,7 +39,7 @@ export class PostsController {
   @Post()
   @HttpCode(HttpStatus.CREATED)
   async create(@Body() createPostDto: CreatePostDto) {
-    const blogger = await this.bloggersService.findOne(createPostDto.bloggerId);
+    const blogger = await this.bloggersService.findOne(createPostDto.blogId);
 
     if (!blogger) {
       throw new BadRequestException();
@@ -68,7 +68,7 @@ export class PostsController {
   @Put(':id')
   @HttpCode(HttpStatus.NO_CONTENT)
   async update(@Param('id') id: string, @Body() updatePostDto: UpdatePostDto) {
-    const blogger = await this.bloggersService.findOne(updatePostDto.bloggerId);
+    const blogger = await this.bloggersService.findOne(updatePostDto.blogId);
 
     if (!blogger) {
       throw new BadRequestException();

@@ -23,7 +23,7 @@ import { CreateBloggerPostDto } from './dto/create-blogger-post.dto';
 import { CreateBloggerDto } from './dto/create-blogger.dto';
 import { UpdateBloggerDto } from './dto/update-blogger.dto';
 
-@Controller('bloggers')
+@Controller('blogs')
 export class BloggersController {
   constructor(
     private readonly bloggersService: BloggersService,
@@ -93,7 +93,7 @@ export class BloggersController {
 
     return this.postsService.findAll({
       ...pageOptionsDto,
-      bloggerId: id,
+      blogId: id,
     });
   }
 
@@ -111,7 +111,7 @@ export class BloggersController {
     }
 
     return this.postsService.create({
-      bloggerId,
+      blogId: bloggerId,
       shortDescription,
       content,
       title,

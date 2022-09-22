@@ -16,7 +16,7 @@ import { Post, PostDocument } from './schemas/posts.schema';
 export class FindAllPostsOptions extends PageOptionsDto {
   @IsInt()
   @IsOptional()
-  bloggerId?: string;
+  blogId?: string;
 }
 
 @Injectable()
@@ -28,7 +28,7 @@ export class PostsRepository {
 
   async create(createPostDto: CreatePostDbDto) {
     const blogger = await this.bloggerModel.findOne({
-      id: createPostDto.bloggerId,
+      id: createPostDto.blogId,
     });
 
     if (!blogger) {
@@ -45,7 +45,7 @@ export class PostsRepository {
       ...(options?.SearchNameTerm
         ? { title: { $regex: options.SearchNameTerm } }
         : {}),
-      ...(options?.bloggerId ? { bloggerId: options.bloggerId } : {}),
+      ...(options?.blogId ? { bloggerId: options.blogId } : {}),
     };
 
     const itemsCount = await this.postModel.countDocuments(filter);

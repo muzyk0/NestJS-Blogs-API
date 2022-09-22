@@ -76,8 +76,8 @@ describe('TestingService', () => {
 
     const testPosts = new Array(countCreatedPosts).fill({
       id: 'some id',
-      bloggerId: blogger.id,
-      bloggerName: blogger.name,
+      blogId: blogger.id,
+      blogName: blogger.name,
       content: 'some content',
       shortDescription: 'short description',
       title: 'Some title',
@@ -117,7 +117,7 @@ describe('TestingService', () => {
       id: 'some id',
       postId: 'some post id',
       content: 'some content',
-      addedAt: new Date(),
+      createdAt: new Date(),
       userId: 'some user id',
       userLogin: 'some user login',
     });
