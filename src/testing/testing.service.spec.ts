@@ -5,7 +5,7 @@ import { MongoMemoryServer } from 'mongodb-memory-server';
 import { connect, Connection, Model } from 'mongoose';
 import { v4 } from 'uuid';
 
-import { Blogger, BloggerSchema } from '../bloggers/schemas/bloggers.schema';
+import { Blog, BlogSchema } from '../blogs/schemas/blogs.schema';
 import { Comment, CommentSchema } from '../comments/schemas/comments.schema';
 import { Limit, LimitSchema } from '../limits/schemas/limits.schema';
 import { Post, PostSchema } from '../posts/schemas/posts.schema';
@@ -26,7 +26,7 @@ describe('TestingService', () => {
   let mongod: MongoMemoryServer;
   let mongoConnection: Connection;
   let postModel: Model<Post>;
-  let bloggerModel: Model<Blogger>;
+  let blogModel: Model<Blog>;
   let userModel: Model<User>;
   let commentModel: Model<Comment>;
   let limitModel: Model<Limit>;
@@ -36,7 +36,7 @@ describe('TestingService', () => {
     const uri = mongod.getUri();
     mongoConnection = (await connect(uri)).connection;
     postModel = mongoConnection.model(Post.name, PostSchema);
-    bloggerModel = mongoConnection.model(Blogger.name, BloggerSchema);
+    blogModel = mongoConnection.model(Blog.name, BlogSchema);
     userModel = mongoConnection.model(User.name, UserSchema);
     commentModel = mongoConnection.model(Comment.name, CommentSchema);
     limitModel = mongoConnection.model(Limit.name, LimitSchema);
@@ -46,7 +46,7 @@ describe('TestingService', () => {
         TestingService,
         TestingRepository,
         { provide: getModelToken(Post.name), useValue: postModel },
-        { provide: getModelToken(Blogger.name), useValue: bloggerModel },
+        { provide: getModelToken(Blog.name), useValue: blogModel },
         { provide: getModelToken(User.name), useValue: userModel },
         { provide: getModelToken(Comment.name), useValue: commentModel },
         { provide: getModelToken(Limit.name), useValue: limitModel },
@@ -68,7 +68,7 @@ describe('TestingService', () => {
     const userName = 'Test User';
     const youtubeUrl = 'https://stackoverflow.com/';
 
-    const blogger = await bloggerModel.create({
+    const blog = await blogModel.create({
       id: v4(),
       name: userName,
       youtubeUrl,
@@ -76,16 +76,16 @@ describe('TestingService', () => {
 
     const testPosts = new Array(countCreatedPosts).fill({
       id: 'some id',
-      bloggerId: blogger.id,
-      bloggerName: blogger.name,
+      blogId: blog.id,
+      blogName: blog.name,
       content: 'some content',
       shortDescription: 'short description',
       title: 'Some title',
     });
 
-    expect(blogger).toBeDefined();
-    expect(blogger.name).toBe(userName);
-    expect(blogger.youtubeUrl).toBe(youtubeUrl);
+    expect(blog).toBeDefined();
+    expect(blog.name).toBe(userName);
+    expect(blog.youtubeUrl).toBe(youtubeUrl);
 
     await postModel.insertMany(testPosts);
 
@@ -117,7 +117,7 @@ describe('TestingService', () => {
       id: 'some id',
       postId: 'some post id',
       content: 'some content',
-      addedAt: new Date(),
+      createdAt: new Date(),
       userId: 'some user id',
       userLogin: 'some user login',
     });
@@ -126,7 +126,7 @@ describe('TestingService', () => {
       login: 'user',
       createdAt: new Date(),
       id: v4(),
-      url: 'https://github.com/muzyk0/NestJS-Bloggers-API',
+      url: 'https://github.com/muzyk0/NestJS-Blogs-API',
       ip: '127.0.0.1',
     });
 

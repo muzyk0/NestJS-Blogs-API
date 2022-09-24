@@ -2,9 +2,9 @@ import { Module } from '@nestjs/common';
 import { MongooseModule } from '@nestjs/mongoose';
 
 import { AuthModule } from '../auth/auth.module';
-import { BloggersRepository } from '../bloggers/bloggers.repository';
-import { BloggersService } from '../bloggers/bloggers.service';
-import { Blogger, BloggerSchema } from '../bloggers/schemas/bloggers.schema';
+import { BlogsRepository } from '../blogs/blogs.repository';
+import { BlogsService } from '../blogs/blogs.service';
+import { Blog, BlogSchema } from '../blogs/schemas/blogs.schema';
 import { CommentsRepository } from '../comments/comments.repository';
 import { CommentsService } from '../comments/comments.service';
 import { Comment, CommentSchema } from '../comments/schemas/comments.schema';
@@ -18,15 +18,15 @@ import { Post, PostSchema } from './schemas/posts.schema';
   imports: [
     AuthModule,
     MongooseModule.forFeature([{ name: Post.name, schema: PostSchema }]),
-    MongooseModule.forFeature([{ name: Blogger.name, schema: BloggerSchema }]),
+    MongooseModule.forFeature([{ name: Blog.name, schema: BlogSchema }]),
     MongooseModule.forFeature([{ name: Comment.name, schema: CommentSchema }]),
   ],
   controllers: [PostsController],
   providers: [
     PostsService,
     PostsRepository,
-    BloggersRepository,
-    BloggersService,
+    BlogsRepository,
+    BlogsService,
     CommentsService,
     CommentsRepository,
   ],

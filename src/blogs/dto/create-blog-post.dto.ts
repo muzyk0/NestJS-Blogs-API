@@ -1,6 +1,6 @@
 import { IsNotEmpty, Length } from 'class-validator';
 
-export class CreateBloggerPostDto {
+export class CreateBlogPostDto {
   @Length(1, 30)
   @IsNotEmpty()
   title: string;

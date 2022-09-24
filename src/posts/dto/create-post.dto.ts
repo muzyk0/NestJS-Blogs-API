@@ -1,6 +1,6 @@
 import { IsNotEmpty, IsString, Length } from 'class-validator';
 
-import { Blogger } from '../../bloggers/schemas/bloggers.schema';
+import { Blog } from '../../blogs/schemas/blogs.schema';
 
 export class CreatePostDto {
   @Length(1, 30)
@@ -14,5 +14,5 @@ export class CreatePostDto {
   content: string;
 
   @IsString()
-  bloggerId: Blogger['id'];
+  blogId: Blog['id'];
 }

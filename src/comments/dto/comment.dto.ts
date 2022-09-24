@@ -5,7 +5,7 @@ export interface IComment {
   content: string;
   userId: string;
   userLogin: string;
-  addedAt: Date;
+  createdAt: Date;
   postId: string;
 }
 
@@ -27,5 +27,5 @@ export class CommentDto implements IComment {
   postId: string;
 
   @IsDate()
-  addedAt: Date;
+  createdAt: Date;
 }

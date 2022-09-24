@@ -3,7 +3,7 @@ import { InjectModel } from '@nestjs/mongoose';
 import { IsInt, IsOptional } from 'class-validator';
 import { Model } from 'mongoose';
 
-import { Blogger, BloggerDocument } from '../bloggers/schemas/bloggers.schema';
+import { Blog, BlogDocument } from '../blogs/schemas/blogs.schema';
 import { BASE_PROJECTION } from '../common/mongoose/constants';
 import { PageOptionsDto } from '../common/paginator/page-options.dto';
 import { PageDto } from '../common/paginator/page.dto';
@@ -16,22 +16,22 @@ import { Post, PostDocument } from './schemas/posts.schema';
 export class FindAllPostsOptions extends PageOptionsDto {
   @IsInt()
   @IsOptional()
-  bloggerId?: string;
+  blogId?: string;
 }
 
 @Injectable()
 export class PostsRepository {
   constructor(
     @InjectModel(Post.name) private postModel: Model<PostDocument>,
-    @InjectModel(Blogger.name) private bloggerModel: Model<BloggerDocument>,
+    @InjectModel(Blog.name) private blogModel: Model<BlogDocument>,
   ) {}
 
   async create(createPostDto: CreatePostDbDto) {
-    const blogger = await this.bloggerModel.findOne({
-      id: createPostDto.bloggerId,
+    const blog = await this.blogModel.findOne({
+      id: createPostDto.blogId,
     });
 
-    if (!blogger) {
+    if (!blog) {
       return null;
     }
 
@@ -42,10 +42,10 @@ export class PostsRepository {
 
   async findAll(options: FindAllPostsOptions) {
     const filter = {
-      ...(options?.SearchNameTerm
-        ? { title: { $regex: options.SearchNameTerm } }
+      ...(options?.searchNameTerm
+        ? { title: { $regex: options.searchNameTerm } }
         : {}),
-      ...(options?.bloggerId ? { bloggerId: options.bloggerId } : {}),
+      ...(options?.blogId ? { blogId: options.blogId } : {}),
     };
 
     const itemsCount = await this.postModel.countDocuments(filter);
@@ -59,7 +59,10 @@ export class PostsRepository {
         { _id: 0, __v: 0 },
       )
       .skip(options.skip)
-      .limit(options.PageSize);
+      .sort({
+        [options.sortBy]: options.sortDirection,
+      })
+      .limit(options.pageSize);
 
     return new PageDto({
       items,

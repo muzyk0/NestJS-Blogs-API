@@ -107,6 +107,14 @@ export class AuthController {
   @Post('/registration-email-resending')
   @HttpCode(HttpStatus.NO_CONTENT)
   async resendConfirmationCode(@Body() { email }: Email) {
+    const user = await this.usersService.findOneByEmail(email);
+
+    if (!user) {
+      throw new BadRequestException([
+        { message: "Email isn't exist", field: 'email' },
+      ]);
+    }
+
     const isConfirmed = await this.authService.resendConfirmationCode(email);
 
     if (!isConfirmed) {
@@ -121,6 +129,7 @@ export class AuthController {
   @Get('/me')
   @UseGuards(JwtAuthGuard)
   async me(@GetCurrentUserId() userId: string) {
+    console.log(userId);
     const user = await this.usersService.findOneById(userId);
 
     return {

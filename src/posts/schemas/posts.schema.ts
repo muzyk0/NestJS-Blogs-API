@@ -20,10 +20,10 @@ export class Post implements PostDto {
   content: string;
 
   @Prop({ required: true })
-  bloggerId: string;
+  blogId: string;
 
   @Prop({ required: true })
-  bloggerName: string;
+  blogName: string;
 }
 
 export const PostSchema = SchemaFactory.createForClass(Post);

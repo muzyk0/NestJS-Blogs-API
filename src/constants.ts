@@ -4,6 +4,6 @@ export enum BaseAuthPayload {
 }
 
 export enum Order {
-  ASC = 'ASC',
-  DESC = 'DESC',
+  ASC = 'asc',
+  DESC = 'desc',
 }

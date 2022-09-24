@@ -38,8 +38,8 @@ export class UsersRepository {
 
   async findAll(pageOptionsDto: PageOptionsDto): Promise<PageDto<User>> {
     const filter = {
-      ...(pageOptionsDto?.SearchNameTerm
-        ? { 'accountData.login': { $regex: pageOptionsDto.SearchNameTerm } }
+      ...(pageOptionsDto?.searchNameTerm
+        ? { 'accountData.login': { $regex: pageOptionsDto.searchNameTerm } }
         : {}),
     };
 
@@ -48,7 +48,10 @@ export class UsersRepository {
     const items = await this.userModel
       .find(filter, projectionFields)
       .skip(pageOptionsDto.skip)
-      .limit(pageOptionsDto.PageSize);
+      .sort({
+        [pageOptionsDto.sortBy]: pageOptionsDto.sortDirection,
+      })
+      .limit(pageOptionsDto.pageSize);
 
     return new PageDto({
       items,

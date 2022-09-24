@@ -3,8 +3,8 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { MongoMemoryServer } from 'mongodb-memory-server';
 import { connect, Connection, Model } from 'mongoose';
 
-import { BloggersRepository } from '../bloggers/bloggers.repository';
-import { Blogger, BloggerSchema } from '../bloggers/schemas/bloggers.schema';
+import { BlogsRepository } from '../blogs/blogs.repository';
+import { Blog, BlogSchema } from '../blogs/schemas/blogs.schema';
 import { PostsRepository } from '../posts/posts.repository';
 import { Post, PostSchema } from '../posts/schemas/posts.schema';
 
@@ -18,7 +18,7 @@ describe('CommentsService', () => {
   let mongoConnection: Connection;
   let commentModel: Model<Comment>;
   let postModel: Model<Post>;
-  let bloggerModel: Model<Blogger>;
+  let blogModel: Model<Blog>;
 
   beforeAll(async () => {
     mongod = await MongoMemoryServer.create();
@@ -26,16 +26,16 @@ describe('CommentsService', () => {
     mongoConnection = (await connect(uri)).connection;
     commentModel = mongoConnection.model(Comment.name, CommentSchema);
     postModel = mongoConnection.model(Post.name, PostSchema);
-    bloggerModel = mongoConnection.model(Blogger.name, BloggerSchema);
+    blogModel = mongoConnection.model(Blog.name, BlogSchema);
     const app: TestingModule = await Test.createTestingModule({
       providers: [
         CommentsService,
         CommentsRepository,
         PostsRepository,
-        BloggersRepository,
+        BlogsRepository,
         { provide: getModelToken(Comment.name), useValue: commentModel },
         { provide: getModelToken(Post.name), useValue: postModel },
-        { provide: getModelToken(Blogger.name), useValue: bloggerModel },
+        { provide: getModelToken(Blog.name), useValue: blogModel },
       ],
     }).compile();
     commentsService = app.get<CommentsService>(CommentsService);

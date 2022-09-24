@@ -49,7 +49,7 @@ export class CommentsService implements ICommentsService {
       userId: createCommentDto.userId,
       userLogin: createCommentDto.userLogin,
       postId: post.id,
-      addedAt: new Date(),
+      createdAt: new Date(),
     };
 
     return this.commentsRepository.create(newComment);
@@ -57,6 +57,10 @@ export class CommentsService implements ICommentsService {
 
   async findOne(id: string) {
     return this.commentsRepository.findOne(id);
+  }
+
+  async findOneWithUserId(id: string, userId: string) {
+    return this.commentsRepository.findOneWithUserId(id, userId);
   }
 
   async findPostComments(options: FindAllCommentsOptions) {

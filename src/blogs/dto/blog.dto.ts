@@ -1,4 +1,4 @@
-export class BloggerDto {
+export class BlogDto {
   id: string;
   name: string;
   youtubeUrl: string;

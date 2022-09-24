@@ -18,60 +18,57 @@ import { BaseAuthGuard } from '../auth/guards/base-auth-guard';
 import { PageOptionsDto } from '../common/paginator/page-options.dto';
 import { PostsService } from '../posts/posts.service';
 
-import { BloggersService } from './bloggers.service';
-import { CreateBloggerPostDto } from './dto/create-blogger-post.dto';
-import { CreateBloggerDto } from './dto/create-blogger.dto';
-import { UpdateBloggerDto } from './dto/update-blogger.dto';
+import { BlogsService } from './blogs.service';
+import { CreateBlogPostDto } from './dto/create-blog-post.dto';
+import { CreateBlogDto } from './dto/create-blog.dto';
+import { UpdateBlogDto } from './dto/update-blog.dto';
 
-@Controller('bloggers')
-export class BloggersController {
+@Controller('blogs')
+export class BlogsController {
   constructor(
-    private readonly bloggersService: BloggersService,
+    private readonly blogsService: BlogsService,
     private readonly postsService: PostsService,
   ) {}
 
   @Post()
   @UseGuards(BaseAuthGuard)
-  create(@Body() createBloggerDto: CreateBloggerDto) {
-    return this.bloggersService.create(createBloggerDto);
+  create(@Body() createBlogDto: CreateBlogDto) {
+    return this.blogsService.create(createBlogDto);
   }
 
   @Get()
   findAll(@Query() pageOptionsDto: PageOptionsDto) {
-    return this.bloggersService.findAll(pageOptionsDto);
+    return this.blogsService.findAll(pageOptionsDto);
   }
 
   @Get(':id')
   async findOne(@Param('id') id: string) {
-    const blogger = await this.bloggersService.findOne(id);
+    const blog = await this.blogsService.findOne(id);
 
-    if (!blogger) {
+    if (!blog) {
       throw new NotFoundException();
     }
 
-    return blogger;
+    return blog;
   }
 
   @Put(':id')
   @HttpCode(HttpStatus.NO_CONTENT)
   @UseGuards(BaseAuthGuard)
-  async update(
-    @Param('id') id: string,
-    @Body() updateBloggerDto: UpdateBloggerDto,
-  ) {
-    const blogger = await this.bloggersService.update(id, updateBloggerDto);
-    if (!blogger) {
+  async update(@Param('id') id: string, @Body() updateBlogDto: UpdateBlogDto) {
+    const blog = await this.blogsService.update(id, updateBlogDto);
+    if (!blog) {
       throw new NotFoundException();
     }
 
-    return blogger;
+    return blog;
   }
 
   @Delete(':id')
   @HttpCode(HttpStatus.NO_CONTENT)
   @UseGuards(BaseAuthGuard)
   async remove(@Param('id') id: string) {
-    const isDeleted = await this.bloggersService.remove(id);
+    const isDeleted = await this.blogsService.remove(id);
 
     if (!isDeleted) {
       throw new NotFoundException();
@@ -81,37 +78,37 @@ export class BloggersController {
   }
 
   @Get(':id/posts')
-  async findBloggerPosts(
+  async findBlogPosts(
     @Query() pageOptionsDto: PageOptionsDto,
     @Param('id') id: string,
   ) {
-    const blogger = await this.bloggersService.findOne(id);
+    const blog = await this.blogsService.findOne(id);
 
-    if (!blogger) {
+    if (!blog) {
       throw new NotFoundException();
     }
 
     return this.postsService.findAll({
       ...pageOptionsDto,
-      bloggerId: id,
+      blogId: id,
     });
   }
 
   @Post(':id/posts')
   @HttpCode(HttpStatus.CREATED)
   @UseGuards(BaseAuthGuard)
-  async createBloggerPost(
-    @Param('id') bloggerId: string,
-    @Body() { shortDescription, content, title }: CreateBloggerPostDto,
+  async createBlogPost(
+    @Param('id') blogId: string,
+    @Body() { shortDescription, content, title }: CreateBlogPostDto,
   ) {
-    const blogger = await this.bloggersService.findOne(bloggerId);
+    const blog = await this.blogsService.findOne(blogId);
 
-    if (!blogger) {
+    if (!blog) {
       throw new BadRequestException();
     }
 
     return this.postsService.create({
-      bloggerId,
+      blogId: blogId,
       shortDescription,
       content,
       title,

@@ -3,8 +3,8 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { MongoMemoryServer } from 'mongodb-memory-server';
 import { connect, Connection, Model } from 'mongoose';
 
-import { BloggersRepository } from '../bloggers/bloggers.repository';
-import { Blogger, BloggerSchema } from '../bloggers/schemas/bloggers.schema';
+import { BlogsRepository } from '../blogs/blogs.repository';
+import { Blog, BlogSchema } from '../blogs/schemas/blogs.schema';
 import { PostsRepository } from '../posts/posts.repository';
 import { Post, PostSchema } from '../posts/schemas/posts.schema';
 import { User, UserSchema } from '../users/schemas/users.schema';
@@ -18,7 +18,7 @@ describe('CommentsController', () => {
   let commentController: CommentsController;
   let mongod: MongoMemoryServer;
   let mongoConnection: Connection;
-  let bloggerModel: Model<Blogger>;
+  let blogModel: Model<Blog>;
   let postModel: Model<Post>;
   let commentModel: Model<Comment>;
   let userModel: Model<User>;
@@ -28,7 +28,7 @@ describe('CommentsController', () => {
     const uri = mongod.getUri();
     mongoConnection = (await connect(uri)).connection;
 
-    bloggerModel = mongoConnection.model(Blogger.name, BloggerSchema);
+    blogModel = mongoConnection.model(Blog.name, BlogSchema);
     postModel = mongoConnection.model(Post.name, PostSchema);
     commentModel = mongoConnection.model(Comment.name, CommentSchema);
     userModel = mongoConnection.model(User.name, UserSchema);
@@ -38,10 +38,10 @@ describe('CommentsController', () => {
       controllers: [CommentsController],
       providers: [
         PostsRepository,
-        BloggersRepository,
+        BlogsRepository,
         CommentsService,
         CommentsRepository,
-        { provide: getModelToken(Blogger.name), useValue: bloggerModel },
+        { provide: getModelToken(Blog.name), useValue: blogModel },
         { provide: getModelToken(Post.name), useValue: postModel },
         { provide: getModelToken(Comment.name), useValue: commentModel },
         { provide: getModelToken(User.name), useValue: userModel },

@@ -7,9 +7,9 @@ import { MongoMemoryServer } from 'mongodb-memory-server';
 import { connect, Connection, Model } from 'mongoose';
 
 import { AuthService } from '../auth/auth.service';
-import { BloggersRepository } from '../bloggers/bloggers.repository';
-import { BloggersService } from '../bloggers/bloggers.service';
-import { Blogger, BloggerSchema } from '../bloggers/schemas/bloggers.schema';
+import { BlogsRepository } from '../blogs/blogs.repository';
+import { BlogsService } from '../blogs/blogs.service';
+import { Blog, BlogSchema } from '../blogs/schemas/blogs.schema';
 import { CommentsRepository } from '../comments/comments.repository';
 import { CommentsService } from '../comments/comments.service';
 import { Comment, CommentSchema } from '../comments/schemas/comments.schema';
@@ -28,7 +28,7 @@ describe('PostsController', () => {
   let postsController: PostsController;
   let mongod: MongoMemoryServer;
   let mongoConnection: Connection;
-  let bloggerModel: Model<Blogger>;
+  let blogModel: Model<Blog>;
   let postModel: Model<Post>;
   let commentModel: Model<Comment>;
   let userModel: Model<User>;
@@ -37,7 +37,7 @@ describe('PostsController', () => {
     mongod = await MongoMemoryServer.create();
     const uri = mongod.getUri();
     mongoConnection = (await connect(uri)).connection;
-    bloggerModel = mongoConnection.model(Blogger.name, BloggerSchema);
+    blogModel = mongoConnection.model(Blog.name, BlogSchema);
     postModel = mongoConnection.model(Post.name, PostSchema);
     commentModel = mongoConnection.model(Comment.name, CommentSchema);
     userModel = mongoConnection.model(User.name, UserSchema);
@@ -48,11 +48,11 @@ describe('PostsController', () => {
       providers: [
         PostsService,
         PostsRepository,
-        BloggersService,
-        BloggersRepository,
+        BlogsService,
+        BlogsRepository,
         CommentsService,
         CommentsRepository,
-        { provide: getModelToken(Blogger.name), useValue: bloggerModel },
+        { provide: getModelToken(Blog.name), useValue: blogModel },
         { provide: getModelToken(Post.name), useValue: postModel },
         { provide: getModelToken(Comment.name), useValue: commentModel },
         { provide: getModelToken(User.name), useValue: userModel },
