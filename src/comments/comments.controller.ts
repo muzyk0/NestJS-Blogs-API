@@ -44,25 +44,40 @@ export class CommentsController {
     @Param('id') id: string,
     @Body() updateCommentDto: CommentInput,
   ) {
+    const commentIsExist = await this.commentsService.findOne(id);
+
+    if (!commentIsExist) {
+      throw new NotFoundException();
+    }
+
     const isAllowed = await this.commentsService.findOneWithUserId(id, userId);
 
     if (!isAllowed) {
       throw new ForbiddenException();
     }
 
-    const comment = await this.commentsService.update(id, updateCommentDto);
+    const updatedComment = await this.commentsService.update(
+      id,
+      updateCommentDto,
+    );
 
-    if (!comment) {
+    if (!updatedComment) {
       throw new NotFoundException();
     }
 
-    return comment;
+    return updatedComment;
   }
 
   @UseGuards(JwtAuthGuard)
   @Delete(':id')
   @HttpCode(HttpStatus.NO_CONTENT)
   async remove(@GetCurrentUserId() userId: string, @Param('id') id: string) {
+    const commentIsExist = await this.commentsService.findOne(id);
+
+    if (!commentIsExist) {
+      throw new NotFoundException();
+    }
+
     const isAllowed = await this.commentsService.findOneWithUserId(id, userId);
 
     if (!isAllowed) {

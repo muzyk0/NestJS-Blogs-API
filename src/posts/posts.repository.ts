@@ -42,8 +42,8 @@ export class PostsRepository {
 
   async findAll(options: FindAllPostsOptions) {
     const filter = {
-      ...(options?.SearchNameTerm
-        ? { title: { $regex: options.SearchNameTerm } }
+      ...(options?.searchNameTerm
+        ? { title: { $regex: options.searchNameTerm } }
         : {}),
       ...(options?.blogId ? { bloggerId: options.blogId } : {}),
     };
@@ -62,7 +62,7 @@ export class PostsRepository {
       .sort({
         [options.sortBy]: options.sortDirection,
       })
-      .limit(options.PageSize);
+      .limit(options.pageSize);
 
     return new PageDto({
       items,

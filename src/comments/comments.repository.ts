@@ -67,7 +67,7 @@ export class CommentsRepository {
       .sort({
         [findAllCommentsOptions.sortBy]: findAllCommentsOptions.sortDirection,
       })
-      .limit(findAllCommentsOptions.PageSize);
+      .limit(findAllCommentsOptions.pageSize);
 
     return new PageDto({
       items,

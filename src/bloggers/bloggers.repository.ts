@@ -23,8 +23,8 @@ export class BloggersRepository {
 
   async findAll(pageOptionsDto: PageOptionsDto): Promise<PageDto<BloggerDto>> {
     const filter = {
-      ...(pageOptionsDto?.SearchNameTerm
-        ? { name: { $regex: pageOptionsDto.SearchNameTerm } }
+      ...(pageOptionsDto?.searchNameTerm
+        ? { name: { $regex: pageOptionsDto.searchNameTerm } }
         : {}),
     };
 
@@ -36,7 +36,7 @@ export class BloggersRepository {
       .sort({
         [pageOptionsDto.sortBy]: pageOptionsDto.sortDirection,
       })
-      .limit(pageOptionsDto.PageSize);
+      .limit(pageOptionsDto.pageSize);
 
     return new PageDto({
       items,

@@ -19,8 +19,8 @@ export class PageDto<T> {
   readonly items: T[];
 
   constructor({ items, pageOptionsDto, itemsCount }: PageMetaDtoParameters<T>) {
-    this.page = pageOptionsDto.PageNumber;
-    this.pageSize = pageOptionsDto.PageSize;
+    this.page = pageOptionsDto.pageNumber;
+    this.pageSize = pageOptionsDto.pageSize;
     this.totalCount = itemsCount;
     this.pagesCount = Math.ceil(this.totalCount / this.pageSize);
     // this.hasPreviousPage = this.page > 1;
