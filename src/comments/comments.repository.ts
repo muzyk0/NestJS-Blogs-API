@@ -50,6 +50,10 @@ export class CommentsRepository {
     return this.commentModel.findOne({ id }, projectionFields);
   }
 
+  findOneWithUserId(id: string, userId: string) {
+    return this.commentModel.findOne({ id, userId }, projectionFields);
+  }
+
   async findPostComments(
     findAllCommentsOptions: FindAllCommentsOptions,
   ): Promise<PageDto<CommentDto>> {

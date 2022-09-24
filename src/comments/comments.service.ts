@@ -59,6 +59,10 @@ export class CommentsService implements ICommentsService {
     return this.commentsRepository.findOne(id);
   }
 
+  async findOneWithUserId(id: string, userId: string) {
+    return this.commentsRepository.findOneWithUserId(id, userId);
+  }
+
   async findPostComments(options: FindAllCommentsOptions) {
     return this.commentsRepository.findPostComments(options);
   }

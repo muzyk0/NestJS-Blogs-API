@@ -3,6 +3,7 @@ import {
   Body,
   Controller,
   Delete,
+  ForbiddenException,
   Get,
   HttpCode,
   HttpStatus,
@@ -15,6 +16,7 @@ import {
 import { Response } from 'express';
 
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
+import { GetCurrentUserId } from '../common/decorators/get-current-user-id.decorator';
 
 import { CommentsService } from './comments.service';
 import { CommentInput } from './dto/comment.input';
@@ -38,9 +40,16 @@ export class CommentsController {
   @Put(':id')
   @HttpCode(HttpStatus.NO_CONTENT)
   async update(
+    @GetCurrentUserId() userId: string,
     @Param('id') id: string,
     @Body() updateCommentDto: CommentInput,
   ) {
+    const isAllowed = await this.commentsService.findOneWithUserId(id, userId);
+
+    if (!isAllowed) {
+      throw new ForbiddenException();
+    }
+
     const comment = await this.commentsService.update(id, updateCommentDto);
 
     if (!comment) {
@@ -53,7 +62,13 @@ export class CommentsController {
   @UseGuards(JwtAuthGuard)
   @Delete(':id')
   @HttpCode(HttpStatus.NO_CONTENT)
-  async remove(@Res() res: Response, @Param('id') id: string) {
+  async remove(@GetCurrentUserId() userId: string, @Param('id') id: string) {
+    const isAllowed = await this.commentsService.findOneWithUserId(id, userId);
+
+    if (!isAllowed) {
+      throw new ForbiddenException();
+    }
+
     const comment = await this.commentsService.findOne(id);
 
     if (!comment) {
@@ -66,6 +81,6 @@ export class CommentsController {
       throw new BadRequestException();
     }
 
-    return res.status(HttpStatus.NO_CONTENT).send();
+    return;
   }
 }
