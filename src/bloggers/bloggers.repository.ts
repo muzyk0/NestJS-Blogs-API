@@ -33,6 +33,9 @@ export class BloggersRepository {
     const items = await this.bloggerModel
       .find(filter, BASE_PROJECTION)
       .skip(pageOptionsDto.skip)
+      .sort({
+        [pageOptionsDto.sortBy]: pageOptionsDto.sortDirection,
+      })
       .limit(pageOptionsDto.PageSize);
 
     return new PageDto({

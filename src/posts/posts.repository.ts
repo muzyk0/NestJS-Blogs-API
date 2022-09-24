@@ -59,6 +59,9 @@ export class PostsRepository {
         { _id: 0, __v: 0 },
       )
       .skip(options.skip)
+      .sort({
+        [options.sortBy]: options.sortDirection,
+      })
       .limit(options.PageSize);
 
     return new PageDto({

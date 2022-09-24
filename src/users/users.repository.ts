@@ -48,6 +48,9 @@ export class UsersRepository {
     const items = await this.userModel
       .find(filter, projectionFields)
       .skip(pageOptionsDto.skip)
+      .sort({
+        [pageOptionsDto.sortBy]: pageOptionsDto.sortDirection,
+      })
       .limit(pageOptionsDto.PageSize);
 
     return new PageDto({
