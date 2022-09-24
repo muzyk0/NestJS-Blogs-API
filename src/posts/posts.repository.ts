@@ -3,7 +3,7 @@ import { InjectModel } from '@nestjs/mongoose';
 import { IsInt, IsOptional } from 'class-validator';
 import { Model } from 'mongoose';
 
-import { Blogger, BloggerDocument } from '../bloggers/schemas/bloggers.schema';
+import { Blog, BlogDocument } from '../blogs/schemas/blogs.schema';
 import { BASE_PROJECTION } from '../common/mongoose/constants';
 import { PageOptionsDto } from '../common/paginator/page-options.dto';
 import { PageDto } from '../common/paginator/page.dto';
@@ -23,15 +23,15 @@ export class FindAllPostsOptions extends PageOptionsDto {
 export class PostsRepository {
   constructor(
     @InjectModel(Post.name) private postModel: Model<PostDocument>,
-    @InjectModel(Blogger.name) private bloggerModel: Model<BloggerDocument>,
+    @InjectModel(Blog.name) private blogModel: Model<BlogDocument>,
   ) {}
 
   async create(createPostDto: CreatePostDbDto) {
-    const blogger = await this.bloggerModel.findOne({
+    const blog = await this.blogModel.findOne({
       id: createPostDto.blogId,
     });
 
-    if (!blogger) {
+    if (!blog) {
       return null;
     }
 
@@ -45,7 +45,7 @@ export class PostsRepository {
       ...(options?.searchNameTerm
         ? { title: { $regex: options.searchNameTerm } }
         : {}),
-      ...(options?.blogId ? { bloggerId: options.blogId } : {}),
+      ...(options?.blogId ? { blogId: options.blogId } : {}),
     };
 
     const itemsCount = await this.postModel.countDocuments(filter);

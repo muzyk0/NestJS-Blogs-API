@@ -3,7 +3,7 @@ import { IsNotEmpty, IsString, Length, Matches } from 'class-validator';
 export const youtubeURLPattern =
   /^https:\/\/([a-zA-Z0-9_-]+\.)+[a-zA-Z0-9_-]+$/;
 
-export class CreateBloggerDto {
+export class CreateBlogDto {
   @IsString()
   @Length(1, 15)
   @IsNotEmpty()

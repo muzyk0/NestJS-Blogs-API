@@ -17,7 +17,7 @@ import {
 import { BaseAuthGuard } from '../auth/guards/base-auth-guard';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 import { JwtPayload } from '../auth/types/jwtPayload.type';
-import { BloggersService } from '../bloggers/bloggers.service';
+import { BlogsService } from '../blogs/blogs.service';
 import { CommentsService } from '../comments/comments.service';
 import { CommentInput } from '../comments/dto/comment.input';
 import { GetCurrentJwtContext } from '../common/decorators/get-current-user.decorator';
@@ -31,7 +31,7 @@ import { PostsService } from './posts.service';
 export class PostsController {
   constructor(
     private readonly postsService: PostsService,
-    private readonly bloggersService: BloggersService,
+    private readonly blogsService: BlogsService,
     private readonly commentsService: CommentsService,
   ) {}
 
@@ -39,9 +39,9 @@ export class PostsController {
   @Post()
   @HttpCode(HttpStatus.CREATED)
   async create(@Body() createPostDto: CreatePostDto) {
-    const blogger = await this.bloggersService.findOne(createPostDto.blogId);
+    const blog = await this.blogsService.findOne(createPostDto.blogId);
 
-    if (!blogger) {
+    if (!blog) {
       throw new BadRequestException();
     }
 
@@ -68,9 +68,9 @@ export class PostsController {
   @Put(':id')
   @HttpCode(HttpStatus.NO_CONTENT)
   async update(@Param('id') id: string, @Body() updatePostDto: UpdatePostDto) {
-    const blogger = await this.bloggersService.findOne(updatePostDto.blogId);
+    const blog = await this.blogsService.findOne(updatePostDto.blogId);
 
-    if (!blogger) {
+    if (!blog) {
       throw new BadRequestException();
     }
 

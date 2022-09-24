@@ -5,7 +5,7 @@ import { MongooseModule } from '@nestjs/mongoose';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { AuthModule } from './auth/auth.module';
-import { BloggersModule } from './bloggers/bloggers.module';
+import { BlogsModule } from './blogs/blogs.module';
 import { CommentsModule } from './comments/comments.module';
 import configuration from './config/configuration';
 import { EmailModule } from './email/email.module';
@@ -23,7 +23,7 @@ import { UsersModule } from './users/users.module';
     }),
     MongooseModule.forRoot(configuration().MONGO_URI),
     TestModule,
-    BloggersModule,
+    BlogsModule,
     PostsModule,
     AuthModule,
     UsersModule,

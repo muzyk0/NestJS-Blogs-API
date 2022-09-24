@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { v4 } from 'uuid';
 
-import { BloggersRepository } from '../bloggers/bloggers.repository';
+import { BlogsRepository } from '../blogs/blogs.repository';
 import { PageDto } from '../common/paginator/page.dto';
 
 import { CreatePostDto } from './dto/create-post.dto';
@@ -22,20 +22,20 @@ interface IPostService {
 export class PostsService implements IPostService {
   constructor(
     private postRepository: PostsRepository,
-    private bloggerRepository: BloggersRepository,
+    private blogRepository: BlogsRepository,
   ) {}
 
   async create(createPostDto: CreatePostDto) {
-    const blogger = await this.bloggerRepository.findOne(createPostDto.blogId);
+    const blog = await this.blogRepository.findOne(createPostDto.blogId);
 
-    if (!blogger) {
+    if (!blog) {
       return null;
     }
 
     const newPostInput: PostDto = {
       id: v4(),
-      blogId: blogger.id,
-      blogName: blogger.name,
+      blogId: blog.id,
+      blogName: blog.name,
       title: createPostDto.title,
       content: createPostDto.content,
       shortDescription: createPostDto.shortDescription,
@@ -53,14 +53,14 @@ export class PostsService implements IPostService {
   }
 
   async update(id: string, updatePostDto: UpdatePostDto) {
-    const blogger = await this.bloggerRepository.findOne(updatePostDto.blogId);
+    const blog = await this.blogRepository.findOne(updatePostDto.blogId);
 
-    if (!blogger) {
+    if (!blog) {
       return null;
     }
 
     const updatedPost: UpdatePostDbDto = {
-      blogName: blogger.name,
+      blogName: blog.name,
       title: updatePostDto.title,
       content: updatePostDto.content,
       shortDescription: updatePostDto.shortDescription,

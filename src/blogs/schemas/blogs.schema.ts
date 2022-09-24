@@ -1,12 +1,12 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { Document } from 'mongoose';
 
-import { BloggerDto } from '../dto/blogger.dto';
+import { BlogDto } from '../dto/blog.dto';
 
-export type BloggerDocument = Blogger & Document;
+export type BlogDocument = Blog & Document;
 
 @Schema()
-export class Blogger implements BloggerDto {
+export class Blog implements BlogDto {
   @Prop({ required: true })
   id: string;
 
@@ -17,4 +17,4 @@ export class Blogger implements BloggerDto {
   youtubeUrl: string;
 }
 
-export const BloggerSchema = SchemaFactory.createForClass(Blogger);
+export const BlogSchema = SchemaFactory.createForClass(Blog);

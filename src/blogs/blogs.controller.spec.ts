@@ -19,20 +19,20 @@ import { User, UserSchema } from '../users/schemas/users.schema';
 import { UsersRepository } from '../users/users.repository';
 import { UsersService } from '../users/users.service';
 
-import { BloggersController } from './bloggers.controller';
-import { BloggersRepository } from './bloggers.repository';
-import { BloggersService } from './bloggers.service';
-import { BloggerDto } from './dto/blogger.dto';
-import { Blogger, BloggerSchema } from './schemas/bloggers.schema';
+import { BlogsController } from './blogs.controller';
+import { BlogsRepository } from './blogs.repository';
+import { BlogsService } from './blogs.service';
+import { BlogDto } from './dto/blog.dto';
+import { Blog, BlogSchema } from './schemas/blogs.schema';
 
-describe('BloggersController', () => {
-  let blogger: BloggerDto;
+describe('blogsController', () => {
+  let blog: BlogDto;
 
-  let bloggerController: BloggersController;
+  let blogController: BlogsController;
   let mongod: MongoMemoryServer;
   let mongoConnection: Connection;
 
-  let bloggerModel: Model<Blogger>;
+  let blogModel: Model<Blog>;
   let userModel: Model<User>;
   let postModel: Model<Post>;
 
@@ -41,17 +41,17 @@ describe('BloggersController', () => {
     const uri = mongod.getUri();
     mongoConnection = (await connect(uri)).connection;
 
-    bloggerModel = mongoConnection.model(Blogger.name, BloggerSchema);
+    blogModel = mongoConnection.model(Blog.name, BlogSchema);
     userModel = mongoConnection.model(User.name, UserSchema);
     postModel = mongoConnection.model(Post.name, PostSchema);
 
     const app: TestingModule = await Test.createTestingModule({
       imports: [ConfigModule.forRoot({})],
-      controllers: [BloggersController],
+      controllers: [BlogsController],
       providers: [
-        BloggersService,
-        BloggersRepository,
-        { provide: getModelToken(Blogger.name), useValue: bloggerModel },
+        BlogsService,
+        BlogsRepository,
+        { provide: getModelToken(Blog.name), useValue: blogModel },
         AuthService,
         EmailService,
         EmailTemplateManager,
@@ -66,7 +66,7 @@ describe('BloggersController', () => {
         JwtService,
       ],
     }).compile();
-    bloggerController = app.get<BloggersController>(BloggersController);
+    blogController = app.get<BlogsController>(BlogsController);
   });
 
   afterAll(async () => {
@@ -83,62 +83,60 @@ describe('BloggersController', () => {
   //   }
   // });
 
-  it('bloggerController should be defined', async () => {
-    expect(bloggerController).toBeDefined();
+  it('blogController should be defined', async () => {
+    expect(blogController).toBeDefined();
   });
 
-  it('first blogger should be created', async () => {
-    const newBlogger = await bloggerController.create({
+  it('first blog should be created', async () => {
+    const newBlog = await blogController.create({
       name: 'Vlad',
       youtubeUrl: 'https://www.youtube.com/channel/UCcZ18YvVGS7tllvrxN5IAAQ',
     });
 
-    blogger = newBlogger;
+    blog = newBlog;
 
-    expect(bloggerController).toBeDefined();
-    expect(newBlogger.name).toBe('Vlad');
+    expect(blogController).toBeDefined();
+    expect(newBlog.name).toBe('Vlad');
   });
 
-  it('blogger should be defined', async () => {
-    const bloggerInDb = await bloggerController.findOne(blogger!.id);
-    expect(bloggerInDb.name).toBe(blogger.name);
+  it('blog should be defined', async () => {
+    const blogInDb = await blogController.findOne(blog!.id);
+    expect(blogInDb.name).toBe(blog.name);
   });
 
-  it('two bloggers should be created', async () => {
-    const firstBlogger = await bloggerController.create({
+  it('two blogs should be created', async () => {
+    const firstBlog = await blogController.create({
       name: 'Vlad 2',
       youtubeUrl: 'https://www.youtube.com/channel/UCcZ18YvVGS7tllvrxN5IAAQ',
     });
 
-    blogger = firstBlogger;
+    blog = firstBlog;
 
-    expect(bloggerController).toBeDefined();
-    expect(firstBlogger.name).toBe('Vlad 2');
+    expect(blogController).toBeDefined();
+    expect(firstBlog.name).toBe('Vlad 2');
   });
 
-  it('bloggers should be equal 3 length', async () => {
-    const bloggers = await bloggerController.findAll(new PageOptionsDto());
+  it('blogs should be equal 3 length', async () => {
+    const blogs = await blogController.findAll(new PageOptionsDto());
 
-    expect(bloggers!.items.length).toBe(2);
+    expect(blogs!.items.length).toBe(2);
   });
 
-  it('blogger should be removed', async () => {
-    const isRemoved = await bloggerController.remove(blogger.id);
-    const bloggers = await bloggerController.findAll(new PageOptionsDto());
+  it('blog should be removed', async () => {
+    const isRemoved = await blogController.remove(blog.id);
+    const blogs = await blogController.findAll(new PageOptionsDto());
 
     expect(isRemoved).toBeTruthy();
-    expect(bloggers!.items.length).toBe(1);
-    expect(bloggers!.items[0].name).not.toBe(blogger.name);
+    expect(blogs!.items.length).toBe(1);
+    expect(blogs!.items[0].name).not.toBe(blog.name);
   });
 
-  it('bloggers should be removed', async () => {
-    const bloggers = await bloggerController.findAll(new PageOptionsDto());
-    const isRemoved = await bloggerController.remove(bloggers.items[0].id);
-    const bloggersIsEmpty = await bloggerController.findAll(
-      new PageOptionsDto(),
-    );
+  it('blogs should be removed', async () => {
+    const blogs = await blogController.findAll(new PageOptionsDto());
+    const isRemoved = await blogController.remove(blogs.items[0].id);
+    const blogsIsEmpty = await blogController.findAll(new PageOptionsDto());
 
     expect(isRemoved).toBeTruthy();
-    expect(bloggersIsEmpty!.items.length).toBe(0);
+    expect(blogsIsEmpty!.items.length).toBe(0);
   });
 });
