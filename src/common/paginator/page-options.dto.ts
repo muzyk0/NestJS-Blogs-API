@@ -15,9 +15,13 @@ export class PageOptionsDto {
     });
   }
 
+  @IsString()
+  @IsOptional()
+  readonly sortBy?: string = 'createdAt';
+
   @IsEnum(Order)
   @IsOptional()
-  readonly order?: Order = Order.ASC;
+  readonly sortDirection?: Order = Order.DESC;
 
   @IsString()
   @IsOptional()

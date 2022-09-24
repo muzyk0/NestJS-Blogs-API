@@ -60,6 +60,9 @@ export class CommentsRepository {
     const items = await this.commentModel
       .find(filter, projectionFields)
       .skip(findAllCommentsOptions.skip)
+      .sort({
+        [findAllCommentsOptions.sortBy]: findAllCommentsOptions.sortDirection,
+      })
       .limit(findAllCommentsOptions.PageSize);
 
     return new PageDto({
