@@ -16,6 +16,7 @@ import {
 
 import { BaseAuthGuard } from '../auth/guards/base-auth-guard';
 import { PageOptionsDto } from '../common/paginator/page-options.dto';
+import { PostsQueryRepository } from '../posts/posts.query.repository';
 import { PostsService } from '../posts/posts.service';
 
 import { BlogsQueryRepository } from './blogs.query.repository';
@@ -38,6 +39,7 @@ export class BlogsController {
     private readonly blogsService: BlogsService,
     private readonly blogsQueryRepository: BlogsQueryRepository,
     private readonly postsService: PostsService,
+    private readonly postsQueryRepository: PostsQueryRepository,
   ) {}
 
   @Post()
@@ -98,7 +100,7 @@ export class BlogsController {
       throw new NotFoundException();
     }
 
-    return this.postsService.findAll({
+    return this.postsQueryRepository.findAll({
       ...pageOptionsDto,
       blogId: id,
     });

@@ -20,6 +20,7 @@ import { UsersRepository } from '../users/users.repository';
 import { UsersService } from '../users/users.service';
 
 import { PostsController } from './posts.controller';
+import { PostsQueryRepository } from './posts.query.repository';
 import { PostsRepository } from './posts.repository';
 import { PostsService } from './posts.service';
 import { Post, PostSchema } from './schemas/posts.schema';
@@ -48,6 +49,7 @@ describe('PostsController', () => {
       providers: [
         PostsService,
         PostsRepository,
+        PostsQueryRepository,
         BlogsService,
         BlogsRepository,
         CommentsService,

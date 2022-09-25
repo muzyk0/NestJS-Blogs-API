@@ -1,17 +1,17 @@
 import {
-  Controller,
-  Get,
-  Post,
-  Body,
-  Param,
-  Delete,
-  Put,
-  UseGuards,
-  HttpStatus,
   BadRequestException,
-  NotFoundException,
+  Body,
+  Controller,
+  Delete,
+  Get,
   HttpCode,
+  HttpStatus,
+  NotFoundException,
+  Param,
+  Post,
+  Put,
   Query,
+  UseGuards,
 } from '@nestjs/common';
 
 import { BaseAuthGuard } from '../auth/guards/base-auth-guard';
@@ -24,13 +24,23 @@ import { GetCurrentJwtContext } from '../common/decorators/get-current-user.deco
 import { PageOptionsDto } from '../common/paginator/page-options.dto';
 
 import { CreatePostDto } from './dto/create-post.dto';
+import { PostDto } from './dto/post.dto';
 import { UpdatePostDto } from './dto/update-post.dto';
+import { PostsQueryRepository } from './posts.query.repository';
 import { PostsService } from './posts.service';
+
+export interface IPostService {
+  create(createPostDto: Omit<CreatePostDto, 'id'>): Promise<PostDto>;
+  findOne(id: string): Promise<PostDto>;
+  update(id: string, updatePostDto: UpdatePostDto): Promise<PostDto>;
+  remove(id: string): Promise<boolean>;
+}
 
 @Controller('posts')
 export class PostsController {
   constructor(
     private readonly postsService: PostsService,
+    private readonly postsQueryRepository: PostsQueryRepository,
     private readonly blogsService: BlogsService,
     private readonly commentsService: CommentsService,
   ) {}
@@ -50,7 +60,7 @@ export class PostsController {
 
   @Get()
   async findAll(@Query() pageOptionsDto: PageOptionsDto) {
-    return this.postsService.findAll(pageOptionsDto);
+    return this.postsQueryRepository.findAll(pageOptionsDto);
   }
 
   @Get(':id')

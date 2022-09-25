@@ -10,26 +10,28 @@ import { CommentsService } from '../comments/comments.service';
 import { Comment, CommentSchema } from '../comments/schemas/comments.schema';
 
 import { PostsController } from './posts.controller';
+import { PostsQueryRepository } from './posts.query.repository';
 import { PostsRepository } from './posts.repository';
 import { PostsService } from './posts.service';
 import { Post, PostSchema } from './schemas/posts.schema';
 
 @Module({
   imports: [
-    AuthModule,
     MongooseModule.forFeature([{ name: Post.name, schema: PostSchema }]),
     MongooseModule.forFeature([{ name: Blog.name, schema: BlogSchema }]),
     MongooseModule.forFeature([{ name: Comment.name, schema: CommentSchema }]),
+    AuthModule,
   ],
   controllers: [PostsController],
   providers: [
     PostsService,
     PostsRepository,
+    PostsQueryRepository,
     BlogsRepository,
     BlogsService,
     CommentsService,
     CommentsRepository,
   ],
-  exports: [PostsService, PostsRepository],
+  exports: [PostsService, PostsRepository, PostsQueryRepository],
 })
 export class PostsModule {}

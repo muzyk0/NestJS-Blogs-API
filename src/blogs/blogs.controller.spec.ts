@@ -12,6 +12,7 @@ import { AuthService } from '../auth/auth.service';
 import { PageOptionsDto } from '../common/paginator/page-options.dto';
 import { EmailTemplateManager } from '../email/email-template-manager';
 import { EmailService } from '../email/email.service';
+import { PostsQueryRepository } from '../posts/posts.query.repository';
 import { PostsRepository } from '../posts/posts.repository';
 import { PostsService } from '../posts/posts.service';
 import { Post, PostSchema } from '../posts/schemas/posts.schema';
@@ -64,6 +65,7 @@ describe('blogsController', () => {
         { provide: getModelToken(User.name), useValue: userModel },
         PostsService,
         PostsRepository,
+        PostsQueryRepository,
         { provide: getModelToken(Post.name), useValue: postModel },
         JwtService,
       ],
