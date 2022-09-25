@@ -10,6 +10,7 @@ import { AuthService } from '../auth/auth.service';
 import { BlogsRepository } from '../blogs/blogs.repository';
 import { BlogsService } from '../blogs/blogs.service';
 import { Blog, BlogSchema } from '../blogs/schemas/blogs.schema';
+import { CommentsQueryRepository } from '../comments/comments.query.repository';
 import { CommentsRepository } from '../comments/comments.repository';
 import { CommentsService } from '../comments/comments.service';
 import { Comment, CommentSchema } from '../comments/schemas/comments.schema';
@@ -20,6 +21,7 @@ import { UsersRepository } from '../users/users.repository';
 import { UsersService } from '../users/users.service';
 
 import { PostsController } from './posts.controller';
+import { PostsQueryRepository } from './posts.query.repository';
 import { PostsRepository } from './posts.repository';
 import { PostsService } from './posts.service';
 import { Post, PostSchema } from './schemas/posts.schema';
@@ -48,10 +50,12 @@ describe('PostsController', () => {
       providers: [
         PostsService,
         PostsRepository,
+        PostsQueryRepository,
         BlogsService,
         BlogsRepository,
         CommentsService,
         CommentsRepository,
+        CommentsQueryRepository,
         { provide: getModelToken(Blog.name), useValue: blogModel },
         { provide: getModelToken(Post.name), useValue: postModel },
         { provide: getModelToken(Comment.name), useValue: commentModel },

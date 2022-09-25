@@ -10,6 +10,7 @@ import { Post, PostSchema } from '../posts/schemas/posts.schema';
 import { User, UserSchema } from '../users/schemas/users.schema';
 
 import { CommentsController } from './comments.controller';
+import { CommentsQueryRepository } from './comments.query.repository';
 import { CommentsRepository } from './comments.repository';
 import { CommentsService } from './comments.service';
 import { Comment, CommentSchema } from './schemas/comments.schema';
@@ -41,6 +42,7 @@ describe('CommentsController', () => {
         BlogsRepository,
         CommentsService,
         CommentsRepository,
+        CommentsQueryRepository,
         { provide: getModelToken(Blog.name), useValue: blogModel },
         { provide: getModelToken(Post.name), useValue: postModel },
         { provide: getModelToken(Comment.name), useValue: commentModel },

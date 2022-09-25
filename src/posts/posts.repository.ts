@@ -9,8 +9,11 @@ import { PageOptionsDto } from '../common/paginator/page-options.dto';
 import { PageDto } from '../common/paginator/page.dto';
 
 import { CreatePostDbDto } from './dto/create-post-db.dto';
+import { CreatePostDto } from './dto/create-post.dto';
 import { PostDto } from './dto/post.dto';
 import { UpdatePostDbDto } from './dto/update-post-db.dto';
+import { UpdatePostDto } from './dto/update-post.dto';
+import { IPostsRepository } from './posts.service';
 import { Post, PostDocument } from './schemas/posts.schema';
 
 export class FindAllPostsOptions extends PageOptionsDto {
@@ -20,7 +23,7 @@ export class FindAllPostsOptions extends PageOptionsDto {
 }
 
 @Injectable()
-export class PostsRepository {
+export class PostsRepository implements IPostsRepository {
   constructor(
     @InjectModel(Post.name) private postModel: Model<PostDocument>,
     @InjectModel(Blog.name) private blogModel: Model<BlogDocument>,
@@ -38,37 +41,6 @@ export class PostsRepository {
     const post = await this.postModel.create(createPostDto);
 
     return this.postModel.findOne({ id: post.id }, BASE_PROJECTION);
-  }
-
-  async findAll(options: FindAllPostsOptions) {
-    const filter = {
-      ...(options?.searchNameTerm
-        ? { title: { $regex: options.searchNameTerm } }
-        : {}),
-      ...(options?.blogId ? { blogId: options.blogId } : {}),
-    };
-
-    const itemsCount = await this.postModel.countDocuments(filter);
-
-    const items = await this.postModel
-      .find(
-        filter,
-        {
-          projection: BASE_PROJECTION,
-        },
-        { _id: 0, __v: 0 },
-      )
-      .skip(options.skip)
-      .sort({
-        [options.sortBy]: options.sortDirection,
-      })
-      .limit(options.pageSize);
-
-    return new PageDto({
-      items,
-      itemsCount,
-      pageOptionsDto: options,
-    });
   }
 
   async findOne(id: string) {

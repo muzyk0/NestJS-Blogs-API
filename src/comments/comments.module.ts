@@ -6,6 +6,7 @@ import { PostsRepository } from '../posts/posts.repository';
 import { Post, PostSchema } from '../posts/schemas/posts.schema';
 
 import { CommentsController } from './comments.controller';
+import { CommentsQueryRepository } from './comments.query.repository';
 import { CommentsRepository } from './comments.repository';
 import { CommentsService } from './comments.service';
 import { Comment, CommentSchema } from './schemas/comments.schema';
@@ -17,6 +18,11 @@ import { Comment, CommentSchema } from './schemas/comments.schema';
     MongooseModule.forFeature([{ name: Blog.name, schema: BlogSchema }]),
   ],
   controllers: [CommentsController],
-  providers: [CommentsService, CommentsRepository, PostsRepository],
+  providers: [
+    CommentsService,
+    CommentsRepository,
+    CommentsQueryRepository,
+    PostsRepository,
+  ],
 })
 export class CommentsModule {}

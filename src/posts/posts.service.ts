@@ -8,11 +8,11 @@ import { CreatePostDto } from './dto/create-post.dto';
 import { PostDto } from './dto/post.dto';
 import { UpdatePostDbDto } from './dto/update-post-db.dto';
 import { UpdatePostDto } from './dto/update-post.dto';
+import { IPostService } from './posts.controller';
 import { FindAllPostsOptions, PostsRepository } from './posts.repository';
 
-interface IPostService {
-  create(createPostDto: Omit<CreatePostDto, 'id'>): Promise<PostDto>;
-  findAll(options: FindAllPostsOptions): Promise<PageDto<PostDto>>;
+export interface IPostsRepository {
+  create(createPostDto: CreatePostDto): Promise<PostDto>;
   findOne(id: string): Promise<PostDto>;
   update(id: string, updatePostDto: UpdatePostDto): Promise<PostDto>;
   remove(id: string): Promise<boolean>;
@@ -42,10 +42,6 @@ export class PostsService implements IPostService {
     };
 
     return this.postRepository.create(newPostInput);
-  }
-
-  async findAll(options: FindAllPostsOptions) {
-    return this.postRepository.findAll(options);
   }
 
   async findOne(id: string) {

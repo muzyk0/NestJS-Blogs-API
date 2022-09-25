@@ -8,6 +8,7 @@ import { BlogsRepository } from '../blogs/blogs.repository';
 import { Blog, BlogSchema } from '../blogs/schemas/blogs.schema';
 import { EmailService } from '../email/email.service';
 
+import { PostsQueryRepository } from './posts.query.repository';
 import { PostsRepository } from './posts.repository';
 import { PostsService } from './posts.service';
 import { Post, PostSchema } from './schemas/posts.schema';
@@ -29,6 +30,7 @@ describe('PostsService', () => {
       providers: [
         PostsService,
         PostsRepository,
+        PostsQueryRepository,
         BlogsRepository,
         { provide: getModelToken(Post.name), useValue: postModel },
         { provide: getModelToken(Blog.name), useValue: blogModel },

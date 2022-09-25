@@ -17,9 +17,21 @@ import { Response } from 'express';
 
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 import { GetCurrentUserId } from '../common/decorators/get-current-user-id.decorator';
+import { PageDto } from '../common/paginator/page.dto';
+import { FindAllPostsOptions } from '../posts/posts.repository';
 
 import { CommentsService } from './comments.service';
+import { CommentDto } from './dto/comment.dto';
 import { CommentInput } from './dto/comment.input';
+import { CreateCommentDto } from './dto/create-comment.dto';
+
+export interface ICommentsService {
+  create(createCommentDto: CreateCommentDto): Promise<CommentDto | null>;
+  findOne(id: string): Promise<CommentDto>;
+  update(id: string, updateCommentDto: CommentInput): Promise<CommentDto>;
+  remove(id: string): Promise<boolean>;
+  checkCredentials(commentId: string, userId: string): Promise<boolean>;
+}
 
 @Controller('comments')
 export class CommentsController {

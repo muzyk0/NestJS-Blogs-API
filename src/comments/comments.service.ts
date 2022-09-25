@@ -7,6 +7,7 @@ import {
   PostsRepository,
 } from '../posts/posts.repository';
 
+import { ICommentsService } from './comments.controller';
 import {
   CommentsRepository,
   FindAllCommentsOptions,
@@ -14,19 +15,13 @@ import {
 import { CommentDto, IComment } from './dto/comment.dto';
 import { CommentInput } from './dto/comment.input';
 import { CreateCommentDto } from './dto/create-comment.dto';
+import { UpdateCommentDto } from './dto/update-comment.dto';
 
-interface ICommentsService {
+export interface ICommentsRepository {
   create(createCommentDto: CreateCommentDto): Promise<CommentDto | null>;
-
   findOne(id: string): Promise<CommentDto>;
-
-  findPostComments(options: FindAllPostsOptions): Promise<PageDto<CommentDto>>;
-
-  update(id: string, updateCommentDto: CommentInput): Promise<CommentDto>;
-
+  update(updateCommentDto: UpdateCommentDto): Promise<CommentDto>;
   remove(id: string): Promise<boolean>;
-
-  checkCredentials(commentId: string, userId: string): Promise<boolean>;
 }
 
 @Injectable()
@@ -61,10 +56,6 @@ export class CommentsService implements ICommentsService {
 
   async findOneWithUserId(id: string, userId: string) {
     return this.commentsRepository.findOneWithUserId(id, userId);
-  }
-
-  async findPostComments(options: FindAllCommentsOptions) {
-    return this.commentsRepository.findPostComments(options);
   }
 
   async update(id: string, updateCommentDto: CommentInput) {
