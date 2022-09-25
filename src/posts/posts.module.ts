@@ -5,6 +5,7 @@ import { AuthModule } from '../auth/auth.module';
 import { BlogsRepository } from '../blogs/blogs.repository';
 import { BlogsService } from '../blogs/blogs.service';
 import { Blog, BlogSchema } from '../blogs/schemas/blogs.schema';
+import { CommentsQueryRepository } from '../comments/comments.query.repository';
 import { CommentsRepository } from '../comments/comments.repository';
 import { CommentsService } from '../comments/comments.service';
 import { Comment, CommentSchema } from '../comments/schemas/comments.schema';
@@ -31,6 +32,7 @@ import { Post, PostSchema } from './schemas/posts.schema';
     BlogsService,
     CommentsService,
     CommentsRepository,
+    CommentsQueryRepository,
   ],
   exports: [PostsService, PostsRepository, PostsQueryRepository],
 })

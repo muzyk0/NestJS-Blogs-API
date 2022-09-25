@@ -5,13 +5,13 @@ import { Model } from 'mongoose';
 
 import { BASE_PROJECTION } from '../common/mongoose/constants';
 import { PageOptionsDto } from '../common/paginator/page-options.dto';
-import { PageDto } from '../common/paginator/page.dto';
 import { Post, PostDocument } from '../posts/schemas/posts.schema';
 
+import { ICommentsRepository } from './comments.service';
 import { CommentDto } from './dto/comment.dto';
 import { CreateCommentDto } from './dto/create-comment.dto';
 import { UpdateCommentDto } from './dto/update-comment.dto';
-import { CommentDocument, Comment } from './schemas/comments.schema';
+import { Comment, CommentDocument } from './schemas/comments.schema';
 
 const projectionFields = { ...BASE_PROJECTION, postId: 0 };
 export class FindAllCommentsOptions extends PageOptionsDto {
@@ -26,7 +26,7 @@ export class FindAllCommentsOptions extends PageOptionsDto {
 }
 
 @Injectable()
-export class CommentsRepository {
+export class CommentsRepository implements ICommentsRepository {
   constructor(
     @InjectModel(Comment.name)
     private readonly commentModel: Model<CommentDocument>,
@@ -52,28 +52,6 @@ export class CommentsRepository {
 
   findOneWithUserId(id: string, userId: string) {
     return this.commentModel.findOne({ id, userId }, projectionFields);
-  }
-
-  async findPostComments(
-    findAllCommentsOptions: FindAllCommentsOptions,
-  ): Promise<PageDto<CommentDto>> {
-    const filter = { postId: findAllCommentsOptions.postId };
-
-    const itemsCount = await this.commentModel.countDocuments(filter);
-
-    const items = await this.commentModel
-      .find(filter, projectionFields)
-      .skip(findAllCommentsOptions.skip)
-      .sort({
-        [findAllCommentsOptions.sortBy]: findAllCommentsOptions.sortDirection,
-      })
-      .limit(findAllCommentsOptions.pageSize);
-
-    return new PageDto({
-      items,
-      itemsCount,
-      pageOptionsDto: findAllCommentsOptions,
-    });
   }
 
   async update(updateCommentDto: UpdateCommentDto): Promise<CommentDto> {

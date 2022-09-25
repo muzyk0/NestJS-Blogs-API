@@ -18,6 +18,7 @@ import { BaseAuthGuard } from '../auth/guards/base-auth-guard';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 import { JwtPayload } from '../auth/types/jwtPayload.type';
 import { BlogsService } from '../blogs/blogs.service';
+import { CommentsQueryRepository } from '../comments/comments.query.repository';
 import { CommentsService } from '../comments/comments.service';
 import { CommentInput } from '../comments/dto/comment.input';
 import { GetCurrentJwtContext } from '../common/decorators/get-current-user.decorator';
@@ -43,6 +44,7 @@ export class PostsController {
     private readonly postsQueryRepository: PostsQueryRepository,
     private readonly blogsService: BlogsService,
     private readonly commentsService: CommentsService,
+    private readonly commentsQueryRepository: CommentsQueryRepository,
   ) {}
 
   @UseGuards(BaseAuthGuard)
@@ -120,7 +122,7 @@ export class PostsController {
       });
     }
 
-    const comments = await this.commentsService.findPostComments({
+    const comments = await this.commentsQueryRepository.findPostComments({
       ...pageOptionsDto,
       postId: id,
     });
