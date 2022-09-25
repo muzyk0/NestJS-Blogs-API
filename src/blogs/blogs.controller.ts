@@ -18,15 +18,25 @@ import { BaseAuthGuard } from '../auth/guards/base-auth-guard';
 import { PageOptionsDto } from '../common/paginator/page-options.dto';
 import { PostsService } from '../posts/posts.service';
 
+import { BlogsQueryRepository } from './blogs.query.repository';
 import { BlogsService } from './blogs.service';
+import { BlogDto } from './dto/blog.dto';
 import { CreateBlogPostDto } from './dto/create-blog-post.dto';
 import { CreateBlogDto } from './dto/create-blog.dto';
 import { UpdateBlogDto } from './dto/update-blog.dto';
+
+export interface IBlogService {
+  create(createBlogDto: Omit<CreateBlogDto, 'id'>): Promise<BlogDto>;
+  findOne(id: string): Promise<BlogDto>;
+  update(id: string, updateBlogDto: UpdateBlogDto): Promise<BlogDto>;
+  remove(id: string): Promise<boolean>;
+}
 
 @Controller('blogs')
 export class BlogsController {
   constructor(
     private readonly blogsService: BlogsService,
+    private readonly blogsQueryRepository: BlogsQueryRepository,
     private readonly postsService: PostsService,
   ) {}
 
@@ -38,12 +48,12 @@ export class BlogsController {
 
   @Get()
   findAll(@Query() pageOptionsDto: PageOptionsDto) {
-    return this.blogsService.findAll(pageOptionsDto);
+    return this.blogsQueryRepository.findAll(pageOptionsDto);
   }
 
   @Get(':id')
   async findOne(@Param('id') id: string) {
-    const blog = await this.blogsService.findOne(id);
+    const blog = await this.blogsQueryRepository.findOne(id);
 
     if (!blog) {
       throw new NotFoundException();
