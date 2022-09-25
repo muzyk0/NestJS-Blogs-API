@@ -5,6 +5,7 @@ import { AuthModule } from '../auth/auth.module';
 import { PostsModule } from '../posts/posts.module';
 
 import { BlogsController } from './blogs.controller';
+import { BlogsQueryRepository } from './blogs.query.repository';
 import { BlogsRepository } from './blogs.repository';
 import { BlogsService } from './blogs.service';
 import { Blog, BlogSchema } from './schemas/blogs.schema';
@@ -16,6 +17,6 @@ import { Blog, BlogSchema } from './schemas/blogs.schema';
     PostsModule,
   ],
   controllers: [BlogsController],
-  providers: [BlogsService, BlogsRepository],
+  providers: [BlogsService, BlogsRepository, BlogsQueryRepository],
 })
 export class BlogsModule {}

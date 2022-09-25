@@ -7,12 +7,14 @@ import { connect, Connection, Model, Promise } from 'mongoose';
 
 import { PageOptionsDto } from '../common/paginator/page-options.dto';
 
+import { BlogsQueryRepository } from './blogs.query.repository';
 import { BlogsRepository } from './blogs.repository';
 import { BlogsService } from './blogs.service';
 import { Blog, BlogSchema } from './schemas/blogs.schema';
 
 describe('BlogsService', () => {
   let blogService: BlogsService;
+  let blogsQueryRepository: BlogsQueryRepository;
   let mongod: MongoMemoryServer;
   let mongoConnection: Connection;
   let blogModel: Model<Blog>;
@@ -26,10 +28,12 @@ describe('BlogsService', () => {
       providers: [
         BlogsService,
         BlogsRepository,
+        BlogsQueryRepository,
         { provide: getModelToken(Blog.name), useValue: blogModel },
       ],
     }).compile();
     blogService = app.get<BlogsService>(BlogsService);
+    blogsQueryRepository = app.get<BlogsQueryRepository>(BlogsQueryRepository);
   });
 
   afterAll(async () => {
@@ -64,7 +68,7 @@ describe('BlogsService', () => {
   });
 
   it('blogs is empty', async () => {
-    const blogs = await blogService.findAll(new PageOptionsDto());
+    const blogs = await blogsQueryRepository.findAll(new PageOptionsDto());
 
     expect(blogs!.items.length).toBe(0);
   });
@@ -76,7 +80,7 @@ describe('BlogsService', () => {
     });
 
     const isRemoved = await blogService.remove(newBlog.id);
-    const blogs = await blogService.findAll(new PageOptionsDto());
+    const blogs = await blogsQueryRepository.findAll(new PageOptionsDto());
 
     expect(isRemoved).toBeTruthy();
     expect(blogs!.items.length).toBe(0);
@@ -92,13 +96,15 @@ describe('BlogsService', () => {
       }),
     );
 
-    const blogs = await blogService.findAll(new PageOptionsDto());
+    const blogs = await blogsQueryRepository.findAll(new PageOptionsDto());
 
     expect(blogs!.items.length).toBe(10);
 
     await Promise.all(blogs!.items.map(({ id }) => blogService.remove(id)));
 
-    const blogsIsEmpty = await blogService.findAll(new PageOptionsDto());
+    const blogsIsEmpty = await blogsQueryRepository.findAll(
+      new PageOptionsDto(),
+    );
 
     expect(blogsIsEmpty!.items.length).toBe(0);
   });

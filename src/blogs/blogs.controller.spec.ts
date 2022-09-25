@@ -20,6 +20,7 @@ import { UsersRepository } from '../users/users.repository';
 import { UsersService } from '../users/users.service';
 
 import { BlogsController } from './blogs.controller';
+import { BlogsQueryRepository } from './blogs.query.repository';
 import { BlogsRepository } from './blogs.repository';
 import { BlogsService } from './blogs.service';
 import { BlogDto } from './dto/blog.dto';
@@ -51,6 +52,7 @@ describe('blogsController', () => {
       providers: [
         BlogsService,
         BlogsRepository,
+        BlogsQueryRepository,
         { provide: getModelToken(Blog.name), useValue: blogModel },
         AuthService,
         EmailService,
