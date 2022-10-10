@@ -67,11 +67,18 @@ export class UsersService {
       throw new Error("User isn't created");
     }
 
-    const { id, login: userLogin } = createdUser.accountData;
+    const {
+      id,
+      login: userLogin,
+      createdAt,
+      email: userEmail,
+    } = createdUser.accountData;
 
     return {
       id,
       login: userLogin,
+      createdAt,
+      email: userEmail,
     };
   }
 

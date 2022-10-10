@@ -14,27 +14,29 @@ import { EmailService } from './email.service';
 @Module({
   imports: [
     MailerModule.forRootAsync({
-      useFactory: async (config: ConfigService) => ({
-        // or transport: config.get("MAIL_TRANSPORT"),
-        transport: {
-          service: 'Gmail',
-          auth: {
-            user: config.get('EMAIL_FROM'),
-            pass: config.get('EMAIL_FROM_PASSWORD'),
+      useFactory: async (config: ConfigService) => {
+        return {
+          // or transport: config.get("MAIL_TRANSPORT"),
+          transport: {
+            service: 'Gmail',
+            auth: {
+              user: config.get('EMAIL_FROM'),
+              pass: config.get('EMAIL_FROM_PASSWORD'),
+            },
           },
-        },
-        defaults: {
-          from: `"No Reply" <${config.get('EMAIL_FROM')}>`,
-        },
-        // preview: true,
-        template: {
-          dir: join(__dirname, 'templates'), // or process.cwd() + '/template/'
-          adapter: new HandlebarsAdapter(), // or new PugAdapter() or new EjsAdapter()
-          options: {
-            strict: true,
+          defaults: {
+            from: `"No Reply" <${config.get('EMAIL_FROM')}>`,
           },
-        },
-      }),
+          // preview: true,
+          template: {
+            dir: join(__dirname, 'templates'), // or process.cwd() + '/template/'
+            adapter: new HandlebarsAdapter(), // or new PugAdapter() or new EjsAdapter()
+            options: {
+              strict: true,
+            },
+          },
+        };
+      },
       inject: [ConfigService],
     }),
   ],
