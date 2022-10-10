@@ -31,7 +31,10 @@ export class UsersController {
     );
 
     if (userAlreadyExistByLogin) {
-      throw new BadRequestException();
+      throw new BadRequestException({
+        field: '',
+        message: 'User already exist',
+      });
     }
 
     const userAlreadyExistByEmail = await this.usersService.findOneByEmail(
@@ -39,7 +42,10 @@ export class UsersController {
     );
 
     if (userAlreadyExistByEmail) {
-      throw new BadRequestException();
+      throw new BadRequestException({
+        field: '',
+        message: 'User already exist',
+      });
     }
 
     return this.usersService.create({ login, email, password });

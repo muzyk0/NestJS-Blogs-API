@@ -1,6 +1,8 @@
 import { Module } from '@nestjs/common';
-import { ConfigModule } from '@nestjs/config';
 import { MongooseModule } from '@nestjs/mongoose';
+
+/* eslint import/order: ["error", {"newlines-between": "ignore"}] */
+import { configModule } from './constants';
 
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
@@ -17,10 +19,7 @@ import { UsersModule } from './users/users.module';
 
 @Module({
   imports: [
-    ConfigModule.forRoot({
-      isGlobal: true,
-      load: [configuration],
-    }),
+    configModule,
     MongooseModule.forRoot(configuration().MONGO_URI),
     TestModule,
     BlogsModule,
