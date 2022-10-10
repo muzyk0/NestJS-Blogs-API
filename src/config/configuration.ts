@@ -5,8 +5,12 @@ export default () => ({
   MONGO_URI: process.env.MONGO_URI,
   ACCESS_TOKEN_SECRET:
     process.env.ACCESS_TOKEN_SECRET ?? 'this is secret code for token',
+  ACCESS_TOKEN_SECRET_EXPIRES_IN:
+    process.env.ACCESS_TOKEN_SECRET_EXPIRES_IN ?? '30m',
   REFRESH_TOKEN_SECRET:
     process.env.REFRESH_TOKEN_SECRET ?? 'this is refresh code for token',
+  REFRESH_TOKEN_SECRET_EXPIRES_IN:
+    process.env.REFRESH_TOKEN_SECRET_EXPIRES_IN ?? '60m',
   SMTP: {
     EMAIL_FROM: process.env.EMAIL_FROM || '',
     EMAIL_FROM_PASSWORD: process.env.EMAIL_FROM_PASSWORD || '',
