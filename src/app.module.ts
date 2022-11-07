@@ -16,6 +16,7 @@ import { PostsModule } from './posts/posts.module';
 import { TestModule } from './test-users/test-users.module';
 import { TestingModule } from './testing/testing.module';
 import { UsersModule } from './users/users.module';
+import { SecurityModule } from './security/security.module';
 
 @Module({
   imports: [
@@ -30,6 +31,7 @@ import { UsersModule } from './users/users.module';
     CommentsModule,
     EmailModule,
     LimitsModule,
+    SecurityModule,
   ],
   controllers: [AppController],
   providers: [AppService],

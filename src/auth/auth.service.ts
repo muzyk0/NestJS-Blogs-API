@@ -8,6 +8,7 @@ import { v4 } from 'uuid';
 import { BaseAuthPayload } from '../constants';
 import { EmailTemplateManager } from '../email/email-template-manager';
 import { EmailService } from '../email/email.service';
+import { SecurityService } from '../security/security.service';
 import { User } from '../users/schemas/users.schema';
 import { UsersService } from '../users/users.service';
 
@@ -27,6 +28,7 @@ export class AuthService {
     private readonly emailTemplateManager: EmailTemplateManager,
     private readonly jwtService: JwtService,
     private config: ConfigService,
+    private securityService: SecurityService,
   ) {}
 
   async decodeBaseAuth(token: string) {
@@ -73,17 +75,13 @@ export class AuthService {
   }
 
   async createJwtTokens(payload: JwtPayload) {
-    const isDev = this.config.get<string>('IS_DEV');
-
     const accessToken = this.jwtService.sign(payload, {
       secret: this.config.get<string>('ACCESS_TOKEN_SECRET'),
-      // expiresIn: isDev ? '30m' : '10s',
       expiresIn: this.config.get<string>('ACCESS_TOKEN_SECRET_EXPIRES_IN'),
     });
 
     const refreshToken = this.jwtService.sign(payload, {
       secret: this.config.get<string>('REFRESH_TOKEN_SECRET'),
-      // expiresIn: isDev ? '60m' : '20s',
       expiresIn: this.config.get<string>('REFRESH_TOKEN_SECRET_EXPIRES_IN'),
     });
     return {
