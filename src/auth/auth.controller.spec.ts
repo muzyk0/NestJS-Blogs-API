@@ -11,6 +11,9 @@ import { EmailService } from '../email/email.service';
 import { LimitsRepository } from '../limits/limits.repository';
 import { LimitsService } from '../limits/limits.service';
 import { Limit, LimitSchema } from '../limits/schemas/limits.schema';
+import { Security, SecuritySchema } from '../security/schemas/security.schema';
+import { SecurityRepository } from '../security/security.repository';
+import { SecurityService } from '../security/security.service';
 import { User, UserSchema } from '../users/schemas/users.schema';
 import { UsersRepository } from '../users/users.repository';
 import { UsersService } from '../users/users.service';
@@ -26,6 +29,7 @@ describe('AuthController', () => {
 
   let userModel: Model<User>;
   let limitModel: Model<Limit>;
+  let securityModel: Model<Security>;
 
   beforeAll(async () => {
     mongod = await MongoMemoryServer.create();
@@ -34,6 +38,7 @@ describe('AuthController', () => {
 
     userModel = mongoConnection.model(User.name, UserSchema);
     limitModel = mongoConnection.model(Limit.name, LimitSchema);
+    securityModel = mongoConnection.model(Security.name, SecuritySchema);
 
     const module: TestingModule = await Test.createTestingModule({
       imports: [
@@ -68,6 +73,9 @@ describe('AuthController', () => {
             }),
           },
         },
+        SecurityService,
+        SecurityRepository,
+        { provide: getModelToken(Security.name), useValue: securityModel },
       ],
     }).compile();
 

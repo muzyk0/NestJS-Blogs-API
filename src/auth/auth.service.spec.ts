@@ -8,6 +8,9 @@ import { connect, Connection, Model } from 'mongoose';
 
 import { EmailTemplateManager } from '../email/email-template-manager';
 import { EmailService } from '../email/email.service';
+import { Security, SecuritySchema } from '../security/schemas/security.schema';
+import { SecurityRepository } from '../security/security.repository';
+import { SecurityService } from '../security/security.service';
 import { User, UserSchema } from '../users/schemas/users.schema';
 import { UsersRepository } from '../users/users.repository';
 import { UsersService } from '../users/users.service';
@@ -21,12 +24,14 @@ describe('AuthService', () => {
   let service: AuthService;
 
   let userModel: Model<User>;
+  let securityModel: Model<Security>;
 
   beforeAll(async () => {
     mongod = await MongoMemoryServer.create();
     const uri = mongod.getUri();
     mongoConnection = (await connect(uri)).connection;
     userModel = mongoConnection.model(User.name, UserSchema);
+    securityModel = mongoConnection.model(Security.name, SecuritySchema);
 
     const module: TestingModule = await Test.createTestingModule({
       imports: [
@@ -34,6 +39,7 @@ describe('AuthService', () => {
           secret: 'access_token_secret',
           signOptions: { expiresIn: '60s' },
         }),
+        // SecurityModule,
         // ConfigModule.forRoot({}),
       ],
       providers: [
@@ -44,6 +50,9 @@ describe('AuthService', () => {
         UsersService,
         UsersRepository,
         { provide: getModelToken(User.name), useValue: userModel },
+        SecurityService,
+        SecurityRepository,
+        { provide: getModelToken(Security.name), useValue: securityModel },
         { provide: MailerService, useValue: jest.fn() },
         JwtService,
         {

@@ -16,6 +16,9 @@ import { CommentsService } from '../comments/comments.service';
 import { Comment, CommentSchema } from '../comments/schemas/comments.schema';
 import { EmailTemplateManager } from '../email/email-template-manager';
 import { EmailService } from '../email/email.service';
+import { Security, SecuritySchema } from '../security/schemas/security.schema';
+import { SecurityRepository } from '../security/security.repository';
+import { SecurityService } from '../security/security.service';
 import { User, UserSchema } from '../users/schemas/users.schema';
 import { UsersRepository } from '../users/users.repository';
 import { UsersService } from '../users/users.service';
@@ -30,19 +33,23 @@ describe('PostsController', () => {
   let postsController: PostsController;
   let mongod: MongoMemoryServer;
   let mongoConnection: Connection;
+
   let blogModel: Model<Blog>;
   let postModel: Model<Post>;
   let commentModel: Model<Comment>;
   let userModel: Model<User>;
+  let securityModel: Model<Security>;
 
   beforeAll(async () => {
     mongod = await MongoMemoryServer.create();
     const uri = mongod.getUri();
     mongoConnection = (await connect(uri)).connection;
+
     blogModel = mongoConnection.model(Blog.name, BlogSchema);
     postModel = mongoConnection.model(Post.name, PostSchema);
     commentModel = mongoConnection.model(Comment.name, CommentSchema);
     userModel = mongoConnection.model(User.name, UserSchema);
+    securityModel = mongoConnection.model(Security.name, SecuritySchema);
 
     const app: TestingModule = await Test.createTestingModule({
       imports: [ConfigModule.forRoot({})],
@@ -68,6 +75,9 @@ describe('PostsController', () => {
         { provide: 'BASE_URL', useValue: 'empty_url' },
         { provide: MailerService, useValue: jest.fn() },
         JwtService,
+        SecurityService,
+        SecurityRepository,
+        { provide: getModelToken(Security.name), useValue: securityModel },
       ],
     }).compile();
     postsController = app.get<PostsController>(PostsController);

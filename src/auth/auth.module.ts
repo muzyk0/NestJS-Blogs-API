@@ -1,9 +1,11 @@
 import { Module } from '@nestjs/common';
 import { JwtModule } from '@nestjs/jwt';
+import { MongooseModule } from '@nestjs/mongoose';
 import { PassportModule } from '@nestjs/passport';
 
 import { EmailModule } from '../email/email.module';
 import { LimitsModule } from '../limits/limits.module';
+import { Security, SecuritySchema } from '../security/schemas/security.schema';
 import { SecurityModule } from '../security/security.module';
 import { UsersModule } from '../users/users.module';
 
@@ -21,6 +23,9 @@ import { RtJwtStrategy } from './strategies/rt.jwt.strategy';
     PassportModule,
     LimitsModule,
     SecurityModule,
+    MongooseModule.forFeature([
+      { name: Security.name, schema: SecuritySchema },
+    ]),
   ],
   controllers: [AuthController],
   providers: [AuthService, LocalStrategy, AtJwtStrategy, RtJwtStrategy],
