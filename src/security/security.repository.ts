@@ -12,7 +12,22 @@ export class SecurityRepository {
   ) {}
 
   create(securityDto: SecurityDto) {
-    return this.securityModel.create(securityDto);
+    return this.securityModel.findOneAndUpdate(
+      {
+        userId: securityDto.userId,
+        // deviceId: securityDto.deviceId,
+        deviceName: securityDto.deviceName,
+      },
+      {
+        // $set: {
+        //   ip: securityDto.ip,
+        //   expireAt: securityDto.expireAt,
+        //   issuedAt: securityDto.issuedAt,
+        // },
+        $set: securityDto,
+      },
+      { upsert: true, new: true },
+    );
   }
 
   async remove(id: string) {
