@@ -3,6 +3,7 @@ import { MongooseModule } from '@nestjs/mongoose';
 
 import { Security, SecuritySchema } from './schemas/security.schema';
 import { SecurityController } from './security.controller';
+import { SecurityQueryRepository } from './security.query.repository';
 import { SecurityRepository } from './security.repository';
 import { SecurityService } from './security.service';
 
@@ -13,7 +14,7 @@ import { SecurityService } from './security.service';
     ]),
   ],
   controllers: [SecurityController],
-  providers: [SecurityService, SecurityRepository],
-  exports: [SecurityService, SecurityRepository],
+  providers: [SecurityService, SecurityRepository, SecurityQueryRepository],
+  exports: [SecurityService, SecurityRepository, SecurityQueryRepository],
 })
 export class SecurityModule {}

@@ -3,7 +3,6 @@ import { v4 } from 'uuid';
 
 import { CreateSecurityDto } from './dto/create-security.dto';
 import { SecurityDto } from './dto/security.dto';
-import { UpdateSecurityDto } from './dto/update-security.dto';
 import { SecurityRepository } from './security.repository';
 
 @Injectable()
@@ -12,39 +11,34 @@ export class SecurityService {
 
   async create({
     ip,
+    deviceId,
     deviceName,
     userId,
     expireAt,
     issuedAt,
   }: CreateSecurityDto) {
-    const deviceId: string = v4();
-
     const session: SecurityDto = {
       id: v4(),
       userId,
       ip,
-      deviceName,
       deviceId,
-      issuedAt: new Date(),
+      deviceName,
+      issuedAt,
       expireAt,
     };
 
     return this.securityRepository.create(session);
   }
 
-  findAll() {
-    return `This action returns all security`;
+  async getSessionByDeviceId(deviceId: string) {
+    return this.securityRepository.getSessionByDeviceId(deviceId);
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} security`;
+  remove(id: string) {
+    return this.securityRepository.remove(id);
   }
 
-  update(id: number, updateSecurityDto: UpdateSecurityDto) {
-    return `This action updates a #${id} security`;
-  }
-
-  remove(id: number) {
-    return `This action removes a #${id} security`;
+  removeAllWithoutMyDevice(userId: string, deviceId: string) {
+    return this.securityRepository.removeAllWithoutMyDevice(userId, deviceId);
   }
 }

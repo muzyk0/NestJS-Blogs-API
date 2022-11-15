@@ -8,12 +8,11 @@ import { v4 } from 'uuid';
 import { BaseAuthPayload } from '../constants';
 import { EmailTemplateManager } from '../email/email-template-manager';
 import { EmailService } from '../email/email.service';
-import { SecurityService } from '../security/security.service';
 import { User } from '../users/schemas/users.schema';
 import { UsersService } from '../users/users.service';
 
 import { LoginDto } from './dto/login.dto';
-import { JwtPayload } from './types/jwtPayload.type';
+import { DecodedJwtPayload, JwtPayload } from './types/jwtPayload.type';
 
 interface TokenDto {
   accessToken: string;
@@ -28,7 +27,6 @@ export class AuthService {
     private readonly emailTemplateManager: EmailTemplateManager,
     private readonly jwtService: JwtService,
     private config: ConfigService,
-    private securityService: SecurityService,
   ) {}
 
   async decodeBaseAuth(token: string) {
@@ -63,12 +61,15 @@ export class AuthService {
       return null;
     }
 
+    const deviceId = v4();
+
     const payload: JwtPayload = {
       user: {
         id,
         login,
         email,
       },
+      deviceId,
     };
 
     return this.createJwtTokens(payload);
@@ -87,6 +88,22 @@ export class AuthService {
     return {
       accessToken,
       refreshToken,
+    };
+  }
+
+  async getDatesFromJwtToken(token: string): Promise<DecodedJwtPayload> {
+    const accessToken = this.jwtService.decode(token) as JwtPayload;
+
+    const iat = new Date(0);
+    iat.setUTCSeconds(accessToken['iat']);
+
+    const exp = new Date(0);
+    exp.setUTCSeconds(accessToken['exp']);
+
+    return {
+      ...accessToken,
+      iat,
+      exp,
     };
   }
 

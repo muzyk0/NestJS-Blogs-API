@@ -5,6 +5,7 @@ import { connect, Connection, Model } from 'mongoose';
 
 import { Security, SecuritySchema } from './schemas/security.schema';
 import { SecurityController } from './security.controller';
+import { SecurityQueryRepository } from './security.query.repository';
 import { SecurityRepository } from './security.repository';
 import { SecurityService } from './security.service';
 
@@ -25,6 +26,7 @@ describe('SecurityController', () => {
       providers: [
         SecurityService,
         SecurityRepository,
+        SecurityQueryRepository,
         { provide: getModelToken(Security.name), useValue: securityModel },
       ],
     }).compile();

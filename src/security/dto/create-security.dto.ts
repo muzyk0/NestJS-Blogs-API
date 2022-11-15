@@ -16,5 +16,8 @@ export class CreateSecurityDto implements Partial<SecurityDto> {
   deviceName: string;
 
   @IsString()
+  deviceId: string;
+
+  @IsString()
   userId: string;
 }

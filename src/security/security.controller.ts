@@ -1,34 +1,66 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
-import { SecurityService } from './security.service';
-import { CreateSecurityDto } from './dto/create-security.dto';
-import { UpdateSecurityDto } from './dto/update-security.dto';
+import {
+  Body,
+  Controller,
+  Delete,
+  ForbiddenException,
+  Get,
+  HttpCode,
+  HttpStatus,
+  NotFoundException,
+  Param,
+  Post,
+  UseGuards,
+} from '@nestjs/common';
 
+import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
+import { JwtPayload } from '../auth/types/jwtPayload.type';
+import { GetCurrentUserId } from '../common/decorators/get-current-user-id.decorator';
+import { GetCurrentJwtContext } from '../common/decorators/get-current-user.decorator';
+
+import { CreateSecurityDto } from './dto/create-security.dto';
+import { SecurityQueryRepository } from './security.query.repository';
+import { SecurityService } from './security.service';
+
+@UseGuards(JwtAuthGuard)
 @Controller('security')
 export class SecurityController {
-  constructor(private readonly securityService: SecurityService) {}
+  constructor(
+    private readonly securityService: SecurityService,
+    private readonly securityQueryRepository: SecurityQueryRepository,
+  ) {}
 
   @Post()
   create(@Body() createSecurityDto: CreateSecurityDto) {
     return this.securityService.create(createSecurityDto);
   }
 
-  @Get()
-  findAll() {
-    return this.securityService.findAll();
+  @Get('/devices')
+  findAll(@GetCurrentJwtContext() ctx: JwtPayload) {
+    return this.securityQueryRepository.findAll(ctx.user.id);
   }
 
-  @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.securityService.findOne(+id);
+  @Delete('/devices/:id')
+  @HttpCode(HttpStatus.NO_CONTENT)
+  async remove(@Param('id') id: string, @GetCurrentUserId() userId: string) {
+    const session = await this.securityService.getSessionByDeviceId(id);
+
+    if (!session) {
+      throw new NotFoundException();
+    }
+
+    if (session.userId !== userId) {
+      throw new ForbiddenException();
+    }
+
+    return this.securityService.remove(id);
   }
 
-  @Patch(':id')
-  update(@Param('id') id: string, @Body() updateSecurityDto: UpdateSecurityDto) {
-    return this.securityService.update(+id, updateSecurityDto);
-  }
-
-  @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.securityService.remove(+id);
+  @Delete('/devices')
+  @HttpCode(HttpStatus.NO_CONTENT)
+  async removeAllWithoutMyDevice(@GetCurrentJwtContext() ctx: JwtPayload) {
+    return this.securityService.removeAllWithoutMyDevice(
+      ctx.user.id,
+      ctx.deviceId,
+    );
   }
 }

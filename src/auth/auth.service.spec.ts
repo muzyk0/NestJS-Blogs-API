@@ -24,14 +24,12 @@ describe('AuthService', () => {
   let service: AuthService;
 
   let userModel: Model<User>;
-  let securityModel: Model<Security>;
 
   beforeAll(async () => {
     mongod = await MongoMemoryServer.create();
     const uri = mongod.getUri();
     mongoConnection = (await connect(uri)).connection;
     userModel = mongoConnection.model(User.name, UserSchema);
-    securityModel = mongoConnection.model(Security.name, SecuritySchema);
 
     const module: TestingModule = await Test.createTestingModule({
       imports: [
@@ -50,9 +48,6 @@ describe('AuthService', () => {
         UsersService,
         UsersRepository,
         { provide: getModelToken(User.name), useValue: userModel },
-        SecurityService,
-        SecurityRepository,
-        { provide: getModelToken(Security.name), useValue: securityModel },
         { provide: MailerService, useValue: jest.fn() },
         JwtService,
         {

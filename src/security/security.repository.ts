@@ -3,7 +3,6 @@ import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 
 import { SecurityDto } from './dto/security.dto';
-import { UpdateSecurityDto } from './dto/update-security.dto';
 import { Security, SecurityDocument } from './schemas/security.schema';
 
 @Injectable()
@@ -16,19 +15,20 @@ export class SecurityRepository {
     return this.securityModel.create(securityDto);
   }
 
-  findAll() {
-    return `This action returns all security`;
+  async remove(id: string) {
+    const result = await this.securityModel.deleteOne({ deviceId: id });
+
+    return result.deletedCount > 0;
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} security`;
+  async getSessionByDeviceId(deviceId: string): Promise<Security | undefined> {
+    return this.securityModel.findOne({ deviceId });
   }
 
-  update(id: number, updateSecurityDto: UpdateSecurityDto) {
-    return `This action updates a #${id} security`;
-  }
-
-  remove(id: number) {
-    return `This action removes a #${id} security`;
+  removeAllWithoutMyDevice(userId: string, deviceId: string) {
+    return this.securityModel.deleteMany({
+      userId,
+      deviceId: { $ne: deviceId },
+    });
   }
 }

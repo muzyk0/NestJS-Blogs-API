@@ -6,7 +6,6 @@ import {
   Get,
   HttpCode,
   HttpStatus,
-  NotFoundException,
   Post,
   Req,
   Res,
@@ -14,11 +13,13 @@ import {
   UseGuards,
 } from '@nestjs/common';
 import { Request, Response } from 'express';
+import { v4 } from 'uuid';
 
 import { GetCurrentUserId } from '../common/decorators/get-current-user-id.decorator';
 import { GetCurrentJwtContext } from '../common/decorators/get-current-user.decorator';
 import { LimitsControlWithIpAndLoginGuard } from '../limits/guards/limits-control-with-ip-and-login-guard.service';
 import { LimitsControlGuard } from '../limits/guards/limits-control.guard';
+import { SecurityService } from '../security/security.service';
 import { CreateUserDto } from '../users/dto/create-user.dto';
 import { EmailConfirmationCodeDto } from '../users/dto/email-confirmation-code.dto';
 import { Email } from '../users/dto/email.dto';
@@ -31,13 +32,13 @@ import { JwtAuthGuard } from './guards/jwt-auth.guard';
 import { JwtRefreshAuthGuard } from './guards/jwt-refresh-auth.guard';
 import { LocalAuthGuard } from './guards/local-auth.guard';
 import { JwtPayloadWithRt } from './types/jwt-payload-with-rt.type';
-import { JwtPayload } from './types/jwtPayload.type';
 
 @Controller('auth')
 export class AuthController {
   constructor(
     private readonly authService: AuthService,
     private readonly usersService: UsersService,
+    private securityService: SecurityService,
   ) {}
 
   @UseGuards(LimitsControlWithIpAndLoginGuard, LocalAuthGuard)
@@ -45,6 +46,7 @@ export class AuthController {
   @HttpCode(HttpStatus.OK)
   async login(
     @Body() loginDto: LoginDto,
+    @Req() req: Request,
     @Res({ passthrough: true }) res: Response,
   ) {
     const { refreshToken, ...tokens } = await this.authService.login(loginDto);
@@ -52,6 +54,21 @@ export class AuthController {
     if (!tokens) {
       throw new UnauthorizedException();
     }
+
+    const decodedAccessToken = await this.authService.getDatesFromJwtToken(
+      tokens.accessToken,
+    );
+
+    const userAgent = req.get('User-Agent');
+
+    await this.securityService.create({
+      userId: decodedAccessToken.user.id,
+      ip: req.ip,
+      deviceId: decodedAccessToken.deviceId,
+      deviceName: userAgent,
+      issuedAt: decodedAccessToken.iat,
+      expireAt: decodedAccessToken.exp,
+    });
 
     res.cookie('refreshToken', refreshToken, {
       httpOnly: true,
@@ -177,6 +194,20 @@ export class AuthController {
 
     const tokens = await this.authService.createJwtTokens({
       user: ctx.user,
+      deviceId: v4(),
+    });
+
+    const decodedAccessToken = await this.authService.getDatesFromJwtToken(
+      tokens.accessToken,
+    );
+
+    await this.securityService.create({
+      userId: decodedAccessToken.user.id,
+      ip: req.ip,
+      deviceId: decodedAccessToken.deviceId,
+      deviceName: userAgent,
+      issuedAt: decodedAccessToken.iat,
+      expireAt: decodedAccessToken.exp,
     });
 
     res.cookie('refreshToken', tokens.refreshToken, {
