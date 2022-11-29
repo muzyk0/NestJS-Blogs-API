@@ -12,7 +12,7 @@ import { User } from '../users/schemas/users.schema';
 import { UsersService } from '../users/users.service';
 
 import { LoginDto } from './dto/login.dto';
-import { DecodedJwtPayload, JwtPayload } from './types/jwtPayload.type';
+import { JwtATPayload, JwtRTPayload } from './types/jwtPayload.type';
 
 interface TokenDto {
   accessToken: string;
@@ -63,7 +63,15 @@ export class AuthService {
 
     const deviceId = v4();
 
-    const payload: JwtPayload = {
+    const atPayload: JwtATPayload = {
+      user: {
+        id,
+        login,
+        email,
+      },
+    };
+
+    const rtPayload: JwtRTPayload = {
       user: {
         id,
         login,
@@ -72,16 +80,16 @@ export class AuthService {
       deviceId,
     };
 
-    return this.createJwtTokens(payload);
+    return this.createJwtTokens(atPayload, rtPayload);
   }
 
-  async createJwtTokens(payload: JwtPayload) {
-    const accessToken = this.jwtService.sign(payload, {
+  async createJwtTokens(atPayload: JwtATPayload, rtPayload: JwtRTPayload) {
+    const accessToken = this.jwtService.sign(atPayload, {
       secret: this.config.get<string>('ACCESS_TOKEN_SECRET'),
       expiresIn: this.config.get<string>('ACCESS_TOKEN_SECRET_EXPIRES_IN'),
     });
 
-    const refreshToken = this.jwtService.sign(payload, {
+    const refreshToken = this.jwtService.sign(rtPayload, {
       secret: this.config.get<string>('REFRESH_TOKEN_SECRET'),
       expiresIn: this.config.get<string>('REFRESH_TOKEN_SECRET_EXPIRES_IN'),
     });
@@ -91,8 +99,8 @@ export class AuthService {
     };
   }
 
-  async getDatesFromJwtToken(token: string): Promise<DecodedJwtPayload> {
-    const accessToken = this.jwtService.decode(token) as JwtPayload;
+  async decodeJwtToken<T>(token: string): Promise<T> {
+    const accessToken = this.jwtService.decode(token) as T;
 
     const iat = new Date(0);
     iat.setUTCSeconds(accessToken['iat']);

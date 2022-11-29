@@ -16,7 +16,7 @@ import {
 
 import { BaseAuthGuard } from '../auth/guards/base-auth-guard';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
-import { JwtPayload } from '../auth/types/jwtPayload.type';
+import { JwtATPayload } from '../auth/types/jwtPayload.type';
 import { BlogsService } from '../blogs/blogs.service';
 import { CommentsQueryRepository } from '../comments/comments.query.repository';
 import { CommentsService } from '../comments/comments.service';
@@ -32,8 +32,11 @@ import { PostsService } from './posts.service';
 
 export interface IPostService {
   create(createPostDto: Omit<CreatePostDto, 'id'>): Promise<PostDto>;
+
   findOne(id: string): Promise<PostDto>;
+
   update(id: string, updatePostDto: UpdatePostDto): Promise<PostDto>;
+
   remove(id: string): Promise<boolean>;
 }
 
@@ -136,7 +139,7 @@ export class PostsController {
   async createPostComment(
     @Param('id') id: string,
     @Body() createCommentDto: CommentInput,
-    @GetCurrentJwtContext() ctx: JwtPayload,
+    @GetCurrentJwtContext() ctx: JwtATPayload,
   ) {
     const { id: userId, login: userLogin } = ctx.user;
 

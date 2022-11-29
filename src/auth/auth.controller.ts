@@ -32,6 +32,7 @@ import { JwtAuthGuard } from './guards/jwt-auth.guard';
 import { JwtRefreshAuthGuard } from './guards/jwt-refresh-auth.guard';
 import { LocalAuthGuard } from './guards/local-auth.guard';
 import { JwtPayloadWithRt } from './types/jwt-payload-with-rt.type';
+import { DecodedJwtRTPayload } from './types/jwtPayload.type';
 
 @Controller('auth')
 export class AuthController {
@@ -55,9 +56,8 @@ export class AuthController {
       throw new UnauthorizedException();
     }
 
-    const decodedAccessToken = await this.authService.getDatesFromJwtToken(
-      tokens.accessToken,
-    );
+    const decodedAccessToken =
+      await this.authService.decodeJwtToken<DecodedJwtRTPayload>(refreshToken);
 
     const userAgent = req.get('User-Agent');
 
@@ -71,8 +71,8 @@ export class AuthController {
     });
 
     res.cookie('refreshToken', refreshToken, {
-      httpOnly: true,
-      secure: true,
+      httpOnly: false,
+      secure: false,
     });
 
     return tokens;
@@ -192,14 +192,20 @@ export class AuthController {
       });
     }
 
-    const tokens = await this.authService.createJwtTokens({
-      user: ctx.user,
-      deviceId: v4(),
-    });
-
-    const decodedAccessToken = await this.authService.getDatesFromJwtToken(
-      tokens.accessToken,
+    const tokens = await this.authService.createJwtTokens(
+      {
+        user: ctx.user,
+      },
+      {
+        user: ctx.user,
+        deviceId: v4(),
+      },
     );
+
+    const decodedAccessToken =
+      await this.authService.decodeJwtToken<DecodedJwtRTPayload>(
+        tokens.refreshToken,
+      );
 
     await this.securityService.create({
       userId: decodedAccessToken.user.id,

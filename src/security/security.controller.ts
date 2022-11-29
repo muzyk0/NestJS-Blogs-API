@@ -13,7 +13,8 @@ import {
 } from '@nestjs/common';
 
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
-import { JwtPayload } from '../auth/types/jwtPayload.type';
+import { JwtRefreshAuthGuard } from '../auth/guards/jwt-refresh-auth.guard';
+import { JwtATPayload, JwtRTPayload } from '../auth/types/jwtPayload.type';
 import { GetCurrentUserId } from '../common/decorators/get-current-user-id.decorator';
 import { GetCurrentJwtContext } from '../common/decorators/get-current-user.decorator';
 
@@ -35,7 +36,7 @@ export class SecurityController {
   }
 
   @Get('/devices')
-  findAll(@GetCurrentJwtContext() ctx: JwtPayload) {
+  findAll(@GetCurrentJwtContext() ctx: JwtATPayload) {
     return this.securityQueryRepository.findAll(ctx.user.id);
   }
 
@@ -57,7 +58,8 @@ export class SecurityController {
 
   @Delete('/devices')
   @HttpCode(HttpStatus.NO_CONTENT)
-  async removeAllWithoutMyDevice(@GetCurrentJwtContext() ctx: JwtPayload) {
+  @UseGuards(JwtRefreshAuthGuard)
+  async removeAllWithoutMyDevice(@GetCurrentJwtContext() ctx: JwtRTPayload) {
     return this.securityService.removeAllWithoutMyDevice(
       ctx.user.id,
       ctx.deviceId,
