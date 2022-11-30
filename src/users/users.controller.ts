@@ -26,9 +26,8 @@ export class UsersController {
   @UseGuards(BaseAuthGuard)
   @Post()
   async create(@Body() { login, email, password }: CreateUserDto) {
-    const userAlreadyExistByLogin = await this.usersService.findOneByLogin(
-      login,
-    );
+    const userAlreadyExistByLogin =
+      await this.usersService.findOneByLoginOrEmail(login);
 
     if (userAlreadyExistByLogin) {
       throw new BadRequestException({

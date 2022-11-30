@@ -46,8 +46,8 @@ export class AuthService {
     return BaseAuthPayload;
   }
 
-  async login({ login, password }: LoginDto): Promise<TokenDto | null> {
-    const user = await this.usersService.findOneByLogin(login);
+  async login({ loginOrEmail, password }: LoginDto): Promise<TokenDto | null> {
+    const user = await this.usersService.findOneByLoginOrEmail(loginOrEmail);
 
     if (!user) {
       return null;
@@ -66,7 +66,7 @@ export class AuthService {
     const atPayload: JwtATPayload = {
       user: {
         id,
-        login,
+        login: user.accountData.login,
         email,
       },
     };
@@ -74,7 +74,7 @@ export class AuthService {
     const rtPayload: JwtRTPayload = {
       user: {
         id,
-        login,
+        login: user.accountData.login,
         email,
       },
       deviceId,
@@ -135,7 +135,7 @@ export class AuthService {
   }
 
   async validateUser(login: string, password: string): Promise<User> {
-    const user = await this.usersService.findOneByLogin(login);
+    const user = await this.usersService.findOneByLoginOrEmail(login);
 
     if (!user) {
       return null;

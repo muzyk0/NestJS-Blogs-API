@@ -60,9 +60,14 @@ export class UsersRepository {
     });
   }
 
-  async findOneByLogin(login: string): Promise<User> {
+  async findOneByLoginOrEmail(loginOrEmail: string): Promise<User> {
     const user = await this.userModel.findOne(
-      { 'accountData.login': login },
+      {
+        $or: [
+          { 'accountData.login': loginOrEmail },
+          { 'accountData.email': loginOrEmail },
+        ],
+      },
       BASE_PROJECTION,
     );
     return user;
@@ -83,6 +88,7 @@ export class UsersRepository {
       BASE_PROJECTION,
     );
   }
+
   async findOneById(id: string) {
     return this.userModel.findOne({ 'accountData.id': id }, BASE_PROJECTION);
   }

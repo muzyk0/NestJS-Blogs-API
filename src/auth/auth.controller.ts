@@ -82,9 +82,8 @@ export class AuthController {
   @Post('/registration')
   @HttpCode(HttpStatus.NO_CONTENT)
   async registerUser(@Body() { login, email, password }: CreateUserDto) {
-    const userAlreadyExistByLogin = await this.usersService.findOneByLogin(
-      login,
-    );
+    const userAlreadyExistByLogin =
+      await this.usersService.findOneByLoginOrEmail(login);
 
     if (userAlreadyExistByLogin) {
       throw new BadRequestException([
