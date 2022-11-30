@@ -22,7 +22,7 @@ import { CreateSecurityDto } from './dto/create-security.dto';
 import { SecurityQueryRepository } from './security.query.repository';
 import { SecurityService } from './security.service';
 
-@UseGuards(JwtAuthGuard)
+@UseGuards(JwtRefreshAuthGuard)
 @Controller('security')
 export class SecurityController {
   constructor(
@@ -58,7 +58,6 @@ export class SecurityController {
 
   @Delete('/devices')
   @HttpCode(HttpStatus.NO_CONTENT)
-  @UseGuards(JwtRefreshAuthGuard)
   async removeAllWithoutMyDevice(@GetCurrentJwtContext() ctx: JwtRTPayload) {
     return this.securityService.removeAllWithoutMyDevice(
       ctx.user.id,
