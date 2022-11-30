@@ -71,8 +71,8 @@ export class AuthController {
     });
 
     res.cookie('refreshToken', refreshToken, {
-      httpOnly: false,
-      secure: false,
+      httpOnly: true,
+      secure: true,
     });
 
     return tokens;
