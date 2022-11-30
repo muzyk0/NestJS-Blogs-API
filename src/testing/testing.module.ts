@@ -5,6 +5,7 @@ import { Blog, BlogSchema } from '../blogs/schemas/blogs.schema';
 import { Comment, CommentSchema } from '../comments/schemas/comments.schema';
 import { Limit, LimitSchema } from '../limits/schemas/limits.schema';
 import { Post, PostSchema } from '../posts/schemas/posts.schema';
+import { Security, SecuritySchema } from '../security/schemas/security.schema';
 import { User, UserSchema } from '../users/schemas/users.schema';
 
 import { TestingController } from './testing.controller';
@@ -18,6 +19,9 @@ import { TestingService } from './testing.service';
     MongooseModule.forFeature([{ name: User.name, schema: UserSchema }]),
     MongooseModule.forFeature([{ name: Comment.name, schema: CommentSchema }]),
     MongooseModule.forFeature([{ name: Limit.name, schema: LimitSchema }]),
+    MongooseModule.forFeature([
+      { name: Security.name, schema: SecuritySchema },
+    ]),
   ],
   controllers: [TestingController],
   providers: [TestingService, TestingRepository],

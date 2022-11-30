@@ -102,7 +102,7 @@ describe('blogsController', () => {
   it('first blog should be created', async () => {
     const newBlog = await blogController.create({
       name: 'Vlad',
-      youtubeUrl: 'https://www.youtube.com/channel/UCcZ18YvVGS7tllvrxN5IAAQ',
+      websiteUrl: 'https://www.youtube.com/channel/UCcZ18YvVGS7tllvrxN5IAAQ',
     });
 
     blog = newBlog;
@@ -119,7 +119,7 @@ describe('blogsController', () => {
   it('two blogs should be created', async () => {
     const firstBlog = await blogController.create({
       name: 'Vlad 2',
-      youtubeUrl: 'https://www.youtube.com/channel/UCcZ18YvVGS7tllvrxN5IAAQ',
+      websiteUrl: 'https://www.youtube.com/channel/UCcZ18YvVGS7tllvrxN5IAAQ',
     });
 
     blog = firstBlog;

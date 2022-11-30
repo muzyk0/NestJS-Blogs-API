@@ -13,6 +13,7 @@ import { Blog, BlogDocument } from './schemas/blogs.schema';
 
 export interface IBlogsQueryRepository {
   findOne(id: string): Promise<BlogDto>;
+
   findAll(pageOptionsDto: PageOptionsDto): Promise<PageDto<BlogDto>>;
 }
 
@@ -55,7 +56,7 @@ export class BlogsQueryRepository implements IBlogsQueryRepository {
     return {
       id: blog.id,
       name: blog.name,
-      youtubeUrl: blog.youtubeUrl,
+      websiteUrl: blog.websiteUrl,
     };
   }
 }

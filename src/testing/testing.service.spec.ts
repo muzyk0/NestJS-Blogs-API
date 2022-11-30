@@ -9,6 +9,7 @@ import { Blog, BlogSchema } from '../blogs/schemas/blogs.schema';
 import { Comment, CommentSchema } from '../comments/schemas/comments.schema';
 import { Limit, LimitSchema } from '../limits/schemas/limits.schema';
 import { Post, PostSchema } from '../posts/schemas/posts.schema';
+import { Security, SecuritySchema } from '../security/schemas/security.schema';
 import {
   User,
   UserAccountDBType,
@@ -30,6 +31,7 @@ describe('TestingService', () => {
   let userModel: Model<User>;
   let commentModel: Model<Comment>;
   let limitModel: Model<Limit>;
+  let securityModel: Model<Security>;
 
   beforeAll(async () => {
     mongod = await MongoMemoryServer.create();
@@ -40,6 +42,7 @@ describe('TestingService', () => {
     userModel = mongoConnection.model(User.name, UserSchema);
     commentModel = mongoConnection.model(Comment.name, CommentSchema);
     limitModel = mongoConnection.model(Limit.name, LimitSchema);
+    securityModel = mongoConnection.model(Security.name, SecuritySchema);
     const app: TestingModule = await Test.createTestingModule({
       controllers: [],
       providers: [
@@ -50,6 +53,7 @@ describe('TestingService', () => {
         { provide: getModelToken(User.name), useValue: userModel },
         { provide: getModelToken(Comment.name), useValue: commentModel },
         { provide: getModelToken(Limit.name), useValue: limitModel },
+        { provide: getModelToken(Security.name), useValue: securityModel },
       ],
     }).compile();
     testingService = app.get<TestingService>(TestingService);
@@ -71,7 +75,7 @@ describe('TestingService', () => {
     const blog = await blogModel.create({
       id: v4(),
       name: userName,
-      youtubeUrl,
+      websiteUrl: youtubeUrl,
     });
 
     const testPosts = new Array(countCreatedPosts).fill({
@@ -85,7 +89,7 @@ describe('TestingService', () => {
 
     expect(blog).toBeDefined();
     expect(blog.name).toBe(userName);
-    expect(blog.youtubeUrl).toBe(youtubeUrl);
+    expect(blog.websiteUrl).toBe(youtubeUrl);
 
     await postModel.insertMany(testPosts);
 

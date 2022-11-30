@@ -14,7 +14,7 @@ export class Blog implements BlogDto {
   name: string;
 
   @Prop({ required: true })
-  youtubeUrl: string;
+  websiteUrl: string;
 }
 
 export const BlogSchema = SchemaFactory.createForClass(Blog);
