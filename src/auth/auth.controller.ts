@@ -257,6 +257,8 @@ export class AuthController {
       });
     }
 
+    await this.securityService.remove(ctx.deviceId);
+
     res.clearCookie('refreshToken');
     return;
   }

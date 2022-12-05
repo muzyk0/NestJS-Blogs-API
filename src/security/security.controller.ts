@@ -13,7 +13,7 @@ import {
 } from '@nestjs/common';
 
 import { JwtRefreshAuthGuard } from '../auth/guards/jwt-refresh-auth.guard';
-import { JwtRTPayload } from '../auth/types/jwtPayload.type';
+import { JwtRTPayload, JwtATPayload } from '../auth/types/jwtPayload.type';
 import { GetCurrentUserId } from '../common/decorators/get-current-user-id.decorator';
 import { GetCurrentJwtContext } from '../common/decorators/get-current-user.decorator';
 
