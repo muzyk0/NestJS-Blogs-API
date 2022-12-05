@@ -10,11 +10,8 @@ export class SecurityQueryRepository {
     @InjectModel(Security.name) private securityModel: Model<SecurityDocument>,
   ) {}
 
-  async findAll(userId: string, deviceId: string) {
-    const sessions = await this.securityModel.find({
-      userId,
-      deviceId: { $ne: deviceId },
-    });
+  async findAll(userId: string) {
+    const sessions = await this.securityModel.find({ userId });
 
     return sessions.map((session) => ({
       ip: session.ip,

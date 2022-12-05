@@ -35,8 +35,8 @@ export class SecurityController {
   }
 
   @Get('/devices')
-  findAll(@GetCurrentJwtContext() ctx: JwtRTPayload) {
-    return this.securityQueryRepository.findAll(ctx.user.id, ctx.deviceId);
+  findAll(@GetCurrentJwtContext() ctx: JwtATPayload) {
+    return this.securityQueryRepository.findAll(ctx.user.id);
   }
 
   @Delete('/devices/:id')
