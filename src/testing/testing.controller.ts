@@ -9,7 +9,7 @@ export class TestingController {
 
   @Delete('all-data')
   async clearDatabase(@Res() res: Response) {
-    // await this.testingService.clearDatabase();
+    await this.testingService.clearDatabase();
 
     res.status(HttpStatus.NO_CONTENT).send();
   }
