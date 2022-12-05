@@ -197,7 +197,7 @@ export class AuthController {
       },
       {
         user: ctx.user,
-        deviceId: v4(),
+        deviceId: ctx.deviceId,
       },
     );
 
