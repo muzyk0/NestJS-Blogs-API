@@ -15,7 +15,7 @@ export class SecurityRepository {
     return this.securityModel.findOneAndUpdate(
       {
         userId: securityDto.userId,
-        deviceName: securityDto.deviceName,
+        deviceId: securityDto.deviceId,
       },
       {
         $set: securityDto,
