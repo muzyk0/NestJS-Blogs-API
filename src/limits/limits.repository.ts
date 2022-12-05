@@ -8,13 +8,15 @@ import { LimitDto } from './dto/limitDto';
 import { Limit, LimitDocument } from './schemas/limits.schema';
 
 export interface ILimitsRepository {
-  addAttempt(requestAttempt: LimitDto): Promise<boolean>;
+  addAttempt(requestAttempt: CreateLimitsDto): Promise<boolean>;
+
   getAttempts(options: {
     ip: string;
     login: string | undefined;
     url: string;
     fromDate: Date;
   }): Promise<number>;
+
   removeLatestAttempts(toDate: Date): Promise<boolean>;
 }
 
@@ -24,12 +26,13 @@ export class LimitsRepository implements ILimitsRepository {
     @InjectModel(Limit.name) private limitsModel: Model<LimitDocument>,
   ) {}
 
-  async addAttempt({ login, url, ip }: CreateLimitsDto) {
+  async addAttempt({ login, url, ip, deviceName }: CreateLimitsDto) {
     await this.limitsModel.create({
       id: v4(),
       url,
       ip,
       login,
+      deviceName,
       createdAt: new Date(),
     });
 
