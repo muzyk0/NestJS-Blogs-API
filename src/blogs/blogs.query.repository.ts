@@ -7,8 +7,6 @@ import { PageOptionsDto } from '../common/paginator/page-options.dto';
 import { PageDto } from '../common/paginator/page.dto';
 
 import { BlogDto } from './dto/blog.dto';
-import { CreateBlogDto } from './dto/create-blog.dto';
-import { UpdateBlogDto } from './dto/update-blog.dto';
 import { Blog, BlogDocument } from './schemas/blogs.schema';
 
 export interface IBlogsQueryRepository {

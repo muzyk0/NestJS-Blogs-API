@@ -2,19 +2,21 @@ import { Injectable } from '@nestjs/common';
 import { v4 } from 'uuid';
 
 import { BlogsRepository } from '../blogs/blogs.repository';
-import { PageDto } from '../common/paginator/page.dto';
 
 import { CreatePostDto } from './dto/create-post.dto';
 import { PostDto } from './dto/post.dto';
 import { UpdatePostDbDto } from './dto/update-post-db.dto';
 import { UpdatePostDto } from './dto/update-post.dto';
 import { IPostService } from './posts.controller';
-import { FindAllPostsOptions, PostsRepository } from './posts.repository';
+import { PostsRepository } from './posts.repository';
 
 export interface IPostsRepository {
   create(createPostDto: CreatePostDto): Promise<PostDto>;
+
   findOne(id: string): Promise<PostDto>;
+
   update(id: string, updatePostDto: UpdatePostDto): Promise<PostDto>;
+
   remove(id: string): Promise<boolean>;
 }
 

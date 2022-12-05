@@ -8,9 +8,6 @@ import { connect, Connection, Model } from 'mongoose';
 
 import { EmailTemplateManager } from '../email/email-template-manager';
 import { EmailService } from '../email/email.service';
-import { Security, SecuritySchema } from '../security/schemas/security.schema';
-import { SecurityRepository } from '../security/security.repository';
-import { SecurityService } from '../security/security.service';
 import { User, UserSchema } from '../users/schemas/users.schema';
 import { UsersRepository } from '../users/users.repository';
 import { UsersService } from '../users/users.service';

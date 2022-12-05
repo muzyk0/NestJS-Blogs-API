@@ -12,9 +12,8 @@ import {
   UseGuards,
 } from '@nestjs/common';
 
-import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 import { JwtRefreshAuthGuard } from '../auth/guards/jwt-refresh-auth.guard';
-import { JwtATPayload, JwtRTPayload } from '../auth/types/jwtPayload.type';
+import { JwtRTPayload } from '../auth/types/jwtPayload.type';
 import { GetCurrentUserId } from '../common/decorators/get-current-user-id.decorator';
 import { GetCurrentJwtContext } from '../common/decorators/get-current-user.decorator';
 

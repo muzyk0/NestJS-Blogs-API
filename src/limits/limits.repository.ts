@@ -4,7 +4,6 @@ import { Model } from 'mongoose';
 import { v4 } from 'uuid';
 
 import { CreateLimitsDto } from './dto/create-limits.dto';
-import { LimitDto } from './dto/limitDto';
 import { Limit, LimitDocument } from './schemas/limits.schema';
 
 export interface ILimitsRepository {

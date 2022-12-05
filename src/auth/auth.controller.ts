@@ -13,7 +13,6 @@ import {
   UseGuards,
 } from '@nestjs/common';
 import { Request, Response } from 'express';
-import { v4 } from 'uuid';
 
 import { GetCurrentUserId } from '../common/decorators/get-current-user-id.decorator';
 import { GetCurrentJwtContext } from '../common/decorators/get-current-user.decorator';
