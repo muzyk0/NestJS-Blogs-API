@@ -7,6 +7,9 @@ import { connect, Connection, Model } from 'mongoose';
 import { BlogsRepository } from '../blogs/blogs.repository';
 import { Blog, BlogSchema } from '../blogs/schemas/blogs.schema';
 import { EmailService } from '../email/email.service';
+import { Security, SecuritySchema } from '../security/schemas/security.schema';
+import { SecurityRepository } from '../security/security.repository';
+import { SecurityService } from '../security/security.service';
 
 import { PostsQueryRepository } from './posts.query.repository';
 import { PostsRepository } from './posts.repository';
@@ -17,15 +20,20 @@ describe('PostsService', () => {
   let postsService: PostsService;
   let mongod: MongoMemoryServer;
   let mongoConnection: Connection;
+
   let postModel: Model<Post>;
   let blogModel: Model<Blog>;
+  let securityModel: Model<Security>;
 
   beforeAll(async () => {
     mongod = await MongoMemoryServer.create();
     const uri = mongod.getUri();
     mongoConnection = (await connect(uri)).connection;
+
     postModel = mongoConnection.model(Post.name, PostSchema);
     blogModel = mongoConnection.model(Blog.name, BlogSchema);
+    securityModel = mongoConnection.model(Security.name, SecuritySchema);
+
     const app: TestingModule = await Test.createTestingModule({
       providers: [
         PostsService,
@@ -36,6 +44,9 @@ describe('PostsService', () => {
         { provide: getModelToken(Blog.name), useValue: blogModel },
         EmailService,
         { provide: MailerService, useValue: jest.fn() },
+        SecurityService,
+        SecurityRepository,
+        { provide: getModelToken(Security.name), useValue: securityModel },
       ],
     }).compile();
     postsService = app.get<PostsService>(PostsService);

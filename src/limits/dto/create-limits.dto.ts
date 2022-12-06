@@ -11,4 +11,7 @@ export class CreateLimitsDto {
 
   @IsString()
   url: string;
+
+  @IsString()
+  deviceName?: string;
 }

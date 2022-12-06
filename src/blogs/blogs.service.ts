@@ -9,8 +9,11 @@ import { UpdateBlogDto } from './dto/update-blog.dto';
 
 export interface IBlogsRepository {
   create(createBlogDto: CreateBlogDto): Promise<BlogDto>;
+
   findOne(id: string): Promise<BlogDto>;
+
   update(id: string, updateBlogDto: UpdateBlogDto): Promise<BlogDto>;
+
   remove(id: string): Promise<boolean>;
 }
 
@@ -19,10 +22,10 @@ export class BlogsService implements IBlogService {
   constructor(private blogsRepository: BlogsRepository) {}
 
   async create(createBlogDto: CreateBlogDto) {
-    const newBlog = {
+    const newBlog: BlogDto = {
       id: v4(),
       name: createBlogDto.name,
-      youtubeUrl: createBlogDto.youtubeUrl,
+      websiteUrl: createBlogDto.websiteUrl,
     };
     return this.blogsRepository.create(newBlog);
   }

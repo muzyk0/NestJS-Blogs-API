@@ -93,8 +93,8 @@ export class UsersService {
     };
   }
 
-  async findOneByLogin(login: string) {
-    return this.usersRepository.findOneByLogin(login);
+  async findOneByLoginOrEmail(loginOrEmail: string) {
+    return this.usersRepository.findOneByLoginOrEmail(loginOrEmail);
   }
 
   async findOneByEmail(email: string) {

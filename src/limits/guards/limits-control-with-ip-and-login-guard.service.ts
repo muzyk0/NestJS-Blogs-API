@@ -6,6 +6,7 @@ import { LimitsService } from '../limits.service';
 @Injectable()
 export class LimitsControlWithIpAndLoginGuard implements CanActivate {
   constructor(private limitsService: LimitsService) {}
+
   async canActivate(context: ExecutionContext): Promise<boolean> | null {
     const request = context.switchToHttp().getRequest();
     const { ip, url } = request;
@@ -14,8 +15,10 @@ export class LimitsControlWithIpAndLoginGuard implements CanActivate {
     const maxLimitInterval = 10 * 1000;
     const maxRequest = 5;
 
+    const deviceName = request.get('User-Agent');
+
     const isContinue = await this.limitsService.checkLimits(
-      { ip, url, login },
+      { ip, url, login, deviceName },
       maxLimitInterval,
       maxRequest,
     );

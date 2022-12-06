@@ -9,6 +9,9 @@ import { connect, Connection, Model } from 'mongoose';
 import { AuthService } from '../auth/auth.service';
 import { EmailTemplateManager } from '../email/email-template-manager';
 import { EmailService } from '../email/email.service';
+import { Security, SecuritySchema } from '../security/schemas/security.schema';
+import { SecurityRepository } from '../security/security.repository';
+import { SecurityService } from '../security/security.service';
 
 import { User, UserSchema } from './schemas/users.schema';
 import { UsersController } from './users.controller';
@@ -19,13 +22,17 @@ describe('UsersController', () => {
   let usersController: UsersController;
   let mongod: MongoMemoryServer;
   let mongoConnection: Connection;
+
   let userModel: Model<User>;
+  let securityModel: Model<Security>;
 
   beforeAll(async () => {
     mongod = await MongoMemoryServer.create();
     const uri = mongod.getUri();
     mongoConnection = (await connect(uri)).connection;
     userModel = mongoConnection.model(User.name, UserSchema);
+    securityModel = mongoConnection.model(Security.name, SecuritySchema);
+
     const app: TestingModule = await Test.createTestingModule({
       imports: [ConfigModule.forRoot({})],
       controllers: [UsersController],
@@ -40,6 +47,9 @@ describe('UsersController', () => {
         { provide: 'BASE_URL', useValue: 'empty_url' },
         { provide: MailerService, useValue: jest.fn() },
         JwtService,
+        SecurityService,
+        SecurityRepository,
+        { provide: getModelToken(Security.name), useValue: securityModel },
       ],
     }).compile();
     usersController = app.get<UsersController>(UsersController);

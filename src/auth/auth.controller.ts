@@ -6,7 +6,6 @@ import {
   Get,
   HttpCode,
   HttpStatus,
-  NotFoundException,
   Post,
   Req,
   Res,
@@ -19,6 +18,7 @@ import { GetCurrentUserId } from '../common/decorators/get-current-user-id.decor
 import { GetCurrentJwtContext } from '../common/decorators/get-current-user.decorator';
 import { LimitsControlWithIpAndLoginGuard } from '../limits/guards/limits-control-with-ip-and-login-guard.service';
 import { LimitsControlGuard } from '../limits/guards/limits-control.guard';
+import { SecurityService } from '../security/security.service';
 import { CreateUserDto } from '../users/dto/create-user.dto';
 import { EmailConfirmationCodeDto } from '../users/dto/email-confirmation-code.dto';
 import { Email } from '../users/dto/email.dto';
@@ -31,13 +31,14 @@ import { JwtAuthGuard } from './guards/jwt-auth.guard';
 import { JwtRefreshAuthGuard } from './guards/jwt-refresh-auth.guard';
 import { LocalAuthGuard } from './guards/local-auth.guard';
 import { JwtPayloadWithRt } from './types/jwt-payload-with-rt.type';
-import { JwtPayload } from './types/jwtPayload.type';
+import { DecodedJwtRTPayload } from './types/jwtPayload.type';
 
 @Controller('auth')
 export class AuthController {
   constructor(
     private readonly authService: AuthService,
     private readonly usersService: UsersService,
+    private securityService: SecurityService,
   ) {}
 
   @UseGuards(LimitsControlWithIpAndLoginGuard, LocalAuthGuard)
@@ -45,6 +46,7 @@ export class AuthController {
   @HttpCode(HttpStatus.OK)
   async login(
     @Body() loginDto: LoginDto,
+    @Req() req: Request,
     @Res({ passthrough: true }) res: Response,
   ) {
     const { refreshToken, ...tokens } = await this.authService.login(loginDto);
@@ -52,6 +54,20 @@ export class AuthController {
     if (!tokens) {
       throw new UnauthorizedException();
     }
+
+    const decodedAccessToken =
+      await this.authService.decodeJwtToken<DecodedJwtRTPayload>(refreshToken);
+
+    const userAgent = req.get('User-Agent');
+
+    await this.securityService.create({
+      userId: decodedAccessToken.user.id,
+      ip: req.ip,
+      deviceId: decodedAccessToken.deviceId,
+      deviceName: userAgent,
+      issuedAt: decodedAccessToken.iat,
+      expireAt: decodedAccessToken.exp,
+    });
 
     res.cookie('refreshToken', refreshToken, {
       httpOnly: true,
@@ -65,9 +81,8 @@ export class AuthController {
   @Post('/registration')
   @HttpCode(HttpStatus.NO_CONTENT)
   async registerUser(@Body() { login, email, password }: CreateUserDto) {
-    const userAlreadyExistByLogin = await this.usersService.findOneByLogin(
-      login,
-    );
+    const userAlreadyExistByLogin =
+      await this.usersService.findOneByLoginOrEmail(login);
 
     if (userAlreadyExistByLogin) {
       throw new BadRequestException([
@@ -175,8 +190,28 @@ export class AuthController {
       });
     }
 
-    const tokens = await this.authService.createJwtTokens({
-      user: ctx.user,
+    const tokens = await this.authService.createJwtTokens(
+      {
+        user: ctx.user,
+      },
+      {
+        user: ctx.user,
+        deviceId: ctx.deviceId,
+      },
+    );
+
+    const decodedAccessToken =
+      await this.authService.decodeJwtToken<DecodedJwtRTPayload>(
+        tokens.refreshToken,
+      );
+
+    await this.securityService.create({
+      userId: decodedAccessToken.user.id,
+      ip: req.ip,
+      deviceId: decodedAccessToken.deviceId,
+      deviceName: userAgent,
+      issuedAt: decodedAccessToken.iat,
+      expireAt: decodedAccessToken.exp,
     });
 
     res.cookie('refreshToken', tokens.refreshToken, {
@@ -221,6 +256,8 @@ export class AuthController {
         field: '',
       });
     }
+
+    await this.securityService.remove(ctx.deviceId);
 
     res.clearCookie('refreshToken');
     return;

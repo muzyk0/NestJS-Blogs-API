@@ -16,6 +16,9 @@ import { PostsQueryRepository } from '../posts/posts.query.repository';
 import { PostsRepository } from '../posts/posts.repository';
 import { PostsService } from '../posts/posts.service';
 import { Post, PostSchema } from '../posts/schemas/posts.schema';
+import { Security, SecuritySchema } from '../security/schemas/security.schema';
+import { SecurityRepository } from '../security/security.repository';
+import { SecurityService } from '../security/security.service';
 import { User, UserSchema } from '../users/schemas/users.schema';
 import { UsersRepository } from '../users/users.repository';
 import { UsersService } from '../users/users.service';
@@ -37,6 +40,7 @@ describe('blogsController', () => {
   let blogModel: Model<Blog>;
   let userModel: Model<User>;
   let postModel: Model<Post>;
+  let securityModel: Model<Security>;
 
   beforeAll(async () => {
     mongod = await MongoMemoryServer.create();
@@ -46,6 +50,7 @@ describe('blogsController', () => {
     blogModel = mongoConnection.model(Blog.name, BlogSchema);
     userModel = mongoConnection.model(User.name, UserSchema);
     postModel = mongoConnection.model(Post.name, PostSchema);
+    securityModel = mongoConnection.model(Security.name, SecuritySchema);
 
     const app: TestingModule = await Test.createTestingModule({
       imports: [ConfigModule.forRoot({})],
@@ -68,6 +73,9 @@ describe('blogsController', () => {
         PostsQueryRepository,
         { provide: getModelToken(Post.name), useValue: postModel },
         JwtService,
+        SecurityService,
+        SecurityRepository,
+        { provide: getModelToken(Security.name), useValue: securityModel },
       ],
     }).compile();
     blogController = app.get<BlogsController>(BlogsController);
@@ -94,7 +102,7 @@ describe('blogsController', () => {
   it('first blog should be created', async () => {
     const newBlog = await blogController.create({
       name: 'Vlad',
-      youtubeUrl: 'https://www.youtube.com/channel/UCcZ18YvVGS7tllvrxN5IAAQ',
+      websiteUrl: 'https://www.youtube.com/channel/UCcZ18YvVGS7tllvrxN5IAAQ',
     });
 
     blog = newBlog;
@@ -111,7 +119,7 @@ describe('blogsController', () => {
   it('two blogs should be created', async () => {
     const firstBlog = await blogController.create({
       name: 'Vlad 2',
-      youtubeUrl: 'https://www.youtube.com/channel/UCcZ18YvVGS7tllvrxN5IAAQ',
+      websiteUrl: 'https://www.youtube.com/channel/UCcZ18YvVGS7tllvrxN5IAAQ',
     });
 
     blog = firstBlog;

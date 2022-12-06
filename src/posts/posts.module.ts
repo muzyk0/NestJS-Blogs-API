@@ -9,6 +9,8 @@ import { CommentsQueryRepository } from '../comments/comments.query.repository';
 import { CommentsRepository } from '../comments/comments.repository';
 import { CommentsService } from '../comments/comments.service';
 import { Comment, CommentSchema } from '../comments/schemas/comments.schema';
+import { Security, SecuritySchema } from '../security/schemas/security.schema';
+import { SecurityModule } from '../security/security.module';
 
 import { PostsController } from './posts.controller';
 import { PostsQueryRepository } from './posts.query.repository';
@@ -21,7 +23,11 @@ import { Post, PostSchema } from './schemas/posts.schema';
     MongooseModule.forFeature([{ name: Post.name, schema: PostSchema }]),
     MongooseModule.forFeature([{ name: Blog.name, schema: BlogSchema }]),
     MongooseModule.forFeature([{ name: Comment.name, schema: CommentSchema }]),
+    MongooseModule.forFeature([
+      { name: Security.name, schema: SecuritySchema },
+    ]),
     AuthModule,
+    SecurityModule,
   ],
   controllers: [PostsController],
   providers: [

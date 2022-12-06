@@ -34,6 +34,7 @@ describe('AuthService', () => {
           secret: 'access_token_secret',
           signOptions: { expiresIn: '60s' },
         }),
+        // SecurityModule,
         // ConfigModule.forRoot({}),
       ],
       providers: [

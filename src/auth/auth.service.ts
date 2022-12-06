@@ -12,7 +12,7 @@ import { User } from '../users/schemas/users.schema';
 import { UsersService } from '../users/users.service';
 
 import { LoginDto } from './dto/login.dto';
-import { JwtPayload } from './types/jwtPayload.type';
+import { JwtATPayload, JwtRTPayload } from './types/jwtPayload.type';
 
 interface TokenDto {
   accessToken: string;
@@ -46,8 +46,8 @@ export class AuthService {
     return BaseAuthPayload;
   }
 
-  async login({ login, password }: LoginDto): Promise<TokenDto | null> {
-    const user = await this.usersService.findOneByLogin(login);
+  async login({ loginOrEmail, password }: LoginDto): Promise<TokenDto | null> {
+    const user = await this.usersService.findOneByLoginOrEmail(loginOrEmail);
 
     if (!user) {
       return null;
@@ -61,34 +61,57 @@ export class AuthService {
       return null;
     }
 
-    const payload: JwtPayload = {
+    const deviceId = v4();
+
+    const atPayload: JwtATPayload = {
       user: {
         id,
-        login,
+        login: user.accountData.login,
         email,
       },
     };
 
-    return this.createJwtTokens(payload);
+    const rtPayload: JwtRTPayload = {
+      user: {
+        id,
+        login: user.accountData.login,
+        email,
+      },
+      deviceId,
+    };
+
+    return this.createJwtTokens(atPayload, rtPayload);
   }
 
-  async createJwtTokens(payload: JwtPayload) {
-    const isDev = this.config.get<string>('IS_DEV');
-
-    const accessToken = this.jwtService.sign(payload, {
+  async createJwtTokens(atPayload: JwtATPayload, rtPayload: JwtRTPayload) {
+    const accessToken = this.jwtService.sign(atPayload, {
       secret: this.config.get<string>('ACCESS_TOKEN_SECRET'),
-      // expiresIn: isDev ? '30m' : '10s',
       expiresIn: this.config.get<string>('ACCESS_TOKEN_SECRET_EXPIRES_IN'),
     });
 
-    const refreshToken = this.jwtService.sign(payload, {
+    const refreshToken = this.jwtService.sign(rtPayload, {
       secret: this.config.get<string>('REFRESH_TOKEN_SECRET'),
-      // expiresIn: isDev ? '60m' : '20s',
       expiresIn: this.config.get<string>('REFRESH_TOKEN_SECRET_EXPIRES_IN'),
     });
     return {
       accessToken,
       refreshToken,
+    };
+  }
+
+  async decodeJwtToken<T>(token: string): Promise<T> {
+    const accessToken = this.jwtService.decode(token) as T;
+
+    const iat = new Date(0);
+    iat.setUTCSeconds(accessToken['iat']);
+
+    const exp = new Date(0);
+    exp.setUTCSeconds(accessToken['exp']);
+
+    return {
+      ...accessToken,
+      iat,
+      exp,
     };
   }
 
@@ -112,7 +135,7 @@ export class AuthService {
   }
 
   async validateUser(login: string, password: string): Promise<User> {
-    const user = await this.usersService.findOneByLogin(login);
+    const user = await this.usersService.findOneByLoginOrEmail(login);
 
     if (!user) {
       return null;

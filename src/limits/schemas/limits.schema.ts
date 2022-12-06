@@ -19,6 +19,9 @@ export class Limit implements LimitDto {
   @Prop({ required: true })
   url: string;
 
+  @Prop({ required: false })
+  deviceName: string;
+
   @Prop({ required: true })
   createdAt: Date;
 }

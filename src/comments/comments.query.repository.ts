@@ -9,11 +9,10 @@ import { PageDto } from '../common/paginator/page.dto';
 import { Post, PostDocument } from '../posts/schemas/posts.schema';
 
 import { CommentDto } from './dto/comment.dto';
-import { CreateCommentDto } from './dto/create-comment.dto';
-import { UpdateCommentDto } from './dto/update-comment.dto';
-import { CommentDocument, Comment } from './schemas/comments.schema';
+import { Comment, CommentDocument } from './schemas/comments.schema';
 
 const projectionFields = { ...BASE_PROJECTION, postId: 0 };
+
 export class FindAllCommentsOptions extends PageOptionsDto {
   constructor(postId: string) {
     super();

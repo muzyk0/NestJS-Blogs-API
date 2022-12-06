@@ -5,6 +5,9 @@ export class LimitDto {
   id: string;
 
   @IsString()
+  deviceName: string;
+
+  @IsString()
   ip: string;
 
   @IsString()

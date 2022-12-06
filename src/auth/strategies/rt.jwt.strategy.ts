@@ -5,7 +5,7 @@ import { Request } from 'express';
 import { ExtractJwt, Strategy } from 'passport-jwt';
 
 import { AuthService } from '../auth.service';
-import { JwtPayload } from '../types/jwtPayload.type';
+import { JwtATPayload } from '../types/jwtPayload.type';
 
 @Injectable()
 export class RtJwtStrategy extends PassportStrategy(Strategy, 'jwt-refresh') {
@@ -28,7 +28,7 @@ export class RtJwtStrategy extends PassportStrategy(Strategy, 'jwt-refresh') {
     });
   }
 
-  async validate(req: Request, payload: JwtPayload) {
+  async validate(req: Request, payload: JwtATPayload) {
     const refreshToken = req?.cookies['refreshToken'];
 
     if (!refreshToken) {
