@@ -1,10 +1,10 @@
 {
-  "name": "nest-project",
-  "version": "0.0.1",
+  "name": "blogs-api",
+  "version": "0.6.9",
   "description": "",
-  "author": "",
+  "author": "MIT",
   "private": true,
-  "license": "UNLICENSED",
+  "license": "",
   "scripts": {
     "prebuild": "rimraf dist",
     "build": "nest build",
