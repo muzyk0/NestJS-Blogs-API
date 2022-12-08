@@ -267,6 +267,7 @@ export class AuthController {
   }
 
   @Post('/password-recovery')
+  @UseGuards(LimitsControlWithIpAndLoginGuard)
   @HttpCode(HttpStatus.NO_CONTENT)
   async recoveryPassword(@Body() { email }: Email) {
     const user = this.usersService.findOneByEmail(email);
@@ -281,6 +282,7 @@ export class AuthController {
   }
 
   @Post('/new-password')
+  @UseGuards(LimitsControlWithIpAndLoginGuard)
   @HttpCode(HttpStatus.NO_CONTENT)
   async confirmRecoveryPassword(
     @Body() { newPassword, recoveryCode }: CreateRecoveryPasswordDto,
