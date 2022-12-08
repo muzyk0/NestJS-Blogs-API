@@ -291,7 +291,10 @@ export class AuthController {
 
     if (!recovery) {
       throw new BadRequestException([
-        { message: 'Recovery code is incorrect or expired', field: 'login' },
+        {
+          message: 'Recovery code is incorrect or expired',
+          field: 'recoveryCode',
+        },
       ]);
     }
 
