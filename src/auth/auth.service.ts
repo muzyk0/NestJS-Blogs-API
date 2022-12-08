@@ -8,6 +8,8 @@ import { v4 } from 'uuid';
 import { BaseAuthPayload } from '../constants';
 import { EmailTemplateManager } from '../email/email-template-manager';
 import { EmailService } from '../email/email.service';
+import { PasswordRecoveryService } from '../password-recovery/password-recovery.service';
+import { PasswordRecoveryDocument } from '../password-recovery/schemas/recovery-password.schema';
 import { User } from '../users/schemas/users.schema';
 import { UsersService } from '../users/users.service';
 
@@ -24,6 +26,7 @@ export class AuthService {
   constructor(
     private readonly emailService: EmailService,
     private readonly usersService: UsersService,
+    private readonly recoveryPasswordService: PasswordRecoveryService,
     private readonly emailTemplateManager: EmailTemplateManager,
     private readonly jwtService: JwtService,
     private config: ConfigService,
@@ -212,5 +215,52 @@ export class AuthService {
       emailTemplate,
     );
     return true;
+  }
+
+  async sendRecoveryPasswordTempCode(email: string): Promise<boolean> {
+    const user = await this.usersService.findOneByEmail(email);
+
+    if (!user) {
+      return false;
+    }
+
+    const passwordRecovery: PasswordRecoveryDocument =
+      await this.recoveryPasswordService.addPasswordRecovery(
+        user.accountData.id,
+      );
+
+    const emailTemplate = this.emailTemplateManager.getRecoveryPasswordMessage({
+      userName: user.accountData.login,
+      recoveryCode: passwordRecovery.code,
+    });
+
+    await this.emailService.sendEmail(
+      email,
+      'Password recovery',
+      emailTemplate,
+    );
+    return true;
+  }
+
+  async confirmPasswordRecovery({
+    recoveryCode,
+    userId,
+    newPassword,
+  }: {
+    recoveryCode: string;
+    userId: string;
+    newPassword: string;
+  }) {
+    const isConfirm =
+      await this.recoveryPasswordService.confirmPasswordRecovery(recoveryCode);
+
+    if (isConfirm) {
+      const password = await this.generateHashPassword(newPassword);
+
+      await this.usersService.updateUserPassword({
+        id: userId,
+        password,
+      });
+    }
   }
 }

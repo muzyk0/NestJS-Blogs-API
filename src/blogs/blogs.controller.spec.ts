@@ -12,6 +12,12 @@ import { AuthService } from '../auth/auth.service';
 import { PageOptionsDto } from '../common/paginator/page-options.dto';
 import { EmailTemplateManager } from '../email/email-template-manager';
 import { EmailService } from '../email/email.service';
+import { PasswordRecoveryService } from '../password-recovery/password-recovery.service';
+import { RecoveryPasswordRepository } from '../password-recovery/recovery-password.repository';
+import {
+  PasswordRecovery,
+  PasswordRecoverySchema,
+} from '../password-recovery/schemas/recovery-password.schema';
 import { PostsQueryRepository } from '../posts/posts.query.repository';
 import { PostsRepository } from '../posts/posts.repository';
 import { PostsService } from '../posts/posts.service';
@@ -41,6 +47,7 @@ describe('blogsController', () => {
   let userModel: Model<User>;
   let postModel: Model<Post>;
   let securityModel: Model<Security>;
+  let passwordRecoveryModel: Model<PasswordRecovery>;
 
   beforeAll(async () => {
     mongod = await MongoMemoryServer.create();
@@ -51,6 +58,10 @@ describe('blogsController', () => {
     userModel = mongoConnection.model(User.name, UserSchema);
     postModel = mongoConnection.model(Post.name, PostSchema);
     securityModel = mongoConnection.model(Security.name, SecuritySchema);
+    passwordRecoveryModel = mongoConnection.model(
+      PasswordRecovery.name,
+      PasswordRecoverySchema,
+    );
 
     const app: TestingModule = await Test.createTestingModule({
       imports: [ConfigModule.forRoot({})],
@@ -72,6 +83,12 @@ describe('blogsController', () => {
         PostsRepository,
         PostsQueryRepository,
         { provide: getModelToken(Post.name), useValue: postModel },
+        PasswordRecoveryService,
+        RecoveryPasswordRepository,
+        {
+          provide: getModelToken(PasswordRecovery.name),
+          useValue: passwordRecoveryModel,
+        },
         JwtService,
         SecurityService,
         SecurityRepository,

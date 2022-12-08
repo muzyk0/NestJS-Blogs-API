@@ -11,6 +11,12 @@ import { EmailService } from '../email/email.service';
 import { LimitsRepository } from '../limits/limits.repository';
 import { LimitsService } from '../limits/limits.service';
 import { Limit, LimitSchema } from '../limits/schemas/limits.schema';
+import { PasswordRecoveryService } from '../password-recovery/password-recovery.service';
+import { RecoveryPasswordRepository } from '../password-recovery/recovery-password.repository';
+import {
+  PasswordRecovery,
+  PasswordRecoverySchema,
+} from '../password-recovery/schemas/recovery-password.schema';
 import { Security, SecuritySchema } from '../security/schemas/security.schema';
 import { SecurityRepository } from '../security/security.repository';
 import { SecurityService } from '../security/security.service';
@@ -30,6 +36,7 @@ describe('AuthController', () => {
   let userModel: Model<User>;
   let limitModel: Model<Limit>;
   let securityModel: Model<Security>;
+  let passwordRecoveryModel: Model<PasswordRecovery>;
 
   beforeAll(async () => {
     mongod = await MongoMemoryServer.create();
@@ -39,6 +46,10 @@ describe('AuthController', () => {
     userModel = mongoConnection.model(User.name, UserSchema);
     limitModel = mongoConnection.model(Limit.name, LimitSchema);
     securityModel = mongoConnection.model(Security.name, SecuritySchema);
+    passwordRecoveryModel = mongoConnection.model(
+      PasswordRecovery.name,
+      PasswordRecoverySchema,
+    );
 
     const module: TestingModule = await Test.createTestingModule({
       imports: [
@@ -56,6 +67,12 @@ describe('AuthController', () => {
         UsersRepository,
         { provide: getModelToken(User.name), useValue: userModel },
         { provide: getModelToken(Limit.name), useValue: limitModel },
+        PasswordRecoveryService,
+        RecoveryPasswordRepository,
+        {
+          provide: getModelToken(PasswordRecovery.name),
+          useValue: passwordRecoveryModel,
+        },
         EmailService,
         EmailTemplateManager,
         { provide: 'BASE_URL', useValue: 'empty_url' },

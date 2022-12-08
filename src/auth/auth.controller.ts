@@ -18,6 +18,8 @@ import { GetCurrentUserId } from '../common/decorators/get-current-user-id.decor
 import { GetCurrentJwtContext } from '../common/decorators/get-current-user.decorator';
 import { LimitsControlWithIpAndLoginGuard } from '../limits/guards/limits-control-with-ip-and-login-guard.service';
 import { LimitsControlGuard } from '../limits/guards/limits-control.guard';
+import { CreateRecoveryPasswordDto } from '../password-recovery/dto/confirm-password-recovery.dto';
+import { PasswordRecoveryService } from '../password-recovery/password-recovery.service';
 import { SecurityService } from '../security/security.service';
 import { CreateUserDto } from '../users/dto/create-user.dto';
 import { EmailConfirmationCodeDto } from '../users/dto/email-confirmation-code.dto';
@@ -39,6 +41,7 @@ export class AuthController {
     private readonly authService: AuthService,
     private readonly usersService: UsersService,
     private securityService: SecurityService,
+    private passwordRecoveryService: PasswordRecoveryService,
   ) {}
 
   @UseGuards(LimitsControlWithIpAndLoginGuard, LocalAuthGuard)
@@ -260,6 +263,49 @@ export class AuthController {
     await this.securityService.remove(ctx.deviceId);
 
     res.clearCookie('refreshToken');
+    return;
+  }
+
+  @Post('/password-recovery')
+  @UseGuards(LimitsControlWithIpAndLoginGuard)
+  @HttpCode(HttpStatus.NO_CONTENT)
+  async recoveryPassword(@Body() { email }: Email) {
+    const user = this.usersService.findOneByEmail(email);
+
+    if (!user) {
+      return;
+    }
+
+    await this.authService.sendRecoveryPasswordTempCode(email);
+
+    return;
+  }
+
+  @Post('/new-password')
+  @UseGuards(LimitsControlWithIpAndLoginGuard)
+  @HttpCode(HttpStatus.NO_CONTENT)
+  async confirmRecoveryPassword(
+    @Body() { newPassword, recoveryCode }: CreateRecoveryPasswordDto,
+  ) {
+    const recovery = await this.passwordRecoveryService.findByRecoveryCode(
+      recoveryCode,
+    );
+
+    if (!recovery) {
+      throw new BadRequestException([
+        {
+          message: 'Recovery code is incorrect or expired',
+          field: 'recoveryCode',
+        },
+      ]);
+    }
+
+    await this.authService.confirmPasswordRecovery({
+      userId: recovery.userId,
+      newPassword,
+      recoveryCode,
+    });
+
     return;
   }
 }

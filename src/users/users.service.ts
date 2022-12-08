@@ -128,4 +128,8 @@ export class UsersService {
   async checkRefreshToken(userId: string, revokeToken: RevokedTokenType) {
     return this.usersRepository.checkRefreshToken(userId, revokeToken);
   }
+
+  async updateUserPassword(params: { password: string; id: string }) {
+    return this.usersRepository.updateUserPassword(params);
+  }
 }

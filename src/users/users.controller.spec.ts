@@ -9,6 +9,12 @@ import { connect, Connection, Model } from 'mongoose';
 import { AuthService } from '../auth/auth.service';
 import { EmailTemplateManager } from '../email/email-template-manager';
 import { EmailService } from '../email/email.service';
+import { PasswordRecoveryService } from '../password-recovery/password-recovery.service';
+import { RecoveryPasswordRepository } from '../password-recovery/recovery-password.repository';
+import {
+  PasswordRecovery,
+  PasswordRecoverySchema,
+} from '../password-recovery/schemas/recovery-password.schema';
 import { Security, SecuritySchema } from '../security/schemas/security.schema';
 import { SecurityRepository } from '../security/security.repository';
 import { SecurityService } from '../security/security.service';
@@ -25,6 +31,7 @@ describe('UsersController', () => {
 
   let userModel: Model<User>;
   let securityModel: Model<Security>;
+  let passwordRecoveryModel: Model<PasswordRecovery>;
 
   beforeAll(async () => {
     mongod = await MongoMemoryServer.create();
@@ -32,6 +39,10 @@ describe('UsersController', () => {
     mongoConnection = (await connect(uri)).connection;
     userModel = mongoConnection.model(User.name, UserSchema);
     securityModel = mongoConnection.model(Security.name, SecuritySchema);
+    passwordRecoveryModel = mongoConnection.model(
+      PasswordRecovery.name,
+      PasswordRecoverySchema,
+    );
 
     const app: TestingModule = await Test.createTestingModule({
       imports: [ConfigModule.forRoot({})],
@@ -50,6 +61,12 @@ describe('UsersController', () => {
         SecurityService,
         SecurityRepository,
         { provide: getModelToken(Security.name), useValue: securityModel },
+        PasswordRecoveryService,
+        RecoveryPasswordRepository,
+        {
+          provide: getModelToken(PasswordRecovery.name),
+          useValue: passwordRecoveryModel,
+        },
       ],
     }).compile();
     usersController = app.get<UsersController>(UsersController);

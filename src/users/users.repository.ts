@@ -151,4 +151,17 @@ export class UsersRepository {
     );
     return !!result.modifiedCount;
   }
+
+  async updateUserPassword({ password, id }: { password: string; id: string }) {
+    const user = await this.userModel.updateOne(
+      { 'accountData.id': id },
+      {
+        $set: {
+          'accountData.password': password,
+        },
+      },
+      { returnDocument: 'after', projection: projectionFields },
+    );
+    return !!user.modifiedCount;
+  }
 }
