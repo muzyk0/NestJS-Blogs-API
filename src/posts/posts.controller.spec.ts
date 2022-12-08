@@ -16,6 +16,12 @@ import { CommentsService } from '../comments/comments.service';
 import { Comment, CommentSchema } from '../comments/schemas/comments.schema';
 import { EmailTemplateManager } from '../email/email-template-manager';
 import { EmailService } from '../email/email.service';
+import { PasswordRecoveryService } from '../password-recovery/password-recovery.service';
+import { RecoveryPasswordRepository } from '../password-recovery/recovery-password.repository';
+import {
+  PasswordRecovery,
+  PasswordRecoverySchema,
+} from '../password-recovery/schemas/recovery-password.schema';
 import { Security, SecuritySchema } from '../security/schemas/security.schema';
 import { SecurityRepository } from '../security/security.repository';
 import { SecurityService } from '../security/security.service';
@@ -39,6 +45,7 @@ describe('PostsController', () => {
   let commentModel: Model<Comment>;
   let userModel: Model<User>;
   let securityModel: Model<Security>;
+  let passwordRecoveryModel: Model<PasswordRecovery>;
 
   beforeAll(async () => {
     mongod = await MongoMemoryServer.create();
@@ -50,6 +57,10 @@ describe('PostsController', () => {
     commentModel = mongoConnection.model(Comment.name, CommentSchema);
     userModel = mongoConnection.model(User.name, UserSchema);
     securityModel = mongoConnection.model(Security.name, SecuritySchema);
+    passwordRecoveryModel = mongoConnection.model(
+      PasswordRecovery.name,
+      PasswordRecoverySchema,
+    );
 
     const app: TestingModule = await Test.createTestingModule({
       imports: [ConfigModule.forRoot({})],
@@ -70,6 +81,12 @@ describe('PostsController', () => {
         AuthService,
         UsersService,
         UsersRepository,
+        PasswordRecoveryService,
+        RecoveryPasswordRepository,
+        {
+          provide: getModelToken(PasswordRecovery.name),
+          useValue: passwordRecoveryModel,
+        },
         EmailService,
         EmailTemplateManager,
         { provide: 'BASE_URL', useValue: 'empty_url' },

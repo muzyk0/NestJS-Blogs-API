@@ -1,6 +1,8 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { Document } from 'mongoose';
 
+import { PasswordRecovery } from '../../password-recovery/schemas/recovery-password.schema';
+
 import {
   EmailConfirmation,
   EmailConfirmationType,
@@ -31,6 +33,15 @@ export class User implements UserAccountDBType {
 
   @Prop({ required: false, default: [] })
   revokedTokens: RevokedTokens[];
+
+  @Prop([
+    {
+      // type: [PasswordRecovery],
+      required: false,
+      default: [],
+    },
+  ])
+  passwordRecoveries: PasswordRecovery[];
 }
 
 export const UserSchema = SchemaFactory.createForClass(User);

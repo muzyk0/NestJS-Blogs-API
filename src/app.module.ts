@@ -17,6 +17,7 @@ import { TestModule } from './test-users/test-users.module';
 import { TestingModule } from './testing/testing.module';
 import { UsersModule } from './users/users.module';
 import { SecurityModule } from './security/security.module';
+import { PasswordRecoveryModule } from './password-recovery/password-recovery.module';
 
 @Module({
   imports: [
@@ -32,6 +33,7 @@ import { SecurityModule } from './security/security.module';
     EmailModule,
     LimitsModule,
     SecurityModule,
+    PasswordRecoveryModule,
   ],
   controllers: [AppController],
   providers: [AppService],
