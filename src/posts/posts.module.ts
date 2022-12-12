@@ -5,6 +5,7 @@ import { AuthModule } from '../auth/auth.module';
 import { BlogsRepository } from '../blogs/blogs.repository';
 import { BlogsService } from '../blogs/blogs.service';
 import { Blog, BlogSchema } from '../blogs/schemas/blogs.schema';
+import { CommentLikesModule } from '../comment-likes/comment-likes.module';
 import { CommentsQueryRepository } from '../comments/comments.query.repository';
 import { CommentsRepository } from '../comments/comments.repository';
 import { CommentsService } from '../comments/comments.service';
@@ -28,6 +29,7 @@ import { Post, PostSchema } from './schemas/posts.schema';
     ]),
     AuthModule,
     SecurityModule,
+    CommentLikesModule,
   ],
   controllers: [PostsController],
   providers: [

@@ -5,6 +5,11 @@ import { connect, Connection, Model } from 'mongoose';
 
 import { BlogsRepository } from '../blogs/blogs.repository';
 import { Blog, BlogSchema } from '../blogs/schemas/blogs.schema';
+import { CommentLikesRepository } from '../comment-likes/comment-likes.repository';
+import {
+  CommentLike,
+  CommentLikeSchema,
+} from '../comment-likes/schemas/comment-likes.schema';
 import { PostsRepository } from '../posts/posts.repository';
 import { Post, PostSchema } from '../posts/schemas/posts.schema';
 import { User, UserSchema } from '../users/schemas/users.schema';
@@ -23,6 +28,7 @@ describe('CommentsController', () => {
   let postModel: Model<Post>;
   let commentModel: Model<Comment>;
   let userModel: Model<User>;
+  let commentLikeModel: Model<CommentLike>;
 
   beforeAll(async () => {
     mongod = await MongoMemoryServer.create();
@@ -33,9 +39,12 @@ describe('CommentsController', () => {
     postModel = mongoConnection.model(Post.name, PostSchema);
     commentModel = mongoConnection.model(Comment.name, CommentSchema);
     userModel = mongoConnection.model(User.name, UserSchema);
+    commentLikeModel = mongoConnection.model(
+      CommentLike.name,
+      CommentLikeSchema,
+    );
 
     const app: TestingModule = await Test.createTestingModule({
-      // imports: [AuthModule],
       controllers: [CommentsController],
       providers: [
         PostsRepository,
@@ -47,6 +56,11 @@ describe('CommentsController', () => {
         { provide: getModelToken(Post.name), useValue: postModel },
         { provide: getModelToken(Comment.name), useValue: commentModel },
         { provide: getModelToken(User.name), useValue: userModel },
+        {
+          provide: getModelToken(CommentLike.name),
+          useValue: commentLikeModel,
+        },
+        CommentLikesRepository,
       ],
     }).compile();
     commentController = app.get<CommentsController>(CommentsController);

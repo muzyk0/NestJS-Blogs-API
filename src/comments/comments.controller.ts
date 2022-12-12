@@ -14,6 +14,7 @@ import {
 } from '@nestjs/common';
 
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
+import { CreateCommentLikeInput } from '../comment-likes/input/create-comment-like.input';
 import { GetCurrentUserId } from '../common/decorators/get-current-user-id.decorator';
 
 import { CommentsService } from './comments.service';
@@ -108,6 +109,22 @@ export class CommentsController {
       throw new BadRequestException();
     }
 
+    return;
+  }
+
+  @UseGuards(JwtAuthGuard)
+  @Put(':id/like-status')
+  @HttpCode(HttpStatus.NO_CONTENT)
+  async likeStatus(
+    @GetCurrentUserId() userId: string,
+    @Param('id') commentId: string,
+    @Body() body: CreateCommentLikeInput,
+  ) {
+    await this.commentsService.updateCommentLikeStatus({
+      commentId,
+      userId,
+      likeStatus: body.likeStatus,
+    });
     return;
   }
 }

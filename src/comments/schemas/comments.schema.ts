@@ -1,12 +1,12 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { Document } from 'mongoose';
 
-import { CommentDto } from '../dto/comment.dto';
+import { IComment } from '../dto/comment.dto';
 
 export type CommentDocument = Comment & Document;
 
 @Schema()
-export class Comment implements CommentDto {
+export class Comment implements IComment {
   @Prop({ required: true })
   id: string;
 

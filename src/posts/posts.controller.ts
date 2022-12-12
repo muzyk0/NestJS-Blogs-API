@@ -111,8 +111,10 @@ export class PostsController {
     return;
   }
 
+  @UseGuards(JwtAuthGuard)
   @Get(':id/comments')
   async findPostComments(
+    @GetCurrentJwtContext() ctx: JwtATPayload,
     @Param('id') id: string,
     @Query() pageOptionsDto: PageOptionsDto,
   ) {
@@ -125,10 +127,15 @@ export class PostsController {
       });
     }
 
-    const comments = await this.commentsQueryRepository.findPostComments({
-      ...pageOptionsDto,
-      postId: id,
-    });
+    const comments = await this.commentsQueryRepository.findPostComments(
+      {
+        ...pageOptionsDto,
+        postId: id,
+      },
+      {
+        userId: ctx.user.id,
+      },
+    );
 
     return comments;
   }
