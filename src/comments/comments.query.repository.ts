@@ -10,7 +10,6 @@ import { PageOptionsDto } from '../common/paginator/page-options.dto';
 import { PageDto } from '../common/paginator/page.dto';
 import { Post, PostDocument } from '../posts/schemas/posts.schema';
 
-import { CommentDto } from './dto/comment.dto';
 import { CommentViewDto } from './dto/comment.view.dto';
 import { Comment, CommentDocument } from './schemas/comments.schema';
 
@@ -37,8 +36,34 @@ export class CommentsQueryRepository {
     private readonly commentLikesRepository: CommentLikesRepository,
   ) {}
 
-  async findOne(id: string): Promise<CommentDto> {
-    return this.commentModel.findOne({ id }, projectionFields);
+  async findOne(id: string, userId: string): Promise<CommentViewDto> {
+    const comment = await this.commentModel.findOne({ id }, projectionFields);
+
+    const { likesCount, dislikesCount } =
+      await this.commentLikesRepository.countLikeAndDislikeByCommentId({
+        commentId: comment.id,
+      });
+
+    const myStatus = await this.commentLikesRepository.getLikeOrDislike({
+      commentId: comment.id,
+      userId: userId,
+    });
+
+    const mappedComment: CommentViewDto = {
+      id: comment.id,
+      content: comment.content,
+      userId: comment.userId,
+      userLogin: comment.userLogin,
+      postId: comment.postId,
+      createdAt: comment.createdAt,
+      likesInfo: {
+        likesCount,
+        dislikesCount,
+        myStatus: getCommentStringLikeStatus(myStatus),
+      },
+    };
+
+    return mappedComment;
   }
 
   async findPostComments(

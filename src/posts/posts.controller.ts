@@ -156,12 +156,17 @@ export class PostsController {
       throw new NotFoundException();
     }
 
-    const comment = await this.commentsService.create({
+    const { id: commentId } = await this.commentsService.create({
       postId: id,
       content: createCommentDto.content,
       userId,
       userLogin,
     });
+
+    const comment = await this.commentsQueryRepository.findOne(
+      commentId,
+      userId,
+    );
 
     if (!comment) {
       throw new BadRequestException({

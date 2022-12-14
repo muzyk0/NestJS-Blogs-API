@@ -6,11 +6,16 @@ import {
 import { CommentLikeType } from '../schemas/comment-likes.schema';
 
 export const getCommentStringLikeStatus = (like: CommentLikeType | null) => {
-  return stringLikeStatuses[like?.status] ?? stringLikeStatuses['default'];
+  return (
+    stringLikeStatuses[like?.status] ??
+    stringLikeStatuses[CommentLikeStatus.NONE]
+  );
 };
 
 export const formatLikeStatusToInt = (
   likeStatus: CommentLikeStringStatus,
 ): CommentLikeStatus | null => {
-  return intLikeStatuses[likeStatus] ?? null;
+  return (
+    intLikeStatuses[likeStatus] ?? intLikeStatuses[CommentLikeStringStatus.NONE]
+  );
 };

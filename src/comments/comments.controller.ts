@@ -17,6 +17,7 @@ import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 import { CreateCommentLikeInput } from '../comment-likes/input/create-comment-like.input';
 import { GetCurrentUserId } from '../common/decorators/get-current-user-id.decorator';
 
+import { CommentsQueryRepository } from './comments.query.repository';
 import { CommentsService } from './comments.service';
 import { CommentDto } from './dto/comment.dto';
 import { CommentInput } from './dto/comment.input';
@@ -36,11 +37,15 @@ export interface ICommentsService {
 
 @Controller('comments')
 export class CommentsController {
-  constructor(private readonly commentsService: CommentsService) {}
+  constructor(
+    private readonly commentsService: CommentsService,
+    private readonly commentsQueryRepository: CommentsQueryRepository,
+  ) {}
 
+  @UseGuards(JwtAuthGuard)
   @Get(':id')
-  async findOne(@Param('id') id: string) {
-    const comment = await this.commentsService.findOne(id);
+  async findOne(@GetCurrentUserId() userId: string, @Param('id') id: string) {
+    const comment = await this.commentsQueryRepository.findOne(id, userId);
 
     if (!comment) {
       throw new NotFoundException();
@@ -120,11 +125,16 @@ export class CommentsController {
     @Param('id') commentId: string,
     @Body() body: CreateCommentLikeInput,
   ) {
-    await this.commentsService.updateCommentLikeStatus({
+    const comment = await this.commentsService.updateCommentLikeStatus({
       commentId,
       userId,
       likeStatus: body.likeStatus,
     });
+
+    if (!comment) {
+      throw new NotFoundException();
+    }
+
     return;
   }
 }
