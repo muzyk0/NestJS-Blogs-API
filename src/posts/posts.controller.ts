@@ -114,7 +114,7 @@ export class PostsController {
 
   @Get(':id/comments')
   async findPostComments(
-    @GetCurrentJwtContextWithoutAuth('user') user: JwtATPayload['user'],
+    @GetCurrentJwtContextWithoutAuth() ctx: JwtATPayload | null,
     @Param('id') id: string,
     @Query() pageOptionsDto: PageOptionsDto,
   ) {
@@ -133,7 +133,7 @@ export class PostsController {
         postId: id,
       },
       {
-        userId: user.id,
+        userId: ctx?.user.id,
       },
     );
 

@@ -36,7 +36,7 @@ export class CommentsQueryRepository {
     private readonly commentLikesRepository: CommentLikesRepository,
   ) {}
 
-  async findOne(id: string, userId: string): Promise<CommentViewDto> {
+  async findOne(id: string, userId?: string): Promise<CommentViewDto> {
     const comment = await this.commentModel.findOne({ id }, projectionFields);
 
     const { likesCount, dislikesCount } =

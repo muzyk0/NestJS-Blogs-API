@@ -46,10 +46,13 @@ export class CommentsController {
 
   @Get(':id')
   async findOne(
-    @GetCurrentJwtContextWithoutAuth('user') user: JwtATPayload['user'],
+    @GetCurrentJwtContextWithoutAuth() ctx: JwtATPayload | null,
     @Param('id') id: string,
   ) {
-    const comment = await this.commentsQueryRepository.findOne(id, user.id);
+    const comment = await this.commentsQueryRepository.findOne(
+      id,
+      ctx?.user.id,
+    );
 
     if (!comment) {
       throw new NotFoundException();
