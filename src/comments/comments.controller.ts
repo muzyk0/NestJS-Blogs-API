@@ -13,6 +13,7 @@ import {
   UseGuards,
 } from '@nestjs/common';
 
+import { AuthGuard } from '../auth/guards/auth-guard';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 import { JwtATPayload } from '../auth/types/jwtPayload.type';
 import { CreateCommentLikeInput } from '../comment-likes/input/create-comment-like.input';
@@ -44,6 +45,7 @@ export class CommentsController {
     private readonly commentsQueryRepository: CommentsQueryRepository,
   ) {}
 
+  @UseGuards(AuthGuard)
   @Get(':id')
   async findOne(
     @GetCurrentJwtContextWithoutAuth() ctx: JwtATPayload | null,

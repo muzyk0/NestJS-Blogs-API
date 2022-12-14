@@ -14,6 +14,7 @@ import {
   UseGuards,
 } from '@nestjs/common';
 
+import { AuthGuard } from '../auth/guards/auth-guard';
 import { BaseAuthGuard } from '../auth/guards/base-auth-guard';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 import { JwtATPayload } from '../auth/types/jwtPayload.type';
@@ -112,6 +113,7 @@ export class PostsController {
     return;
   }
 
+  @UseGuards(AuthGuard)
   @Get(':id/comments')
   async findPostComments(
     @GetCurrentJwtContextWithoutAuth() ctx: JwtATPayload | null,
