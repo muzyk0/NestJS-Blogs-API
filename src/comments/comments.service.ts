@@ -90,6 +90,12 @@ export class CommentsService implements ICommentsService {
     userId: string;
     likeStatus: CommentLikeStringStatus;
   }) {
+    const comment = await this.commentsRepository.findOne(createLike.commentId);
+
+    if (!comment) {
+      return null;
+    }
+
     const status = formatLikeStatusToInt(createLike.likeStatus);
 
     return this.commentsLikeService.updateLikeStatus({
