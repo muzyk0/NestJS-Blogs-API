@@ -21,6 +21,7 @@ import { BlogsService } from '../blogs/blogs.service';
 import { CommentsQueryRepository } from '../comments/comments.query.repository';
 import { CommentsService } from '../comments/comments.service';
 import { CommentInput } from '../comments/dto/comment.input';
+import { GetCurrentJwtContextWithoutAuth } from '../common/decorators/get-current-user-without-auth.decorator';
 import { GetCurrentJwtContext } from '../common/decorators/get-current-user.decorator';
 import { PageOptionsDto } from '../common/paginator/page-options.dto';
 
@@ -111,10 +112,9 @@ export class PostsController {
     return;
   }
 
-  @UseGuards(JwtAuthGuard)
   @Get(':id/comments')
   async findPostComments(
-    @GetCurrentJwtContext() ctx: JwtATPayload,
+    @GetCurrentJwtContextWithoutAuth('user') user: JwtATPayload['user'],
     @Param('id') id: string,
     @Query() pageOptionsDto: PageOptionsDto,
   ) {
@@ -133,7 +133,7 @@ export class PostsController {
         postId: id,
       },
       {
-        userId: ctx.user.id,
+        userId: user.id,
       },
     );
 

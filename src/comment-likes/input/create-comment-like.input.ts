@@ -4,6 +4,5 @@ import { CommentLikeStringStatus } from '../interfaces/comment-like-status.enum'
 
 export class CreateCommentLikeInput {
   @IsEnum(CommentLikeStringStatus)
-  // @IsString()
   likeStatus: CommentLikeStringStatus;
 }

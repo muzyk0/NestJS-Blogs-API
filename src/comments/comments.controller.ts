@@ -14,8 +14,10 @@ import {
 } from '@nestjs/common';
 
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
+import { JwtATPayload } from '../auth/types/jwtPayload.type';
 import { CreateCommentLikeInput } from '../comment-likes/input/create-comment-like.input';
 import { GetCurrentUserId } from '../common/decorators/get-current-user-id.decorator';
+import { GetCurrentJwtContextWithoutAuth } from '../common/decorators/get-current-user-without-auth.decorator';
 
 import { CommentsQueryRepository } from './comments.query.repository';
 import { CommentsService } from './comments.service';
@@ -42,10 +44,12 @@ export class CommentsController {
     private readonly commentsQueryRepository: CommentsQueryRepository,
   ) {}
 
-  @UseGuards(JwtAuthGuard)
   @Get(':id')
-  async findOne(@GetCurrentUserId() userId: string, @Param('id') id: string) {
-    const comment = await this.commentsQueryRepository.findOne(id, userId);
+  async findOne(
+    @GetCurrentJwtContextWithoutAuth('user') user: JwtATPayload['user'],
+    @Param('id') id: string,
+  ) {
+    const comment = await this.commentsQueryRepository.findOne(id, user.id);
 
     if (!comment) {
       throw new NotFoundException();
