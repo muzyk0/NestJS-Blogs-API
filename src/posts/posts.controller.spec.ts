@@ -11,6 +11,7 @@ import { BlogsRepository } from '../blogs/blogs.repository';
 import { BlogsService } from '../blogs/blogs.service';
 import { Blog, BlogSchema } from '../blogs/schemas/blogs.schema';
 import { CommentLikesRepository } from '../comment-likes/comment-likes.repository';
+import { CommentLikesService } from '../comment-likes/comment-likes.service';
 import {
   CommentLike,
   CommentLikeSchema,
@@ -105,11 +106,12 @@ describe('PostsController', () => {
         SecurityService,
         SecurityRepository,
         { provide: getModelToken(Security.name), useValue: securityModel },
+        CommentLikesService,
+        CommentLikesRepository,
         {
           provide: getModelToken(CommentLike.name),
           useValue: commentLikeModel,
         },
-        CommentLikesRepository,
       ],
     }).compile();
     postsController = app.get<PostsController>(PostsController);
