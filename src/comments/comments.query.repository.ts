@@ -3,7 +3,7 @@ import { InjectModel } from '@nestjs/mongoose';
 import { IsInt, IsOptional } from 'class-validator';
 import { Model } from 'mongoose';
 
-import { CommentLikesRepository } from '../comment-likes/comment-likes.repository';
+import { CommentLikesRepositorySql } from '../comment-likes/comment-likes.repository.sql';
 import { getCommentStringLikeStatus } from '../comment-likes/utils/formatters';
 import { BASE_PROJECTION } from '../common/mongoose/constants';
 import { PageOptionsDto } from '../common/paginator/page-options.dto';
@@ -33,18 +33,19 @@ export class CommentsQueryRepository {
     private readonly commentModel: Model<CommentDocument>,
     @InjectModel(Post.name)
     private readonly postModel: Model<PostDocument>,
-    private readonly commentLikesRepository: CommentLikesRepository,
+    // private readonly commentLikesRepository: CommentLikesRepository,
+    private readonly commentLikesRepositorySql: CommentLikesRepositorySql,
   ) {}
 
   async findOne(id: string, userId?: string): Promise<CommentViewDto> {
     const comment = await this.commentModel.findOne({ id }, projectionFields);
 
     const { likesCount, dislikesCount } =
-      await this.commentLikesRepository.countLikeAndDislikeByCommentId({
+      await this.commentLikesRepositorySql.countLikeAndDislikeByCommentId({
         commentId: comment.id,
       });
 
-    const myStatus = await this.commentLikesRepository.getLikeOrDislike({
+    const myStatus = await this.commentLikesRepositorySql.getLikeOrDislike({
       commentId: comment.id,
       userId: userId,
     });
@@ -86,11 +87,11 @@ export class CommentsQueryRepository {
     const commentsWithLikesInfo: CommentViewDto[] = await Promise.all(
       comments.map(async (comment) => {
         const { likesCount, dislikesCount } =
-          await this.commentLikesRepository.countLikeAndDislikeByCommentId({
+          await this.commentLikesRepositorySql.countLikeAndDislikeByCommentId({
             commentId: comment.id,
           });
 
-        const myStatus = await this.commentLikesRepository.getLikeOrDislike({
+        const myStatus = await this.commentLikesRepositorySql.getLikeOrDislike({
           commentId: comment.id,
           userId: userId,
         });

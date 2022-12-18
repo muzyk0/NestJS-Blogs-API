@@ -3,6 +3,7 @@ export default () => ({
   BASE_PREFIX: process.env.BASE_PREFIX ?? '',
   BASE_URL: process.env.BASE_URL ?? 'http://localhost:3000',
   MONGO_URI: process.env.MONGO_URI,
+  POSTGRESQL_URI: process.env.POSTGRESQL_URI,
   ACCESS_TOKEN_SECRET:
     process.env.ACCESS_TOKEN_SECRET ?? 'this is secret code for token',
   ACCESS_TOKEN_SECRET_EXPIRES_IN:

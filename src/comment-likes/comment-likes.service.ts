@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { v4 } from 'uuid';
 
 import { CommentLikesRepository } from './comment-likes.repository';
+import { CommentLikesRepositorySql } from './comment-likes.repository.sql';
 import { CreateCommentLikeDto } from './dto/create-comment-like.dto';
 import { CommentLikeStatus } from './interfaces/comment-like-status.enum';
 import { GetCommentLikeByUser } from './interfaces/get-comment-like.interface';
@@ -10,14 +11,15 @@ import { GetCommentLikeByUser } from './interfaces/get-comment-like.interface';
 export class CommentLikesService {
   constructor(
     private readonly commentLikesRepository: CommentLikesRepository,
+    private readonly commentLikesRepositorySql: CommentLikesRepositorySql,
   ) {}
 
   async getLikeOrDislike(getCommentLikeDto: GetCommentLikeByUser) {
-    return this.commentLikesRepository.getLikeOrDislike(getCommentLikeDto);
+    return this.commentLikesRepositorySql.getLikeOrDislike(getCommentLikeDto);
   }
 
   async createLike(createLike: CreateCommentLikeDto) {
-    return this.commentLikesRepository.create({
+    return this.commentLikesRepositorySql.create({
       id: v4(),
       commentId: createLike.commentId,
       userId: createLike.userId,
@@ -26,7 +28,7 @@ export class CommentLikesService {
   }
 
   async updateLikeStatus(createLike: CreateCommentLikeDto) {
-    return this.commentLikesRepository.create({
+    return this.commentLikesRepositorySql.create({
       id: v4(),
       commentId: createLike.commentId,
       userId: createLike.userId,

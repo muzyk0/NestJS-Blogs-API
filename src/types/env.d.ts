@@ -5,6 +5,7 @@ declare global {
       BASE_PREFIX: string;
       BASE_URL: string;
       MONGO_URI: string;
+      POSTGRESQL_URI: string;
       ACCESS_TOKEN_SECRET: string;
       REFRESH_TOKEN_SECRET: string;
       EMAIL_FROM: string;
