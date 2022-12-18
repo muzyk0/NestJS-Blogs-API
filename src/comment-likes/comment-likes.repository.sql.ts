@@ -23,7 +23,7 @@ export class CommentLikesRepositorySql {
     // TODO: Optimize in 1 query
     const likesCount = await queryRunner.query(
       `
-          select COUNT(*)
+          select COUNT(*) ::int
           from likes
           where "commentId" = $1
             and "status" = $2;
@@ -33,7 +33,7 @@ export class CommentLikesRepositorySql {
     );
     const dislikesCount = await queryRunner.query(
       `
-          select COUNT(*)
+          select COUNT(*) ::int
           from likes
           where "commentId" = $1
             and "status" = $2;
