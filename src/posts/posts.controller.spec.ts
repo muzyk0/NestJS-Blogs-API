@@ -10,6 +10,12 @@ import { AuthService } from '../auth/auth.service';
 import { BlogsRepository } from '../blogs/blogs.repository';
 import { BlogsService } from '../blogs/blogs.service';
 import { Blog, BlogSchema } from '../blogs/schemas/blogs.schema';
+import { CommentLikesRepository } from '../comment-likes/comment-likes.repository';
+import { CommentLikesService } from '../comment-likes/comment-likes.service';
+import {
+  CommentLike,
+  CommentLikeSchema,
+} from '../comment-likes/schemas/comment-likes.schema';
 import { CommentsQueryRepository } from '../comments/comments.query.repository';
 import { CommentsRepository } from '../comments/comments.repository';
 import { CommentsService } from '../comments/comments.service';
@@ -46,6 +52,7 @@ describe('PostsController', () => {
   let userModel: Model<User>;
   let securityModel: Model<Security>;
   let passwordRecoveryModel: Model<PasswordRecovery>;
+  let commentLikeModel: Model<CommentLike>;
 
   beforeAll(async () => {
     mongod = await MongoMemoryServer.create();
@@ -60,6 +67,10 @@ describe('PostsController', () => {
     passwordRecoveryModel = mongoConnection.model(
       PasswordRecovery.name,
       PasswordRecoverySchema,
+    );
+    commentLikeModel = mongoConnection.model(
+      CommentLike.name,
+      CommentLikeSchema,
     );
 
     const app: TestingModule = await Test.createTestingModule({
@@ -95,6 +106,12 @@ describe('PostsController', () => {
         SecurityService,
         SecurityRepository,
         { provide: getModelToken(Security.name), useValue: securityModel },
+        CommentLikesService,
+        CommentLikesRepository,
+        {
+          provide: getModelToken(CommentLike.name),
+          useValue: commentLikeModel,
+        },
       ],
     }).compile();
     postsController = app.get<PostsController>(PostsController);

@@ -1,6 +1,9 @@
 import { Injectable } from '@nestjs/common';
 import { v4 } from 'uuid';
 
+import { CommentLikesService } from '../comment-likes/comment-likes.service';
+import { CommentLikeStringStatus } from '../comment-likes/interfaces/comment-like-status.enum';
+import { formatLikeStatusToInt } from '../comment-likes/utils/formatters';
 import { PostsRepository } from '../posts/posts.repository';
 
 import { ICommentsService } from './comments.controller';
@@ -25,6 +28,7 @@ export class CommentsService implements ICommentsService {
   constructor(
     private readonly commentsRepository: CommentsRepository,
     private readonly postsRepository: PostsRepository,
+    private readonly commentsLikeService: CommentLikesService,
   ) {}
 
   async create(createCommentDto: CreateCommentDto) {
@@ -79,5 +83,25 @@ export class CommentsService implements ICommentsService {
     }
 
     return comment.userId === userId;
+  }
+
+  async updateCommentLikeStatus(createLike: {
+    commentId: string;
+    userId: string;
+    likeStatus: CommentLikeStringStatus;
+  }) {
+    const comment = await this.commentsRepository.findOne(createLike.commentId);
+
+    if (!comment) {
+      return null;
+    }
+
+    const status = formatLikeStatusToInt(createLike.likeStatus);
+
+    return this.commentsLikeService.updateLikeStatus({
+      commentId: createLike.commentId,
+      userId: createLike.userId,
+      likeStatus: status,
+    });
   }
 }

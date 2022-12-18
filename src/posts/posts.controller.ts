@@ -14,6 +14,7 @@ import {
   UseGuards,
 } from '@nestjs/common';
 
+import { AuthGuard } from '../auth/guards/auth-guard';
 import { BaseAuthGuard } from '../auth/guards/base-auth-guard';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 import { JwtATPayload } from '../auth/types/jwtPayload.type';
@@ -21,6 +22,7 @@ import { BlogsService } from '../blogs/blogs.service';
 import { CommentsQueryRepository } from '../comments/comments.query.repository';
 import { CommentsService } from '../comments/comments.service';
 import { CommentInput } from '../comments/dto/comment.input';
+import { GetCurrentJwtContextWithoutAuth } from '../common/decorators/get-current-user-without-auth.decorator';
 import { GetCurrentJwtContext } from '../common/decorators/get-current-user.decorator';
 import { PageOptionsDto } from '../common/paginator/page-options.dto';
 
@@ -111,8 +113,10 @@ export class PostsController {
     return;
   }
 
+  @UseGuards(AuthGuard)
   @Get(':id/comments')
   async findPostComments(
+    @GetCurrentJwtContextWithoutAuth() ctx: JwtATPayload | null,
     @Param('id') id: string,
     @Query() pageOptionsDto: PageOptionsDto,
   ) {
@@ -125,10 +129,15 @@ export class PostsController {
       });
     }
 
-    const comments = await this.commentsQueryRepository.findPostComments({
-      ...pageOptionsDto,
-      postId: id,
-    });
+    const comments = await this.commentsQueryRepository.findPostComments(
+      {
+        ...pageOptionsDto,
+        postId: id,
+      },
+      {
+        userId: ctx?.user.id,
+      },
+    );
 
     return comments;
   }
@@ -149,12 +158,17 @@ export class PostsController {
       throw new NotFoundException();
     }
 
-    const comment = await this.commentsService.create({
+    const { id: commentId } = await this.commentsService.create({
       postId: id,
       content: createCommentDto.content,
       userId,
       userLogin,
     });
+
+    const comment = await this.commentsQueryRepository.findOne(
+      commentId,
+      userId,
+    );
 
     if (!comment) {
       throw new BadRequestException({

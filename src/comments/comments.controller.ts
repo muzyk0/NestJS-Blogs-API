@@ -13,9 +13,14 @@ import {
   UseGuards,
 } from '@nestjs/common';
 
+import { AuthGuard } from '../auth/guards/auth-guard';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
+import { JwtATPayload } from '../auth/types/jwtPayload.type';
+import { CreateCommentLikeInput } from '../comment-likes/input/create-comment-like.input';
 import { GetCurrentUserId } from '../common/decorators/get-current-user-id.decorator';
+import { GetCurrentJwtContextWithoutAuth } from '../common/decorators/get-current-user-without-auth.decorator';
 
+import { CommentsQueryRepository } from './comments.query.repository';
 import { CommentsService } from './comments.service';
 import { CommentDto } from './dto/comment.dto';
 import { CommentInput } from './dto/comment.input';
@@ -35,11 +40,21 @@ export interface ICommentsService {
 
 @Controller('comments')
 export class CommentsController {
-  constructor(private readonly commentsService: CommentsService) {}
+  constructor(
+    private readonly commentsService: CommentsService,
+    private readonly commentsQueryRepository: CommentsQueryRepository,
+  ) {}
 
+  @UseGuards(AuthGuard)
   @Get(':id')
-  async findOne(@Param('id') id: string) {
-    const comment = await this.commentsService.findOne(id);
+  async findOne(
+    @GetCurrentJwtContextWithoutAuth() ctx: JwtATPayload | null,
+    @Param('id') id: string,
+  ) {
+    const comment = await this.commentsQueryRepository.findOne(
+      id,
+      ctx?.user.id,
+    );
 
     if (!comment) {
       throw new NotFoundException();
@@ -106,6 +121,27 @@ export class CommentsController {
 
     if (!isDeleted) {
       throw new BadRequestException();
+    }
+
+    return;
+  }
+
+  @UseGuards(JwtAuthGuard)
+  @Put(':id/like-status')
+  @HttpCode(HttpStatus.NO_CONTENT)
+  async likeStatus(
+    @GetCurrentUserId() userId: string,
+    @Param('id') commentId: string,
+    @Body() body: CreateCommentLikeInput,
+  ) {
+    const comment = await this.commentsService.updateCommentLikeStatus({
+      commentId,
+      userId,
+      likeStatus: body.likeStatus,
+    });
+
+    if (!comment) {
+      throw new NotFoundException();
     }
 
     return;

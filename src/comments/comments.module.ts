@@ -1,7 +1,9 @@
 import { Module } from '@nestjs/common';
 import { MongooseModule } from '@nestjs/mongoose';
 
+import { AuthModule } from '../auth/auth.module';
 import { Blog, BlogSchema } from '../blogs/schemas/blogs.schema';
+import { CommentLikesModule } from '../comment-likes/comment-likes.module';
 import { PostsRepository } from '../posts/posts.repository';
 import { Post, PostSchema } from '../posts/schemas/posts.schema';
 
@@ -16,6 +18,8 @@ import { Comment, CommentSchema } from './schemas/comments.schema';
     MongooseModule.forFeature([{ name: Comment.name, schema: CommentSchema }]),
     MongooseModule.forFeature([{ name: Post.name, schema: PostSchema }]),
     MongooseModule.forFeature([{ name: Blog.name, schema: BlogSchema }]),
+    CommentLikesModule,
+    AuthModule,
   ],
   controllers: [CommentsController],
   providers: [
