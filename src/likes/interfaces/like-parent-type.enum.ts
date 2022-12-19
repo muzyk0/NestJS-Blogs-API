@@ -1,4 +1,4 @@
 export enum LikeParentTypeEnum {
-  COMMENT = 0,
-  POST = 1,
+  COMMENT = 1,
+  POST = 2,
 }
