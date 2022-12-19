@@ -1,5 +1,6 @@
 import { Injectable } from '@nestjs/common';
-import { DataSource } from 'typeorm';
+import { InjectRepository } from '@nestjs/typeorm';
+import { DataSource, Repository } from 'typeorm';
 
 import { GetLikeDto } from './dto/get-like.dto';
 import { Like } from './entity/like.entity';
@@ -9,7 +10,11 @@ import { LikeInterface } from './interfaces/like.interface';
 
 @Injectable()
 export class LikesRepositorySql {
-  constructor(private dataSource: DataSource) {}
+  constructor(
+    @InjectRepository(Like)
+    private usersRepository: Repository<Like>,
+    private dataSource: DataSource,
+  ) {}
 
   async countLikeAndDislikeByCommentId({ parentId }: GetLikeDto) {
     const queryRunner = this.dataSource.createQueryRunner();
@@ -74,9 +79,9 @@ export class LikesRepositorySql {
     const queryRunner = this.dataSource.createQueryRunner();
     await queryRunner.connect();
 
-    await queryRunner.query(
+    const like: Like[] = await queryRunner.query(
       `
-          DELETE
+          SELECT id
           FROM likes
           WHERE "userId" = $1
             AND "parentId" = $2
@@ -85,14 +90,29 @@ export class LikesRepositorySql {
       [createLike.userId, createLike.parentId, createLike.parentType],
     );
 
-    const result: Like[] = await queryRunner.query(
+    if (like[0]?.id) {
+      const updatedLike: Like[] = await queryRunner.query(
+        `
+            UPDATE likes
+            SET status      = $2,
+                "updatedAt" = $3
+            WHERE "id" = $1;
+        `,
+        [like[0].id, createLike.status, new Date()],
+      );
+
+      await queryRunner.release();
+
+      return updatedLike[0];
+    }
+
+    const createdLike: Like[] = await queryRunner.query(
       `
           INSERT
-          INTO likes (id, "userId", "parentId", status, "parentType")
-          VALUES ($1, $2, $3, $4, $5) RETURNING *
+          INTO likes ("userId", "parentId", status, "parentType")
+          VALUES ($1, $2, $3, $4) RETURNING *
       `,
       [
-        createLike.id,
         createLike.userId,
         createLike.parentId,
         createLike.status,
@@ -102,6 +122,6 @@ export class LikesRepositorySql {
 
     await queryRunner.release();
 
-    return result[0];
+    return createdLike[0];
   }
 }

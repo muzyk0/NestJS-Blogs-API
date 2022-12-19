@@ -22,9 +22,11 @@ import { BlogsService } from '../blogs/blogs.service';
 import { CommentsQueryRepository } from '../comments/comments.query.repository';
 import { CommentsService } from '../comments/comments.service';
 import { CommentInput } from '../comments/dto/comment.input';
+import { GetCurrentUserId } from '../common/decorators/get-current-user-id.decorator';
 import { GetCurrentJwtContextWithoutAuth } from '../common/decorators/get-current-user-without-auth.decorator';
 import { GetCurrentJwtContext } from '../common/decorators/get-current-user.decorator';
 import { PageOptionsDto } from '../common/paginator/page-options.dto';
+import { CreateLikeInput } from '../likes/input/create-like.input';
 
 import { CreatePostDto } from './dto/create-post.dto';
 import { PostDto } from './dto/post.dto';
@@ -178,5 +180,26 @@ export class PostsController {
     }
 
     return comment;
+  }
+
+  @UseGuards(JwtAuthGuard)
+  @Put(':id/like-status')
+  @HttpCode(HttpStatus.NO_CONTENT)
+  async likeStatus(
+    @GetCurrentUserId() userId: string,
+    @Param('id') blogId: string,
+    @Body() body: CreateLikeInput,
+  ) {
+    const comment = await this.postsService.updatePostLikeStatus({
+      blogId,
+      userId,
+      likeStatus: body.likeStatus,
+    });
+
+    if (!comment) {
+      throw new NotFoundException();
+    }
+
+    return;
   }
 }

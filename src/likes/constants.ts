@@ -1,7 +1,4 @@
-import {
-  LikeStatus,
-  CommentLikeStringStatus,
-} from './interfaces/like-status.enum';
+import { LikeStatus, LikeStringStatus } from './interfaces/like-status.enum';
 
 export const stringLikeStatuses = {
   [LikeStatus.LIKE]: 'Like',
@@ -10,7 +7,7 @@ export const stringLikeStatuses = {
 };
 
 export const intLikeStatuses = {
-  [CommentLikeStringStatus.LIKE]: LikeStatus.LIKE,
-  [CommentLikeStringStatus.DISLIKE]: LikeStatus.DISLIKE,
-  [CommentLikeStringStatus.NONE]: LikeStatus.NONE,
+  [LikeStringStatus.LIKE]: LikeStatus.LIKE,
+  [LikeStringStatus.DISLIKE]: LikeStatus.DISLIKE,
+  [LikeStringStatus.NONE]: LikeStatus.NONE,
 };

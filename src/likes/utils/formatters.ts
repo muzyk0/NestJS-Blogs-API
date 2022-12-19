@@ -1,9 +1,6 @@
 import { intLikeStatuses, stringLikeStatuses } from '../constants';
 import { Like } from '../entity/like.entity';
-import {
-  LikeStatus,
-  CommentLikeStringStatus,
-} from '../interfaces/like-status.enum';
+import { LikeStatus, LikeStringStatus } from '../interfaces/like-status.enum';
 
 export const getStringLikeStatus = (like: Like | null) => {
   return (
@@ -12,9 +9,7 @@ export const getStringLikeStatus = (like: Like | null) => {
 };
 
 export const formatLikeStatusToInt = (
-  likeStatus: CommentLikeStringStatus,
+  likeStatus: LikeStringStatus,
 ): LikeStatus | null => {
-  return (
-    intLikeStatuses[likeStatus] ?? intLikeStatuses[CommentLikeStringStatus.NONE]
-  );
+  return intLikeStatuses[likeStatus] ?? intLikeStatuses[LikeStringStatus.NONE];
 };

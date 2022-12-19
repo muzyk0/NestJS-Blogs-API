@@ -4,7 +4,7 @@ export enum LikeStatus {
   LIKE = 2,
 }
 
-export enum CommentLikeStringStatus {
+export enum LikeStringStatus {
   NONE = 'None',
   DISLIKE = 'Dislike',
   LIKE = 'Like',
