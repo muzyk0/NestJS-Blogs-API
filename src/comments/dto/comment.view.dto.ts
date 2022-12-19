@@ -1,6 +1,6 @@
 import { IsArray, IsDate, IsNotEmpty, IsString, Length } from 'class-validator';
 
-import { CommentLikeDto } from '../../comment-likes/dto/comment-like.dto';
+import { LikeDto } from '../../likes/dto/like.dto';
 
 export interface IComment {
   id: string;
@@ -32,5 +32,5 @@ export class CommentViewDto implements IComment {
   createdAt: Date;
 
   @IsArray()
-  likesInfo: CommentLikeDto;
+  likesInfo: LikeDto;
 }

@@ -1,8 +1,9 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { HydratedDocument } from 'mongoose';
 
-import { CommentLikeStatus } from '../interfaces/comment-like-status.enum';
+import { CommentLikeStatus } from '../interfaces/like-status.enum';
 
+/** @deprecated */
 export type CommentLikeType = {
   id: string;
   userId: string;
@@ -10,8 +11,10 @@ export type CommentLikeType = {
   status: CommentLikeStatus;
 };
 
+/** @deprecated */
 export type CommentLikeDocument = HydratedDocument<CommentLikeType>;
 
+/** @deprecated */
 @Schema({ timestamps: true })
 export class CommentLike implements CommentLikeType {
   @Prop({ required: true })
@@ -27,4 +30,5 @@ export class CommentLike implements CommentLikeType {
   status: CommentLikeStatus;
 }
 
+/** @deprecated */
 export const CommentLikeSchema = SchemaFactory.createForClass(CommentLike);

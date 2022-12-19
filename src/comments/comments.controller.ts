@@ -16,9 +16,9 @@ import {
 import { AuthGuard } from '../auth/guards/auth-guard';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 import { JwtATPayload } from '../auth/types/jwtPayload.type';
-import { CreateCommentLikeInput } from '../comment-likes/input/create-comment-like.input';
 import { GetCurrentUserId } from '../common/decorators/get-current-user-id.decorator';
 import { GetCurrentJwtContextWithoutAuth } from '../common/decorators/get-current-user-without-auth.decorator';
+import { CreateLikeInput } from '../likes/input/create-like.input';
 
 import { CommentsQueryRepository } from './comments.query.repository';
 import { CommentsService } from './comments.service';
@@ -132,7 +132,7 @@ export class CommentsController {
   async likeStatus(
     @GetCurrentUserId() userId: string,
     @Param('id') commentId: string,
-    @Body() body: CreateCommentLikeInput,
+    @Body() body: CreateLikeInput,
   ) {
     const comment = await this.commentsService.updateCommentLikeStatus({
       commentId,

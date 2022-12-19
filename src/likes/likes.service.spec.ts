@@ -2,16 +2,18 @@ import { getModelToken } from '@nestjs/mongoose';
 import { Test, TestingModule } from '@nestjs/testing';
 import { MongoMemoryServer } from 'mongodb-memory-server';
 import { connect, Connection, Model } from 'mongoose';
+import { DataSource } from 'typeorm';
 
-import { CommentLikesRepository } from './comment-likes.repository';
-import { CommentLikesService } from './comment-likes.service';
+import { LikesRepository } from './likes.repository';
+import { LikesRepositorySql } from './likes.repository.sql';
+import { LikesService } from './likes.service';
 import { CommentLike, CommentLikeSchema } from './schemas/comment-likes.schema';
 
 describe('CommentLikesService', () => {
   let mongod: MongoMemoryServer;
   let mongoConnection: Connection;
 
-  let commentLikesService: CommentLikesService;
+  let commentLikesService: LikesService;
 
   let commentLikeModel: Model<CommentLike>;
 
@@ -27,15 +29,20 @@ describe('CommentLikesService', () => {
 
     const app: TestingModule = await Test.createTestingModule({
       providers: [
-        CommentLikesService,
-        CommentLikesRepository,
+        LikesService,
+        LikesRepository,
         {
           provide: getModelToken(CommentLike.name),
           useValue: commentLikeModel,
         },
+        LikesRepositorySql,
+        {
+          provide: DataSource,
+          useValue: jest.fn(),
+        },
       ],
     }).compile();
-    commentLikesService = app.get<CommentLikesService>(CommentLikesService);
+    commentLikesService = app.get<LikesService>(LikesService);
   });
 
   afterAll(async () => {

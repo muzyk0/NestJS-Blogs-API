@@ -1,9 +1,9 @@
 import { Injectable } from '@nestjs/common';
 import { v4 } from 'uuid';
 
-import { CommentLikesService } from '../comment-likes/comment-likes.service';
-import { CommentLikeStringStatus } from '../comment-likes/interfaces/comment-like-status.enum';
-import { formatLikeStatusToInt } from '../comment-likes/utils/formatters';
+import { CommentLikeStringStatus } from '../likes/interfaces/like-status.enum';
+import { LikesService } from '../likes/likes.service';
+import { formatLikeStatusToInt } from '../likes/utils/formatters';
 import { PostsRepository } from '../posts/posts.repository';
 
 import { ICommentsService } from './comments.controller';
@@ -28,7 +28,7 @@ export class CommentsService implements ICommentsService {
   constructor(
     private readonly commentsRepository: CommentsRepository,
     private readonly postsRepository: PostsRepository,
-    private readonly commentsLikeService: CommentLikesService,
+    private readonly commentsLikeService: LikesService,
   ) {}
 
   async create(createCommentDto: CreateCommentDto) {

@@ -1,8 +1,8 @@
 import { IsEnum, IsOptional, IsString } from 'class-validator';
 
-import { CommentLikeStatus } from '../interfaces/comment-like-status.enum';
+import { CommentLikeStatus } from '../interfaces/like-status.enum';
 
-export class CreateCommentLikeDto {
+export class CreateLikeDto {
   @IsString()
   userId: string;
 

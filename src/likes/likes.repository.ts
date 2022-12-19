@@ -2,23 +2,23 @@ import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 
-import { GetCommentLikeDto } from './dto/get-comment-like.dto';
-import { CommentLikeStatus } from './interfaces/comment-like-status.enum';
-import { CommentLikeInterface } from './interfaces/comment-like.interface';
-import { GetCommentLikeByUser } from './interfaces/get-comment-like.interface';
+import { GetLikeDto } from './dto/get-like.dto';
+import { GetCommentLikeByUser } from './interfaces/get-like.interface';
+import { CommentLikeStatus } from './interfaces/like-status.enum';
+import { LikeInterface } from './interfaces/like.interface';
 import {
   CommentLike,
   CommentLikeDocument,
 } from './schemas/comment-likes.schema';
 
 @Injectable()
-export class CommentLikesRepository {
+export class LikesRepository {
   constructor(
     @InjectModel(CommentLike.name)
     private commentLikeModel: Model<CommentLikeDocument>,
   ) {}
 
-  async countLikeAndDislikeByCommentId({ commentId }: GetCommentLikeDto) {
+  async countLikeAndDislikeByCommentId({ commentId }: GetLikeDto) {
     const likesCount = await this.commentLikeModel
       .countDocuments({
         commentId,
@@ -54,7 +54,7 @@ export class CommentLikesRepository {
     return likes[0];
   }
 
-  async create(createLike: CommentLikeInterface) {
+  async create(createLike: LikeInterface) {
     await this.commentLikeModel.deleteMany({
       commentId: createLike.commentId,
       userId: createLike.userId,

@@ -2,6 +2,8 @@ import { Module } from '@nestjs/common';
 import { MongooseModule } from '@nestjs/mongoose';
 
 /* eslint import/order: ["error", {"newlines-between": "ignore"}] */
+import { TypeOrmModule } from '@nestjs/typeorm';
+import { ConfigModule, ConfigService } from '@nestjs/config';
 import { configModule } from './constants';
 
 import { AppController } from './app.controller';
@@ -18,12 +20,24 @@ import { TestingModule } from './testing/testing.module';
 import { UsersModule } from './users/users.module';
 import { SecurityModule } from './security/security.module';
 import { PasswordRecoveryModule } from './password-recovery/password-recovery.module';
-import { CommentLikesModule } from './comment-likes/comment-likes.module';
+import { LikesModule } from './likes/likes.module';
+import { Like } from './likes/entity/like.entity';
 
 @Module({
   imports: [
     configModule,
     MongooseModule.forRoot(configuration().MONGO_URI),
+    TypeOrmModule.forRootAsync({
+      imports: [ConfigModule],
+      useFactory: (configService: ConfigService) => ({
+        type: 'postgres',
+        url: configService.get('POSTGRESQL_URI'),
+        entities: [Like],
+        synchronize: true,
+        ssl: true,
+      }),
+      inject: [ConfigService],
+    }),
     TestModule,
     BlogsModule,
     PostsModule,
@@ -35,7 +49,7 @@ import { CommentLikesModule } from './comment-likes/comment-likes.module';
     LimitsModule,
     SecurityModule,
     PasswordRecoveryModule,
-    CommentLikesModule,
+    LikesModule,
   ],
   controllers: [AppController],
   providers: [AppService],
