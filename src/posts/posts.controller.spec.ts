@@ -5,23 +5,25 @@ import { getModelToken } from '@nestjs/mongoose';
 import { Test, TestingModule } from '@nestjs/testing';
 import { MongoMemoryServer } from 'mongodb-memory-server';
 import { connect, Connection, Model } from 'mongoose';
+import { DataSource } from 'typeorm';
 
 import { AuthService } from '../auth/auth.service';
 import { BlogsRepository } from '../blogs/blogs.repository';
 import { BlogsService } from '../blogs/blogs.service';
 import { Blog, BlogSchema } from '../blogs/schemas/blogs.schema';
-import { CommentLikesRepository } from '../comment-likes/comment-likes.repository';
-import { CommentLikesService } from '../comment-likes/comment-likes.service';
-import {
-  CommentLike,
-  CommentLikeSchema,
-} from '../comment-likes/schemas/comment-likes.schema';
 import { CommentsQueryRepository } from '../comments/comments.query.repository';
 import { CommentsRepository } from '../comments/comments.repository';
 import { CommentsService } from '../comments/comments.service';
 import { Comment, CommentSchema } from '../comments/schemas/comments.schema';
 import { EmailTemplateManager } from '../email/email-template-manager';
 import { EmailService } from '../email/email.service';
+import { LikesRepository } from '../likes/likes.repository';
+import { LikesRepositorySql } from '../likes/likes.repository.sql';
+import { LikesService } from '../likes/likes.service';
+import {
+  CommentLike,
+  CommentLikeSchema,
+} from '../likes/schemas/comment-likes.schema';
 import { PasswordRecoveryService } from '../password-recovery/password-recovery.service';
 import { RecoveryPasswordRepository } from '../password-recovery/recovery-password.repository';
 import {
@@ -106,11 +108,16 @@ describe('PostsController', () => {
         SecurityService,
         SecurityRepository,
         { provide: getModelToken(Security.name), useValue: securityModel },
-        CommentLikesService,
-        CommentLikesRepository,
+        LikesService,
+        LikesRepository,
         {
           provide: getModelToken(CommentLike.name),
           useValue: commentLikeModel,
+        },
+        LikesRepositorySql,
+        {
+          provide: DataSource,
+          useValue: jest.fn(),
         },
       ],
     }).compile();

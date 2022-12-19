@@ -20,8 +20,8 @@ import { TestingModule } from './testing/testing.module';
 import { UsersModule } from './users/users.module';
 import { SecurityModule } from './security/security.module';
 import { PasswordRecoveryModule } from './password-recovery/password-recovery.module';
-import { CommentLikesModule } from './comment-likes/comment-likes.module';
-import { Like } from './comment-likes/entity/like.entity';
+import { LikesModule } from './likes/likes.module';
+import { Like } from './likes/entity/like.entity';
 
 @Module({
   imports: [
@@ -49,7 +49,7 @@ import { Like } from './comment-likes/entity/like.entity';
     LimitsModule,
     SecurityModule,
     PasswordRecoveryModule,
-    CommentLikesModule,
+    LikesModule,
   ],
   controllers: [AppController],
   providers: [AppService],

@@ -5,11 +5,11 @@ import { AuthModule } from '../auth/auth.module';
 import { BlogsRepository } from '../blogs/blogs.repository';
 import { BlogsService } from '../blogs/blogs.service';
 import { Blog, BlogSchema } from '../blogs/schemas/blogs.schema';
-import { CommentLikesModule } from '../comment-likes/comment-likes.module';
 import { CommentsQueryRepository } from '../comments/comments.query.repository';
 import { CommentsRepository } from '../comments/comments.repository';
 import { CommentsService } from '../comments/comments.service';
 import { Comment, CommentSchema } from '../comments/schemas/comments.schema';
+import { LikesModule } from '../likes/likes.module';
 import { Security, SecuritySchema } from '../security/schemas/security.schema';
 import { SecurityModule } from '../security/security.module';
 
@@ -29,7 +29,7 @@ import { Post, PostSchema } from './schemas/posts.schema';
     ]),
     AuthModule,
     SecurityModule,
-    CommentLikesModule,
+    LikesModule,
   ],
   controllers: [PostsController],
   providers: [

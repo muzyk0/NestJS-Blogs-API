@@ -2,10 +2,10 @@ import { intLikeStatuses, stringLikeStatuses } from '../constants';
 import {
   CommentLikeStatus,
   CommentLikeStringStatus,
-} from '../interfaces/comment-like-status.enum';
+} from '../interfaces/like-status.enum';
 import { CommentLikeType } from '../schemas/comment-likes.schema';
 
-export const getCommentStringLikeStatus = (like: CommentLikeType | null) => {
+export const getStringLikeStatus = (like: CommentLikeType | null) => {
   return (
     stringLikeStatuses[like?.status] ??
     stringLikeStatuses[CommentLikeStatus.NONE]

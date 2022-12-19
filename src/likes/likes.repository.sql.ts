@@ -1,22 +1,17 @@
 import { Injectable } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
-import { DataSource, Repository } from 'typeorm';
+import { DataSource } from 'typeorm';
 
-import { GetCommentLikeDto } from './dto/get-comment-like.dto';
+import { GetLikeDto } from './dto/get-like.dto';
 import { Like } from './entity/like.entity';
-import { CommentLikeStatus } from './interfaces/comment-like-status.enum';
-import { CommentLikeInterface } from './interfaces/comment-like.interface';
-import { GetCommentLikeByUser } from './interfaces/get-comment-like.interface';
+import { GetCommentLikeByUser } from './interfaces/get-like.interface';
+import { CommentLikeStatus } from './interfaces/like-status.enum';
+import { LikeInterface } from './interfaces/like.interface';
 
 @Injectable()
-export class CommentLikesRepositorySql {
-  constructor(
-    @InjectRepository(Like)
-    private usersRepository: Repository<Like>,
-    private dataSource: DataSource,
-  ) {}
+export class LikesRepositorySql {
+  constructor(private dataSource: DataSource) {}
 
-  async countLikeAndDislikeByCommentId({ commentId }: GetCommentLikeDto) {
+  async countLikeAndDislikeByCommentId({ commentId }: GetLikeDto) {
     const queryRunner = this.dataSource.createQueryRunner();
     await queryRunner.connect();
 
@@ -73,7 +68,7 @@ export class CommentLikesRepositorySql {
     return like[0];
   }
 
-  async create(createLike: CommentLikeInterface): Promise<Like> {
+  async create(createLike: LikeInterface): Promise<Like> {
     const queryRunner = this.dataSource.createQueryRunner();
     await queryRunner.connect();
 

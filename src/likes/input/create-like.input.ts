@@ -1,8 +1,8 @@
 import { IsEnum } from 'class-validator';
 
-import { CommentLikeStringStatus } from '../interfaces/comment-like-status.enum';
+import { CommentLikeStringStatus } from '../interfaces/like-status.enum';
 
-export class CreateCommentLikeInput {
+export class CreateLikeInput {
   @IsEnum(CommentLikeStringStatus)
   likeStatus: CommentLikeStringStatus;
 }

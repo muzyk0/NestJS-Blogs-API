@@ -5,18 +5,20 @@ import { getModelToken } from '@nestjs/mongoose';
 import { Test, TestingModule } from '@nestjs/testing';
 import { MongoMemoryServer } from 'mongodb-memory-server';
 import { connect, Connection, Model } from 'mongoose';
+import { DataSource } from 'typeorm';
 
 import { AuthService } from '../auth/auth.service';
 import { BlogsRepository } from '../blogs/blogs.repository';
 import { Blog, BlogSchema } from '../blogs/schemas/blogs.schema';
-import { CommentLikesRepository } from '../comment-likes/comment-likes.repository';
-import { CommentLikesService } from '../comment-likes/comment-likes.service';
+import { EmailTemplateManager } from '../email/email-template-manager';
+import { EmailService } from '../email/email.service';
+import { LikesRepository } from '../likes/likes.repository';
+import { LikesRepositorySql } from '../likes/likes.repository.sql';
+import { LikesService } from '../likes/likes.service';
 import {
   CommentLike,
   CommentLikeSchema,
-} from '../comment-likes/schemas/comment-likes.schema';
-import { EmailTemplateManager } from '../email/email-template-manager';
-import { EmailService } from '../email/email.service';
+} from '../likes/schemas/comment-likes.schema';
 import { PasswordRecoveryService } from '../password-recovery/password-recovery.service';
 import { RecoveryPasswordRepository } from '../password-recovery/recovery-password.repository';
 import {
@@ -92,9 +94,14 @@ describe('CommentsController', () => {
         { provide: getModelToken(Post.name), useValue: postModel },
         { provide: getModelToken(Comment.name), useValue: commentModel },
         { provide: getModelToken(User.name), useValue: userModel },
-        CommentLikesService,
-        CommentLikesRepository,
+        LikesService,
+        LikesRepository,
         { provide: getModelToken(CommentLike.name), useValue: likeModel },
+        LikesRepositorySql,
+        {
+          provide: DataSource,
+          useValue: jest.fn(),
+        },
       ],
     }).compile();
     commentController = app.get<CommentsController>(CommentsController);

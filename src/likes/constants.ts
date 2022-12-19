@@ -1,7 +1,7 @@
 import {
   CommentLikeStatus,
   CommentLikeStringStatus,
-} from './interfaces/comment-like-status.enum';
+} from './interfaces/like-status.enum';
 
 export const stringLikeStatuses = {
   [CommentLikeStatus.LIKE]: 'Like',

@@ -1,6 +1,6 @@
 import { IsInt, IsString } from 'class-validator';
 
-export class CommentLikeDto {
+export class LikeDto {
   @IsInt()
   likesCount: number;
 
