@@ -12,6 +12,8 @@ import { Comment, CommentSchema } from '../comments/schemas/comments.schema';
 import { LikesModule } from '../likes/likes.module';
 import { Security, SecuritySchema } from '../security/schemas/security.schema';
 import { SecurityModule } from '../security/security.module';
+import { User, UserSchema } from '../users/schemas/users.schema';
+import { UsersModule } from '../users/users.module';
 
 import { PostsController } from './posts.controller';
 import { PostsQueryRepository } from './posts.query.repository';
@@ -27,9 +29,11 @@ import { Post, PostSchema } from './schemas/posts.schema';
     MongooseModule.forFeature([
       { name: Security.name, schema: SecuritySchema },
     ]),
+    MongooseModule.forFeature([{ name: User.name, schema: UserSchema }]),
     AuthModule,
     SecurityModule,
     LikesModule,
+    UsersModule,
   ],
   controllers: [PostsController],
   providers: [

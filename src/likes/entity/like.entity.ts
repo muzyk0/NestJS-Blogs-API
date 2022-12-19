@@ -1,6 +1,7 @@
 import { Entity, Column, PrimaryGeneratedColumn } from 'typeorm';
 
-import { BaseEntity } from './base.entity';
+import { BaseEntity } from '../../common/base-entity/base.entity';
+import { LikeParentTypeEnum } from '../interfaces/like-parent-type.enum';
 
 @Entity('likes')
 export class Like extends BaseEntity {
@@ -11,7 +12,13 @@ export class Like extends BaseEntity {
   userId: string;
 
   @Column()
-  commentId: string;
+  parentId: string;
+
+  @Column({
+    type: 'enum',
+    enum: LikeParentTypeEnum,
+  })
+  parentType: string;
 
   @Column()
   status: number;

@@ -2,6 +2,10 @@ import { Injectable } from '@nestjs/common';
 import { v4 } from 'uuid';
 
 import { BlogsRepository } from '../blogs/blogs.repository';
+import { LikeParentTypeEnum } from '../likes/interfaces/like-parent-type.enum';
+import { LikeStringStatus } from '../likes/interfaces/like-status.enum';
+import { LikesService } from '../likes/likes.service';
+import { formatLikeStatusToInt } from '../likes/utils/formatters';
 
 import { CreatePostDto } from './dto/create-post.dto';
 import { PostDto } from './dto/post.dto';
@@ -23,8 +27,9 @@ export interface IPostsRepository {
 @Injectable()
 export class PostsService implements IPostService {
   constructor(
-    private postRepository: PostsRepository,
-    private blogRepository: BlogsRepository,
+    private readonly postRepository: PostsRepository,
+    private readonly blogRepository: BlogsRepository,
+    private readonly likeService: LikesService,
   ) {}
 
   async create(createPostDto: CreatePostDto) {
@@ -41,6 +46,7 @@ export class PostsService implements IPostService {
       title: createPostDto.title,
       content: createPostDto.content,
       shortDescription: createPostDto.shortDescription,
+      createdAt: new Date(),
     };
 
     return this.postRepository.create(newPostInput);
@@ -69,5 +75,26 @@ export class PostsService implements IPostService {
 
   async remove(id: string) {
     return this.postRepository.remove(id);
+  }
+
+  async updatePostLikeStatus(updateLike: {
+    postId: string;
+    userId: string;
+    likeStatus: LikeStringStatus;
+  }) {
+    const post = await this.postRepository.findOne(updateLike.postId);
+
+    if (!post) {
+      return null;
+    }
+
+    const status = formatLikeStatusToInt(updateLike.likeStatus);
+
+    return this.likeService.updateLikeStatus({
+      parentId: updateLike.postId,
+      parentType: LikeParentTypeEnum.POST,
+      userId: updateLike.userId,
+      likeStatus: status,
+    });
   }
 }

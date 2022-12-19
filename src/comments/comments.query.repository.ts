@@ -6,6 +6,7 @@ import { Model } from 'mongoose';
 import { BASE_PROJECTION } from '../common/mongoose/constants';
 import { PageOptionsDto } from '../common/paginator/page-options.dto';
 import { PageDto } from '../common/paginator/page.dto';
+import { LikeParentTypeEnum } from '../likes/interfaces/like-parent-type.enum';
 import { LikesRepositorySql } from '../likes/likes.repository.sql';
 import { getStringLikeStatus } from '../likes/utils/formatters';
 import { Post, PostDocument } from '../posts/schemas/posts.schema';
@@ -33,19 +34,20 @@ export class CommentsQueryRepository {
     private readonly commentModel: Model<CommentDocument>,
     @InjectModel(Post.name)
     private readonly postModel: Model<PostDocument>,
-    private readonly commentLikesRepositorySql: LikesRepositorySql,
+    private readonly likesRepositorySql: LikesRepositorySql,
   ) {}
 
   async findOne(id: string, userId?: string): Promise<CommentViewDto> {
     const comment = await this.commentModel.findOne({ id }, projectionFields);
 
     const { likesCount, dislikesCount } =
-      await this.commentLikesRepositorySql.countLikeAndDislikeByCommentId({
-        commentId: comment.id,
+      await this.likesRepositorySql.countLikeAndDislikeByCommentId({
+        parentId: comment.id,
       });
 
-    const myStatus = await this.commentLikesRepositorySql.getLikeOrDislike({
-      commentId: comment.id,
+    const myStatus = await this.likesRepositorySql.getLikeOrDislike({
+      parentId: comment.id,
+      parentType: LikeParentTypeEnum.COMMENT,
       userId: userId,
     });
 
@@ -86,12 +88,13 @@ export class CommentsQueryRepository {
     const commentsWithLikesInfo: CommentViewDto[] = await Promise.all(
       comments.map(async (comment) => {
         const { likesCount, dislikesCount } =
-          await this.commentLikesRepositorySql.countLikeAndDislikeByCommentId({
-            commentId: comment.id,
+          await this.likesRepositorySql.countLikeAndDislikeByCommentId({
+            parentId: comment.id,
           });
 
-        const myStatus = await this.commentLikesRepositorySql.getLikeOrDislike({
-          commentId: comment.id,
+        const myStatus = await this.likesRepositorySql.getLikeOrDislike({
+          parentId: comment.id,
+          parentType: LikeParentTypeEnum.COMMENT,
           userId: userId,
         });
 

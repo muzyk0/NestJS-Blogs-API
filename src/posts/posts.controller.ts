@@ -22,9 +22,11 @@ import { BlogsService } from '../blogs/blogs.service';
 import { CommentsQueryRepository } from '../comments/comments.query.repository';
 import { CommentsService } from '../comments/comments.service';
 import { CommentInput } from '../comments/dto/comment.input';
+import { GetCurrentUserId } from '../common/decorators/get-current-user-id.decorator';
 import { GetCurrentJwtContextWithoutAuth } from '../common/decorators/get-current-user-without-auth.decorator';
 import { GetCurrentJwtContext } from '../common/decorators/get-current-user.decorator';
 import { PageOptionsDto } from '../common/paginator/page-options.dto';
+import { CreateLikeInput } from '../likes/input/create-like.input';
 
 import { CreatePostDto } from './dto/create-post.dto';
 import { PostDto } from './dto/post.dto';
@@ -62,17 +64,30 @@ export class PostsController {
       throw new BadRequestException();
     }
 
-    return this.postsService.create(createPostDto);
+    const post = await this.postsService.create(createPostDto);
+
+    return this.postsQueryRepository.findOne(post.id);
   }
 
+  @UseGuards(AuthGuard)
   @Get()
-  async findAll(@Query() pageOptionsDto: PageOptionsDto) {
-    return this.postsQueryRepository.findAll(pageOptionsDto);
+  async findAll(
+    @GetCurrentJwtContextWithoutAuth() ctx: JwtATPayload | null,
+    @Query() pageOptionsDto: PageOptionsDto,
+  ) {
+    return this.postsQueryRepository.findAll({
+      ...pageOptionsDto,
+      userId: ctx?.user.id,
+    });
   }
 
+  @UseGuards(AuthGuard)
   @Get(':id')
-  async findOne(@Param('id') id: string) {
-    const post = await this.postsService.findOne(id);
+  async findOne(
+    @GetCurrentJwtContextWithoutAuth() ctx: JwtATPayload | null,
+    @Param('id') id: string,
+  ) {
+    const post = await this.postsQueryRepository.findOne(id, ctx?.user.id);
 
     if (!post) {
       throw new NotFoundException();
@@ -129,7 +144,7 @@ export class PostsController {
       });
     }
 
-    const comments = await this.commentsQueryRepository.findPostComments(
+    return this.commentsQueryRepository.findPostComments(
       {
         ...pageOptionsDto,
         postId: id,
@@ -138,8 +153,6 @@ export class PostsController {
         userId: ctx?.user.id,
       },
     );
-
-    return comments;
   }
 
   @UseGuards(JwtAuthGuard)
@@ -178,5 +191,26 @@ export class PostsController {
     }
 
     return comment;
+  }
+
+  @UseGuards(JwtAuthGuard)
+  @Put(':id/like-status')
+  @HttpCode(HttpStatus.NO_CONTENT)
+  async likeStatus(
+    @GetCurrentUserId() userId: string,
+    @Param('id') postId: string,
+    @Body() body: CreateLikeInput,
+  ) {
+    const comment = await this.postsService.updatePostLikeStatus({
+      postId,
+      userId,
+      likeStatus: body.likeStatus,
+    });
+
+    if (!comment) {
+      throw new NotFoundException();
+    }
+
+    return;
   }
 }

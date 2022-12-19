@@ -5,7 +5,7 @@ import { PostDto } from '../dto/post.dto';
 
 export type PostDocument = Post & Document;
 
-@Schema()
+@Schema({ timestamps: true })
 export class Post implements PostDto {
   @Prop({ required: true })
   id: string;
@@ -24,6 +24,9 @@ export class Post implements PostDto {
 
   @Prop({ required: true })
   blogName: string;
+
+  @Prop({ required: true })
+  createdAt: Date;
 }
 
 export const PostSchema = SchemaFactory.createForClass(Post);

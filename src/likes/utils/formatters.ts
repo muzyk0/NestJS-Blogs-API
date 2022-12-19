@@ -1,21 +1,15 @@
 import { intLikeStatuses, stringLikeStatuses } from '../constants';
-import {
-  CommentLikeStatus,
-  CommentLikeStringStatus,
-} from '../interfaces/like-status.enum';
-import { CommentLikeType } from '../schemas/comment-likes.schema';
+import { Like } from '../entity/like.entity';
+import { LikeStatus, LikeStringStatus } from '../interfaces/like-status.enum';
 
-export const getStringLikeStatus = (like: CommentLikeType | null) => {
+export const getStringLikeStatus = (like: Like | null) => {
   return (
-    stringLikeStatuses[like?.status] ??
-    stringLikeStatuses[CommentLikeStatus.NONE]
+    stringLikeStatuses[like?.status] ?? stringLikeStatuses[LikeStatus.NONE]
   );
 };
 
 export const formatLikeStatusToInt = (
-  likeStatus: CommentLikeStringStatus,
-): CommentLikeStatus | null => {
-  return (
-    intLikeStatuses[likeStatus] ?? intLikeStatuses[CommentLikeStringStatus.NONE]
-  );
+  likeStatus: LikeStringStatus,
+): LikeStatus | null => {
+  return intLikeStatuses[likeStatus] ?? intLikeStatuses[LikeStringStatus.NONE];
 };

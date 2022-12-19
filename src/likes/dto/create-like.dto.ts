@@ -1,15 +1,19 @@
 import { IsEnum, IsOptional, IsString } from 'class-validator';
 
-import { CommentLikeStatus } from '../interfaces/like-status.enum';
+import { LikeParentTypeEnum } from '../interfaces/like-parent-type.enum';
+import { LikeStatus } from '../interfaces/like-status.enum';
 
 export class CreateLikeDto {
   @IsString()
   userId: string;
 
   @IsString()
-  commentId: string;
+  parentId: string;
 
-  @IsEnum(CommentLikeStatus)
+  @IsEnum(LikeParentTypeEnum)
+  parentType: LikeParentTypeEnum;
+
+  @IsEnum(LikeStatus)
   @IsOptional()
   likeStatus: number;
 }

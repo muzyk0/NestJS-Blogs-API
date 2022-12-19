@@ -14,7 +14,10 @@ import {
   UseGuards,
 } from '@nestjs/common';
 
+import { AuthGuard } from '../auth/guards/auth-guard';
 import { BaseAuthGuard } from '../auth/guards/base-auth-guard';
+import { JwtATPayload } from '../auth/types/jwtPayload.type';
+import { GetCurrentJwtContextWithoutAuth } from '../common/decorators/get-current-user-without-auth.decorator';
 import { PageOptionsDto } from '../common/paginator/page-options.dto';
 import { PostsQueryRepository } from '../posts/posts.query.repository';
 import { PostsService } from '../posts/posts.service';
@@ -28,8 +31,11 @@ import { UpdateBlogDto } from './dto/update-blog.dto';
 
 export interface IBlogService {
   create(createBlogDto: Omit<CreateBlogDto, 'id'>): Promise<BlogDto>;
+
   findOne(id: string): Promise<BlogDto>;
+
   update(id: string, updateBlogDto: UpdateBlogDto): Promise<BlogDto>;
+
   remove(id: string): Promise<boolean>;
 }
 
@@ -89,8 +95,10 @@ export class BlogsController {
     return isDeleted;
   }
 
+  @UseGuards(AuthGuard)
   @Get(':id/posts')
   async findBlogPosts(
+    @GetCurrentJwtContextWithoutAuth() ctx: JwtATPayload | null,
     @Query() pageOptionsDto: PageOptionsDto,
     @Param('id') id: string,
   ) {
@@ -103,6 +111,7 @@ export class BlogsController {
     return this.postsQueryRepository.findAll({
       ...pageOptionsDto,
       blogId: id,
+      userId: ctx?.user.id,
     });
   }
 
@@ -119,11 +128,13 @@ export class BlogsController {
       throw new BadRequestException();
     }
 
-    return this.postsService.create({
+    const post = await this.postsService.create({
       blogId: blogId,
       shortDescription,
       content,
       title,
     });
+
+    return this.postsQueryRepository.findOne(post.id);
   }
 }
