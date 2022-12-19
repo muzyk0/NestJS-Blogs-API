@@ -28,8 +28,11 @@ import { UpdateBlogDto } from './dto/update-blog.dto';
 
 export interface IBlogService {
   create(createBlogDto: Omit<CreateBlogDto, 'id'>): Promise<BlogDto>;
+
   findOne(id: string): Promise<BlogDto>;
+
   update(id: string, updateBlogDto: UpdateBlogDto): Promise<BlogDto>;
+
   remove(id: string): Promise<boolean>;
 }
 
@@ -119,11 +122,13 @@ export class BlogsController {
       throw new BadRequestException();
     }
 
-    return this.postsService.create({
+    const post = await this.postsService.create({
       blogId: blogId,
       shortDescription,
       content,
       title,
     });
+
+    return this.postsQueryRepository.findOne(post.id);
   }
 }
