@@ -46,6 +46,7 @@ export class PostsService implements IPostService {
       title: createPostDto.title,
       content: createPostDto.content,
       shortDescription: createPostDto.shortDescription,
+      createdAt: new Date(),
     };
 
     return this.postRepository.create(newPostInput);
@@ -77,20 +78,20 @@ export class PostsService implements IPostService {
   }
 
   async updatePostLikeStatus(updateLike: {
-    blogId: string;
+    postId: string;
     userId: string;
     likeStatus: LikeStringStatus;
   }) {
-    const blog = await this.blogRepository.findOne(updateLike.blogId);
+    const post = await this.postRepository.findOne(updateLike.postId);
 
-    if (!blog) {
+    if (!post) {
       return null;
     }
 
     const status = formatLikeStatusToInt(updateLike.likeStatus);
 
     return this.likeService.updateLikeStatus({
-      parentId: updateLike.blogId,
+      parentId: updateLike.postId,
       parentType: LikeParentTypeEnum.POST,
       userId: updateLike.userId,
       likeStatus: status,

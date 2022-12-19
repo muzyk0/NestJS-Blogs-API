@@ -1,4 +1,4 @@
-import { IsNotEmpty, IsString, Length } from 'class-validator';
+import { IsDate, IsNotEmpty, IsString, Length } from 'class-validator';
 
 export class PostDto {
   @IsString()
@@ -19,4 +19,7 @@ export class PostDto {
 
   @Length(1)
   blogName: string;
+
+  @IsDate()
+  createdAt: Date;
 }

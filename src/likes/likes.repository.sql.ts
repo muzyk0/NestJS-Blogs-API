@@ -75,6 +75,33 @@ export class LikesRepositorySql {
     return like[0];
   }
 
+  async getLatestLikes({
+    parentId,
+    parentType,
+    limit = 3,
+  }: Pick<GetCommentLikeByUser, 'parentId' | 'parentType'> & {
+    limit?: number;
+  }): Promise<Like[]> {
+    const queryRunner = this.dataSource.createQueryRunner();
+    await queryRunner.connect();
+
+    const likes: Like[] = await queryRunner.query(
+      `
+          SELECT *
+          FROM likes
+          WHERE "parentId" = $1
+            AND "parentType" = $2
+            AND "status" = $3
+          ORDER BY "createdAt" DESC LIMIT $4
+      `,
+      [parentId, parentType, LikeStatus.LIKE, limit],
+    );
+
+    await queryRunner.release();
+
+    return likes;
+  }
+
   async create(createLike: LikeInterface): Promise<Like> {
     const queryRunner = this.dataSource.createQueryRunner();
     await queryRunner.connect();

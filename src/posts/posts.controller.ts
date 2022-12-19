@@ -64,17 +64,30 @@ export class PostsController {
       throw new BadRequestException();
     }
 
-    return this.postsService.create(createPostDto);
+    const post = await this.postsService.create(createPostDto);
+
+    return this.postsQueryRepository.findOne(post.id);
   }
 
+  @UseGuards(AuthGuard)
   @Get()
-  async findAll(@Query() pageOptionsDto: PageOptionsDto) {
-    return this.postsQueryRepository.findAll(pageOptionsDto);
+  async findAll(
+    @GetCurrentJwtContextWithoutAuth() ctx: JwtATPayload | null,
+    @Query() pageOptionsDto: PageOptionsDto,
+  ) {
+    return this.postsQueryRepository.findAll({
+      ...pageOptionsDto,
+      userId: ctx?.user.id,
+    });
   }
 
+  @UseGuards(AuthGuard)
   @Get(':id')
-  async findOne(@Param('id') id: string) {
-    const post = await this.postsService.findOne(id);
+  async findOne(
+    @GetCurrentJwtContextWithoutAuth() ctx: JwtATPayload | null,
+    @Param('id') id: string,
+  ) {
+    const post = await this.postsQueryRepository.findOne(id, ctx?.user.id);
 
     if (!post) {
       throw new NotFoundException();
@@ -131,7 +144,7 @@ export class PostsController {
       });
     }
 
-    const comments = await this.commentsQueryRepository.findPostComments(
+    return this.commentsQueryRepository.findPostComments(
       {
         ...pageOptionsDto,
         postId: id,
@@ -140,8 +153,6 @@ export class PostsController {
         userId: ctx?.user.id,
       },
     );
-
-    return comments;
   }
 
   @UseGuards(JwtAuthGuard)
@@ -187,11 +198,11 @@ export class PostsController {
   @HttpCode(HttpStatus.NO_CONTENT)
   async likeStatus(
     @GetCurrentUserId() userId: string,
-    @Param('id') blogId: string,
+    @Param('id') postId: string,
     @Body() body: CreateLikeInput,
   ) {
     const comment = await this.postsService.updatePostLikeStatus({
-      blogId,
+      postId,
       userId,
       likeStatus: body.likeStatus,
     });
