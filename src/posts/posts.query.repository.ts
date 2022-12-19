@@ -67,7 +67,7 @@ export class PostsQueryRepository implements IPostsQueryRepository {
 
         const myStatus = await this.likesRepositorySql.getLikeOrDislike({
           parentId: post.id,
-          parentType: LikeParentTypeEnum.COMMENT,
+          parentType: LikeParentTypeEnum.POST,
           userId: options.userId,
         });
 
