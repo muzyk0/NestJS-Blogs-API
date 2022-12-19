@@ -34,6 +34,7 @@ import { Like } from './comment-likes/entity/like.entity';
         url: configService.get('POSTGRESQL_URI'),
         entities: [Like],
         synchronize: true,
+        ssl: true,
       }),
       inject: [ConfigService],
     }),
