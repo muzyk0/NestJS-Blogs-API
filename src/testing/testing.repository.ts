@@ -30,7 +30,8 @@ export class TestingRepository {
     await queryRunner.connect();
 
     await queryRunner.query(`
-        drop table likes
+        DELETE
+        FROM likes
     `);
 
     await queryRunner.release();
