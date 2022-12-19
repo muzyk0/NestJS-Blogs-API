@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
+import { DataSource } from 'typeorm';
 
 import { Blog, BlogDocument } from '../blogs/schemas/blogs.schema';
 import { Comment, CommentDocument } from '../comments/schemas/comments.schema';
@@ -15,6 +16,7 @@ import { User, UserDocument } from '../users/schemas/users.schema';
 @Injectable()
 export class TestingRepository {
   constructor(
+    private dataSource: DataSource,
     @InjectModel(Post.name) private postModel: Model<PostDocument>,
     @InjectModel(Blog.name) private blogModel: Model<BlogDocument>,
     @InjectModel(User.name) private userModel: Model<UserDocument>,
@@ -23,7 +25,22 @@ export class TestingRepository {
     @InjectModel(Security.name) private securityModel: Model<SecurityDocument>,
   ) {}
 
+  async clearSqlDatabase(): Promise<boolean> {
+    const queryRunner = this.dataSource.createQueryRunner();
+    await queryRunner.connect();
+
+    await queryRunner.query(`
+        drop table likes
+    `);
+
+    await queryRunner.release();
+
+    return true;
+  }
+
   async clearDatabase(): Promise<boolean> {
+    await this.clearSqlDatabase();
+
     await this.blogModel.deleteMany({});
     await this.postModel.deleteMany({});
     await this.userModel.deleteMany({});

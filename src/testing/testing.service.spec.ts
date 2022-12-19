@@ -3,6 +3,7 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { addDays } from 'date-fns';
 import { MongoMemoryServer } from 'mongodb-memory-server';
 import { connect, Connection, Model } from 'mongoose';
+import { DataSource } from 'typeorm';
 import { v4 } from 'uuid';
 
 import { Blog, BlogSchema } from '../blogs/schemas/blogs.schema';
@@ -54,6 +55,11 @@ describe('TestingService', () => {
         { provide: getModelToken(Comment.name), useValue: commentModel },
         { provide: getModelToken(Limit.name), useValue: limitModel },
         { provide: getModelToken(Security.name), useValue: securityModel },
+
+        {
+          provide: DataSource,
+          useValue: jest.fn(),
+        },
       ],
     }).compile();
     testingService = app.get<TestingService>(TestingService);
