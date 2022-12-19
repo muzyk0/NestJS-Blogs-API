@@ -57,7 +57,7 @@ export class CommentLikesRepositorySql {
     const queryRunner = this.dataSource.createQueryRunner();
     await queryRunner.connect();
 
-    const like: Like[] = await this.usersRepository.query(
+    const like: Like[] = await queryRunner.query(
       `
           SELECT *
           FROM likes
