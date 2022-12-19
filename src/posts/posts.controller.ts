@@ -50,7 +50,7 @@ export class PostsController {
     private readonly commentsQueryRepository: CommentsQueryRepository,
   ) {}
 
-  @UseGuards(BaseAuthGuard)
+  // @UseGuards(BaseAuthGuard)
   @Post()
   @HttpCode(HttpStatus.CREATED)
   async create(@Body() createPostDto: CreatePostDto) {
@@ -79,7 +79,7 @@ export class PostsController {
     return post;
   }
 
-  @UseGuards(BaseAuthGuard)
+  // @UseGuards(BaseAuthGuard)
   @Put(':id')
   @HttpCode(HttpStatus.NO_CONTENT)
   async update(@Param('id') id: string, @Body() updatePostDto: UpdatePostDto) {
@@ -98,7 +98,7 @@ export class PostsController {
     return;
   }
 
-  @UseGuards(BaseAuthGuard)
+  // @UseGuards(BaseAuthGuard)
   @Delete(':id')
   @HttpCode(HttpStatus.NO_CONTENT)
   async remove(@Param('id') id: string) {

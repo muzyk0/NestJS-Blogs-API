@@ -28,8 +28,11 @@ import { UpdateBlogDto } from './dto/update-blog.dto';
 
 export interface IBlogService {
   create(createBlogDto: Omit<CreateBlogDto, 'id'>): Promise<BlogDto>;
+
   findOne(id: string): Promise<BlogDto>;
+
   update(id: string, updateBlogDto: UpdateBlogDto): Promise<BlogDto>;
+
   remove(id: string): Promise<boolean>;
 }
 
@@ -43,7 +46,7 @@ export class BlogsController {
   ) {}
 
   @Post()
-  @UseGuards(BaseAuthGuard)
+  // @UseGuards(BaseAuthGuard)
   create(@Body() createBlogDto: CreateBlogDto) {
     return this.blogsService.create(createBlogDto);
   }
@@ -66,7 +69,7 @@ export class BlogsController {
 
   @Put(':id')
   @HttpCode(HttpStatus.NO_CONTENT)
-  @UseGuards(BaseAuthGuard)
+  // @UseGuards(BaseAuthGuard)
   async update(@Param('id') id: string, @Body() updateBlogDto: UpdateBlogDto) {
     const blog = await this.blogsService.update(id, updateBlogDto);
     if (!blog) {
@@ -78,7 +81,7 @@ export class BlogsController {
 
   @Delete(':id')
   @HttpCode(HttpStatus.NO_CONTENT)
-  @UseGuards(BaseAuthGuard)
+  // @UseGuards(BaseAuthGuard)
   async remove(@Param('id') id: string) {
     const isDeleted = await this.blogsService.remove(id);
 
@@ -108,7 +111,7 @@ export class BlogsController {
 
   @Post(':id/posts')
   @HttpCode(HttpStatus.CREATED)
-  @UseGuards(BaseAuthGuard)
+  // @UseGuards(BaseAuthGuard)
   async createBlogPost(
     @Param('id') blogId: string,
     @Body() { shortDescription, content, title }: CreateBlogPostDto,
