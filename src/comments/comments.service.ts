@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { v4 } from 'uuid';
 
+import { LikeParentTypeEnum } from '../likes/interfaces/like-parent-type.enum';
 import { CommentLikeStringStatus } from '../likes/interfaces/like-status.enum';
 import { LikesService } from '../likes/likes.service';
 import { formatLikeStatusToInt } from '../likes/utils/formatters';
@@ -99,7 +100,8 @@ export class CommentsService implements ICommentsService {
     const status = formatLikeStatusToInt(createLike.likeStatus);
 
     return this.commentsLikeService.updateLikeStatus({
-      commentId: createLike.commentId,
+      parentId: createLike.commentId,
+      parentType: LikeParentTypeEnum.COMMENT,
       userId: createLike.userId,
       likeStatus: status,
     });

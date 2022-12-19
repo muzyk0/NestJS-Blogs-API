@@ -4,14 +4,14 @@ import { DataSource } from 'typeorm';
 import { GetLikeDto } from './dto/get-like.dto';
 import { Like } from './entity/like.entity';
 import { GetCommentLikeByUser } from './interfaces/get-like.interface';
-import { CommentLikeStatus } from './interfaces/like-status.enum';
+import { LikeStatus } from './interfaces/like-status.enum';
 import { LikeInterface } from './interfaces/like.interface';
 
 @Injectable()
 export class LikesRepositorySql {
   constructor(private dataSource: DataSource) {}
 
-  async countLikeAndDislikeByCommentId({ commentId }: GetLikeDto) {
+  async countLikeAndDislikeByCommentId({ parentId }: GetLikeDto) {
     const queryRunner = this.dataSource.createQueryRunner();
     await queryRunner.connect();
 
@@ -20,21 +20,21 @@ export class LikesRepositorySql {
       `
           select COUNT(*) ::int
           from likes
-          where "commentId" = $1
+          where "parentId" = $1
             and "status" = $2;
 
       `,
-      [commentId, CommentLikeStatus.LIKE],
+      [parentId, LikeStatus.LIKE],
     );
     const dislikesCount = await queryRunner.query(
       `
           select COUNT(*) ::int
           from likes
-          where "commentId" = $1
+          where "parentId" = $1
             and "status" = $2;
 
       `,
-      [commentId, CommentLikeStatus.DISLIKE],
+      [parentId, LikeStatus.DISLIKE],
     );
 
     await queryRunner.release();
@@ -46,8 +46,9 @@ export class LikesRepositorySql {
   }
 
   async getLikeOrDislike({
-    commentId,
+    parentId,
     userId,
+    parentType,
   }: GetCommentLikeByUser): Promise<Like> {
     const queryRunner = this.dataSource.createQueryRunner();
     await queryRunner.connect();
@@ -56,11 +57,12 @@ export class LikesRepositorySql {
       `
           SELECT *
           FROM likes
-          WHERE "commentId" = $1
+          WHERE "parentId" = $1
             AND "userId" = $2
+            AND "parentType" = $3
           ORDER BY "createdAt" DESC LIMIT 1
       `,
-      [commentId, userId],
+      [parentId, userId, parentType],
     );
 
     await queryRunner.release();
@@ -77,22 +79,24 @@ export class LikesRepositorySql {
           DELETE
           FROM likes
           WHERE "userId" = $1
-            AND "commentId" = $2
+            AND "parentId" = $2
+            AND "parentType" = $3
       `,
-      [createLike.userId, createLike.commentId],
+      [createLike.userId, createLike.parentId, createLike.parentType],
     );
 
     const result: Like[] = await queryRunner.query(
       `
           INSERT
-          INTO likes (id, "userId", "commentId", status)
-          VALUES ($1, $2, $3, $4) RETURNING *
+          INTO likes (id, "userId", "parentId", status, "parentType")
+          VALUES ($1, $2, $3, $4, $5) RETURNING *
       `,
       [
         createLike.id,
         createLike.userId,
-        createLike.commentId,
+        createLike.parentId,
         createLike.status,
+        createLike.parentType,
       ],
     );
 

@@ -4,7 +4,7 @@ import { Model } from 'mongoose';
 
 import { GetLikeDto } from './dto/get-like.dto';
 import { GetCommentLikeByUser } from './interfaces/get-like.interface';
-import { CommentLikeStatus } from './interfaces/like-status.enum';
+import { LikeStatus } from './interfaces/like-status.enum';
 import { LikeInterface } from './interfaces/like.interface';
 import {
   CommentLike,
@@ -18,17 +18,17 @@ export class LikesRepository {
     private commentLikeModel: Model<CommentLikeDocument>,
   ) {}
 
-  async countLikeAndDislikeByCommentId({ commentId }: GetLikeDto) {
+  async countLikeAndDislikeByCommentId({ parentId }: GetLikeDto) {
     const likesCount = await this.commentLikeModel
       .countDocuments({
-        commentId,
-        status: CommentLikeStatus.LIKE,
+        parentId: parentId,
+        status: LikeStatus.LIKE,
       })
       .lean();
     const dislikesCount = await this.commentLikeModel
       .countDocuments({
-        commentId,
-        status: CommentLikeStatus.DISLIKE,
+        parentId: parentId,
+        status: LikeStatus.DISLIKE,
       })
       .lean();
 
@@ -38,11 +38,11 @@ export class LikesRepository {
     };
   }
 
-  async getLikeOrDislike({ commentId, userId }: GetCommentLikeByUser) {
+  async getLikeOrDislike({ parentId, userId }: GetCommentLikeByUser) {
     const likes = await this.commentLikeModel
       .find(
         {
-          commentId,
+          parentId: parentId,
           userId,
         },
         {},
@@ -56,7 +56,7 @@ export class LikesRepository {
 
   async create(createLike: LikeInterface) {
     await this.commentLikeModel.deleteMany({
-      commentId: createLike.commentId,
+      parentId: createLike.parentId,
       userId: createLike.userId,
     });
 

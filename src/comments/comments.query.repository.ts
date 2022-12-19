@@ -6,6 +6,7 @@ import { Model } from 'mongoose';
 import { BASE_PROJECTION } from '../common/mongoose/constants';
 import { PageOptionsDto } from '../common/paginator/page-options.dto';
 import { PageDto } from '../common/paginator/page.dto';
+import { LikeParentTypeEnum } from '../likes/interfaces/like-parent-type.enum';
 import { LikesRepositorySql } from '../likes/likes.repository.sql';
 import { getStringLikeStatus } from '../likes/utils/formatters';
 import { Post, PostDocument } from '../posts/schemas/posts.schema';
@@ -41,11 +42,12 @@ export class CommentsQueryRepository {
 
     const { likesCount, dislikesCount } =
       await this.commentLikesRepositorySql.countLikeAndDislikeByCommentId({
-        commentId: comment.id,
+        parentId: comment.id,
       });
 
     const myStatus = await this.commentLikesRepositorySql.getLikeOrDislike({
-      commentId: comment.id,
+      parentId: comment.id,
+      parentType: LikeParentTypeEnum.COMMENT,
       userId: userId,
     });
 
@@ -87,11 +89,12 @@ export class CommentsQueryRepository {
       comments.map(async (comment) => {
         const { likesCount, dislikesCount } =
           await this.commentLikesRepositorySql.countLikeAndDislikeByCommentId({
-            commentId: comment.id,
+            parentId: comment.id,
           });
 
         const myStatus = await this.commentLikesRepositorySql.getLikeOrDislike({
-          commentId: comment.id,
+          parentId: comment.id,
+          parentType: LikeParentTypeEnum.COMMENT,
           userId: userId,
         });
 

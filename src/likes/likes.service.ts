@@ -3,7 +3,7 @@ import { v4 } from 'uuid';
 
 import { CreateLikeDto } from './dto/create-like.dto';
 import { GetCommentLikeByUser } from './interfaces/get-like.interface';
-import { CommentLikeStatus } from './interfaces/like-status.enum';
+import { LikeStatus } from './interfaces/like-status.enum';
 import { LikesRepository } from './likes.repository';
 import { LikesRepositorySql } from './likes.repository.sql';
 
@@ -21,16 +21,18 @@ export class LikesService {
   async createLike(createLike: CreateLikeDto) {
     return this.commentLikesRepositorySql.create({
       id: v4(),
-      commentId: createLike.commentId,
+      parentId: createLike.parentId,
+      parentType: createLike.parentType,
       userId: createLike.userId,
-      status: CommentLikeStatus.LIKE,
+      status: LikeStatus.LIKE,
     });
   }
 
   async updateLikeStatus(createLike: CreateLikeDto) {
     return this.commentLikesRepositorySql.create({
       id: v4(),
-      commentId: createLike.commentId,
+      parentId: createLike.parentId,
+      parentType: createLike.parentType,
       userId: createLike.userId,
       status: createLike.likeStatus,
     });
