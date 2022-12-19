@@ -14,7 +14,10 @@ import {
   UseGuards,
 } from '@nestjs/common';
 
+import { AuthGuard } from '../auth/guards/auth-guard';
 import { BaseAuthGuard } from '../auth/guards/base-auth-guard';
+import { JwtATPayload } from '../auth/types/jwtPayload.type';
+import { GetCurrentJwtContextWithoutAuth } from '../common/decorators/get-current-user-without-auth.decorator';
 import { PageOptionsDto } from '../common/paginator/page-options.dto';
 import { PostsQueryRepository } from '../posts/posts.query.repository';
 import { PostsService } from '../posts/posts.service';
@@ -92,8 +95,10 @@ export class BlogsController {
     return isDeleted;
   }
 
+  @UseGuards(AuthGuard)
   @Get(':id/posts')
   async findBlogPosts(
+    @GetCurrentJwtContextWithoutAuth() ctx: JwtATPayload | null,
     @Query() pageOptionsDto: PageOptionsDto,
     @Param('id') id: string,
   ) {
@@ -106,6 +111,7 @@ export class BlogsController {
     return this.postsQueryRepository.findAll({
       ...pageOptionsDto,
       blogId: id,
+      userId: ctx?.user.id,
     });
   }
 
