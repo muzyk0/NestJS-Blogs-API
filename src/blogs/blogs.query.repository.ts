@@ -56,6 +56,7 @@ export class BlogsQueryRepository implements IBlogsQueryRepository {
       name: blog.name,
       description: blog.description,
       websiteUrl: blog.websiteUrl,
+      createdAt: blog.createdAt,
     };
   }
 }
