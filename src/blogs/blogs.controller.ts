@@ -127,7 +127,7 @@ export class BlogsController {
     const blog = await this.blogsService.findOne(blogId);
 
     if (!blog) {
-      throw new BadRequestException();
+      throw new NotFoundException();
     }
 
     const post = await this.postsService.create({
