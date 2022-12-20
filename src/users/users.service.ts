@@ -3,13 +3,10 @@ import * as bcrypt from 'bcrypt';
 import { addDays } from 'date-fns';
 import { v4 } from 'uuid';
 
-import { PageOptionsDto } from '../common/paginator/page-options.dto';
-import { PageDto } from '../common/paginator/page.dto';
 import { EmailTemplateManager } from '../email/email-template-manager';
 import { EmailService } from '../email/email.service';
 
 import { CreateUserDto } from './dto/create-user.dto';
-import { UserDto } from './dto/user.dto';
 import { RevokedTokenType } from './schemas/revoked-tokens.schema';
 import { UserAccountDBType } from './schemas/users.schema';
 import { UpdateConfirmationType } from './users.interface';
@@ -79,17 +76,6 @@ export class UsersService {
       login: userLogin,
       createdAt,
       email: userEmail,
-    };
-  }
-
-  async findAll(pageOptionsDto: PageOptionsDto): Promise<PageDto<UserDto>> {
-    const users = await this.usersRepository.findAll(pageOptionsDto);
-    return {
-      ...users,
-      items: users.items.map((u) => ({
-        id: u.accountData.id,
-        login: u.accountData.login,
-      })),
     };
   }
 
