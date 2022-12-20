@@ -17,7 +17,7 @@ import configuration from './config/configuration';
   app.useGlobalPipes(
     new ValidationPipe({
       transform: true,
-      stopAtFirstError: true,
+      stopAtFirstError: false,
       exceptionFactory: (options) => {
         const errors = options.map((option) =>
           Object.values(option.constraints ?? []).map((message) => ({

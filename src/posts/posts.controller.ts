@@ -77,7 +77,7 @@ export class PostsController {
   ) {
     return this.postsQueryRepository.findAll({
       ...pageOptionsDto,
-      userId: ctx?.user.id,
+      userId: ctx?.user?.id,
     });
   }
 

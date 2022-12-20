@@ -122,6 +122,10 @@ export class PostsQueryRepository implements IPostsQueryRepository {
       { projection: BASE_PROJECTION },
     );
 
+    if (!post) {
+      return;
+    }
+
     const { likesCount, dislikesCount } =
       await this.likesRepositorySql.countLikeAndDislikeByCommentId({
         parentId: post.id,
