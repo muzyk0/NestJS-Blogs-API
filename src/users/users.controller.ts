@@ -27,7 +27,7 @@ export class UsersController {
     private readonly usersQueryRepository: UsersQueryRepository,
   ) {}
 
-  @UseGuards(BaseAuthGuard)
+  // @UseGuards(BaseAuthGuard)
   @Post()
   async create(@Body() { login, email, password }: CreateUserDto) {
     const userAlreadyExistByLogin =
@@ -61,7 +61,7 @@ export class UsersController {
     return this.usersQueryRepository.findAll(pageOptionsDto);
   }
 
-  @UseGuards(BaseAuthGuard)
+  // @UseGuards(BaseAuthGuard)
   @Delete(':id')
   @HttpCode(HttpStatus.NO_CONTENT)
   async remove(@Param('id') id: string) {
