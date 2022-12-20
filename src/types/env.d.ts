@@ -10,6 +10,7 @@ declare global {
       REFRESH_TOKEN_SECRET: string;
       EMAIL_FROM: string;
       EMAIL_FROM_PASSWORD: string;
+      IP_RESTRICTION_LIMIT: string;
     }
   }
 }
