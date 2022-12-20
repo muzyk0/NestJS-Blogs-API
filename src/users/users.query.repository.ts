@@ -50,7 +50,7 @@ export class UsersQueryRepository {
       .find(filter, projectionFields)
       .skip(pageOptionsDto.skip)
       .sort({
-        [pageOptionsDto.sortBy
+        [pageOptionsDto.sortBy !== 'createdAt'
           ? `accountData.${pageOptionsDto.sortBy}`
           : 'createdAt']: pageOptionsDto.sortDirection,
       })
