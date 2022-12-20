@@ -3,8 +3,6 @@ import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 
 import { BASE_PROJECTION } from '../common/mongoose/constants';
-import { PageOptionsDto } from '../common/paginator/page-options.dto';
-import { PageDto } from '../common/paginator/page.dto';
 
 import { RevokedTokenType } from './schemas/revoked-tokens.schema';
 import { User, UserAccountDBType, UserDocument } from './schemas/users.schema';
@@ -34,30 +32,6 @@ export class UsersRepository {
       { 'accountData.id': createUserDto.accountData.id },
       { projection: projectionFields },
     );
-  }
-
-  async findAll(pageOptionsDto: PageOptionsDto): Promise<PageDto<User>> {
-    const filter = {
-      ...(pageOptionsDto?.searchNameTerm
-        ? { 'accountData.login': { $regex: pageOptionsDto.searchNameTerm } }
-        : {}),
-    };
-
-    const itemsCount = await this.userModel.countDocuments(filter);
-
-    const items = await this.userModel
-      .find(filter, projectionFields)
-      .skip(pageOptionsDto.skip)
-      .sort({
-        [pageOptionsDto.sortBy]: pageOptionsDto.sortDirection,
-      })
-      .limit(pageOptionsDto.pageSize);
-
-    return new PageDto({
-      items,
-      itemsCount,
-      pageOptionsDto,
-    });
   }
 
   async findOneByLoginOrEmail(loginOrEmail: string): Promise<User> {
