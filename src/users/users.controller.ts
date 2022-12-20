@@ -51,7 +51,9 @@ export class UsersController {
       });
     }
 
-    return this.usersService.create({ login, email, password });
+    const user = await this.usersService.create({ login, email, password });
+
+    return this.usersQueryRepository.findOne(user.id);
   }
 
   @Get()

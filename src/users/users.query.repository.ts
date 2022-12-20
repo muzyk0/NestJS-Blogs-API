@@ -15,6 +15,11 @@ const projectionFields = { ...BASE_PROJECTION, postId: 0 };
 export class UsersQueryRepository {
   constructor(@InjectModel(User.name) private userModel: Model<UserDocument>) {}
 
+  async findOne(id: string): Promise<UserDto> {
+    const user = await this.userModel.findOne({ id }, BASE_PROJECTION);
+    return this.mapToDto(user);
+  }
+
   async findAll(pageOptionsDto: PageOptionsDto): Promise<PageDto<UserDto>> {
     const filter = {
       ...(pageOptionsDto?.searchNameTerm
@@ -33,18 +38,18 @@ export class UsersQueryRepository {
       .limit(pageOptionsDto.pageSize);
 
     return new PageDto({
-      items: this.mapToDto(items),
+      items: items.map(this.mapToDto),
       itemsCount,
       pageOptionsDto,
     });
   }
 
-  mapToDto(users: UserDocument[]): UserDto[] {
-    return users.map((u) => ({
-      id: u.accountData.id,
-      login: u.accountData.login,
-      email: u.accountData.email,
-      createdAt: u.createdAt,
-    }));
+  mapToDto(users: UserDocument): UserDto {
+    return {
+      id: users.accountData.id,
+      login: users.accountData.login,
+      email: users.accountData.email,
+      createdAt: users.createdAt,
+    };
   }
 }
