@@ -8,7 +8,7 @@ export class CreateBlogDto {
   @IsString()
   @Length(1, 15)
   @IsNotEmpty()
-  @Transform(({ value }) => (typeof value === 'string' ? value?.trim() : value))
+  @Transform(({ value }) => value?.trim?.())
   name: string;
 
   @Length(0, 500)
