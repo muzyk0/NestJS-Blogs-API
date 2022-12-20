@@ -54,6 +54,7 @@ export class BlogsQueryRepository implements IBlogsQueryRepository {
     return {
       id: blog.id,
       name: blog.name,
+      description: blog.description,
       websiteUrl: blog.websiteUrl,
     };
   }

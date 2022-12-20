@@ -50,8 +50,10 @@ export class BlogsController {
 
   @Post()
   @UseGuards(BaseAuthGuard)
-  create(@Body() createBlogDto: CreateBlogDto) {
-    return this.blogsService.create(createBlogDto);
+  async create(@Body() createBlogDto: CreateBlogDto) {
+    const blog = await this.blogsService.create(createBlogDto);
+
+    return this.blogsQueryRepository.findOne(blog.id);
   }
 
   @Get()
@@ -79,7 +81,7 @@ export class BlogsController {
       throw new NotFoundException();
     }
 
-    return blog;
+    return;
   }
 
   @Delete(':id')

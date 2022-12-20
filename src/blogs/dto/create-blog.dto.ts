@@ -9,6 +9,9 @@ export class CreateBlogDto {
   @IsNotEmpty()
   name: string;
 
+  @Length(0, 500)
+  description: string;
+
   @Length(0, 100)
   @Matches(websiteURLPattern)
   websiteUrl: string;
