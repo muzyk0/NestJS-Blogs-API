@@ -20,7 +20,7 @@ export type UserAccountDBType = {
 
 export type UserDocument = User & Document;
 
-@Schema()
+@Schema({ timestamps: true })
 export class User implements UserAccountDBType {
   @Prop({ required: true })
   accountData: UserData;
