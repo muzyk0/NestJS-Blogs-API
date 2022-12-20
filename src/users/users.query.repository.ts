@@ -23,7 +23,12 @@ export class UsersQueryRepository {
   async findAll(pageOptionsDto: PageOptionsDto): Promise<PageDto<UserDto>> {
     const filter = {
       ...(pageOptionsDto?.searchNameTerm
-        ? { 'accountData.login': { $regex: pageOptionsDto.searchNameTerm } }
+        ? {
+            'accountData.login': {
+              $regex: pageOptionsDto.searchNameTerm,
+              $options: 'i',
+            },
+          }
         : {}),
     };
 
