@@ -23,7 +23,7 @@ import { UsersService } from './users.service';
 export class UsersController {
   constructor(private readonly usersService: UsersService) {}
 
-  // @UseGuards(BaseAuthGuard)
+  @UseGuards(BaseAuthGuard)
   @Post()
   async create(@Body() { login, email, password }: CreateUserDto) {
     const userAlreadyExistByLogin =
@@ -55,7 +55,7 @@ export class UsersController {
     return this.usersService.findAll(pageOptionsDto);
   }
 
-  // @UseGuards(BaseAuthGuard)
+  @UseGuards(BaseAuthGuard)
   @Delete(':id')
   @HttpCode(HttpStatus.NO_CONTENT)
   async remove(@Param('id') id: string) {
