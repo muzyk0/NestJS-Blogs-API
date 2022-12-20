@@ -50,7 +50,9 @@ export class UsersQueryRepository {
       .find(filter, projectionFields)
       .skip(pageOptionsDto.skip)
       .sort({
-        [`accountData.${pageOptionsDto.sortBy}`]: pageOptionsDto.sortDirection,
+        [pageOptionsDto.sortBy
+          ? `accountData.${pageOptionsDto.sortBy}`
+          : 'createdAt']: pageOptionsDto.sortDirection,
       })
       .limit(pageOptionsDto.pageSize);
 
