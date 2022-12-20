@@ -13,6 +13,7 @@ export class CreatePostDto {
   @IsNotEmpty()
   shortDescription: string;
 
+  @IsString()
   @Length(1, 1000)
   @IsNotEmpty()
   content: string;

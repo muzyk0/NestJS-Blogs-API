@@ -130,7 +130,7 @@ export class BlogsController {
     }
 
     const post = await this.postsService.create({
-      blogId: blogId,
+      blogId: blog.id,
       shortDescription,
       content,
       title,
