@@ -14,7 +14,7 @@ import {
 } from '@nestjs/common';
 
 import { BaseAuthGuard } from '../auth/guards/base-auth-guard';
-import { PageOptionsDto } from '../common/paginator/page-options.dto';
+import { PageOptionsForUserDto } from '../common/paginator/page-options.dto';
 
 import { CreateUserDto } from './dto/create-user.dto';
 import { UsersQueryRepository } from './users.query.repository';
@@ -57,7 +57,7 @@ export class UsersController {
   }
 
   @Get()
-  async findAll(@Query() pageOptionsDto: PageOptionsDto) {
+  async findAll(@Query() pageOptionsDto: PageOptionsForUserDto) {
     return this.usersQueryRepository.findAll(pageOptionsDto);
   }
 

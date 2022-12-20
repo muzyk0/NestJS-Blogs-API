@@ -48,3 +48,13 @@ export class PageOptionsDto {
   //   return (this.PageNumber - 1) * this.PageSize;
   // }
 }
+
+export class PageOptionsForUserDto extends PageOptionsDto {
+  @IsString()
+  @IsOptional()
+  searchLoginTerm?: string | null = null;
+
+  @IsString()
+  @IsOptional()
+  searchEmailTerm?: string | null = null;
+}

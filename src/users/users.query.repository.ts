@@ -3,7 +3,7 @@ import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 
 import { BASE_PROJECTION } from '../common/mongoose/constants';
-import { PageOptionsDto } from '../common/paginator/page-options.dto';
+import { PageOptionsForUserDto } from '../common/paginator/page-options.dto';
 import { PageDto } from '../common/paginator/page.dto';
 
 import { UserDto } from './dto/user.view.dto';
@@ -20,12 +20,22 @@ export class UsersQueryRepository {
     return this.mapToDto(user);
   }
 
-  async findAll(pageOptionsDto: PageOptionsDto): Promise<PageDto<UserDto>> {
+  async findAll(
+    pageOptionsDto: PageOptionsForUserDto,
+  ): Promise<PageDto<UserDto>> {
     const filter = {
-      ...(pageOptionsDto?.searchNameTerm
+      ...(pageOptionsDto?.searchLoginTerm
         ? {
             'accountData.login': {
-              $regex: pageOptionsDto.searchNameTerm,
+              $regex: pageOptionsDto.searchLoginTerm,
+              $options: 'i',
+            },
+          }
+        : {}),
+      ...(pageOptionsDto?.searchEmailTerm
+        ? {
+            'accountData.email': {
+              $regex: pageOptionsDto.searchEmailTerm,
               $options: 'i',
             },
           }
