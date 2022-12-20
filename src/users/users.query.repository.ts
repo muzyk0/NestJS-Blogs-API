@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
-import { Model } from 'mongoose';
+import { FilterQuery, Model } from 'mongoose';
 
 import { BASE_PROJECTION } from '../common/mongoose/constants';
 import { PageOptionsForUserDto } from '../common/paginator/page-options.dto';
@@ -23,23 +23,25 @@ export class UsersQueryRepository {
   async findAll(
     pageOptionsDto: PageOptionsForUserDto,
   ): Promise<PageDto<UserDto>> {
-    const filter = {
-      ...(pageOptionsDto?.searchLoginTerm
-        ? {
-            'accountData.login': {
-              $regex: pageOptionsDto.searchLoginTerm,
-              $options: 'i',
-            },
-          }
-        : {}),
-      ...(pageOptionsDto?.searchEmailTerm
-        ? {
-            'accountData.email': {
-              $regex: pageOptionsDto.searchEmailTerm,
-              $options: 'i',
-            },
-          }
-        : {}),
+    const filter: FilterQuery<UserDocument> = {
+      $or: [
+        pageOptionsDto?.searchLoginTerm
+          ? {
+              'accountData.login': {
+                $regex: pageOptionsDto.searchLoginTerm,
+                $options: 'si',
+              },
+            }
+          : {},
+        pageOptionsDto?.searchEmailTerm
+          ? {
+              'accountData.email': {
+                $regex: pageOptionsDto.searchEmailTerm,
+                $options: 'si',
+              },
+            }
+          : {},
+      ],
     };
 
     const itemsCount = await this.userModel.countDocuments(filter);
