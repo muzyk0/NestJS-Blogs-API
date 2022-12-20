@@ -1,5 +1,4 @@
 import {
-  BadRequestException,
   Body,
   Controller,
   Delete,
@@ -15,7 +14,6 @@ import {
 } from '@nestjs/common';
 
 import { AuthGuard } from '../auth/guards/auth-guard';
-import { BaseAuthGuard } from '../auth/guards/base-auth-guard';
 import { JwtATPayload } from '../auth/types/jwtPayload.type';
 import { GetCurrentJwtContextWithoutAuth } from '../common/decorators/get-current-user-without-auth.decorator';
 import { PageOptionsDto } from '../common/paginator/page-options.dto';
@@ -88,13 +86,13 @@ export class BlogsController {
   @HttpCode(HttpStatus.NO_CONTENT)
   // @UseGuards(BaseAuthGuard)
   async remove(@Param('id') id: string) {
-    const isDeleted = await this.blogsService.remove(id);
+    const blog = await this.blogsService.findOne(id);
 
-    if (!isDeleted) {
+    if (!blog) {
       throw new NotFoundException();
     }
 
-    return isDeleted;
+    return await this.blogsService.remove(id);
   }
 
   @UseGuards(AuthGuard)
