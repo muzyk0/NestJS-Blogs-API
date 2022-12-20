@@ -22,7 +22,7 @@ export class BlogsQueryRepository implements IBlogsQueryRepository {
   async findAll(pageOptionsDto: PageOptionsDto): Promise<PageDto<BlogDto>> {
     const filter = {
       ...(pageOptionsDto?.searchNameTerm
-        ? { name: { $regex: pageOptionsDto.searchNameTerm } }
+        ? { name: { $regex: pageOptionsDto.searchNameTerm, $options: 'i' } }
         : {}),
     };
 
