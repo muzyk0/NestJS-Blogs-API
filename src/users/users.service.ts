@@ -69,6 +69,7 @@ export class UsersService {
       id,
       login: userLogin,
       email: userEmail,
+      createdAt: createdUser.createdAt,
     };
   }
 
