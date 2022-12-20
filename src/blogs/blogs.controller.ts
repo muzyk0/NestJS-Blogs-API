@@ -14,6 +14,7 @@ import {
 } from '@nestjs/common';
 
 import { AuthGuard } from '../auth/guards/auth-guard';
+import { BaseAuthGuard } from '../auth/guards/base-auth-guard';
 import { JwtATPayload } from '../auth/types/jwtPayload.type';
 import { GetCurrentJwtContextWithoutAuth } from '../common/decorators/get-current-user-without-auth.decorator';
 import { PageOptionsDto } from '../common/paginator/page-options.dto';
@@ -47,7 +48,7 @@ export class BlogsController {
   ) {}
 
   @Post()
-  // @UseGuards(BaseAuthGuard)
+  @UseGuards(BaseAuthGuard)
   async create(@Body() createBlogDto: CreateBlogDto) {
     const blog = await this.blogsService.create(createBlogDto);
 
@@ -72,7 +73,7 @@ export class BlogsController {
 
   @Put(':id')
   @HttpCode(HttpStatus.NO_CONTENT)
-  // @UseGuards(BaseAuthGuard)
+  @UseGuards(BaseAuthGuard)
   async update(@Param('id') id: string, @Body() updateBlogDto: UpdateBlogDto) {
     const blog = await this.blogsService.update(id, updateBlogDto);
     if (!blog) {
@@ -84,7 +85,7 @@ export class BlogsController {
 
   @Delete(':id')
   @HttpCode(HttpStatus.NO_CONTENT)
-  // @UseGuards(BaseAuthGuard)
+  @UseGuards(BaseAuthGuard)
   async remove(@Param('id') id: string) {
     const blog = await this.blogsService.findOne(id);
 
@@ -117,7 +118,7 @@ export class BlogsController {
 
   @Post(':id/posts')
   @HttpCode(HttpStatus.CREATED)
-  // @UseGuards(BaseAuthGuard)
+  @UseGuards(BaseAuthGuard)
   async createBlogPost(
     @Param('id') blogId: string,
     @Body() { shortDescription, content, title }: CreateBlogPostDto,
