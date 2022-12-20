@@ -11,6 +11,7 @@ declare global {
       EMAIL_FROM: string;
       EMAIL_FROM_PASSWORD: string;
       IP_RESTRICTION_LIMIT: string;
+      ENABLE_CLEAR_DB_ENDPOINT: string;
     }
   }
 }

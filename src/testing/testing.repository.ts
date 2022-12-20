@@ -1,4 +1,5 @@
 import { Injectable } from '@nestjs/common';
+import { ConfigService } from '@nestjs/config';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { DataSource } from 'typeorm';
@@ -16,6 +17,7 @@ import { User, UserDocument } from '../users/schemas/users.schema';
 @Injectable()
 export class TestingRepository {
   constructor(
+    private readonly config: ConfigService,
     private dataSource: DataSource,
     @InjectModel(Post.name) private postModel: Model<PostDocument>,
     @InjectModel(Blog.name) private blogModel: Model<BlogDocument>,
@@ -40,14 +42,16 @@ export class TestingRepository {
   }
 
   async clearDatabase(): Promise<boolean> {
-    await this.clearSqlDatabase();
+    if (this.config.get('ENABLE_CLEAR_DB_ENDPOINT')) {
+      await this.clearSqlDatabase();
 
-    await this.blogModel.deleteMany({});
-    await this.postModel.deleteMany({});
-    await this.userModel.deleteMany({});
-    await this.commentModel.deleteMany({});
-    await this.limitModel.deleteMany({});
-    await this.securityModel.deleteMany({});
+      await this.blogModel.deleteMany({});
+      await this.postModel.deleteMany({});
+      await this.userModel.deleteMany({});
+      await this.commentModel.deleteMany({});
+      await this.limitModel.deleteMany({});
+      await this.securityModel.deleteMany({});
+    }
 
     return true;
   }

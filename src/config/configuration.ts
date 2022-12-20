@@ -22,4 +22,5 @@ export default () => ({
       ? Number(process.env.IP_RESTRICTION_LIMIT)
       : 5,
   },
+  ENABLE_CLEAR_DB_ENDPOINT: process.env.ENABLE_CLEAR_DB_ENDPOINT === 'true',
 });
