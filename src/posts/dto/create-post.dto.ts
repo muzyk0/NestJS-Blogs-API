@@ -1,6 +1,7 @@
 import { IsNotEmpty, IsString, Length } from 'class-validator';
 
 import { Blog } from '../../blogs/schemas/blogs.schema';
+import { IsBlogExists } from '../../common/decorators/validations/check-blogId-if-exist.decorator';
 
 export class CreatePostDto {
   @IsString()
@@ -20,5 +21,6 @@ export class CreatePostDto {
 
   @IsString()
   @IsNotEmpty()
+  @IsBlogExists()
   blogId: Blog['id'];
 }

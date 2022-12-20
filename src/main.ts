@@ -1,6 +1,7 @@
 import { BadRequestException, ValidationPipe } from '@nestjs/common';
 import { NestFactory } from '@nestjs/core';
 import { NestExpressApplication } from '@nestjs/platform-express';
+import { useContainer } from 'class-validator';
 import cookieParser from 'cookie-parser';
 
 import { AppModule } from './app.module';
@@ -9,6 +10,8 @@ import configuration from './config/configuration';
 
 (async function bootstrap() {
   const app = await NestFactory.create<NestExpressApplication>(AppModule);
+
+  useContainer(app.select(AppModule), { fallbackOnErrors: true });
 
   app.set('trust proxy');
   app.enableCors();
