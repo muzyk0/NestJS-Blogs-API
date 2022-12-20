@@ -42,6 +42,9 @@ export class User implements UserAccountDBType {
     },
   ])
   passwordRecoveries: PasswordRecovery[];
+
+  @Prop({ required: false })
+  createdAt: Date;
 }
 
 export const UserSchema = SchemaFactory.createForClass(User);

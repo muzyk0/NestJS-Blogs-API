@@ -44,7 +44,7 @@ export class UsersQueryRepository {
       id: u.accountData.id,
       login: u.accountData.login,
       email: u.accountData.email,
-      createdAt: u.accountData.createdAt,
+      createdAt: u.createdAt,
     }));
   }
 }

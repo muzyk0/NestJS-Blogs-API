@@ -5,7 +5,6 @@ export interface IUser {
   login: string;
   email: string;
   password: string;
-  createdAt: Date;
 }
 
 export class UserData implements IUser {
@@ -20,9 +19,6 @@ export class UserData implements IUser {
 
   @Prop({ required: true })
   password: string;
-
-  @Prop({ required: true })
-  createdAt: Date;
 }
 
 export const UserDataSchema = SchemaFactory.createForClass(UserData);
