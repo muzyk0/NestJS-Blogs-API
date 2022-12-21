@@ -1,7 +1,7 @@
 import { LikeParentTypeEnum } from './like-parent-type.enum';
 
 export interface GetCommentLikeByUser {
-  userId: string;
+  userId?: string;
   parentId: string;
   parentType: LikeParentTypeEnum;
 }

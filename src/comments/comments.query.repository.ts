@@ -6,6 +6,7 @@ import { Model } from 'mongoose';
 import { BASE_PROJECTION } from '../common/mongoose/constants';
 import { PageOptionsDto } from '../common/paginator/page-options.dto';
 import { PageDto } from '../common/paginator/page.dto';
+import { Like } from '../likes/entity/like.entity';
 import { LikeParentTypeEnum } from '../likes/interfaces/like-parent-type.enum';
 import { LikesRepositorySql } from '../likes/likes.repository.sql';
 import { getStringLikeStatus } from '../likes/utils/formatters';
@@ -40,32 +41,11 @@ export class CommentsQueryRepository {
   async findOne(id: string, userId?: string): Promise<CommentViewDto> {
     const comment = await this.commentModel.findOne({ id }, projectionFields);
 
-    const { likesCount, dislikesCount } =
-      await this.likesRepositorySql.countLikeAndDislikeByCommentId({
-        parentId: comment.id,
-      });
+    if (!comment) {
+      return;
+    }
 
-    const myStatus = await this.likesRepositorySql.getLikeOrDislike({
-      parentId: comment.id,
-      parentType: LikeParentTypeEnum.COMMENT,
-      userId: userId,
-    });
-
-    const mappedComment: CommentViewDto = {
-      id: comment.id,
-      content: comment.content,
-      userId: comment.userId,
-      userLogin: comment.userLogin,
-      postId: comment.postId,
-      createdAt: comment.createdAt,
-      likesInfo: {
-        likesCount,
-        dislikesCount,
-        myStatus: getStringLikeStatus(myStatus),
-      },
-    };
-
-    return mappedComment;
+    return await this.getLikesInfo(comment, userId);
   }
 
   async findPostComments(
@@ -87,32 +67,7 @@ export class CommentsQueryRepository {
 
     const commentsWithLikesInfo: CommentViewDto[] = await Promise.all(
       comments.map(async (comment) => {
-        const { likesCount, dislikesCount } =
-          await this.likesRepositorySql.countLikeAndDislikeByCommentId({
-            parentId: comment.id,
-          });
-
-        const myStatus = await this.likesRepositorySql.getLikeOrDislike({
-          parentId: comment.id,
-          parentType: LikeParentTypeEnum.COMMENT,
-          userId: userId,
-        });
-
-        const mappedComment: CommentViewDto = {
-          id: comment.id,
-          content: comment.content,
-          userId: comment.userId,
-          userLogin: comment.userLogin,
-          postId: comment.postId,
-          createdAt: comment.createdAt,
-          likesInfo: {
-            likesCount,
-            dislikesCount,
-            myStatus: getStringLikeStatus(myStatus),
-          },
-        };
-
-        return mappedComment;
+        return this.getLikesInfo(comment, userId);
       }),
     );
 
@@ -121,5 +76,41 @@ export class CommentsQueryRepository {
       itemsCount,
       pageOptionsDto: findAllCommentsOptions,
     });
+  }
+
+  private async getLikesInfo(comment: Comment, userId: string) {
+    const { likesCount, dislikesCount } =
+      await this.likesRepositorySql.countLikeAndDislikeByCommentId({
+        parentId: comment.id,
+      });
+
+    const myStatus = await this.likesRepositorySql.getLikeOrDislike({
+      parentId: comment.id,
+      parentType: LikeParentTypeEnum.COMMENT,
+      userId: userId,
+    });
+
+    return this.mapToDto(comment, likesCount, dislikesCount, myStatus);
+  }
+
+  private mapToDto(
+    comment: Comment,
+    likesCount,
+    dislikesCount,
+    myStatus: Like,
+  ): CommentViewDto {
+    return {
+      id: comment.id,
+      content: comment.content,
+      userId: comment.userId,
+      userLogin: comment.userLogin,
+      postId: comment.postId,
+      createdAt: comment.createdAt,
+      likesInfo: {
+        likesCount,
+        dislikesCount,
+        myStatus: getStringLikeStatus(myStatus),
+      },
+    };
   }
 }

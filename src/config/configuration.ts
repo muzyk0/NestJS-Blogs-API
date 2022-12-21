@@ -17,4 +17,10 @@ export default () => ({
     EMAIL_FROM_PASSWORD: process.env.EMAIL_FROM_PASSWORD || '',
   },
   IS_DEV: process.env.NODE_ENV === 'development',
+  IP_RESTRICTION: {
+    LIMIT: process.env.IP_RESTRICTION_LIMIT
+      ? Number(process.env.IP_RESTRICTION_LIMIT)
+      : 5,
+  },
+  ENABLE_CLEAR_DB_ENDPOINT: process.env.ENABLE_CLEAR_DB_ENDPOINT === 'true',
 });

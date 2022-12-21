@@ -25,6 +25,7 @@ export class BlogsService implements IBlogService {
     const newBlog: BlogDto = {
       id: v4(),
       name: createBlogDto.name,
+      description: createBlogDto.description,
       websiteUrl: createBlogDto.websiteUrl,
     };
     return this.blogsRepository.create(newBlog);

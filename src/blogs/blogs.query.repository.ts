@@ -22,7 +22,7 @@ export class BlogsQueryRepository implements IBlogsQueryRepository {
   async findAll(pageOptionsDto: PageOptionsDto): Promise<PageDto<BlogDto>> {
     const filter = {
       ...(pageOptionsDto?.searchNameTerm
-        ? { name: { $regex: pageOptionsDto.searchNameTerm } }
+        ? { name: { $regex: pageOptionsDto.searchNameTerm, $options: 'i' } }
         : {}),
     };
 
@@ -47,6 +47,11 @@ export class BlogsQueryRepository implements IBlogsQueryRepository {
 
   async findOne(id: string): Promise<BlogDto> {
     const blog = await this.blogModel.findOne({ id }, BASE_PROJECTION);
+
+    if (!blog) {
+      return;
+    }
+
     return this.mapToDto(blog);
   }
 
@@ -54,7 +59,9 @@ export class BlogsQueryRepository implements IBlogsQueryRepository {
     return {
       id: blog.id,
       name: blog.name,
+      description: blog.description,
       websiteUrl: blog.websiteUrl,
+      createdAt: blog.createdAt,
     };
   }
 }

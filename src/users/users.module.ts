@@ -8,6 +8,7 @@ import { SecurityModule } from '../security/security.module';
 
 import { User, UserSchema } from './schemas/users.schema';
 import { UsersController } from './users.controller';
+import { UsersQueryRepository } from './users.query.repository';
 import { UsersRepository } from './users.repository';
 import { UsersService } from './users.service';
 
@@ -20,7 +21,7 @@ import { UsersService } from './users.service';
     PasswordRecoveryModule,
   ],
   controllers: [UsersController],
-  providers: [UsersService, UsersRepository],
-  exports: [UsersService, UsersRepository],
+  providers: [UsersService, UsersRepository, UsersQueryRepository],
+  exports: [UsersService, UsersRepository, UsersQueryRepository],
 })
 export class UsersModule {}

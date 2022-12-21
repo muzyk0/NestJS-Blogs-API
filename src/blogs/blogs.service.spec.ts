@@ -57,6 +57,7 @@ describe('BlogsService', () => {
   it('first blog should be created', async () => {
     const newBlog = await blogService.create({
       name: 'Vlad',
+      description: 'description',
       websiteUrl: 'https://www.youtube.com/channel/UCcZ18YvVGS7tllvrxN5IAAQ',
     });
 
@@ -76,6 +77,7 @@ describe('BlogsService', () => {
   it('blog should be removed', async () => {
     const newBlog = await blogService.create({
       name: 'Vlad',
+      description: 'description',
       websiteUrl: 'https://www.youtube.com/channel/UCcZ18YvVGS7tllvrxN5IAAQ',
     });
 
@@ -91,6 +93,7 @@ describe('BlogsService', () => {
       new Array(10).fill(undefined).map((_, i) => {
         return blogService.create({
           name: `Vlad ${i}`,
+          description: 'description',
           websiteUrl: `https://www.youtube.com/channel/${i}`,
         });
       }),

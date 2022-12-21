@@ -20,7 +20,7 @@ export type UserAccountDBType = {
 
 export type UserDocument = User & Document;
 
-@Schema()
+@Schema({ timestamps: true })
 export class User implements UserAccountDBType {
   @Prop({ required: true })
   accountData: UserData;
@@ -42,6 +42,9 @@ export class User implements UserAccountDBType {
     },
   ])
   passwordRecoveries: PasswordRecovery[];
+
+  @Prop({ required: false })
+  createdAt: Date;
 }
 
 export const UserSchema = SchemaFactory.createForClass(User);

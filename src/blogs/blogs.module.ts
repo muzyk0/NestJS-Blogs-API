@@ -2,6 +2,7 @@ import { Module } from '@nestjs/common';
 import { MongooseModule } from '@nestjs/mongoose';
 
 import { AuthModule } from '../auth/auth.module';
+import { BlogExistsRule } from '../common/decorators/validations/check-blogId-if-exist.decorator';
 import { PostsModule } from '../posts/posts.module';
 import { Security, SecuritySchema } from '../security/schemas/security.schema';
 
@@ -21,7 +22,12 @@ import { Blog, BlogSchema } from './schemas/blogs.schema';
     PostsModule,
   ],
   controllers: [BlogsController],
-  providers: [BlogsService, BlogsRepository, BlogsQueryRepository],
+  providers: [
+    BlogsService,
+    BlogsRepository,
+    BlogsQueryRepository,
+    BlogExistsRule,
+  ],
   exports: [BlogsService, BlogsRepository, BlogsQueryRepository],
 })
 export class BlogsModule {}

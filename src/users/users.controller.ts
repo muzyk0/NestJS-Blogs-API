@@ -14,14 +14,18 @@ import {
 } from '@nestjs/common';
 
 import { BaseAuthGuard } from '../auth/guards/base-auth-guard';
-import { PageOptionsDto } from '../common/paginator/page-options.dto';
+import { PageOptionsForUserDto } from '../common/paginator/page-options.dto';
 
 import { CreateUserDto } from './dto/create-user.dto';
+import { UsersQueryRepository } from './users.query.repository';
 import { UsersService } from './users.service';
 
 @Controller('users')
 export class UsersController {
-  constructor(private readonly usersService: UsersService) {}
+  constructor(
+    private readonly usersService: UsersService,
+    private readonly usersQueryRepository: UsersQueryRepository,
+  ) {}
 
   @UseGuards(BaseAuthGuard)
   @Post()
@@ -48,11 +52,13 @@ export class UsersController {
     }
 
     return this.usersService.create({ login, email, password });
+
+    // return this.usersQueryRepository.findOne(user.id);
   }
 
   @Get()
-  async findAll(@Query() pageOptionsDto: PageOptionsDto) {
-    return this.usersService.findAll(pageOptionsDto);
+  async findAll(@Query() pageOptionsDto: PageOptionsForUserDto) {
+    return this.usersQueryRepository.findAll(pageOptionsDto);
   }
 
   @UseGuards(BaseAuthGuard)

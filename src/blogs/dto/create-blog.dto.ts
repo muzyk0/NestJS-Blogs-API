@@ -1,3 +1,4 @@
+import { Transform } from 'class-transformer';
 import { IsNotEmpty, IsString, Length, Matches } from 'class-validator';
 
 export const websiteURLPattern =
@@ -7,7 +8,11 @@ export class CreateBlogDto {
   @IsString()
   @Length(1, 15)
   @IsNotEmpty()
+  @Transform(({ value }) => value?.trim?.())
   name: string;
+
+  @Length(0, 500)
+  description: string;
 
   @Length(0, 100)
   @Matches(websiteURLPattern)

@@ -1,18 +1,30 @@
+import { Transform } from 'class-transformer';
 import { IsNotEmpty, IsString, Length } from 'class-validator';
 
 import { Blog } from '../../blogs/schemas/blogs.schema';
+import { IsBlogExists } from '../../common/decorators/validations/check-blogId-if-exist.decorator';
 
 export class CreatePostDto {
+  @IsString()
   @Length(1, 30)
   @IsNotEmpty()
+  @Transform(({ value }) => value?.trim?.())
   title: string;
 
-  @Length(0, 100)
+  @IsString()
+  @Length(1, 100)
+  @IsNotEmpty()
+  @Transform(({ value }) => value?.trim?.())
   shortDescription: string;
 
+  @IsString()
   @Length(1, 1000)
+  @IsNotEmpty()
+  @Transform(({ value }) => value?.trim?.())
   content: string;
 
   @IsString()
+  @IsNotEmpty()
+  @IsBlogExists()
   blogId: Blog['id'];
 }

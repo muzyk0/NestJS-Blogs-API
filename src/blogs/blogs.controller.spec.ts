@@ -104,14 +104,6 @@ describe('blogsController', () => {
     await mongod.stop();
   });
 
-  // afterEach(async () => {
-  //   const collections = mongoConnection.collections;
-  //   for (const key in collections) {
-  //     const collection = collections[key];
-  //     await collection.deleteMany({});
-  //   }
-  // });
-
   it('blogController should be defined', async () => {
     expect(blogController).toBeDefined();
   });
@@ -119,6 +111,7 @@ describe('blogsController', () => {
   it('first blog should be created', async () => {
     const newBlog = await blogController.create({
       name: 'Vlad',
+      description: '',
       websiteUrl: 'https://www.youtube.com/channel/UCcZ18YvVGS7tllvrxN5IAAQ',
     });
 
@@ -136,6 +129,7 @@ describe('blogsController', () => {
   it('two blogs should be created', async () => {
     const firstBlog = await blogController.create({
       name: 'Vlad 2',
+      description: '',
       websiteUrl: 'https://www.youtube.com/channel/UCcZ18YvVGS7tllvrxN5IAAQ',
     });
 

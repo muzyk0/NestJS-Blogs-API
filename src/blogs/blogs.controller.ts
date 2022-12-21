@@ -1,5 +1,4 @@
 import {
-  BadRequestException,
   Body,
   Controller,
   Delete,
@@ -50,8 +49,10 @@ export class BlogsController {
 
   @Post()
   @UseGuards(BaseAuthGuard)
-  create(@Body() createBlogDto: CreateBlogDto) {
-    return this.blogsService.create(createBlogDto);
+  async create(@Body() createBlogDto: CreateBlogDto) {
+    const blog = await this.blogsService.create(createBlogDto);
+
+    return this.blogsQueryRepository.findOne(blog.id);
   }
 
   @Get()
@@ -79,20 +80,20 @@ export class BlogsController {
       throw new NotFoundException();
     }
 
-    return blog;
+    return;
   }
 
   @Delete(':id')
   @HttpCode(HttpStatus.NO_CONTENT)
   @UseGuards(BaseAuthGuard)
   async remove(@Param('id') id: string) {
-    const isDeleted = await this.blogsService.remove(id);
+    const blog = await this.blogsService.findOne(id);
 
-    if (!isDeleted) {
+    if (!blog) {
       throw new NotFoundException();
     }
 
-    return isDeleted;
+    return await this.blogsService.remove(id);
   }
 
   @UseGuards(AuthGuard)
@@ -125,11 +126,11 @@ export class BlogsController {
     const blog = await this.blogsService.findOne(blogId);
 
     if (!blog) {
-      throw new BadRequestException();
+      throw new NotFoundException();
     }
 
     const post = await this.postsService.create({
-      blogId: blogId,
+      blogId: blog.id,
       shortDescription,
       content,
       title,

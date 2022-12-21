@@ -12,12 +12,16 @@ export class ErrorExceptionFilter implements ExceptionFilter {
     const ctx = host.switchToHttp();
     const response = ctx.getResponse<Response>();
 
-    if (process.env.NODE_ENV !== 'production') {
-      response
-        .status(500)
-        .send({ message: exception.message, stack: exception.stack });
-    } else {
-      response.status(400).send('some error occurred');
-    }
+    // if (process.env.NODE_ENV !== 'production') {
+    //   response
+    //     .status(500)
+    //     .send({ message: exception.message, stack: exception.stack });
+    // } else {
+    //   response.status(400).send('some error occurred');
+    // }
+
+    response
+      .status(500)
+      .send({ message: exception.message, stack: exception.stack });
   }
 }

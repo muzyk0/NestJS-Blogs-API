@@ -103,19 +103,23 @@ export class AuthService {
   }
 
   async decodeJwtToken<T>(token: string): Promise<T> {
-    const accessToken = this.jwtService.decode(token) as T;
+    try {
+      const accessToken = this.jwtService.decode(token) as T;
 
-    const iat = new Date(0);
-    iat.setUTCSeconds(accessToken['iat']);
+      const iat = new Date(0);
+      iat.setUTCSeconds(accessToken['iat']);
 
-    const exp = new Date(0);
-    exp.setUTCSeconds(accessToken['exp']);
+      const exp = new Date(0);
+      exp.setUTCSeconds(accessToken['exp']);
 
-    return {
-      ...accessToken,
-      iat,
-      exp,
-    };
+      return {
+        ...accessToken,
+        iat,
+        exp,
+      };
+    } catch {
+      return null;
+    }
   }
 
   async compareBaseAuth(token: string) {

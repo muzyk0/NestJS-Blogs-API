@@ -54,7 +54,7 @@ export class LikesRepositorySql {
     parentId,
     userId,
     parentType,
-  }: GetCommentLikeByUser): Promise<Like> {
+  }: GetCommentLikeByUser): Promise<Like | undefined> {
     const queryRunner = this.dataSource.createQueryRunner();
     await queryRunner.connect();
 
@@ -63,11 +63,12 @@ export class LikesRepositorySql {
           SELECT *
           FROM likes
           WHERE "parentId" = $1
-            AND "userId" = $2
-            AND "parentType" = $3
-          ORDER BY "createdAt" DESC LIMIT 1
+            AND "parentType" = $2
+            AND "userId" = $3
+          ORDER BY "createdAt" DESC
+          LIMIT 1
       `,
-      [parentId, userId, parentType],
+      [parentId, parentType, userId],
     );
 
     await queryRunner.release();
@@ -92,7 +93,8 @@ export class LikesRepositorySql {
           WHERE "parentId" = $1
             AND "parentType" = $2
             AND "status" = $3
-          ORDER BY "createdAt" DESC LIMIT $4
+          ORDER BY "createdAt" DESC
+          LIMIT $4
       `,
       [parentId, parentType, LikeStatus.LIKE, limit],
     );
@@ -117,7 +119,7 @@ export class LikesRepositorySql {
       [createLike.userId, createLike.parentId, createLike.parentType],
     );
 
-    if (like[0]?.id) {
+    if (like?.[0]?.id) {
       const updatedLike: Like[] = await queryRunner.query(
         `
             UPDATE likes
@@ -137,12 +139,13 @@ export class LikesRepositorySql {
       `
           INSERT
           INTO likes ("userId", "parentId", status, "parentType")
-          VALUES ($1, $2, $3, $4) RETURNING *
+          VALUES ($1, $2, $3, $4)
+          RETURNING *
       `,
       [
         createLike.userId,
         createLike.parentId,
-        createLike.status,
+        createLike.status ?? LikeStatus.NONE,
         createLike.parentType,
       ],
     );

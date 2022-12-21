@@ -37,7 +37,7 @@ export class PostsRepository implements IPostsRepository {
 
     const post = await this.postModel.create(createPostDto);
 
-    return this.postModel.findOne({ id: post.id }, BASE_PROJECTION);
+    return this.postModel.findOne({ id: post.id }, BASE_PROJECTION).lean();
   }
 
   async findOne(id: string) {
