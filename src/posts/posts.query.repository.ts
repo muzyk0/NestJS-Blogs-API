@@ -6,6 +6,7 @@ import { Model } from 'mongoose';
 import { BASE_PROJECTION } from '../common/mongoose/constants';
 import { PageOptionsDto } from '../common/paginator/page-options.dto';
 import { PageDto } from '../common/paginator/page.dto';
+import { Like } from '../likes/entity/like.entity';
 import { LikeParentTypeEnum } from '../likes/interfaces/like-parent-type.enum';
 import { LikesRepositorySql } from '../likes/likes.repository.sql';
 import { getStringLikeStatus } from '../likes/utils/formatters';
@@ -130,11 +131,12 @@ export class PostsQueryRepository implements IPostsQueryRepository {
         parentId: post.id,
       });
 
-    const myStatus = await this.likesRepositorySql.getLikeOrDislike({
-      parentId: post.id,
-      parentType: LikeParentTypeEnum.POST,
-      userId: userId,
-    });
+    const myStatus: Like | undefined =
+      await this.likesRepositorySql.getLikeOrDislike({
+        parentId: post.id,
+        parentType: LikeParentTypeEnum.POST,
+        userId: userId,
+      });
 
     const lastNewestLikes = await this.likesRepositorySql.getLatestLikes({
       parentId: post.id,

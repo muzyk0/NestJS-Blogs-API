@@ -54,11 +54,11 @@ export class LikesRepositorySql {
     parentId,
     userId,
     parentType,
-  }: GetCommentLikeByUser): Promise<Like> {
+  }: GetCommentLikeByUser): Promise<Like | undefined> {
     const queryRunner = this.dataSource.createQueryRunner();
     await queryRunner.connect();
 
-    const like: Like[] | undefined = await queryRunner.query(
+    const like: Like[] = await queryRunner.query(
       `
           SELECT *
           FROM likes
@@ -73,7 +73,7 @@ export class LikesRepositorySql {
 
     await queryRunner.release();
 
-    return like?.[0];
+    return like[0];
   }
 
   async getLatestLikes({
