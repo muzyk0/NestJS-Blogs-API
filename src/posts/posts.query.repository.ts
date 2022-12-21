@@ -117,10 +117,9 @@ export class PostsQueryRepository implements IPostsQueryRepository {
   }
 
   async findOne(id: string, userId?: string) {
-    const post = await this.postModel.findOne(
-      { id },
-      { projection: BASE_PROJECTION },
-    );
+    const post = await this.postModel
+      .findOne({ id }, { projection: BASE_PROJECTION })
+      .lean();
 
     if (!post) {
       return;
