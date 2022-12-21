@@ -58,21 +58,22 @@ export class LikesRepositorySql {
     const queryRunner = this.dataSource.createQueryRunner();
     await queryRunner.connect();
 
-    const like: Like[] = await queryRunner.query(
+    const like: Like[] | undefined = await queryRunner.query(
       `
           SELECT *
           FROM likes
           WHERE "parentId" = $1
-            AND "userId" = $2
-            AND "parentType" = $3
-          ORDER BY "createdAt" DESC LIMIT 1
+            AND "parentType" = $2
+            AND "userId" = $3
+          ORDER BY "createdAt" DESC
+          LIMIT 1
       `,
-      [parentId, userId, parentType],
+      [parentId, parentType, userId],
     );
 
     await queryRunner.release();
 
-    return like[0];
+    return like?.[0];
   }
 
   async getLatestLikes({
@@ -92,7 +93,8 @@ export class LikesRepositorySql {
           WHERE "parentId" = $1
             AND "parentType" = $2
             AND "status" = $3
-          ORDER BY "createdAt" DESC LIMIT $4
+          ORDER BY "createdAt" DESC
+          LIMIT $4
       `,
       [parentId, parentType, LikeStatus.LIKE, limit],
     );
@@ -137,7 +139,8 @@ export class LikesRepositorySql {
       `
           INSERT
           INTO likes ("userId", "parentId", status, "parentType")
-          VALUES ($1, $2, $3, $4) RETURNING *
+          VALUES ($1, $2, $3, $4)
+          RETURNING *
       `,
       [
         createLike.userId,
