@@ -40,6 +40,10 @@ export class CommentsQueryRepository {
   async findOne(id: string, userId?: string): Promise<CommentViewDto> {
     const comment = await this.commentModel.findOne({ id }, projectionFields);
 
+    if (!comment) {
+      return;
+    }
+
     const { likesCount, dislikesCount } =
       await this.likesRepositorySql.countLikeAndDislikeByCommentId({
         parentId: comment.id,
