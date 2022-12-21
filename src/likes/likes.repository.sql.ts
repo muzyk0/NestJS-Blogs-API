@@ -119,7 +119,7 @@ export class LikesRepositorySql {
       [createLike.userId, createLike.parentId, createLike.parentType],
     );
 
-    if (like[0]?.id) {
+    if (like?.[0]?.id) {
       const updatedLike: Like[] = await queryRunner.query(
         `
             UPDATE likes
@@ -145,7 +145,7 @@ export class LikesRepositorySql {
       [
         createLike.userId,
         createLike.parentId,
-        createLike.status,
+        createLike.status ?? LikeStatus.NONE,
         createLike.parentType,
       ],
     );
