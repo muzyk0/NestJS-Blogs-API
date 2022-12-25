@@ -10,8 +10,8 @@ import { Security, SecuritySchema } from '../security/schemas/security.schema';
 import { SecurityModule } from '../security/security.module';
 import { UsersModule } from '../users/users.module';
 
-import { AuthController } from './auth.controller';
-import { AuthService } from './auth.service';
+import { AuthController } from './api/auth.controller';
+import { AuthService } from './application/auth.service';
 import { AtJwtStrategy } from './strategies/at.jwt.strategy';
 import { LocalStrategy } from './strategies/local.strategy';
 import { RtJwtStrategy } from './strategies/rt.jwt.strategy';

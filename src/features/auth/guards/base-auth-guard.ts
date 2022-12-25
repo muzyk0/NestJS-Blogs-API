@@ -6,7 +6,7 @@ import {
 } from '@nestjs/common';
 import { Request } from 'express';
 
-import { AuthService } from '../auth.service';
+import { AuthService } from '../application/auth.service';
 
 @Injectable()
 export class BaseAuthGuard implements CanActivate {

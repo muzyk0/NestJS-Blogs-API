@@ -15,9 +15,9 @@ import {
 
 import { GetCurrentUserId } from '../../common/decorators/get-current-user-id.decorator';
 import { GetCurrentJwtContextWithoutAuth } from '../../common/decorators/get-current-user-without-auth.decorator';
+import { JwtATPayload } from '../auth/application/interfaces/jwtPayload.type';
 import { AuthGuard } from '../auth/guards/auth-guard';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
-import { JwtATPayload } from '../auth/types/jwtPayload.type';
 import { CreateLikeInput } from '../likes/input/create-like.input';
 
 import { CommentsQueryRepository } from './comments.query.repository';

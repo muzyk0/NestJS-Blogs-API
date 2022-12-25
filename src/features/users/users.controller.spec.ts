@@ -6,7 +6,7 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { MongoMemoryServer } from 'mongodb-memory-server';
 import { connect, Connection, Model } from 'mongoose';
 
-import { AuthService } from '../auth/auth.service';
+import { AuthService } from '../auth/application/auth.service';
 import { EmailTemplateManager } from '../email/email-template-manager';
 import { EmailService } from '../email/email.service';
 import { PasswordRecoveryService } from '../password-recovery/password-recovery.service';

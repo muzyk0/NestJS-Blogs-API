@@ -18,10 +18,10 @@ import { GetCurrentUserId } from '../../common/decorators/get-current-user-id.de
 import { GetCurrentJwtContextWithoutAuth } from '../../common/decorators/get-current-user-without-auth.decorator';
 import { GetCurrentJwtContext } from '../../common/decorators/get-current-user.decorator';
 import { PageOptionsDto } from '../../common/paginator/page-options.dto';
+import { JwtATPayload } from '../auth/application/interfaces/jwtPayload.type';
 import { AuthGuard } from '../auth/guards/auth-guard';
 import { BaseAuthGuard } from '../auth/guards/base-auth-guard';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
-import { JwtATPayload } from '../auth/types/jwtPayload.type';
 import { BlogsService } from '../blogs/blogs.service';
 import { CommentsQueryRepository } from '../comments/comments.query.repository';
 import { CommentsService } from '../comments/comments.service';

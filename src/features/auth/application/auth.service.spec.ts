@@ -1,51 +1,39 @@
 import { MailerService } from '@nestjs-modules/mailer';
 import { ConfigService } from '@nestjs/config';
-import { JwtModule } from '@nestjs/jwt';
+import { JwtModule, JwtService } from '@nestjs/jwt';
 import { getModelToken } from '@nestjs/mongoose';
 import { Test, TestingModule } from '@nestjs/testing';
 import { MongoMemoryServer } from 'mongodb-memory-server';
 import { connect, Connection, Model } from 'mongoose';
 
-import { EmailTemplateManager } from '../email/email-template-manager';
-import { EmailService } from '../email/email.service';
-import { LimitsRepository } from '../limits/limits.repository';
-import { LimitsService } from '../limits/limits.service';
-import { Limit, LimitSchema } from '../limits/schemas/limits.schema';
-import { PasswordRecoveryService } from '../password-recovery/password-recovery.service';
-import { RecoveryPasswordRepository } from '../password-recovery/recovery-password.repository';
+import { EmailTemplateManager } from '../../email/email-template-manager';
+import { EmailService } from '../../email/email.service';
+import { PasswordRecoveryService } from '../../password-recovery/password-recovery.service';
+import { RecoveryPasswordRepository } from '../../password-recovery/recovery-password.repository';
 import {
   PasswordRecovery,
   PasswordRecoverySchema,
-} from '../password-recovery/schemas/recovery-password.schema';
-import { Security, SecuritySchema } from '../security/schemas/security.schema';
-import { SecurityRepository } from '../security/security.repository';
-import { SecurityService } from '../security/security.service';
-import { User, UserSchema } from '../users/schemas/users.schema';
-import { UsersRepository } from '../users/users.repository';
-import { UsersService } from '../users/users.service';
+} from '../../password-recovery/schemas/recovery-password.schema';
+import { User, UserSchema } from '../../users/schemas/users.schema';
+import { UsersRepository } from '../../users/users.repository';
+import { UsersService } from '../../users/users.service';
+import { AtJwtStrategy } from '../strategies/at.jwt.strategy';
 
-import { AuthController } from './auth.controller';
 import { AuthService } from './auth.service';
-import { AtJwtStrategy } from './strategies/at.jwt.strategy';
 
-describe('AuthController', () => {
-  let controller: AuthController;
+describe('AuthService', () => {
   let mongod: MongoMemoryServer;
   let mongoConnection: Connection;
+  let service: AuthService;
 
   let userModel: Model<User>;
-  let limitModel: Model<Limit>;
-  let securityModel: Model<Security>;
   let passwordRecoveryModel: Model<PasswordRecovery>;
 
   beforeAll(async () => {
     mongod = await MongoMemoryServer.create();
     const uri = mongod.getUri();
     mongoConnection = (await connect(uri)).connection;
-
     userModel = mongoConnection.model(User.name, UserSchema);
-    limitModel = mongoConnection.model(Limit.name, LimitSchema);
-    securityModel = mongoConnection.model(Security.name, SecuritySchema);
     passwordRecoveryModel = mongoConnection.model(
       PasswordRecovery.name,
       PasswordRecoverySchema,
@@ -58,26 +46,22 @@ describe('AuthController', () => {
           signOptions: { expiresIn: '60s' },
         }),
       ],
-      controllers: [AuthController],
       providers: [
-        LimitsService,
-        LimitsRepository,
         AuthService,
+        EmailService,
+        EmailTemplateManager,
+        { provide: 'BASE_URL', useValue: 'empty_url' },
         UsersService,
         UsersRepository,
         { provide: getModelToken(User.name), useValue: userModel },
-        { provide: getModelToken(Limit.name), useValue: limitModel },
         PasswordRecoveryService,
         RecoveryPasswordRepository,
         {
           provide: getModelToken(PasswordRecovery.name),
           useValue: passwordRecoveryModel,
         },
-        EmailService,
-        EmailTemplateManager,
-        { provide: 'BASE_URL', useValue: 'empty_url' },
         { provide: MailerService, useValue: jest.fn() },
-        AtJwtStrategy,
+        JwtService,
         {
           provide: ConfigService,
           useValue: {
@@ -90,13 +74,11 @@ describe('AuthController', () => {
             }),
           },
         },
-        SecurityService,
-        SecurityRepository,
-        { provide: getModelToken(Security.name), useValue: securityModel },
+        AtJwtStrategy,
       ],
     }).compile();
 
-    controller = module.get<AuthController>(AuthController);
+    service = module.get<AuthService>(AuthService);
   });
 
   afterAll(async () => {
@@ -106,6 +88,6 @@ describe('AuthController', () => {
   });
 
   it('should be defined', () => {
-    expect(controller).toBeDefined();
+    expect(service).toBeDefined();
   });
 });

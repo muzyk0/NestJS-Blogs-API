@@ -14,8 +14,11 @@ import {
 
 import { GetCurrentUserId } from '../../common/decorators/get-current-user-id.decorator';
 import { GetCurrentJwtContext } from '../../common/decorators/get-current-user.decorator';
+import {
+  JwtRTPayload,
+  JwtATPayload,
+} from '../auth/application/interfaces/jwtPayload.type';
 import { JwtRefreshAuthGuard } from '../auth/guards/jwt-refresh-auth.guard';
-import { JwtRTPayload, JwtATPayload } from '../auth/types/jwtPayload.type';
 
 import { CreateSecurityDto } from './dto/create-security.dto';
 import { SecurityQueryRepository } from './security.query.repository';

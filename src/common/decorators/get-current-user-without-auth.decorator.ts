@@ -1,6 +1,6 @@
 import { createParamDecorator, ExecutionContext } from '@nestjs/common';
 
-import { JwtATPayload } from '../../features/auth/types/jwtPayload.type';
+import { JwtATPayload } from '../../features/auth/application/interfaces/jwtPayload.type';
 
 export const GetCurrentJwtContextWithoutAuth = createParamDecorator(
   (_, context: ExecutionContext): JwtATPayload | null => {

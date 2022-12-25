@@ -1,19 +1,19 @@
-export type JwtATPayload = {
+export interface JwtATPayload {
   user: {
     id: string;
     login: string;
     email: string;
   };
-};
+}
 
-export type JwtRTPayload = {
+export interface JwtRTPayload {
   user: {
     id: string;
     login: string;
     email: string;
   };
   deviceId: string;
-};
+}
 
 export interface DecodedJwtATPayload extends JwtATPayload {
   iat: Date;

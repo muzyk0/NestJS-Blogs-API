@@ -5,16 +5,16 @@ import * as bcrypt from 'bcrypt';
 import { addDays, isAfter } from 'date-fns';
 import { v4 } from 'uuid';
 
-import { BaseAuthPayload } from '../../constants';
-import { EmailTemplateManager } from '../email/email-template-manager';
-import { EmailService } from '../email/email.service';
-import { PasswordRecoveryService } from '../password-recovery/password-recovery.service';
-import { PasswordRecoveryDocument } from '../password-recovery/schemas/recovery-password.schema';
-import { User } from '../users/schemas/users.schema';
-import { UsersService } from '../users/users.service';
+import { BaseAuthPayload } from '../../../constants';
+import { EmailTemplateManager } from '../../email/email-template-manager';
+import { EmailService } from '../../email/email.service';
+import { PasswordRecoveryService } from '../../password-recovery/password-recovery.service';
+import { PasswordRecoveryDocument } from '../../password-recovery/schemas/recovery-password.schema';
+import { User } from '../../users/schemas/users.schema';
+import { UsersService } from '../../users/users.service';
 
 import { LoginDto } from './dto/login.dto';
-import { JwtATPayload, JwtRTPayload } from './types/jwtPayload.type';
+import { JwtATPayload, JwtRTPayload } from './interfaces/jwtPayload.type';
 
 interface TokenDto {
   accessToken: string;

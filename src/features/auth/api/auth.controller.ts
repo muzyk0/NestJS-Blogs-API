@@ -14,26 +14,25 @@ import {
 } from '@nestjs/common';
 import { Request, Response } from 'express';
 
-import { GetCurrentUserId } from '../../common/decorators/get-current-user-id.decorator';
-import { GetCurrentJwtContext } from '../../common/decorators/get-current-user.decorator';
-import { LimitsControlWithIpAndLoginGuard } from '../limits/guards/limits-control-with-ip-and-login-guard.service';
-import { LimitsControlGuard } from '../limits/guards/limits-control.guard';
-import { CreateRecoveryPasswordDto } from '../password-recovery/dto/confirm-password-recovery.dto';
-import { PasswordRecoveryService } from '../password-recovery/password-recovery.service';
-import { SecurityService } from '../security/security.service';
-import { CreateUserDto } from '../users/dto/create-user.dto';
-import { EmailConfirmationCodeDto } from '../users/dto/email-confirmation-code.dto';
-import { Email } from '../users/dto/email.dto';
-import { RevokedTokenType } from '../users/schemas/revoked-tokens.schema';
-import { UsersService } from '../users/users.service';
-
-import { AuthService } from './auth.service';
-import { LoginDto } from './dto/login.dto';
-import { JwtAuthGuard } from './guards/jwt-auth.guard';
-import { JwtRefreshAuthGuard } from './guards/jwt-refresh-auth.guard';
-import { LocalAuthGuard } from './guards/local-auth.guard';
-import { JwtPayloadWithRt } from './types/jwt-payload-with-rt.type';
-import { DecodedJwtRTPayload } from './types/jwtPayload.type';
+import { GetCurrentUserId } from '../../../common/decorators/get-current-user-id.decorator';
+import { GetCurrentJwtContext } from '../../../common/decorators/get-current-user.decorator';
+import { LimitsControlWithIpAndLoginGuard } from '../../limits/guards/limits-control-with-ip-and-login-guard.service';
+import { LimitsControlGuard } from '../../limits/guards/limits-control.guard';
+import { CreateRecoveryPasswordDto } from '../../password-recovery/dto/confirm-password-recovery.dto';
+import { PasswordRecoveryService } from '../../password-recovery/password-recovery.service';
+import { SecurityService } from '../../security/security.service';
+import { CreateUserDto } from '../../users/dto/create-user.dto';
+import { EmailConfirmationCodeDto } from '../../users/dto/email-confirmation-code.dto';
+import { Email } from '../../users/dto/email.dto';
+import { RevokedTokenType } from '../../users/schemas/revoked-tokens.schema';
+import { UsersService } from '../../users/users.service';
+import { AuthService } from '../application/auth.service';
+import { LoginDto } from '../application/dto/login.dto';
+import { JwtPayloadWithRt } from '../application/interfaces/jwt-payload-with-rt.type';
+import { DecodedJwtRTPayload } from '../application/interfaces/jwtPayload.type';
+import { JwtAuthGuard } from '../guards/jwt-auth.guard';
+import { JwtRefreshAuthGuard } from '../guards/jwt-refresh-auth.guard';
+import { LocalAuthGuard } from '../guards/local-auth.guard';
 
 @Controller('auth')
 export class AuthController {

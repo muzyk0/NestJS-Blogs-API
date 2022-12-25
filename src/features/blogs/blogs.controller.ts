@@ -15,9 +15,9 @@ import {
 
 import { GetCurrentJwtContextWithoutAuth } from '../../common/decorators/get-current-user-without-auth.decorator';
 import { PageOptionsDto } from '../../common/paginator/page-options.dto';
+import { JwtATPayload } from '../auth/application/interfaces/jwtPayload.type';
 import { AuthGuard } from '../auth/guards/auth-guard';
 import { BaseAuthGuard } from '../auth/guards/base-auth-guard';
-import { JwtATPayload } from '../auth/types/jwtPayload.type';
 import { PostsQueryRepository } from '../posts/posts.query.repository';
 import { PostsService } from '../posts/posts.service';
 
