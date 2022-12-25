@@ -11,12 +11,12 @@ import { EmailService } from '../../email/application/email.service';
 import { LimitsService } from '../../limits/application/limits.service';
 import { Limit, LimitSchema } from '../../limits/domain/schemas/limits.schema';
 import { LimitsRepository } from '../../limits/infrastructure/limits.repository';
-import { PasswordRecoveryService } from '../../password-recovery/password-recovery.service';
-import { RecoveryPasswordRepository } from '../../password-recovery/recovery-password.repository';
+import { PasswordRecoveryService } from '../../password-recovery/application/password-recovery.service';
 import {
   PasswordRecovery,
   PasswordRecoverySchema,
-} from '../../password-recovery/schemas/recovery-password.schema';
+} from '../../password-recovery/domain/schemas/recovery-password.schema';
+import { RecoveryPasswordRepository } from '../../password-recovery/infrastructure/recovery-password.repository';
 import {
   Security,
   SecuritySchema,

@@ -18,8 +18,8 @@ import { GetCurrentUserId } from '../../../common/decorators/get-current-user-id
 import { GetCurrentJwtContext } from '../../../common/decorators/get-current-user.decorator';
 import { LimitsControlWithIpAndLoginGuard } from '../../limits/guards/limits-control-with-ip-and-login-guard.service';
 import { LimitsControlGuard } from '../../limits/guards/limits-control.guard';
-import { CreateRecoveryPasswordDto } from '../../password-recovery/dto/confirm-password-recovery.dto';
-import { PasswordRecoveryService } from '../../password-recovery/password-recovery.service';
+import { CreateRecoveryPasswordDto } from '../../password-recovery/application/dto/confirm-password-recovery.dto';
+import { PasswordRecoveryService } from '../../password-recovery/application/password-recovery.service';
 import { SecurityService } from '../../security/security.service';
 import { CreateUserDto } from '../../users/dto/create-user.dto';
 import { EmailConfirmationCodeDto } from '../../users/dto/email-confirmation-code.dto';

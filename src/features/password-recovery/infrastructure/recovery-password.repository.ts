@@ -2,11 +2,11 @@ import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 
-import { CreateRecoveryPasswordDto } from './dto/create-recovery-password.dto';
+import { CreateRecoveryPasswordDto } from '../application/dto/create-recovery-password.dto';
 import {
   PasswordRecovery,
   PasswordRecoveryDocument,
-} from './schemas/recovery-password.schema';
+} from '../domain/schemas/recovery-password.schema';
 
 @Injectable()
 export class RecoveryPasswordRepository {

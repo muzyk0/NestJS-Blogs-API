@@ -1,8 +1,9 @@
 import { Injectable } from '@nestjs/common';
 import { v4 } from 'uuid';
 
+import { RecoveryPasswordRepository } from '../infrastructure/recovery-password.repository';
+
 import { CreateRecoveryPasswordDto } from './dto/create-recovery-password.dto';
-import { RecoveryPasswordRepository } from './recovery-password.repository';
 
 @Injectable()
 export class PasswordRecoveryService {

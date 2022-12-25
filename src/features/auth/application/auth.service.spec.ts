@@ -8,12 +8,12 @@ import { connect, Connection, Model } from 'mongoose';
 
 import { EmailTemplateManager } from '../../email/application/email-template-manager';
 import { EmailService } from '../../email/application/email.service';
-import { PasswordRecoveryService } from '../../password-recovery/password-recovery.service';
-import { RecoveryPasswordRepository } from '../../password-recovery/recovery-password.repository';
+import { PasswordRecoveryService } from '../../password-recovery/application/password-recovery.service';
 import {
   PasswordRecovery,
   PasswordRecoverySchema,
-} from '../../password-recovery/schemas/recovery-password.schema';
+} from '../../password-recovery/domain/schemas/recovery-password.schema';
+import { RecoveryPasswordRepository } from '../../password-recovery/infrastructure/recovery-password.repository';
 import { User, UserSchema } from '../../users/schemas/users.schema';
 import { UsersRepository } from '../../users/users.repository';
 import { UsersService } from '../../users/users.service';

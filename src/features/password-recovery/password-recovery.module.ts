@@ -1,12 +1,12 @@
 import { Module } from '@nestjs/common';
 import { MongooseModule } from '@nestjs/mongoose';
 
-import { PasswordRecoveryService } from './password-recovery.service';
-import { RecoveryPasswordRepository } from './recovery-password.repository';
+import { PasswordRecoveryService } from './application/password-recovery.service';
 import {
   PasswordRecovery,
   PasswordRecoverySchema,
-} from './schemas/recovery-password.schema';
+} from './domain/schemas/recovery-password.schema';
+import { RecoveryPasswordRepository } from './infrastructure/recovery-password.repository';
 
 @Module({
   imports: [

@@ -19,12 +19,12 @@ import {
 } from '../../likes/domain/schemas/comment-likes.schema';
 import { LikesRepository } from '../../likes/infrastructure/likes.repository';
 import { LikesRepositorySql } from '../../likes/infrastructure/likes.repository.sql';
-import { PasswordRecoveryService } from '../../password-recovery/password-recovery.service';
-import { RecoveryPasswordRepository } from '../../password-recovery/recovery-password.repository';
+import { PasswordRecoveryService } from '../../password-recovery/application/password-recovery.service';
 import {
   PasswordRecovery,
   PasswordRecoverySchema,
-} from '../../password-recovery/schemas/recovery-password.schema';
+} from '../../password-recovery/domain/schemas/recovery-password.schema';
+import { RecoveryPasswordRepository } from '../../password-recovery/infrastructure/recovery-password.repository';
 import { PostsRepository } from '../../posts/posts.repository';
 import { Post, PostSchema } from '../../posts/schemas/posts.schema';
 import { User, UserSchema } from '../../users/schemas/users.schema';
