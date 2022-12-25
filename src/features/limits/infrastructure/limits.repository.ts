@@ -3,8 +3,8 @@ import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { v4 } from 'uuid';
 
-import { CreateLimitsDto } from './dto/create-limits.dto';
-import { Limit, LimitDocument } from './schemas/limits.schema';
+import { CreateLimitsDto } from '../application/dto/create-limits.dto';
+import { Limit, LimitDocument } from '../domain/schemas/limits.schema';
 
 export interface ILimitsRepository {
   addAttempt(requestAttempt: CreateLimitsDto): Promise<boolean>;

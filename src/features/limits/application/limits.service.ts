@@ -1,8 +1,9 @@
 import { Injectable } from '@nestjs/common';
 import { addMilliseconds } from 'date-fns';
 
+import { LimitsRepository } from '../infrastructure/limits.repository';
+
 import { CreateLimitsDto } from './dto/create-limits.dto';
-import { LimitsRepository } from './limits.repository';
 
 export interface ILimitsService {
   checkLimits(

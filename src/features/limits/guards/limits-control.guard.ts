@@ -2,8 +2,8 @@ import { CanActivate, ExecutionContext, Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 
 import { ToManyRequestsException } from '../../../common/exceptions/to-many-requests.exception';
-import { LimitEnum } from '../dto/limit.enum';
-import { LimitsService } from '../limits.service';
+import { LimitEnum } from '../application/dto/limit.enum';
+import { LimitsService } from '../application/limits.service';
 
 @Injectable()
 export class LimitsControlGuard implements CanActivate {

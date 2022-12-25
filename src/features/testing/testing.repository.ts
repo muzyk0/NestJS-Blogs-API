@@ -9,7 +9,7 @@ import {
   Comment,
   CommentDocument,
 } from '../comments/domain/schemas/comments.schema';
-import { Limit, LimitDocument } from '../limits/schemas/limits.schema';
+import { Limit, LimitDocument } from '../limits/domain/schemas/limits.schema';
 import { Post, PostDocument } from '../posts/schemas/posts.schema';
 import {
   Security,

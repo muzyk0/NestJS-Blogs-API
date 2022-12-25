@@ -3,9 +3,10 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { MongoMemoryServer } from 'mongodb-memory-server';
 import { connect, Connection, Model } from 'mongoose';
 
-import { LimitsRepository } from './limits.repository';
+import { Limit, LimitSchema } from '../domain/schemas/limits.schema';
+import { LimitsRepository } from '../infrastructure/limits.repository';
+
 import { LimitsService } from './limits.service';
-import { Limit, LimitSchema } from './schemas/limits.schema';
 
 describe('LimitsService', () => {
   let mongod: MongoMemoryServer;

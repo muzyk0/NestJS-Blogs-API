@@ -1,7 +1,7 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { Document } from 'mongoose';
 
-import { LimitDto } from '../dto/limitDto';
+import { LimitDto } from '../../application/dto/limitDto';
 
 export type LimitDocument = Limit & Document;
 

@@ -1,9 +1,9 @@
 import { Module } from '@nestjs/common';
 import { MongooseModule } from '@nestjs/mongoose';
 
-import { LimitsRepository } from './limits.repository';
-import { LimitsService } from './limits.service';
-import { Limit, LimitSchema } from './schemas/limits.schema';
+import { LimitsService } from './application/limits.service';
+import { Limit, LimitSchema } from './domain/schemas/limits.schema';
+import { LimitsRepository } from './infrastructure/limits.repository';
 
 @Module({
   imports: [
