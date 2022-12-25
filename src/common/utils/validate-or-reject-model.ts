@@ -1,6 +1,6 @@
 import { validateOrReject } from 'class-validator';
 
-// eslint-disable-next-line @typescript-eslint/ban-interfaces
+// eslint-disable-next-line @typescript-eslint/ban-types
 export const validateOrRejectModel = async <M extends Object, C>(
   model: M,
   ctor: { new (): C },
