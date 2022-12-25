@@ -6,24 +6,24 @@ import { connect, Connection, Model } from 'mongoose';
 import { DataSource } from 'typeorm';
 import { v4 } from 'uuid';
 
-import { Blog, BlogSchema } from '../blogs/domain/schemas/blogs.schema';
+import { Blog, BlogSchema } from '../../blogs/domain/schemas/blogs.schema';
 import {
   Comment,
   CommentSchema,
-} from '../comments/domain/schemas/comments.schema';
-import { Limit, LimitSchema } from '../limits/domain/schemas/limits.schema';
-import { Post, PostSchema } from '../posts/domain/schemas/posts.schema';
+} from '../../comments/domain/schemas/comments.schema';
+import { Limit, LimitSchema } from '../../limits/domain/schemas/limits.schema';
+import { Post, PostSchema } from '../../posts/domain/schemas/posts.schema';
 import {
   Security,
   SecuritySchema,
-} from '../security/domain/schemas/security.schema';
+} from '../../security/domain/schemas/security.schema';
 import {
   User,
   UserAccountDBType,
   UserSchema,
-} from '../users/schemas/users.schema';
+} from '../../users/schemas/users.schema';
+import { TestingRepository } from '../infrastructure/testing.repository';
 
-import { TestingRepository } from './testing.repository';
 import { TestingService } from './testing.service';
 
 describe('TestingService', () => {

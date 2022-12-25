@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 
-import { TestingRepository } from './testing.repository';
+import { TestingRepository } from '../infrastructure/testing.repository';
 
 interface ITestingService {
   clearDatabase(): Promise<boolean>;

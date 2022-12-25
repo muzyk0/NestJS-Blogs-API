@@ -4,18 +4,21 @@ import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { DataSource } from 'typeorm';
 
-import { Blog, BlogDocument } from '../blogs/domain/schemas/blogs.schema';
+import { Blog, BlogDocument } from '../../blogs/domain/schemas/blogs.schema';
 import {
   Comment,
   CommentDocument,
-} from '../comments/domain/schemas/comments.schema';
-import { Limit, LimitDocument } from '../limits/domain/schemas/limits.schema';
-import { Post, PostDocument } from '../posts/domain/schemas/posts.schema';
+} from '../../comments/domain/schemas/comments.schema';
+import {
+  Limit,
+  LimitDocument,
+} from '../../limits/domain/schemas/limits.schema';
+import { Post, PostDocument } from '../../posts/domain/schemas/posts.schema';
 import {
   Security,
   SecurityDocument,
-} from '../security/domain/schemas/security.schema';
-import { User, UserDocument } from '../users/schemas/users.schema';
+} from '../../security/domain/schemas/security.schema';
+import { User, UserDocument } from '../../users/schemas/users.schema';
 
 @Injectable()
 export class TestingRepository {
