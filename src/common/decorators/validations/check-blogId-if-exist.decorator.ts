@@ -10,7 +10,7 @@ import {
   ValidatorConstraintInterface,
 } from 'class-validator';
 
-import { BlogsRepository } from '../../../blogs/blogs.repository';
+import { BlogsRepository } from '../../../features/blogs/blogs.repository';
 
 @ValidatorConstraint({ name: 'BlogExists', async: true })
 @Injectable()
