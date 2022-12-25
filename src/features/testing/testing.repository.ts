@@ -14,7 +14,7 @@ import { Post, PostDocument } from '../posts/domain/schemas/posts.schema';
 import {
   Security,
   SecurityDocument,
-} from '../security/schemas/security.schema';
+} from '../security/domain/schemas/security.schema';
 import { User, UserDocument } from '../users/schemas/users.schema';
 
 @Injectable()

@@ -4,7 +4,10 @@ import { MongooseModule } from '@nestjs/mongoose';
 import { BlogExistsRule } from '../../common/decorators/validations/check-blogId-if-exist.decorator';
 import { AuthModule } from '../auth/auth.module';
 import { PostsModule } from '../posts/posts.module';
-import { Security, SecuritySchema } from '../security/schemas/security.schema';
+import {
+  Security,
+  SecuritySchema,
+} from '../security/domain/schemas/security.schema';
 
 import { BlogsController } from './api/blogs.controller';
 import { BlogsService } from './application/blogs.service';

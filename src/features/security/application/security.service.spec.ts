@@ -3,8 +3,9 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { MongoMemoryServer } from 'mongodb-memory-server';
 import { connect, Connection, Model } from 'mongoose';
 
-import { Security, SecuritySchema } from './schemas/security.schema';
-import { SecurityRepository } from './security.repository';
+import { Security, SecuritySchema } from '../domain/schemas/security.schema';
+import { SecurityRepository } from '../infrastructure/security.repository';
+
 import { SecurityService } from './security.service';
 
 describe('SecurityService', () => {

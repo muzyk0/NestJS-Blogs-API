@@ -3,11 +3,12 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { MongoMemoryServer } from 'mongodb-memory-server';
 import { connect, Connection, Model } from 'mongoose';
 
-import { Security, SecuritySchema } from './schemas/security.schema';
+import { SecurityService } from '../application/security.service';
+import { Security, SecuritySchema } from '../domain/schemas/security.schema';
+import { SecurityQueryRepository } from '../infrastructure/security.query.repository';
+import { SecurityRepository } from '../infrastructure/security.repository';
+
 import { SecurityController } from './security.controller';
-import { SecurityQueryRepository } from './security.query.repository';
-import { SecurityRepository } from './security.repository';
-import { SecurityService } from './security.service';
 
 describe('SecurityController', () => {
   let controller: SecurityController;

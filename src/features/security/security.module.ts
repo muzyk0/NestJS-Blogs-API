@@ -1,11 +1,11 @@
 import { Module } from '@nestjs/common';
 import { MongooseModule } from '@nestjs/mongoose';
 
-import { Security, SecuritySchema } from './schemas/security.schema';
-import { SecurityController } from './security.controller';
-import { SecurityQueryRepository } from './security.query.repository';
-import { SecurityRepository } from './security.repository';
-import { SecurityService } from './security.service';
+import { SecurityController } from './api/security.controller';
+import { SecurityService } from './application/security.service';
+import { Security, SecuritySchema } from './domain/schemas/security.schema';
+import { SecurityQueryRepository } from './infrastructure/security.query.repository';
+import { SecurityRepository } from './infrastructure/security.repository';
 
 @Module({
   imports: [

@@ -12,17 +12,16 @@ import {
   UseGuards,
 } from '@nestjs/common';
 
-import { GetCurrentUserId } from '../../common/decorators/get-current-user-id.decorator';
-import { GetCurrentJwtContext } from '../../common/decorators/get-current-user.decorator';
+import { GetCurrentUserId } from '../../../common/decorators/get-current-user-id.decorator';
+import { GetCurrentJwtContext } from '../../../common/decorators/get-current-user.decorator';
 import {
   JwtRTPayload,
   JwtATPayload,
-} from '../auth/application/interfaces/jwtPayload.type';
-import { JwtRefreshAuthGuard } from '../auth/guards/jwt-refresh-auth.guard';
-
-import { CreateSecurityDto } from './dto/create-security.dto';
-import { SecurityQueryRepository } from './security.query.repository';
-import { SecurityService } from './security.service';
+} from '../../auth/application/interfaces/jwtPayload.type';
+import { JwtRefreshAuthGuard } from '../../auth/guards/jwt-refresh-auth.guard';
+import { CreateSecurityDto } from '../application/dto/create-security.dto';
+import { SecurityService } from '../application/security.service';
+import { SecurityQueryRepository } from '../infrastructure/security.query.repository';
 
 @UseGuards(JwtRefreshAuthGuard)
 @Controller('security')

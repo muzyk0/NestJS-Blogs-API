@@ -15,9 +15,12 @@ import {
   PasswordRecoverySchema,
 } from '../password-recovery/domain/schemas/recovery-password.schema';
 import { RecoveryPasswordRepository } from '../password-recovery/infrastructure/recovery-password.repository';
-import { Security, SecuritySchema } from '../security/schemas/security.schema';
-import { SecurityRepository } from '../security/security.repository';
-import { SecurityService } from '../security/security.service';
+import { SecurityService } from '../security/application/security.service';
+import {
+  Security,
+  SecuritySchema,
+} from '../security/domain/schemas/security.schema';
+import { SecurityRepository } from '../security/infrastructure/security.repository';
 
 import { User, UserSchema } from './schemas/users.schema';
 import { UsersController } from './users.controller';

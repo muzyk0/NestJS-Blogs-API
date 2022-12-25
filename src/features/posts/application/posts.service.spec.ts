@@ -7,12 +7,12 @@ import { connect, Connection, Model } from 'mongoose';
 import { Blog, BlogSchema } from '../../blogs/domain/schemas/blogs.schema';
 import { BlogsRepository } from '../../blogs/infrastructure/blogs.repository';
 import { EmailService } from '../../email/application/email.service';
+import { SecurityService } from '../../security/application/security.service';
 import {
   Security,
   SecuritySchema,
-} from '../../security/schemas/security.schema';
-import { SecurityRepository } from '../../security/security.repository';
-import { SecurityService } from '../../security/security.service';
+} from '../../security/domain/schemas/security.schema';
+import { SecurityRepository } from '../../security/infrastructure/security.repository';
 import { Post, PostSchema } from '../domain/schemas/posts.schema';
 import { PostsQueryRepository } from '../infrastructure/posts.query.repository';
 import { PostsRepository } from '../infrastructure/posts.repository';

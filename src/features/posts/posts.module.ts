@@ -13,7 +13,10 @@ import {
 import { CommentsQueryRepository } from '../comments/infrastructure/comments.query.repository';
 import { CommentsRepository } from '../comments/infrastructure/comments.repository';
 import { LikesModule } from '../likes/likes.module';
-import { Security, SecuritySchema } from '../security/schemas/security.schema';
+import {
+  Security,
+  SecuritySchema,
+} from '../security/domain/schemas/security.schema';
 import { SecurityModule } from '../security/security.module';
 import { User, UserSchema } from '../users/schemas/users.schema';
 import { UsersModule } from '../users/users.module';

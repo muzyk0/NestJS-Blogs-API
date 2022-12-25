@@ -1,7 +1,7 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { Document } from 'mongoose';
 
-import { SecurityDto } from '../dto/security.dto';
+import { SecurityDto } from '../../application/dto/security.dto';
 
 export type SecurityDocument = Security & Document;
 

@@ -20,7 +20,7 @@ import { LimitsControlWithIpAndLoginGuard } from '../../limits/guards/limits-con
 import { LimitsControlGuard } from '../../limits/guards/limits-control.guard';
 import { CreateRecoveryPasswordDto } from '../../password-recovery/application/dto/confirm-password-recovery.dto';
 import { PasswordRecoveryService } from '../../password-recovery/application/password-recovery.service';
-import { SecurityService } from '../../security/security.service';
+import { SecurityService } from '../../security/application/security.service';
 import { CreateUserDto } from '../../users/dto/create-user.dto';
 import { EmailConfirmationCodeDto } from '../../users/dto/email-confirmation-code.dto';
 import { Email } from '../../users/dto/email.dto';

@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 
-import { Security, SecurityDocument } from './schemas/security.schema';
+import { Security, SecurityDocument } from '../domain/schemas/security.schema';
 
 @Injectable()
 export class SecurityQueryRepository {

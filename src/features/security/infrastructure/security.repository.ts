@@ -2,8 +2,8 @@ import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 
-import { SecurityDto } from './dto/security.dto';
-import { Security, SecurityDocument } from './schemas/security.schema';
+import { SecurityDto } from '../application/dto/security.dto';
+import { Security, SecurityDocument } from '../domain/schemas/security.schema';
 
 @Injectable()
 export class SecurityRepository {

@@ -22,12 +22,12 @@ import { PostsService } from '../../posts/application/posts.service';
 import { Post, PostSchema } from '../../posts/domain/schemas/posts.schema';
 import { PostsQueryRepository } from '../../posts/infrastructure/posts.query.repository';
 import { PostsRepository } from '../../posts/infrastructure/posts.repository';
+import { SecurityService } from '../../security/application/security.service';
 import {
   Security,
   SecuritySchema,
-} from '../../security/schemas/security.schema';
-import { SecurityRepository } from '../../security/security.repository';
-import { SecurityService } from '../../security/security.service';
+} from '../../security/domain/schemas/security.schema';
+import { SecurityRepository } from '../../security/infrastructure/security.repository';
 import { User, UserSchema } from '../../users/schemas/users.schema';
 import { UsersRepository } from '../../users/users.repository';
 import { UsersService } from '../../users/users.service';

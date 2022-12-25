@@ -1,9 +1,10 @@
 import { Injectable } from '@nestjs/common';
 import { v4 } from 'uuid';
 
+import { SecurityRepository } from '../infrastructure/security.repository';
+
 import { CreateSecurityDto } from './dto/create-security.dto';
 import { SecurityDto } from './dto/security.dto';
-import { SecurityRepository } from './security.repository';
 
 @Injectable()
 export class SecurityService {

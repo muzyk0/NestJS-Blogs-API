@@ -17,12 +17,12 @@ import {
   PasswordRecoverySchema,
 } from '../../password-recovery/domain/schemas/recovery-password.schema';
 import { RecoveryPasswordRepository } from '../../password-recovery/infrastructure/recovery-password.repository';
+import { SecurityService } from '../../security/application/security.service';
 import {
   Security,
   SecuritySchema,
-} from '../../security/schemas/security.schema';
-import { SecurityRepository } from '../../security/security.repository';
-import { SecurityService } from '../../security/security.service';
+} from '../../security/domain/schemas/security.schema';
+import { SecurityRepository } from '../../security/infrastructure/security.repository';
 import { User, UserSchema } from '../../users/schemas/users.schema';
 import { UsersRepository } from '../../users/users.repository';
 import { UsersService } from '../../users/users.service';
