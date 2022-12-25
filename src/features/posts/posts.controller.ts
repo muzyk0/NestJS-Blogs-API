@@ -22,7 +22,7 @@ import { JwtATPayload } from '../auth/application/interfaces/jwtPayload.type';
 import { AuthGuard } from '../auth/guards/auth-guard';
 import { BaseAuthGuard } from '../auth/guards/base-auth-guard';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
-import { BlogsService } from '../blogs/blogs.service';
+import { BlogsService } from '../blogs/application/blogs.service';
 import { CommentsQueryRepository } from '../comments/comments.query.repository';
 import { CommentsService } from '../comments/comments.service';
 import { CommentInput } from '../comments/dto/comment.input';

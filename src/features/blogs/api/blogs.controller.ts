@@ -13,20 +13,19 @@ import {
   UseGuards,
 } from '@nestjs/common';
 
-import { GetCurrentJwtContextWithoutAuth } from '../../common/decorators/get-current-user-without-auth.decorator';
-import { PageOptionsDto } from '../../common/paginator/page-options.dto';
-import { JwtATPayload } from '../auth/application/interfaces/jwtPayload.type';
-import { AuthGuard } from '../auth/guards/auth-guard';
-import { BaseAuthGuard } from '../auth/guards/base-auth-guard';
-import { PostsQueryRepository } from '../posts/posts.query.repository';
-import { PostsService } from '../posts/posts.service';
-
-import { BlogsQueryRepository } from './blogs.query.repository';
-import { BlogsService } from './blogs.service';
-import { BlogDto } from './dto/blog.dto';
-import { CreateBlogPostDto } from './dto/create-blog-post.dto';
-import { CreateBlogDto } from './dto/create-blog.dto';
-import { UpdateBlogDto } from './dto/update-blog.dto';
+import { GetCurrentJwtContextWithoutAuth } from '../../../common/decorators/get-current-user-without-auth.decorator';
+import { PageOptionsDto } from '../../../common/paginator/page-options.dto';
+import { JwtATPayload } from '../../auth/application/interfaces/jwtPayload.type';
+import { AuthGuard } from '../../auth/guards/auth-guard';
+import { BaseAuthGuard } from '../../auth/guards/base-auth-guard';
+import { PostsQueryRepository } from '../../posts/posts.query.repository';
+import { PostsService } from '../../posts/posts.service';
+import { BlogsService } from '../application/blogs.service';
+import { BlogDto } from '../application/dto/blog.dto';
+import { CreateBlogPostDto } from '../application/dto/create-blog-post.dto';
+import { CreateBlogDto } from '../application/dto/create-blog.dto';
+import { UpdateBlogDto } from '../application/dto/update-blog.dto';
+import { BlogsQueryRepository } from '../infrastructure/blogs.query.repository';
 
 export interface IBlogService {
   create(createBlogDto: Omit<CreateBlogDto, 'id'>): Promise<BlogDto>;

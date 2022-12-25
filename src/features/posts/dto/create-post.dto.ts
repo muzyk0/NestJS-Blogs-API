@@ -2,7 +2,7 @@ import { Transform } from 'class-transformer';
 import { IsNotEmpty, IsString, Length } from 'class-validator';
 
 import { IsBlogExists } from '../../../common/decorators/validations/check-blogId-if-exist.decorator';
-import { Blog } from '../../blogs/schemas/blogs.schema';
+import { Blog } from '../../blogs/domain/schemas/blogs.schema';
 
 export class CreatePostDto {
   @IsString()

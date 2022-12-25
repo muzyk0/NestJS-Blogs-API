@@ -4,7 +4,7 @@ import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { DataSource } from 'typeorm';
 
-import { Blog, BlogDocument } from '../blogs/schemas/blogs.schema';
+import { Blog, BlogDocument } from '../blogs/domain/schemas/blogs.schema';
 import { Comment, CommentDocument } from '../comments/schemas/comments.schema';
 import { Limit, LimitDocument } from '../limits/schemas/limits.schema';
 import { Post, PostDocument } from '../posts/schemas/posts.schema';

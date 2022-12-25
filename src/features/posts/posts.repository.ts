@@ -5,7 +5,7 @@ import { Model } from 'mongoose';
 
 import { BASE_PROJECTION } from '../../common/mongoose/constants';
 import { PageOptionsDto } from '../../common/paginator/page-options.dto';
-import { Blog, BlogDocument } from '../blogs/schemas/blogs.schema';
+import { Blog, BlogDocument } from '../blogs/domain/schemas/blogs.schema';
 
 import { CreatePostDbDto } from './dto/create-post-db.dto';
 import { PostDto } from './dto/post.dto';

@@ -4,8 +4,8 @@ import { MongoMemoryServer } from 'mongodb-memory-server';
 import { connect, Connection, Model } from 'mongoose';
 import { DataSource } from 'typeorm';
 
-import { BlogsRepository } from '../blogs/blogs.repository';
-import { Blog, BlogSchema } from '../blogs/schemas/blogs.schema';
+import { Blog, BlogSchema } from '../blogs/domain/schemas/blogs.schema';
+import { BlogsRepository } from '../blogs/infrastructure/blogs.repository';
 import { LikesRepository } from '../likes/likes.repository';
 import { LikesRepositorySql } from '../likes/likes.repository.sql';
 import { LikesService } from '../likes/likes.service';

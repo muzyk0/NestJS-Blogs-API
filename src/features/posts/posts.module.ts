@@ -2,9 +2,9 @@ import { Module } from '@nestjs/common';
 import { MongooseModule } from '@nestjs/mongoose';
 
 import { AuthModule } from '../auth/auth.module';
-import { BlogsRepository } from '../blogs/blogs.repository';
-import { BlogsService } from '../blogs/blogs.service';
-import { Blog, BlogSchema } from '../blogs/schemas/blogs.schema';
+import { BlogsService } from '../blogs/application/blogs.service';
+import { Blog, BlogSchema } from '../blogs/domain/schemas/blogs.schema';
+import { BlogsRepository } from '../blogs/infrastructure/blogs.repository';
 import { CommentsQueryRepository } from '../comments/comments.query.repository';
 import { CommentsRepository } from '../comments/comments.repository';
 import { CommentsService } from '../comments/comments.service';

@@ -1,8 +1,9 @@
 import { Injectable } from '@nestjs/common';
 import { v4 } from 'uuid';
 
-import { IBlogService } from './blogs.controller';
-import { BlogsRepository } from './blogs.repository';
+import { IBlogService } from '../api/blogs.controller';
+import { BlogsRepository } from '../infrastructure/blogs.repository';
+
 import { BlogDto } from './dto/blog.dto';
 import { CreateBlogDto } from './dto/create-blog.dto';
 import { UpdateBlogDto } from './dto/update-blog.dto';

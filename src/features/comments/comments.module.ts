@@ -2,7 +2,7 @@ import { Module } from '@nestjs/common';
 import { MongooseModule } from '@nestjs/mongoose';
 
 import { AuthModule } from '../auth/auth.module';
-import { Blog, BlogSchema } from '../blogs/schemas/blogs.schema';
+import { Blog, BlogSchema } from '../blogs/domain/schemas/blogs.schema';
 import { LikesModule } from '../likes/likes.module';
 import { PostsRepository } from '../posts/posts.repository';
 import { Post, PostSchema } from '../posts/schemas/posts.schema';

@@ -5,12 +5,12 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { MongoMemoryServer } from 'mongodb-memory-server';
 import { connect, Connection, Model, Promise } from 'mongoose';
 
-import { PageOptionsDto } from '../../common/paginator/page-options.dto';
+import { PageOptionsDto } from '../../../common/paginator/page-options.dto';
+import { Blog, BlogSchema } from '../domain/schemas/blogs.schema';
+import { BlogsQueryRepository } from '../infrastructure/blogs.query.repository';
+import { BlogsRepository } from '../infrastructure/blogs.repository';
 
-import { BlogsQueryRepository } from './blogs.query.repository';
-import { BlogsRepository } from './blogs.repository';
 import { BlogsService } from './blogs.service';
-import { Blog, BlogSchema } from './schemas/blogs.schema';
 
 describe('BlogsService', () => {
   let blogService: BlogsService;

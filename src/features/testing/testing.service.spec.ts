@@ -6,7 +6,7 @@ import { connect, Connection, Model } from 'mongoose';
 import { DataSource } from 'typeorm';
 import { v4 } from 'uuid';
 
-import { Blog, BlogSchema } from '../blogs/schemas/blogs.schema';
+import { Blog, BlogSchema } from '../blogs/domain/schemas/blogs.schema';
 import { Comment, CommentSchema } from '../comments/schemas/comments.schema';
 import { Limit, LimitSchema } from '../limits/schemas/limits.schema';
 import { Post, PostSchema } from '../posts/schemas/posts.schema';

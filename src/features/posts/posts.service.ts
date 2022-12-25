@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { v4 } from 'uuid';
 
-import { BlogsRepository } from '../blogs/blogs.repository';
+import { BlogsRepository } from '../blogs/infrastructure/blogs.repository';
 import { LikeParentTypeEnum } from '../likes/interfaces/like-parent-type.enum';
 import { LikeStringStatus } from '../likes/interfaces/like-status.enum';
 import { LikesService } from '../likes/likes.service';

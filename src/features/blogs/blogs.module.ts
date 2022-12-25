@@ -6,11 +6,11 @@ import { AuthModule } from '../auth/auth.module';
 import { PostsModule } from '../posts/posts.module';
 import { Security, SecuritySchema } from '../security/schemas/security.schema';
 
-import { BlogsController } from './blogs.controller';
-import { BlogsQueryRepository } from './blogs.query.repository';
-import { BlogsRepository } from './blogs.repository';
-import { BlogsService } from './blogs.service';
-import { Blog, BlogSchema } from './schemas/blogs.schema';
+import { BlogsController } from './api/blogs.controller';
+import { BlogsService } from './application/blogs.service';
+import { Blog, BlogSchema } from './domain/schemas/blogs.schema';
+import { BlogsQueryRepository } from './infrastructure/blogs.query.repository';
+import { BlogsRepository } from './infrastructure/blogs.repository';
 
 @Module({
   imports: [

@@ -8,33 +8,36 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { MongoMemoryServer } from 'mongodb-memory-server';
 import { connect, Connection, Model } from 'mongoose';
 
-import { PageOptionsDto } from '../../common/paginator/page-options.dto';
-import { AuthService } from '../auth/application/auth.service';
-import { EmailTemplateManager } from '../email/email-template-manager';
-import { EmailService } from '../email/email.service';
-import { PasswordRecoveryService } from '../password-recovery/password-recovery.service';
-import { RecoveryPasswordRepository } from '../password-recovery/recovery-password.repository';
+import { PageOptionsDto } from '../../../common/paginator/page-options.dto';
+import { AuthService } from '../../auth/application/auth.service';
+import { EmailTemplateManager } from '../../email/email-template-manager';
+import { EmailService } from '../../email/email.service';
+import { PasswordRecoveryService } from '../../password-recovery/password-recovery.service';
+import { RecoveryPasswordRepository } from '../../password-recovery/recovery-password.repository';
 import {
   PasswordRecovery,
   PasswordRecoverySchema,
-} from '../password-recovery/schemas/recovery-password.schema';
-import { PostsQueryRepository } from '../posts/posts.query.repository';
-import { PostsRepository } from '../posts/posts.repository';
-import { PostsService } from '../posts/posts.service';
-import { Post, PostSchema } from '../posts/schemas/posts.schema';
-import { Security, SecuritySchema } from '../security/schemas/security.schema';
-import { SecurityRepository } from '../security/security.repository';
-import { SecurityService } from '../security/security.service';
-import { User, UserSchema } from '../users/schemas/users.schema';
-import { UsersRepository } from '../users/users.repository';
-import { UsersService } from '../users/users.service';
+} from '../../password-recovery/schemas/recovery-password.schema';
+import { PostsQueryRepository } from '../../posts/posts.query.repository';
+import { PostsRepository } from '../../posts/posts.repository';
+import { PostsService } from '../../posts/posts.service';
+import { Post, PostSchema } from '../../posts/schemas/posts.schema';
+import {
+  Security,
+  SecuritySchema,
+} from '../../security/schemas/security.schema';
+import { SecurityRepository } from '../../security/security.repository';
+import { SecurityService } from '../../security/security.service';
+import { User, UserSchema } from '../../users/schemas/users.schema';
+import { UsersRepository } from '../../users/users.repository';
+import { UsersService } from '../../users/users.service';
+import { BlogsService } from '../application/blogs.service';
+import { BlogDto } from '../application/dto/blog.dto';
+import { Blog, BlogSchema } from '../domain/schemas/blogs.schema';
+import { BlogsQueryRepository } from '../infrastructure/blogs.query.repository';
+import { BlogsRepository } from '../infrastructure/blogs.repository';
 
 import { BlogsController } from './blogs.controller';
-import { BlogsQueryRepository } from './blogs.query.repository';
-import { BlogsRepository } from './blogs.repository';
-import { BlogsService } from './blogs.service';
-import { BlogDto } from './dto/blog.dto';
-import { Blog, BlogSchema } from './schemas/blogs.schema';
 
 describe('blogsController', () => {
   let blog: BlogDto;

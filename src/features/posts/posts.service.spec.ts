@@ -4,8 +4,8 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { MongoMemoryServer } from 'mongodb-memory-server';
 import { connect, Connection, Model } from 'mongoose';
 
-import { BlogsRepository } from '../blogs/blogs.repository';
-import { Blog, BlogSchema } from '../blogs/schemas/blogs.schema';
+import { Blog, BlogSchema } from '../blogs/domain/schemas/blogs.schema';
+import { BlogsRepository } from '../blogs/infrastructure/blogs.repository';
 import { EmailService } from '../email/email.service';
 import { Security, SecuritySchema } from '../security/schemas/security.schema';
 import { SecurityRepository } from '../security/security.repository';

@@ -2,7 +2,7 @@ import { Module } from '@nestjs/common';
 import { MongooseModule } from '@nestjs/mongoose';
 import { TypeOrmModule } from '@nestjs/typeorm';
 
-import { Blog, BlogSchema } from '../blogs/schemas/blogs.schema';
+import { Blog, BlogSchema } from '../blogs/domain/schemas/blogs.schema';
 import { Comment, CommentSchema } from '../comments/schemas/comments.schema';
 import { Like } from '../likes/entity/like.entity';
 import { Limit, LimitSchema } from '../limits/schemas/limits.schema';

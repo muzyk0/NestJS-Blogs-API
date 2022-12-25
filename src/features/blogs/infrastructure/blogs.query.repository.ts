@@ -2,12 +2,11 @@ import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 
-import { BASE_PROJECTION } from '../../common/mongoose/constants';
-import { PageOptionsDto } from '../../common/paginator/page-options.dto';
-import { PageDto } from '../../common/paginator/page.dto';
-
-import { BlogDto } from './dto/blog.dto';
-import { Blog, BlogDocument } from './schemas/blogs.schema';
+import { BASE_PROJECTION } from '../../../common/mongoose/constants';
+import { PageOptionsDto } from '../../../common/paginator/page-options.dto';
+import { PageDto } from '../../../common/paginator/page.dto';
+import { BlogDto } from '../application/dto/blog.dto';
+import { Blog, BlogDocument } from '../domain/schemas/blogs.schema';
 
 export interface IBlogsQueryRepository {
   findOne(id: string): Promise<BlogDto>;

@@ -8,8 +8,8 @@ import { connect, Connection, Model } from 'mongoose';
 import { DataSource } from 'typeorm';
 
 import { AuthService } from '../auth/application/auth.service';
-import { BlogsRepository } from '../blogs/blogs.repository';
-import { Blog, BlogSchema } from '../blogs/schemas/blogs.schema';
+import { Blog, BlogSchema } from '../blogs/domain/schemas/blogs.schema';
+import { BlogsRepository } from '../blogs/infrastructure/blogs.repository';
 import { EmailTemplateManager } from '../email/email-template-manager';
 import { EmailService } from '../email/email.service';
 import { LikesRepository } from '../likes/likes.repository';
