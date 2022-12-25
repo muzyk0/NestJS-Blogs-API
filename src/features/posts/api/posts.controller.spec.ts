@@ -7,44 +7,47 @@ import { MongoMemoryServer } from 'mongodb-memory-server';
 import { connect, Connection, Model } from 'mongoose';
 import { DataSource } from 'typeorm';
 
-import { AuthService } from '../auth/application/auth.service';
-import { BlogsService } from '../blogs/application/blogs.service';
-import { Blog, BlogSchema } from '../blogs/domain/schemas/blogs.schema';
-import { BlogsRepository } from '../blogs/infrastructure/blogs.repository';
-import { CommentsService } from '../comments/application/comments.service';
+import { AuthService } from '../../auth/application/auth.service';
+import { BlogsService } from '../../blogs/application/blogs.service';
+import { Blog, BlogSchema } from '../../blogs/domain/schemas/blogs.schema';
+import { BlogsRepository } from '../../blogs/infrastructure/blogs.repository';
+import { CommentsService } from '../../comments/application/comments.service';
 import {
   Comment,
   CommentSchema,
-} from '../comments/domain/schemas/comments.schema';
-import { CommentsQueryRepository } from '../comments/infrastructure/comments.query.repository';
-import { CommentsRepository } from '../comments/infrastructure/comments.repository';
-import { EmailTemplateManager } from '../email/application/email-template-manager';
-import { EmailService } from '../email/application/email.service';
-import { LikesService } from '../likes/application/likes.service';
+} from '../../comments/domain/schemas/comments.schema';
+import { CommentsQueryRepository } from '../../comments/infrastructure/comments.query.repository';
+import { CommentsRepository } from '../../comments/infrastructure/comments.repository';
+import { EmailTemplateManager } from '../../email/application/email-template-manager';
+import { EmailService } from '../../email/application/email.service';
+import { LikesService } from '../../likes/application/likes.service';
 import {
   CommentLike,
   CommentLikeSchema,
-} from '../likes/domain/schemas/comment-likes.schema';
-import { LikesRepository } from '../likes/infrastructure/likes.repository';
-import { LikesRepositorySql } from '../likes/infrastructure/likes.repository.sql';
-import { PasswordRecoveryService } from '../password-recovery/application/password-recovery.service';
+} from '../../likes/domain/schemas/comment-likes.schema';
+import { LikesRepository } from '../../likes/infrastructure/likes.repository';
+import { LikesRepositorySql } from '../../likes/infrastructure/likes.repository.sql';
+import { PasswordRecoveryService } from '../../password-recovery/application/password-recovery.service';
 import {
   PasswordRecovery,
   PasswordRecoverySchema,
-} from '../password-recovery/domain/schemas/recovery-password.schema';
-import { RecoveryPasswordRepository } from '../password-recovery/infrastructure/recovery-password.repository';
-import { Security, SecuritySchema } from '../security/schemas/security.schema';
-import { SecurityRepository } from '../security/security.repository';
-import { SecurityService } from '../security/security.service';
-import { User, UserSchema } from '../users/schemas/users.schema';
-import { UsersRepository } from '../users/users.repository';
-import { UsersService } from '../users/users.service';
+} from '../../password-recovery/domain/schemas/recovery-password.schema';
+import { RecoveryPasswordRepository } from '../../password-recovery/infrastructure/recovery-password.repository';
+import {
+  Security,
+  SecuritySchema,
+} from '../../security/schemas/security.schema';
+import { SecurityRepository } from '../../security/security.repository';
+import { SecurityService } from '../../security/security.service';
+import { User, UserSchema } from '../../users/schemas/users.schema';
+import { UsersRepository } from '../../users/users.repository';
+import { UsersService } from '../../users/users.service';
+import { PostsService } from '../application/posts.service';
+import { Post, PostSchema } from '../domain/schemas/posts.schema';
+import { PostsQueryRepository } from '../infrastructure/posts.query.repository';
+import { PostsRepository } from '../infrastructure/posts.repository';
 
 import { PostsController } from './posts.controller';
-import { PostsQueryRepository } from './posts.query.repository';
-import { PostsRepository } from './posts.repository';
-import { PostsService } from './posts.service';
-import { Post, PostSchema } from './schemas/posts.schema';
 
 describe('PostsController', () => {
   let postsController: PostsController;

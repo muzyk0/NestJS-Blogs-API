@@ -14,25 +14,24 @@ import {
   UseGuards,
 } from '@nestjs/common';
 
-import { GetCurrentUserId } from '../../common/decorators/get-current-user-id.decorator';
-import { GetCurrentJwtContextWithoutAuth } from '../../common/decorators/get-current-user-without-auth.decorator';
-import { GetCurrentJwtContext } from '../../common/decorators/get-current-user.decorator';
-import { PageOptionsDto } from '../../common/paginator/page-options.dto';
-import { JwtATPayload } from '../auth/application/interfaces/jwtPayload.type';
-import { AuthGuard } from '../auth/guards/auth-guard';
-import { BaseAuthGuard } from '../auth/guards/base-auth-guard';
-import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
-import { BlogsService } from '../blogs/application/blogs.service';
-import { CommentsService } from '../comments/application/comments.service';
-import { CommentInput } from '../comments/application/dto/comment.input';
-import { CommentsQueryRepository } from '../comments/infrastructure/comments.query.repository';
-import { CreateLikeInput } from '../likes/application/input/create-like.input';
-
-import { CreatePostDto } from './dto/create-post.dto';
-import { PostDto } from './dto/post.dto';
-import { UpdatePostDto } from './dto/update-post.dto';
-import { PostsQueryRepository } from './posts.query.repository';
-import { PostsService } from './posts.service';
+import { GetCurrentUserId } from '../../../common/decorators/get-current-user-id.decorator';
+import { GetCurrentJwtContextWithoutAuth } from '../../../common/decorators/get-current-user-without-auth.decorator';
+import { GetCurrentJwtContext } from '../../../common/decorators/get-current-user.decorator';
+import { PageOptionsDto } from '../../../common/paginator/page-options.dto';
+import { JwtATPayload } from '../../auth/application/interfaces/jwtPayload.type';
+import { AuthGuard } from '../../auth/guards/auth-guard';
+import { BaseAuthGuard } from '../../auth/guards/base-auth-guard';
+import { JwtAuthGuard } from '../../auth/guards/jwt-auth.guard';
+import { BlogsService } from '../../blogs/application/blogs.service';
+import { CommentsService } from '../../comments/application/comments.service';
+import { CommentInput } from '../../comments/application/dto/comment.input';
+import { CommentsQueryRepository } from '../../comments/infrastructure/comments.query.repository';
+import { CreateLikeInput } from '../../likes/application/input/create-like.input';
+import { CreatePostDto } from '../application/dto/create-post.dto';
+import { PostDto } from '../application/dto/post.dto';
+import { UpdatePostDto } from '../application/dto/update-post.dto';
+import { PostsService } from '../application/posts.service';
+import { PostsQueryRepository } from '../infrastructure/posts.query.repository';
 
 export interface IPostService {
   create(createPostDto: Omit<CreatePostDto, 'id'>): Promise<PostDto>;

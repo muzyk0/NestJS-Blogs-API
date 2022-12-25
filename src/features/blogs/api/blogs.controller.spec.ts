@@ -18,10 +18,10 @@ import {
   PasswordRecoverySchema,
 } from '../../password-recovery/domain/schemas/recovery-password.schema';
 import { RecoveryPasswordRepository } from '../../password-recovery/infrastructure/recovery-password.repository';
-import { PostsQueryRepository } from '../../posts/posts.query.repository';
-import { PostsRepository } from '../../posts/posts.repository';
-import { PostsService } from '../../posts/posts.service';
-import { Post, PostSchema } from '../../posts/schemas/posts.schema';
+import { PostsService } from '../../posts/application/posts.service';
+import { Post, PostSchema } from '../../posts/domain/schemas/posts.schema';
+import { PostsQueryRepository } from '../../posts/infrastructure/posts.query.repository';
+import { PostsRepository } from '../../posts/infrastructure/posts.repository';
 import {
   Security,
   SecuritySchema,

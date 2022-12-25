@@ -13,8 +13,8 @@ import {
 } from '../../likes/domain/schemas/comment-likes.schema';
 import { LikesRepository } from '../../likes/infrastructure/likes.repository';
 import { LikesRepositorySql } from '../../likes/infrastructure/likes.repository.sql';
-import { PostsRepository } from '../../posts/posts.repository';
-import { Post, PostSchema } from '../../posts/schemas/posts.schema';
+import { Post, PostSchema } from '../../posts/domain/schemas/posts.schema';
+import { PostsRepository } from '../../posts/infrastructure/posts.repository';
 import { Comment, CommentSchema } from '../domain/schemas/comments.schema';
 import { CommentsRepository } from '../infrastructure/comments.repository';
 

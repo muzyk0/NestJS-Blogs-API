@@ -3,18 +3,17 @@ import { InjectModel } from '@nestjs/mongoose';
 import { IsInt, IsOptional } from 'class-validator';
 import { Model } from 'mongoose';
 
-import { BASE_PROJECTION } from '../../common/mongoose/constants';
-import { PageOptionsDto } from '../../common/paginator/page-options.dto';
-import { PageDto } from '../../common/paginator/page.dto';
-import { LikeParentTypeEnum } from '../likes/application/interfaces/like-parent-type.enum';
-import { Like } from '../likes/domain/entity/like.entity';
-import { LikesRepositorySql } from '../likes/infrastructure/likes.repository.sql';
-import { getStringLikeStatus } from '../likes/utils/formatters';
-import { UsersRepository } from '../users/users.repository';
-
-import { PostDto } from './dto/post.dto';
-import { PostViewDto } from './dto/post.view.dto';
-import { Post, PostDocument } from './schemas/posts.schema';
+import { BASE_PROJECTION } from '../../../common/mongoose/constants';
+import { PageOptionsDto } from '../../../common/paginator/page-options.dto';
+import { PageDto } from '../../../common/paginator/page.dto';
+import { LikeParentTypeEnum } from '../../likes/application/interfaces/like-parent-type.enum';
+import { Like } from '../../likes/domain/entity/like.entity';
+import { LikesRepositorySql } from '../../likes/infrastructure/likes.repository.sql';
+import { getStringLikeStatus } from '../../likes/utils/formatters';
+import { UsersRepository } from '../../users/users.repository';
+import { PostDto } from '../application/dto/post.dto';
+import { PostViewDto } from '../application/dto/post.view.dto';
+import { Post, PostDocument } from '../domain/schemas/posts.schema';
 
 export interface IPostsQueryRepository {
   findAll(options: FindAllPostsOptions): Promise<PageDto<PostDto>>;

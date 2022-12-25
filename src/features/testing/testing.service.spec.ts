@@ -12,7 +12,7 @@ import {
   CommentSchema,
 } from '../comments/domain/schemas/comments.schema';
 import { Limit, LimitSchema } from '../limits/domain/schemas/limits.schema';
-import { Post, PostSchema } from '../posts/schemas/posts.schema';
+import { Post, PostSchema } from '../posts/domain/schemas/posts.schema';
 import { Security, SecuritySchema } from '../security/schemas/security.schema';
 import {
   User,

@@ -5,7 +5,7 @@ import { LikeParentTypeEnum } from '../../likes/application/interfaces/like-pare
 import { LikeStringStatus } from '../../likes/application/interfaces/like-status.enum';
 import { LikesService } from '../../likes/application/likes.service';
 import { formatLikeStatusToInt } from '../../likes/utils/formatters';
-import { PostsRepository } from '../../posts/posts.repository';
+import { PostsRepository } from '../../posts/infrastructure/posts.repository';
 import { ICommentsService } from '../api/comments.controller';
 import { CommentsRepository } from '../infrastructure/comments.repository';
 

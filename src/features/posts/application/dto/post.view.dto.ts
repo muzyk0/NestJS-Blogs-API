@@ -1,4 +1,4 @@
-import { LikeStringStatus } from '../../likes/application/interfaces/like-status.enum';
+import { LikeStringStatus } from '../../../likes/application/interfaces/like-status.enum';
 
 export interface PostViewDto {
   id: string;

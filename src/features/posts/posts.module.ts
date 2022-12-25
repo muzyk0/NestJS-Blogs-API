@@ -18,11 +18,11 @@ import { SecurityModule } from '../security/security.module';
 import { User, UserSchema } from '../users/schemas/users.schema';
 import { UsersModule } from '../users/users.module';
 
-import { PostsController } from './posts.controller';
-import { PostsQueryRepository } from './posts.query.repository';
-import { PostsRepository } from './posts.repository';
-import { PostsService } from './posts.service';
-import { Post, PostSchema } from './schemas/posts.schema';
+import { PostsController } from './api/posts.controller';
+import { PostsService } from './application/posts.service';
+import { Post, PostSchema } from './domain/schemas/posts.schema';
+import { PostsQueryRepository } from './infrastructure/posts.query.repository';
+import { PostsRepository } from './infrastructure/posts.repository';
 
 @Module({
   imports: [

@@ -3,15 +3,14 @@ import { InjectModel } from '@nestjs/mongoose';
 import { IsInt, IsOptional } from 'class-validator';
 import { Model } from 'mongoose';
 
-import { BASE_PROJECTION } from '../../common/mongoose/constants';
-import { PageOptionsDto } from '../../common/paginator/page-options.dto';
-import { Blog, BlogDocument } from '../blogs/domain/schemas/blogs.schema';
-
-import { CreatePostDbDto } from './dto/create-post-db.dto';
-import { PostDto } from './dto/post.dto';
-import { UpdatePostDbDto } from './dto/update-post-db.dto';
-import { IPostsRepository } from './posts.service';
-import { Post, PostDocument } from './schemas/posts.schema';
+import { BASE_PROJECTION } from '../../../common/mongoose/constants';
+import { PageOptionsDto } from '../../../common/paginator/page-options.dto';
+import { Blog, BlogDocument } from '../../blogs/domain/schemas/blogs.schema';
+import { CreatePostDbDto } from '../application/dto/create-post-db.dto';
+import { PostDto } from '../application/dto/post.dto';
+import { UpdatePostDbDto } from '../application/dto/update-post-db.dto';
+import { IPostsRepository } from '../application/posts.service';
+import { Post, PostDocument } from '../domain/schemas/posts.schema';
 
 export class FindAllPostsOptions extends PageOptionsDto {
   @IsInt()

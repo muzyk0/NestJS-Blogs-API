@@ -1,7 +1,7 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { Document } from 'mongoose';
 
-import { PostDto } from '../dto/post.dto';
+import { PostDto } from '../../application/dto/post.dto';
 
 export type PostDocument = Post & Document;
 

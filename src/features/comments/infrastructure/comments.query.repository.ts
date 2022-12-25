@@ -10,7 +10,7 @@ import { LikeParentTypeEnum } from '../../likes/application/interfaces/like-pare
 import { Like } from '../../likes/domain/entity/like.entity';
 import { LikesRepositorySql } from '../../likes/infrastructure/likes.repository.sql';
 import { getStringLikeStatus } from '../../likes/utils/formatters';
-import { Post, PostDocument } from '../../posts/schemas/posts.schema';
+import { Post, PostDocument } from '../../posts/domain/schemas/posts.schema';
 import { CommentViewDto } from '../application/dto/comment.view.dto';
 import { Comment, CommentDocument } from '../domain/schemas/comments.schema';
 

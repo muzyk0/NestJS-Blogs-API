@@ -25,8 +25,8 @@ import {
   PasswordRecoverySchema,
 } from '../../password-recovery/domain/schemas/recovery-password.schema';
 import { RecoveryPasswordRepository } from '../../password-recovery/infrastructure/recovery-password.repository';
-import { PostsRepository } from '../../posts/posts.repository';
-import { Post, PostSchema } from '../../posts/schemas/posts.schema';
+import { Post, PostSchema } from '../../posts/domain/schemas/posts.schema';
+import { PostsRepository } from '../../posts/infrastructure/posts.repository';
 import { User, UserSchema } from '../../users/schemas/users.schema';
 import { UsersRepository } from '../../users/users.repository';
 import { UsersService } from '../../users/users.service';

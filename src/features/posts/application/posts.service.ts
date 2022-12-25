@@ -1,18 +1,18 @@
 import { Injectable } from '@nestjs/common';
 import { v4 } from 'uuid';
 
-import { BlogsRepository } from '../blogs/infrastructure/blogs.repository';
-import { LikeParentTypeEnum } from '../likes/application/interfaces/like-parent-type.enum';
-import { LikeStringStatus } from '../likes/application/interfaces/like-status.enum';
-import { LikesService } from '../likes/application/likes.service';
-import { formatLikeStatusToInt } from '../likes/utils/formatters';
+import { BlogsRepository } from '../../blogs/infrastructure/blogs.repository';
+import { LikeParentTypeEnum } from '../../likes/application/interfaces/like-parent-type.enum';
+import { LikeStringStatus } from '../../likes/application/interfaces/like-status.enum';
+import { LikesService } from '../../likes/application/likes.service';
+import { formatLikeStatusToInt } from '../../likes/utils/formatters';
+import { IPostService } from '../api/posts.controller';
+import { PostsRepository } from '../infrastructure/posts.repository';
 
 import { CreatePostDto } from './dto/create-post.dto';
 import { PostDto } from './dto/post.dto';
 import { UpdatePostDbDto } from './dto/update-post-db.dto';
 import { UpdatePostDto } from './dto/update-post.dto';
-import { IPostService } from './posts.controller';
-import { PostsRepository } from './posts.repository';
 
 export interface IPostsRepository {
   create(createPostDto: CreatePostDto): Promise<PostDto>;
