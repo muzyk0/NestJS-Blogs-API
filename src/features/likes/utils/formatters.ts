@@ -1,6 +1,9 @@
+import {
+  LikeStatus,
+  LikeStringStatus,
+} from '../application/interfaces/like-status.enum';
 import { intLikeStatuses, stringLikeStatuses } from '../constants';
-import { Like } from '../entity/like.entity';
-import { LikeStatus, LikeStringStatus } from '../interfaces/like-status.enum';
+import { Like } from '../domain/entity/like.entity';
 
 export const getStringLikeStatus = (like: Like | null) => {
   return (

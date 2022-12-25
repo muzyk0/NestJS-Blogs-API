@@ -2,14 +2,14 @@ import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 
-import { GetLikeDto } from './dto/get-like.dto';
-import { GetCommentLikeByUser } from './interfaces/get-like.interface';
-import { LikeStatus } from './interfaces/like-status.enum';
-import { LikeInterface } from './interfaces/like.interface';
+import { GetLikeDto } from '../application/dto/get-like.dto';
+import { GetCommentLikeByUser } from '../application/interfaces/get-like.interface';
+import { LikeStatus } from '../application/interfaces/like-status.enum';
+import { LikeInterface } from '../application/interfaces/like.interface';
 import {
   CommentLike,
   CommentLikeDocument,
-} from './schemas/comment-likes.schema';
+} from '../domain/schemas/comment-likes.schema';
 
 @Injectable()
 export class LikesRepository {

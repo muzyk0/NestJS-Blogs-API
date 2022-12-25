@@ -1,6 +1,6 @@
 import { IsArray, IsDate, IsNotEmpty, IsString, Length } from 'class-validator';
 
-import { LikeDto } from '../../../likes/dto/like.dto';
+import { LikeDto } from '../../../likes/application/dto/like.dto';
 
 export interface IComment {
   id: string;

@@ -2,11 +2,11 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { DataSource, Repository } from 'typeorm';
 
-import { GetLikeDto } from './dto/get-like.dto';
-import { Like } from './entity/like.entity';
-import { GetCommentLikeByUser } from './interfaces/get-like.interface';
-import { LikeStatus } from './interfaces/like-status.enum';
-import { LikeInterface } from './interfaces/like.interface';
+import { GetLikeDto } from '../application/dto/get-like.dto';
+import { GetCommentLikeByUser } from '../application/interfaces/get-like.interface';
+import { LikeStatus } from '../application/interfaces/like-status.enum';
+import { LikeInterface } from '../application/interfaces/like.interface';
+import { Like } from '../domain/entity/like.entity';
 
 @Injectable()
 export class LikesRepositorySql {

@@ -1,7 +1,7 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { HydratedDocument } from 'mongoose';
 
-import { LikeStatus } from '../interfaces/like-status.enum';
+import { LikeStatus } from '../../application/interfaces/like-status.enum';
 
 /** @deprecated */
 export type CommentLikeType = {

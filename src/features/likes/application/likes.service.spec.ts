@@ -4,10 +4,14 @@ import { MongoMemoryServer } from 'mongodb-memory-server';
 import { connect, Connection, Model } from 'mongoose';
 import { DataSource } from 'typeorm';
 
-import { LikesRepository } from './likes.repository';
-import { LikesRepositorySql } from './likes.repository.sql';
+import {
+  CommentLike,
+  CommentLikeSchema,
+} from '../domain/schemas/comment-likes.schema';
+import { LikesRepository } from '../infrastructure/likes.repository';
+import { LikesRepositorySql } from '../infrastructure/likes.repository.sql';
+
 import { LikesService } from './likes.service';
-import { CommentLike, CommentLikeSchema } from './schemas/comment-likes.schema';
 
 describe('CommentLikesService', () => {
   let mongod: MongoMemoryServer;

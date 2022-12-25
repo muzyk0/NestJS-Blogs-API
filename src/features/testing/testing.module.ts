@@ -7,7 +7,7 @@ import {
   Comment,
   CommentSchema,
 } from '../comments/domain/schemas/comments.schema';
-import { Like } from '../likes/entity/like.entity';
+import { Like } from '../likes/domain/entity/like.entity';
 import { Limit, LimitSchema } from '../limits/schemas/limits.schema';
 import { Post, PostSchema } from '../posts/schemas/posts.schema';
 import { Security, SecuritySchema } from '../security/schemas/security.schema';

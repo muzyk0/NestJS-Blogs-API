@@ -26,7 +26,7 @@ import { BlogsService } from '../blogs/application/blogs.service';
 import { CommentsService } from '../comments/application/comments.service';
 import { CommentInput } from '../comments/application/dto/comment.input';
 import { CommentsQueryRepository } from '../comments/infrastructure/comments.query.repository';
-import { CreateLikeInput } from '../likes/input/create-like.input';
+import { CreateLikeInput } from '../likes/application/input/create-like.input';
 
 import { CreatePostDto } from './dto/create-post.dto';
 import { PostDto } from './dto/post.dto';

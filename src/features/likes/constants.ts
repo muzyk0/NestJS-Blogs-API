@@ -1,4 +1,7 @@
-import { LikeStatus, LikeStringStatus } from './interfaces/like-status.enum';
+import {
+  LikeStatus,
+  LikeStringStatus,
+} from './application/interfaces/like-status.enum';
 
 export const stringLikeStatuses = {
   [LikeStatus.LIKE]: 'Like',

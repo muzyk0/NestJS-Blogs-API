@@ -18,7 +18,7 @@ import { GetCurrentJwtContextWithoutAuth } from '../../../common/decorators/get-
 import { JwtATPayload } from '../../auth/application/interfaces/jwtPayload.type';
 import { AuthGuard } from '../../auth/guards/auth-guard';
 import { JwtAuthGuard } from '../../auth/guards/jwt-auth.guard';
-import { CreateLikeInput } from '../../likes/input/create-like.input';
+import { CreateLikeInput } from '../../likes/application/input/create-like.input';
 import { CommentsService } from '../application/comments.service';
 import { CommentDto } from '../application/dto/comment.dto';
 import { CommentInput } from '../application/dto/comment.input';

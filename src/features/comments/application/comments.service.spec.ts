@@ -6,13 +6,13 @@ import { DataSource } from 'typeorm';
 
 import { Blog, BlogSchema } from '../../blogs/domain/schemas/blogs.schema';
 import { BlogsRepository } from '../../blogs/infrastructure/blogs.repository';
-import { LikesRepository } from '../../likes/likes.repository';
-import { LikesRepositorySql } from '../../likes/likes.repository.sql';
-import { LikesService } from '../../likes/likes.service';
+import { LikesService } from '../../likes/application/likes.service';
 import {
   CommentLike,
   CommentLikeSchema,
-} from '../../likes/schemas/comment-likes.schema';
+} from '../../likes/domain/schemas/comment-likes.schema';
+import { LikesRepository } from '../../likes/infrastructure/likes.repository';
+import { LikesRepositorySql } from '../../likes/infrastructure/likes.repository.sql';
 import { PostsRepository } from '../../posts/posts.repository';
 import { Post, PostSchema } from '../../posts/schemas/posts.schema';
 import { Comment, CommentSchema } from '../domain/schemas/comments.schema';

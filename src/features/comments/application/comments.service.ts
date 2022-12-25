@@ -1,9 +1,9 @@
 import { Injectable } from '@nestjs/common';
 import { v4 } from 'uuid';
 
-import { LikeParentTypeEnum } from '../../likes/interfaces/like-parent-type.enum';
-import { LikeStringStatus } from '../../likes/interfaces/like-status.enum';
-import { LikesService } from '../../likes/likes.service';
+import { LikeParentTypeEnum } from '../../likes/application/interfaces/like-parent-type.enum';
+import { LikeStringStatus } from '../../likes/application/interfaces/like-status.enum';
+import { LikesService } from '../../likes/application/likes.service';
 import { formatLikeStatusToInt } from '../../likes/utils/formatters';
 import { PostsRepository } from '../../posts/posts.repository';
 import { ICommentsService } from '../api/comments.controller';

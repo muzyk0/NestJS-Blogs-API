@@ -21,7 +21,7 @@ import { UsersModule } from './features/users/users.module';
 import { SecurityModule } from './features/security/security.module';
 import { PasswordRecoveryModule } from './features/password-recovery/password-recovery.module';
 import { LikesModule } from './features/likes/likes.module';
-import { Like } from './features/likes/entity/like.entity';
+import { Like } from './features/likes/domain/entity/like.entity';
 
 @Module({
   imports: [

@@ -2,11 +2,14 @@ import { Module } from '@nestjs/common';
 import { MongooseModule } from '@nestjs/mongoose';
 import { TypeOrmModule } from '@nestjs/typeorm';
 
-import { Like } from './entity/like.entity';
-import { LikesRepository } from './likes.repository';
-import { LikesRepositorySql } from './likes.repository.sql';
-import { LikesService } from './likes.service';
-import { CommentLike, CommentLikeSchema } from './schemas/comment-likes.schema';
+import { LikesService } from './application/likes.service';
+import { Like } from './domain/entity/like.entity';
+import {
+  CommentLike,
+  CommentLikeSchema,
+} from './domain/schemas/comment-likes.schema';
+import { LikesRepository } from './infrastructure/likes.repository';
+import { LikesRepositorySql } from './infrastructure/likes.repository.sql';
 
 @Module({
   controllers: [],
