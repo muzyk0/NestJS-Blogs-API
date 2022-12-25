@@ -18,7 +18,7 @@ import {
   Security,
   SecurityDocument,
 } from '../../security/domain/schemas/security.schema';
-import { User, UserDocument } from '../../users/schemas/users.schema';
+import { User, UserDocument } from '../../users/domain/schemas/users.schema';
 
 @Injectable()
 export class TestingRepository {

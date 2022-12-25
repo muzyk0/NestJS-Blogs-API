@@ -3,14 +3,14 @@ import * as bcrypt from 'bcrypt';
 import { addDays } from 'date-fns';
 import { v4 } from 'uuid';
 
-import { EmailTemplateManager } from '../email/application/email-template-manager';
-import { EmailService } from '../email/application/email.service';
+import { EmailTemplateManager } from '../../email/application/email-template-manager';
+import { EmailService } from '../../email/application/email.service';
+import { RevokedTokenType } from '../domain/schemas/revoked-tokens.schema';
+import { UserAccountDBType } from '../domain/schemas/users.schema';
+import { UsersRepository } from '../infrastructure/users.repository';
 
 import { CreateUserDto } from './dto/create-user.dto';
-import { RevokedTokenType } from './schemas/revoked-tokens.schema';
-import { UserAccountDBType } from './schemas/users.schema';
-import { UpdateConfirmationType } from './users.interface';
-import { UsersRepository } from './users.repository';
+import { UpdateConfirmationType } from './interfaces/users.interface';
 
 @Injectable()
 export class UsersService {

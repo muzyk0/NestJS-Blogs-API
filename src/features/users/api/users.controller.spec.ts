@@ -6,26 +6,26 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { MongoMemoryServer } from 'mongodb-memory-server';
 import { connect, Connection, Model } from 'mongoose';
 
-import { AuthService } from '../auth/application/auth.service';
-import { EmailTemplateManager } from '../email/application/email-template-manager';
-import { EmailService } from '../email/application/email.service';
-import { PasswordRecoveryService } from '../password-recovery/application/password-recovery.service';
+import { AuthService } from '../../auth/application/auth.service';
+import { EmailTemplateManager } from '../../email/application/email-template-manager';
+import { EmailService } from '../../email/application/email.service';
+import { PasswordRecoveryService } from '../../password-recovery/application/password-recovery.service';
 import {
   PasswordRecovery,
   PasswordRecoverySchema,
-} from '../password-recovery/domain/schemas/recovery-password.schema';
-import { RecoveryPasswordRepository } from '../password-recovery/infrastructure/recovery-password.repository';
-import { SecurityService } from '../security/application/security.service';
+} from '../../password-recovery/domain/schemas/recovery-password.schema';
+import { RecoveryPasswordRepository } from '../../password-recovery/infrastructure/recovery-password.repository';
+import { SecurityService } from '../../security/application/security.service';
 import {
   Security,
   SecuritySchema,
-} from '../security/domain/schemas/security.schema';
-import { SecurityRepository } from '../security/infrastructure/security.repository';
+} from '../../security/domain/schemas/security.schema';
+import { SecurityRepository } from '../../security/infrastructure/security.repository';
+import { UsersService } from '../application/users.service';
+import { User, UserSchema } from '../domain/schemas/users.schema';
+import { UsersRepository } from '../infrastructure/users.repository';
 
-import { User, UserSchema } from './schemas/users.schema';
 import { UsersController } from './users.controller';
-import { UsersRepository } from './users.repository';
-import { UsersService } from './users.service';
 
 describe('UsersController', () => {
   let usersController: UsersController;

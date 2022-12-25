@@ -18,7 +18,7 @@ import {
   SecuritySchema,
 } from '../security/domain/schemas/security.schema';
 import { SecurityModule } from '../security/security.module';
-import { User, UserSchema } from '../users/schemas/users.schema';
+import { User, UserSchema } from '../users/domain/schemas/users.schema';
 import { UsersModule } from '../users/users.module';
 
 import { PostsController } from './api/posts.controller';

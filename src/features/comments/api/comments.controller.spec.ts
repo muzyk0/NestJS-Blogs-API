@@ -27,9 +27,9 @@ import {
 import { RecoveryPasswordRepository } from '../../password-recovery/infrastructure/recovery-password.repository';
 import { Post, PostSchema } from '../../posts/domain/schemas/posts.schema';
 import { PostsRepository } from '../../posts/infrastructure/posts.repository';
-import { User, UserSchema } from '../../users/schemas/users.schema';
-import { UsersRepository } from '../../users/users.repository';
-import { UsersService } from '../../users/users.service';
+import { UsersService } from '../../users/application/users.service';
+import { User, UserSchema } from '../../users/domain/schemas/users.schema';
+import { UsersRepository } from '../../users/infrastructure/users.repository';
 import { CommentsService } from '../application/comments.service';
 import { Comment, CommentSchema } from '../domain/schemas/comments.schema';
 import { CommentsQueryRepository } from '../infrastructure/comments.query.repository';

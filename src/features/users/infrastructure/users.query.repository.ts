@@ -2,12 +2,11 @@ import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { FilterQuery, Model } from 'mongoose';
 
-import { BASE_PROJECTION } from '../../common/mongoose/constants';
-import { PageOptionsForUserDto } from '../../common/paginator/page-options.dto';
-import { PageDto } from '../../common/paginator/page.dto';
-
-import { UserDto } from './dto/user.view.dto';
-import { User, UserDocument } from './schemas/users.schema';
+import { BASE_PROJECTION } from '../../../common/mongoose/constants';
+import { PageOptionsForUserDto } from '../../../common/paginator/page-options.dto';
+import { PageDto } from '../../../common/paginator/page.dto';
+import { UserDto } from '../application/dto/user.view.dto';
+import { User, UserDocument } from '../domain/schemas/users.schema';
 
 const projectionFields = { ...BASE_PROJECTION, postId: 0 };
 

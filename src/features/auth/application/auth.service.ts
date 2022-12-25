@@ -10,8 +10,8 @@ import { EmailTemplateManager } from '../../email/application/email-template-man
 import { EmailService } from '../../email/application/email.service';
 import { PasswordRecoveryService } from '../../password-recovery/application/password-recovery.service';
 import { PasswordRecoveryDocument } from '../../password-recovery/domain/schemas/recovery-password.schema';
-import { User } from '../../users/schemas/users.schema';
-import { UsersService } from '../../users/users.service';
+import { UsersService } from '../../users/application/users.service';
+import { User } from '../../users/domain/schemas/users.schema';
 
 import { LoginDto } from './dto/login.dto';
 import { JwtATPayload, JwtRTPayload } from './interfaces/jwtPayload.type';

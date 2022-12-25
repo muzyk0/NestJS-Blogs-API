@@ -14,9 +14,9 @@ import {
   PasswordRecoverySchema,
 } from '../../password-recovery/domain/schemas/recovery-password.schema';
 import { RecoveryPasswordRepository } from '../../password-recovery/infrastructure/recovery-password.repository';
-import { User, UserSchema } from '../../users/schemas/users.schema';
-import { UsersRepository } from '../../users/users.repository';
-import { UsersService } from '../../users/users.service';
+import { UsersService } from '../../users/application/users.service';
+import { User, UserSchema } from '../../users/domain/schemas/users.schema';
+import { UsersRepository } from '../../users/infrastructure/users.repository';
 import { AtJwtStrategy } from '../strategies/at.jwt.strategy';
 
 import { AuthService } from './auth.service';

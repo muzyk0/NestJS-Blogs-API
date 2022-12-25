@@ -21,7 +21,7 @@ import {
   User,
   UserAccountDBType,
   UserSchema,
-} from '../../users/schemas/users.schema';
+} from '../../users/domain/schemas/users.schema';
 import { TestingRepository } from '../infrastructure/testing.repository';
 
 import { TestingService } from './testing.service';

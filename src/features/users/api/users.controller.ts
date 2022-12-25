@@ -13,12 +13,11 @@ import {
   UseGuards,
 } from '@nestjs/common';
 
-import { PageOptionsForUserDto } from '../../common/paginator/page-options.dto';
-import { BaseAuthGuard } from '../auth/guards/base-auth-guard';
-
-import { CreateUserDto } from './dto/create-user.dto';
-import { UsersQueryRepository } from './users.query.repository';
-import { UsersService } from './users.service';
+import { PageOptionsForUserDto } from '../../../common/paginator/page-options.dto';
+import { BaseAuthGuard } from '../../auth/guards/base-auth-guard';
+import { CreateUserDto } from '../application/dto/create-user.dto';
+import { UsersService } from '../application/users.service';
+import { UsersQueryRepository } from '../infrastructure/users.query.repository';
 
 @Controller('users')
 export class UsersController {

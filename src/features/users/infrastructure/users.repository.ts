@@ -2,11 +2,14 @@ import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 
-import { BASE_PROJECTION } from '../../common/mongoose/constants';
-
-import { RevokedTokenType } from './schemas/revoked-tokens.schema';
-import { User, UserAccountDBType, UserDocument } from './schemas/users.schema';
-import { UpdateConfirmationType } from './users.interface';
+import { BASE_PROJECTION } from '../../../common/mongoose/constants';
+import { UpdateConfirmationType } from '../application/interfaces/users.interface';
+import { RevokedTokenType } from '../domain/schemas/revoked-tokens.schema';
+import {
+  User,
+  UserAccountDBType,
+  UserDocument,
+} from '../domain/schemas/users.schema';
 
 const projectionFields = { ...BASE_PROJECTION, postId: 0 };
 

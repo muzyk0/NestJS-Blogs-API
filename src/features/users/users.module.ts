@@ -6,11 +6,11 @@ import { EmailModule } from '../email/email.module';
 import { PasswordRecoveryModule } from '../password-recovery/password-recovery.module';
 import { SecurityModule } from '../security/security.module';
 
-import { User, UserSchema } from './schemas/users.schema';
-import { UsersController } from './users.controller';
-import { UsersQueryRepository } from './users.query.repository';
-import { UsersRepository } from './users.repository';
-import { UsersService } from './users.service';
+import { UsersController } from './api/users.controller';
+import { UsersService } from './application/users.service';
+import { User, UserSchema } from './domain/schemas/users.schema';
+import { UsersQueryRepository } from './infrastructure/users.query.repository';
+import { UsersRepository } from './infrastructure/users.repository';
 
 @Module({
   imports: [

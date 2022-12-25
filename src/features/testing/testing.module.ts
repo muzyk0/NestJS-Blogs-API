@@ -14,7 +14,7 @@ import {
   Security,
   SecuritySchema,
 } from '../security/domain/schemas/security.schema';
-import { User, UserSchema } from '../users/schemas/users.schema';
+import { User, UserSchema } from '../users/domain/schemas/users.schema';
 
 import { TestingController } from './api/testing.controller';
 import { TestingService } from './application/testing.service';

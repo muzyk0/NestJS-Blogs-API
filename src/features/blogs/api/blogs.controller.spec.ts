@@ -28,9 +28,9 @@ import {
   SecuritySchema,
 } from '../../security/domain/schemas/security.schema';
 import { SecurityRepository } from '../../security/infrastructure/security.repository';
-import { User, UserSchema } from '../../users/schemas/users.schema';
-import { UsersRepository } from '../../users/users.repository';
-import { UsersService } from '../../users/users.service';
+import { UsersService } from '../../users/application/users.service';
+import { User, UserSchema } from '../../users/domain/schemas/users.schema';
+import { UsersRepository } from '../../users/infrastructure/users.repository';
 import { BlogsService } from '../application/blogs.service';
 import { BlogDto } from '../application/dto/blog.dto';
 import { Blog, BlogSchema } from '../domain/schemas/blogs.schema';
