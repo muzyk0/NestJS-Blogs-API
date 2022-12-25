@@ -10,8 +10,8 @@ import { connect, Connection, Model } from 'mongoose';
 
 import { PageOptionsDto } from '../../../common/paginator/page-options.dto';
 import { AuthService } from '../../auth/application/auth.service';
-import { EmailTemplateManager } from '../../email/email-template-manager';
-import { EmailService } from '../../email/email.service';
+import { EmailTemplateManager } from '../../email/application/email-template-manager';
+import { EmailService } from '../../email/application/email.service';
 import { PasswordRecoveryService } from '../../password-recovery/password-recovery.service';
 import { RecoveryPasswordRepository } from '../../password-recovery/recovery-password.repository';
 import {

@@ -23,9 +23,9 @@ import { AuthGuard } from '../auth/guards/auth-guard';
 import { BaseAuthGuard } from '../auth/guards/base-auth-guard';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 import { BlogsService } from '../blogs/application/blogs.service';
-import { CommentsQueryRepository } from '../comments/comments.query.repository';
-import { CommentsService } from '../comments/comments.service';
-import { CommentInput } from '../comments/dto/comment.input';
+import { CommentsService } from '../comments/application/comments.service';
+import { CommentInput } from '../comments/application/dto/comment.input';
+import { CommentsQueryRepository } from '../comments/infrastructure/comments.query.repository';
 import { CreateLikeInput } from '../likes/input/create-like.input';
 
 import { CreatePostDto } from './dto/create-post.dto';

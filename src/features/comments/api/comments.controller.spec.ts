@@ -7,35 +7,35 @@ import { MongoMemoryServer } from 'mongodb-memory-server';
 import { connect, Connection, Model } from 'mongoose';
 import { DataSource } from 'typeorm';
 
-import { AuthService } from '../auth/application/auth.service';
-import { Blog, BlogSchema } from '../blogs/domain/schemas/blogs.schema';
-import { BlogsRepository } from '../blogs/infrastructure/blogs.repository';
-import { EmailTemplateManager } from '../email/email-template-manager';
-import { EmailService } from '../email/email.service';
-import { LikesRepository } from '../likes/likes.repository';
-import { LikesRepositorySql } from '../likes/likes.repository.sql';
-import { LikesService } from '../likes/likes.service';
+import { AuthService } from '../../auth/application/auth.service';
+import { Blog, BlogSchema } from '../../blogs/domain/schemas/blogs.schema';
+import { BlogsRepository } from '../../blogs/infrastructure/blogs.repository';
+import { EmailTemplateManager } from '../../email/application/email-template-manager';
+import { EmailService } from '../../email/application/email.service';
+import { LikesRepository } from '../../likes/likes.repository';
+import { LikesRepositorySql } from '../../likes/likes.repository.sql';
+import { LikesService } from '../../likes/likes.service';
 import {
   CommentLike,
   CommentLikeSchema,
-} from '../likes/schemas/comment-likes.schema';
-import { PasswordRecoveryService } from '../password-recovery/password-recovery.service';
-import { RecoveryPasswordRepository } from '../password-recovery/recovery-password.repository';
+} from '../../likes/schemas/comment-likes.schema';
+import { PasswordRecoveryService } from '../../password-recovery/password-recovery.service';
+import { RecoveryPasswordRepository } from '../../password-recovery/recovery-password.repository';
 import {
   PasswordRecovery,
   PasswordRecoverySchema,
-} from '../password-recovery/schemas/recovery-password.schema';
-import { PostsRepository } from '../posts/posts.repository';
-import { Post, PostSchema } from '../posts/schemas/posts.schema';
-import { User, UserSchema } from '../users/schemas/users.schema';
-import { UsersRepository } from '../users/users.repository';
-import { UsersService } from '../users/users.service';
+} from '../../password-recovery/schemas/recovery-password.schema';
+import { PostsRepository } from '../../posts/posts.repository';
+import { Post, PostSchema } from '../../posts/schemas/posts.schema';
+import { User, UserSchema } from '../../users/schemas/users.schema';
+import { UsersRepository } from '../../users/users.repository';
+import { UsersService } from '../../users/users.service';
+import { CommentsService } from '../application/comments.service';
+import { Comment, CommentSchema } from '../domain/schemas/comments.schema';
+import { CommentsQueryRepository } from '../infrastructure/comments.query.repository';
+import { CommentsRepository } from '../infrastructure/comments.repository';
 
 import { CommentsController } from './comments.controller';
-import { CommentsQueryRepository } from './comments.query.repository';
-import { CommentsRepository } from './comments.repository';
-import { CommentsService } from './comments.service';
-import { Comment, CommentSchema } from './schemas/comments.schema';
 
 describe('CommentsController', () => {
   let commentController: CommentsController;

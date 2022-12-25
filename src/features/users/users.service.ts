@@ -3,8 +3,8 @@ import * as bcrypt from 'bcrypt';
 import { addDays } from 'date-fns';
 import { v4 } from 'uuid';
 
-import { EmailTemplateManager } from '../email/email-template-manager';
-import { EmailService } from '../email/email.service';
+import { EmailTemplateManager } from '../email/application/email-template-manager';
+import { EmailService } from '../email/application/email.service';
 
 import { CreateUserDto } from './dto/create-user.dto';
 import { RevokedTokenType } from './schemas/revoked-tokens.schema';

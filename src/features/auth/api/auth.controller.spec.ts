@@ -6,8 +6,8 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { MongoMemoryServer } from 'mongodb-memory-server';
 import { connect, Connection, Model } from 'mongoose';
 
-import { EmailTemplateManager } from '../../email/email-template-manager';
-import { EmailService } from '../../email/email.service';
+import { EmailTemplateManager } from '../../email/application/email-template-manager';
+import { EmailService } from '../../email/application/email.service';
 import { LimitsRepository } from '../../limits/limits.repository';
 import { LimitsService } from '../../limits/limits.service';
 import { Limit, LimitSchema } from '../../limits/schemas/limits.schema';

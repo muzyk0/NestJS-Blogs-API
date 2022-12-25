@@ -3,17 +3,16 @@ import { InjectModel } from '@nestjs/mongoose';
 import { IsInt, IsOptional } from 'class-validator';
 import { Model } from 'mongoose';
 
-import { BASE_PROJECTION } from '../../common/mongoose/constants';
-import { PageOptionsDto } from '../../common/paginator/page-options.dto';
-import { PageDto } from '../../common/paginator/page.dto';
-import { Like } from '../likes/entity/like.entity';
-import { LikeParentTypeEnum } from '../likes/interfaces/like-parent-type.enum';
-import { LikesRepositorySql } from '../likes/likes.repository.sql';
-import { getStringLikeStatus } from '../likes/utils/formatters';
-import { Post, PostDocument } from '../posts/schemas/posts.schema';
-
-import { CommentViewDto } from './dto/comment.view.dto';
-import { Comment, CommentDocument } from './schemas/comments.schema';
+import { BASE_PROJECTION } from '../../../common/mongoose/constants';
+import { PageOptionsDto } from '../../../common/paginator/page-options.dto';
+import { PageDto } from '../../../common/paginator/page.dto';
+import { Like } from '../../likes/entity/like.entity';
+import { LikeParentTypeEnum } from '../../likes/interfaces/like-parent-type.enum';
+import { LikesRepositorySql } from '../../likes/likes.repository.sql';
+import { getStringLikeStatus } from '../../likes/utils/formatters';
+import { Post, PostDocument } from '../../posts/schemas/posts.schema';
+import { CommentViewDto } from '../application/dto/comment.view.dto';
+import { Comment, CommentDocument } from '../domain/schemas/comments.schema';
 
 const projectionFields = { ...BASE_PROJECTION, postId: 0 };
 

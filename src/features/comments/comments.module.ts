@@ -7,11 +7,11 @@ import { LikesModule } from '../likes/likes.module';
 import { PostsRepository } from '../posts/posts.repository';
 import { Post, PostSchema } from '../posts/schemas/posts.schema';
 
-import { CommentsController } from './comments.controller';
-import { CommentsQueryRepository } from './comments.query.repository';
-import { CommentsRepository } from './comments.repository';
-import { CommentsService } from './comments.service';
-import { Comment, CommentSchema } from './schemas/comments.schema';
+import { CommentsController } from './api/comments.controller';
+import { CommentsService } from './application/comments.service';
+import { Comment, CommentSchema } from './domain/schemas/comments.schema';
+import { CommentsQueryRepository } from './infrastructure/comments.query.repository';
+import { CommentsRepository } from './infrastructure/comments.repository';
 
 @Module({
   imports: [

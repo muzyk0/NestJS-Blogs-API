@@ -1,7 +1,7 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { Document } from 'mongoose';
 
-import { IComment } from '../dto/comment.dto';
+import { IComment } from '../../application/dto/comment.dto';
 
 export type CommentDocument = Comment & Document;
 

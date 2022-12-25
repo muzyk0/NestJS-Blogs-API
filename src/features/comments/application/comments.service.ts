@@ -1,14 +1,14 @@
 import { Injectable } from '@nestjs/common';
 import { v4 } from 'uuid';
 
-import { LikeParentTypeEnum } from '../likes/interfaces/like-parent-type.enum';
-import { LikeStringStatus } from '../likes/interfaces/like-status.enum';
-import { LikesService } from '../likes/likes.service';
-import { formatLikeStatusToInt } from '../likes/utils/formatters';
-import { PostsRepository } from '../posts/posts.repository';
+import { LikeParentTypeEnum } from '../../likes/interfaces/like-parent-type.enum';
+import { LikeStringStatus } from '../../likes/interfaces/like-status.enum';
+import { LikesService } from '../../likes/likes.service';
+import { formatLikeStatusToInt } from '../../likes/utils/formatters';
+import { PostsRepository } from '../../posts/posts.repository';
+import { ICommentsService } from '../api/comments.controller';
+import { CommentsRepository } from '../infrastructure/comments.repository';
 
-import { ICommentsService } from './comments.controller';
-import { CommentsRepository } from './comments.repository';
 import { CommentDto, IComment } from './dto/comment.dto';
 import { CommentInput } from './dto/comment.input';
 import { CreateCommentDto } from './dto/create-comment.dto';

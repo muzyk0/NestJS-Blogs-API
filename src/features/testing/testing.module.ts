@@ -3,7 +3,10 @@ import { MongooseModule } from '@nestjs/mongoose';
 import { TypeOrmModule } from '@nestjs/typeorm';
 
 import { Blog, BlogSchema } from '../blogs/domain/schemas/blogs.schema';
-import { Comment, CommentSchema } from '../comments/schemas/comments.schema';
+import {
+  Comment,
+  CommentSchema,
+} from '../comments/domain/schemas/comments.schema';
 import { Like } from '../likes/entity/like.entity';
 import { Limit, LimitSchema } from '../limits/schemas/limits.schema';
 import { Post, PostSchema } from '../posts/schemas/posts.schema';

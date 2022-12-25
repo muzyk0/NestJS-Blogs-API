@@ -3,15 +3,14 @@ import { InjectModel } from '@nestjs/mongoose';
 import { IsInt, IsOptional } from 'class-validator';
 import { Model } from 'mongoose';
 
-import { BASE_PROJECTION } from '../../common/mongoose/constants';
-import { PageOptionsDto } from '../../common/paginator/page-options.dto';
-import { Post, PostDocument } from '../posts/schemas/posts.schema';
-
-import { ICommentsRepository } from './comments.service';
-import { CommentDto } from './dto/comment.dto';
-import { CreateCommentDto } from './dto/create-comment.dto';
-import { UpdateCommentDto } from './dto/update-comment.dto';
-import { Comment, CommentDocument } from './schemas/comments.schema';
+import { BASE_PROJECTION } from '../../../common/mongoose/constants';
+import { PageOptionsDto } from '../../../common/paginator/page-options.dto';
+import { Post, PostDocument } from '../../posts/schemas/posts.schema';
+import { ICommentsRepository } from '../application/comments.service';
+import { CommentDto } from '../application/dto/comment.dto';
+import { CreateCommentDto } from '../application/dto/create-comment.dto';
+import { UpdateCommentDto } from '../application/dto/update-comment.dto';
+import { Comment, CommentDocument } from '../domain/schemas/comments.schema';
 
 const projectionFields = { ...BASE_PROJECTION, postId: 0 };
 

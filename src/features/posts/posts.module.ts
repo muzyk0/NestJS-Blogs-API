@@ -5,10 +5,13 @@ import { AuthModule } from '../auth/auth.module';
 import { BlogsService } from '../blogs/application/blogs.service';
 import { Blog, BlogSchema } from '../blogs/domain/schemas/blogs.schema';
 import { BlogsRepository } from '../blogs/infrastructure/blogs.repository';
-import { CommentsQueryRepository } from '../comments/comments.query.repository';
-import { CommentsRepository } from '../comments/comments.repository';
-import { CommentsService } from '../comments/comments.service';
-import { Comment, CommentSchema } from '../comments/schemas/comments.schema';
+import { CommentsService } from '../comments/application/comments.service';
+import {
+  Comment,
+  CommentSchema,
+} from '../comments/domain/schemas/comments.schema';
+import { CommentsQueryRepository } from '../comments/infrastructure/comments.query.repository';
+import { CommentsRepository } from '../comments/infrastructure/comments.repository';
 import { LikesModule } from '../likes/likes.module';
 import { Security, SecuritySchema } from '../security/schemas/security.schema';
 import { SecurityModule } from '../security/security.module';

@@ -7,8 +7,8 @@ import { ConfigService } from '@nestjs/config';
 
 import configuration from '../../config/configuration';
 
-import { EmailTemplateManager } from './email-template-manager';
-import { EmailService } from './email.service';
+import { EmailTemplateManager } from './application/email-template-manager';
+import { EmailService } from './application/email.service';
 
 @Global()
 @Module({

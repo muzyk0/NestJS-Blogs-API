@@ -7,7 +7,10 @@ import { DataSource } from 'typeorm';
 import { v4 } from 'uuid';
 
 import { Blog, BlogSchema } from '../blogs/domain/schemas/blogs.schema';
-import { Comment, CommentSchema } from '../comments/schemas/comments.schema';
+import {
+  Comment,
+  CommentSchema,
+} from '../comments/domain/schemas/comments.schema';
 import { Limit, LimitSchema } from '../limits/schemas/limits.schema';
 import { Post, PostSchema } from '../posts/schemas/posts.schema';
 import { Security, SecuritySchema } from '../security/schemas/security.schema';

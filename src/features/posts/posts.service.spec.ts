@@ -6,7 +6,7 @@ import { connect, Connection, Model } from 'mongoose';
 
 import { Blog, BlogSchema } from '../blogs/domain/schemas/blogs.schema';
 import { BlogsRepository } from '../blogs/infrastructure/blogs.repository';
-import { EmailService } from '../email/email.service';
+import { EmailService } from '../email/application/email.service';
 import { Security, SecuritySchema } from '../security/schemas/security.schema';
 import { SecurityRepository } from '../security/security.repository';
 import { SecurityService } from '../security/security.service';

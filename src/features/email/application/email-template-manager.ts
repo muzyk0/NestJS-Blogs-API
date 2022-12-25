@@ -1,7 +1,7 @@
 import { Inject, Injectable } from '@nestjs/common';
 
-import { UserAccountDBType } from '../users/schemas/users.schema';
-import { RecoveryPasswordMessageType } from '../users/types/recovery-password-message.type';
+import { UserAccountDBType } from '../../users/schemas/users.schema';
+import { RecoveryPasswordMessageType } from '../../users/types/recovery-password-message.type';
 
 @Injectable()
 export class EmailTemplateManager {

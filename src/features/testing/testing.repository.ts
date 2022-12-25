@@ -5,7 +5,10 @@ import { Model } from 'mongoose';
 import { DataSource } from 'typeorm';
 
 import { Blog, BlogDocument } from '../blogs/domain/schemas/blogs.schema';
-import { Comment, CommentDocument } from '../comments/schemas/comments.schema';
+import {
+  Comment,
+  CommentDocument,
+} from '../comments/domain/schemas/comments.schema';
 import { Limit, LimitDocument } from '../limits/schemas/limits.schema';
 import { Post, PostDocument } from '../posts/schemas/posts.schema';
 import {

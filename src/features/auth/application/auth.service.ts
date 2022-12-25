@@ -6,8 +6,8 @@ import { addDays, isAfter } from 'date-fns';
 import { v4 } from 'uuid';
 
 import { BaseAuthPayload } from '../../../constants';
-import { EmailTemplateManager } from '../../email/email-template-manager';
-import { EmailService } from '../../email/email.service';
+import { EmailTemplateManager } from '../../email/application/email-template-manager';
+import { EmailService } from '../../email/application/email.service';
 import { PasswordRecoveryService } from '../../password-recovery/password-recovery.service';
 import { PasswordRecoveryDocument } from '../../password-recovery/schemas/recovery-password.schema';
 import { User } from '../../users/schemas/users.schema';

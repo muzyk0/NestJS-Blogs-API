@@ -13,18 +13,17 @@ import {
   UseGuards,
 } from '@nestjs/common';
 
-import { GetCurrentUserId } from '../../common/decorators/get-current-user-id.decorator';
-import { GetCurrentJwtContextWithoutAuth } from '../../common/decorators/get-current-user-without-auth.decorator';
-import { JwtATPayload } from '../auth/application/interfaces/jwtPayload.type';
-import { AuthGuard } from '../auth/guards/auth-guard';
-import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
-import { CreateLikeInput } from '../likes/input/create-like.input';
-
-import { CommentsQueryRepository } from './comments.query.repository';
-import { CommentsService } from './comments.service';
-import { CommentDto } from './dto/comment.dto';
-import { CommentInput } from './dto/comment.input';
-import { CreateCommentDto } from './dto/create-comment.dto';
+import { GetCurrentUserId } from '../../../common/decorators/get-current-user-id.decorator';
+import { GetCurrentJwtContextWithoutAuth } from '../../../common/decorators/get-current-user-without-auth.decorator';
+import { JwtATPayload } from '../../auth/application/interfaces/jwtPayload.type';
+import { AuthGuard } from '../../auth/guards/auth-guard';
+import { JwtAuthGuard } from '../../auth/guards/jwt-auth.guard';
+import { CreateLikeInput } from '../../likes/input/create-like.input';
+import { CommentsService } from '../application/comments.service';
+import { CommentDto } from '../application/dto/comment.dto';
+import { CommentInput } from '../application/dto/comment.input';
+import { CreateCommentDto } from '../application/dto/create-comment.dto';
+import { CommentsQueryRepository } from '../infrastructure/comments.query.repository';
 
 export interface ICommentsService {
   create(createCommentDto: CreateCommentDto): Promise<CommentDto | null>;
