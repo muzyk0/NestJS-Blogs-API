@@ -3,7 +3,6 @@ import { MongooseModule } from '@nestjs/mongoose';
 
 /* eslint import/order: ["error", {"newlines-between": "ignore"}] */
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { ConfigModule, ConfigService } from '@nestjs/config';
 import { configModule } from './constants';
 
 import { AppController } from './app.controller';
@@ -21,23 +20,13 @@ import { UsersModule } from './features/users/users.module';
 import { SecurityModule } from './features/security/security.module';
 import { PasswordRecoveryModule } from './features/password-recovery/password-recovery.module';
 import { LikesModule } from './features/likes/likes.module';
-import { Like } from './features/likes/domain/entity/like.entity';
+import typeOrmConfig from './config/typeorm.config';
 
 @Module({
   imports: [
     configModule,
     MongooseModule.forRoot(configuration().MONGO_URI),
-    TypeOrmModule.forRootAsync({
-      imports: [ConfigModule],
-      useFactory: (configService: ConfigService) => ({
-        type: 'postgres',
-        url: configService.get('POSTGRESQL_URI'),
-        entities: [Like],
-        synchronize: true,
-        ssl: true,
-      }),
-      inject: [ConfigService],
-    }),
+    TypeOrmModule.forRoot(typeOrmConfig.options),
     TestModule,
     BlogsModule,
     PostsModule,
