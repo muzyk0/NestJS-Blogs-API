@@ -1,0 +1,45 @@
+version: "3.9"
+services:
+  postgres:
+    image: postgres
+    volumes:
+      - blogs-nest-pg:/var/lib/postgresql/data
+    environment:
+      POSTGRES_PASSWORD: ${LOCAL_DB_PASSWORD}
+    ports:
+      #!!
+      - "5432:5432"
+    networks:
+      - webnet
+    restart: always
+
+  server:
+    build:
+      context: .
+      dockerfile: ./Dockerfile
+    image: blogs
+    environment:
+      POSTGRESQL_URI: postgres://postgres:${LOCAL_DB_PASSWORD}@postgres:5432/blogs_nest
+      TYPEORM_SSL: ''
+    #      TYPEORM_SYNCHRONIZE: "false"
+    #      TYPEORM_ENTITIES: dist/**/*.entity.js
+    #      TYPEORM_MIGRATIONS: dist/migrations/**/*.js
+    #      TYPEORM_SUBSCRIBERS: dist/subscribers/**/*.js
+    ports:
+      - "5000:5000"
+      - "9229:9229"
+    command: yarn start:dev
+    networks:
+      - webnet
+    depends_on:
+      - "postgres"
+    volumes:
+      - .:/app
+      - /app/node_modules
+    restart: always
+
+networks:
+  webnet:
+
+volumes:
+  blogs-nest-pg:

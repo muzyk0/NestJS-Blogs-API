@@ -12,6 +12,7 @@ declare global {
       EMAIL_FROM_PASSWORD: string;
       IP_RESTRICTION_LIMIT: string;
       ENABLE_CLEAR_DB_ENDPOINT: string;
+      TYPEORM_SSL: string;
     }
   }
 }
