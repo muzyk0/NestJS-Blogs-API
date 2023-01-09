@@ -37,6 +37,8 @@ export class ConfirmAccountHandler
     if (!this.isValidConfirmationCode(user, code)) {
       return false;
     }
+
+    return true;
   }
 
   private isConfirmed(user: User) {

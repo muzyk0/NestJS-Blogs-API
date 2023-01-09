@@ -123,7 +123,7 @@ export class AuthController {
 
     if (!isConfirmed) {
       throw new BadRequestException([
-        { message: 'Code isn"t correct', field: 'code' },
+        { message: "Code isn't correct", field: 'code' },
       ]);
     }
 
