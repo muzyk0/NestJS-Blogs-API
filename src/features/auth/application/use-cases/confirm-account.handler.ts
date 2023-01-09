@@ -1,6 +1,4 @@
-import { BadRequestException } from '@nestjs/common';
 import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
-import * as bcrypt from 'bcrypt';
 import { isAfter } from 'date-fns';
 
 import { PasswordRecoveryService } from '../../../password-recovery/application/password-recovery.service';

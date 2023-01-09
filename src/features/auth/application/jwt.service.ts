@@ -1,12 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { JwtService as NestJwtService } from '@nestjs/jwt';
-import * as bcrypt from 'bcrypt';
-import { isAfter } from 'date-fns';
-
-import { BaseAuthPayload } from '../../../constants';
-import { UsersService } from '../../users/application/users.service';
-import { User } from '../../users/domain/schemas/users.schema';
 
 import { JwtATPayload, JwtRTPayload } from './interfaces/jwtPayload.type';
 

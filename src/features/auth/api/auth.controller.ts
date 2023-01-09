@@ -26,7 +26,6 @@ import { EmailConfirmationCodeDto } from '../../users/application/dto/email-conf
 import { Email } from '../../users/application/dto/email.dto';
 import { UsersService } from '../../users/application/users.service';
 import { RevokedTokenType } from '../../users/domain/schemas/revoked-tokens.schema';
-import { AuthService } from '../application/auth.service';
 import { LoginDto } from '../application/dto/login.dto';
 import { JwtPayloadWithRt } from '../application/interfaces/jwt-payload-with-rt.type';
 import { DecodedJwtRTPayload } from '../application/interfaces/jwtPayload.type';
