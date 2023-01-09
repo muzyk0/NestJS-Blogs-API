@@ -115,7 +115,6 @@ describe('TestingService', () => {
         login: 'Test',
         email: 'test@9art.ru',
         password: '',
-        createdAt: new Date(),
       },
       loginAttempts: [],
       emailConfirmation: {

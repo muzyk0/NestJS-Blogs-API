@@ -22,6 +22,9 @@ import { PasswordRecoveryModule } from './features/password-recovery/password-re
 import { LikesModule } from './features/likes/likes.module';
 import typeOrmConfig from './config/typeorm.config';
 
+console.log('typeOrmConfig.options', typeOrmConfig.options);
+console.log('configuration()', configuration());
+
 @Module({
   imports: [
     configModule,
