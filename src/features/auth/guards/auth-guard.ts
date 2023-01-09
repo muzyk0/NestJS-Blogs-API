@@ -4,10 +4,14 @@ import { Observable } from 'rxjs';
 
 import { AuthService } from '../application/auth.service';
 import { JwtATPayload } from '../application/interfaces/jwtPayload.type';
+import { JwtService } from '../application/jwt.service';
 
 @Injectable()
 export class AuthGuard implements CanActivate {
-  constructor(private readonly authService: AuthService) {}
+  constructor(
+    private readonly authService: AuthService,
+    private readonly jwtService: JwtService,
+  ) {}
 
   canActivate(
     context: ExecutionContext,
@@ -21,7 +25,7 @@ export class AuthGuard implements CanActivate {
     }
 
     try {
-      const decodedCtx = this.authService.decodeJwtToken<JwtATPayload>(token);
+      const decodedCtx = this.jwtService.decodeJwtToken<JwtATPayload>(token);
 
       request.user = decodedCtx;
     } catch (e) {

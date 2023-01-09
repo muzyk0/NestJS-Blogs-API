@@ -3,6 +3,7 @@ import { MongooseModule } from '@nestjs/mongoose';
 
 /* eslint import/order: ["error", {"newlines-between": "ignore"}] */
 import { TypeOrmModule } from '@nestjs/typeorm';
+import { CqrsModule } from '@nestjs/cqrs';
 import { configModule } from './constants';
 
 import { AppController } from './app.controller';
@@ -21,9 +22,6 @@ import { SecurityModule } from './features/security/security.module';
 import { PasswordRecoveryModule } from './features/password-recovery/password-recovery.module';
 import { LikesModule } from './features/likes/likes.module';
 import typeOrmConfig from './config/typeorm.config';
-
-console.log('typeOrmConfig.options', typeOrmConfig.options);
-console.log('configuration()', configuration());
 
 @Module({
   imports: [

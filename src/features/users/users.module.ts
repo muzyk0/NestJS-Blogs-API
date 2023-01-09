@@ -1,4 +1,5 @@
 import { forwardRef, Module } from '@nestjs/common';
+import { CqrsModule } from '@nestjs/cqrs';
 import { MongooseModule } from '@nestjs/mongoose';
 
 import { AuthModule } from '../auth/auth.module';
@@ -14,6 +15,7 @@ import { UsersRepository } from './infrastructure/users.repository';
 
 @Module({
   imports: [
+    CqrsModule,
     forwardRef(() => AuthModule),
     MongooseModule.forFeature([{ name: User.name, schema: UserSchema }]),
     EmailModule,

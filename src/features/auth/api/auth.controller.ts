@@ -12,6 +12,7 @@ import {
   UnauthorizedException,
   UseGuards,
 } from '@nestjs/common';
+import { CommandBus } from '@nestjs/cqrs';
 import { Request, Response } from 'express';
 
 import { GetCurrentUserId } from '../../../common/decorators/get-current-user-id.decorator';
@@ -19,17 +20,21 @@ import { GetCurrentJwtContext } from '../../../common/decorators/get-current-use
 import { LimitsControlWithIpAndLoginGuard } from '../../limits/guards/limits-control-with-ip-and-login-guard.service';
 import { LimitsControlGuard } from '../../limits/guards/limits-control.guard';
 import { CreateRecoveryPasswordDto } from '../../password-recovery/application/dto/confirm-password-recovery.dto';
-import { PasswordRecoveryService } from '../../password-recovery/application/password-recovery.service';
 import { SecurityService } from '../../security/application/security.service';
 import { CreateUserDto } from '../../users/application/dto/create-user.dto';
 import { EmailConfirmationCodeDto } from '../../users/application/dto/email-confirmation-code.dto';
 import { Email } from '../../users/application/dto/email.dto';
 import { UsersService } from '../../users/application/users.service';
 import { RevokedTokenType } from '../../users/domain/schemas/revoked-tokens.schema';
-import { AuthService } from '../application/auth.service';
 import { LoginDto } from '../application/dto/login.dto';
 import { JwtPayloadWithRt } from '../application/interfaces/jwt-payload-with-rt.type';
 import { DecodedJwtRTPayload } from '../application/interfaces/jwtPayload.type';
+import { JwtService } from '../application/jwt.service';
+import { ConfirmAccountCommand } from '../application/use-cases/confirm-account.handler';
+import { ConfirmPasswordRecoveryCommand } from '../application/use-cases/confirm-password-recovery.handler';
+import { LoginCommand } from '../application/use-cases/login.handler';
+import { ResendConfirmationCodeCommand } from '../application/use-cases/resend-confirmation-code.handler';
+import { SendRecoveryPasswordTempCodeCommand } from '../application/use-cases/send-recovery-password-temp-code.handler';
 import { JwtAuthGuard } from '../guards/jwt-auth.guard';
 import { JwtRefreshAuthGuard } from '../guards/jwt-refresh-auth.guard';
 import { LocalAuthGuard } from '../guards/local-auth.guard';
@@ -37,10 +42,10 @@ import { LocalAuthGuard } from '../guards/local-auth.guard';
 @Controller('auth')
 export class AuthController {
   constructor(
-    private readonly authService: AuthService,
     private readonly usersService: UsersService,
-    private securityService: SecurityService,
-    private passwordRecoveryService: PasswordRecoveryService,
+    private readonly securityService: SecurityService,
+    private readonly jwtService: JwtService,
+    private readonly commandBus: CommandBus,
   ) {}
 
   @UseGuards(LimitsControlWithIpAndLoginGuard, LocalAuthGuard)
@@ -51,14 +56,16 @@ export class AuthController {
     @Req() req: Request,
     @Res({ passthrough: true }) res: Response,
   ) {
-    const { refreshToken, ...tokens } = await this.authService.login(loginDto);
+    const { refreshToken, ...tokens } = await this.commandBus.execute(
+      new LoginCommand(loginDto.loginOrEmail, loginDto.password),
+    );
 
     if (!tokens) {
       throw new UnauthorizedException();
     }
 
     const decodedAccessToken =
-      await this.authService.decodeJwtToken<DecodedJwtRTPayload>(refreshToken);
+      await this.jwtService.decodeJwtToken<DecodedJwtRTPayload>(refreshToken);
 
     const userAgent = req.get('User-Agent');
 
@@ -109,11 +116,14 @@ export class AuthController {
   @Post('/registration-confirmation')
   @HttpCode(HttpStatus.NO_CONTENT)
   async confirmAccount(@Body() { code }: EmailConfirmationCodeDto) {
-    const isConfirmed = await this.authService.confirmAccount(code);
+    const isConfirmed = await this.commandBus.execute<
+      ConfirmAccountCommand,
+      boolean
+    >(new ConfirmAccountCommand(code));
 
     if (!isConfirmed) {
       throw new BadRequestException([
-        { message: 'Code isn"t correct', field: 'code' },
+        { message: "Code isn't correct", field: 'code' },
       ]);
     }
 
@@ -132,7 +142,9 @@ export class AuthController {
       ]);
     }
 
-    const isConfirmed = await this.authService.resendConfirmationCode(email);
+    const isConfirmed = await this.commandBus.execute(
+      new ResendConfirmationCodeCommand(email),
+    );
 
     if (!isConfirmed) {
       throw new BadRequestException([
@@ -192,7 +204,7 @@ export class AuthController {
       });
     }
 
-    const tokens = await this.authService.createJwtTokens(
+    const tokens = await this.jwtService.createJwtTokens(
       {
         user: ctx.user,
       },
@@ -203,7 +215,7 @@ export class AuthController {
     );
 
     const decodedAccessToken =
-      await this.authService.decodeJwtToken<DecodedJwtRTPayload>(
+      await this.jwtService.decodeJwtToken<DecodedJwtRTPayload>(
         tokens.refreshToken,
       );
 
@@ -269,15 +281,9 @@ export class AuthController {
   @UseGuards(LimitsControlWithIpAndLoginGuard)
   @HttpCode(HttpStatus.NO_CONTENT)
   async recoveryPassword(@Body() { email }: Email) {
-    const user = this.usersService.findOneByEmail(email);
-
-    if (!user) {
-      return;
-    }
-
-    await this.authService.sendRecoveryPasswordTempCode(email);
-
-    return;
+    return this.commandBus.execute(
+      new SendRecoveryPasswordTempCodeCommand(email),
+    );
   }
 
   @Post('/new-password')
@@ -286,25 +292,8 @@ export class AuthController {
   async confirmRecoveryPassword(
     @Body() { newPassword, recoveryCode }: CreateRecoveryPasswordDto,
   ) {
-    const recovery = await this.passwordRecoveryService.findByRecoveryCode(
-      recoveryCode,
+    return this.commandBus.execute(
+      new ConfirmPasswordRecoveryCommand(recoveryCode, newPassword),
     );
-
-    if (!recovery) {
-      throw new BadRequestException([
-        {
-          message: 'Recovery code is incorrect or expired',
-          field: 'recoveryCode',
-        },
-      ]);
-    }
-
-    await this.authService.confirmPasswordRecovery({
-      userId: recovery.userId,
-      newPassword,
-      recoveryCode,
-    });
-
-    return;
   }
 }

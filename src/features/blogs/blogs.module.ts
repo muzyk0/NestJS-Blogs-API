@@ -1,4 +1,5 @@
 import { Module } from '@nestjs/common';
+import { CqrsModule } from '@nestjs/cqrs';
 import { MongooseModule } from '@nestjs/mongoose';
 
 import { BlogExistsRule } from '../../common/decorators/validations/check-blogId-if-exist.decorator';
@@ -17,6 +18,7 @@ import { BlogsRepository } from './infrastructure/blogs.repository';
 
 @Module({
   imports: [
+    CqrsModule,
     MongooseModule.forFeature([{ name: Blog.name, schema: BlogSchema }]),
     MongooseModule.forFeature([
       { name: Security.name, schema: SecuritySchema },
