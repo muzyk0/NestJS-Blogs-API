@@ -17,9 +17,11 @@ import { UsersModule } from '../users/users.module';
 import { AuthController } from './api/auth.controller';
 import { AuthService } from './application/auth.service';
 import { JwtService } from './application/jwt.service';
+import { BaseAuthHandler } from './application/use-cases/base-auth.handler';
 import { ConfirmAccountHandler } from './application/use-cases/confirm-account.handler';
 import { ConfirmPasswordRecoveryHandler } from './application/use-cases/confirm-password-recovery.handler';
 import { LoginHandler } from './application/use-cases/login.handler';
+import { ResendConfirmationCodeHandler } from './application/use-cases/resend-confirmation-code.handler';
 import { SendRecoveryPasswordTempCodeHandler } from './application/use-cases/send-recovery-password-temp-code.handler';
 import { AtJwtStrategy } from './strategies/at.jwt.strategy';
 import { LocalStrategy } from './strategies/local.strategy';
@@ -31,6 +33,9 @@ const CommandHandlers = [
   LoginHandler,
   SendRecoveryPasswordTempCodeHandler,
   ConfirmAccountHandler,
+  BaseAuthHandler,
+  ConfirmPasswordRecoveryHandler,
+  ResendConfirmationCodeHandler,
 ];
 const Providers = [AuthService, JwtService];
 
