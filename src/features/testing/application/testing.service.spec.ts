@@ -1,5 +1,5 @@
 import { ConfigService } from '@nestjs/config';
-import { getModelToken } from '@nestjs/mongoose';
+import { getConnectionToken, getModelToken } from '@nestjs/mongoose';
 import { Test, TestingModule } from '@nestjs/testing';
 import { addDays } from 'date-fns';
 import { MongoMemoryServer } from 'mongodb-memory-server';
@@ -56,17 +56,29 @@ describe('TestingService', () => {
       providers: [
         TestingService,
         TestingRepository,
-        { provide: getModelToken(Post.name), useValue: postModel },
-        { provide: getModelToken(Blog.name), useValue: blogModel },
-        { provide: getModelToken(User.name), useValue: userModel },
-        { provide: getModelToken(Comment.name), useValue: commentModel },
-        { provide: getModelToken(Limit.name), useValue: limitModel },
-        { provide: getModelToken(Security.name), useValue: securityModel },
         {
           provide: DataSource,
-          useValue: jest.fn(),
+          useValue: {
+            createQueryRunner: jest.fn().mockResolvedValue({
+              connect: jest.fn(),
+            }),
+          },
         },
-        ConfigService,
+        {
+          provide: ConfigService,
+          useValue: {
+            get: jest.fn((key: string) => {
+              if (key === 'ENABLE_CLEAR_DB_ENDPOINT') {
+                return 'true';
+              }
+              return null;
+            }),
+          },
+        },
+        {
+          provide: getConnectionToken('Database'),
+          useValue: {},
+        },
       ],
     }).compile();
     testingService = app.get<TestingService>(TestingService);
@@ -151,6 +163,16 @@ describe('TestingService', () => {
       ip: '127.0.0.1',
     });
 
+    await securityModel.create({
+      id: v4(),
+      userId: 'some user id',
+      deviceId: v4(),
+      issuedAt: new Date(),
+      expireAt: new Date(),
+      ip: 'some ip',
+      deviceName: 'Device',
+    });
+
     expect(postCount).toBe(countCreatedPosts);
 
     const collections = mongoConnection.collections;
@@ -184,8 +206,6 @@ describe('TestingService', () => {
 
     await Promise.all(
       collections.map(async (collection) => {
-        const res = await collection.find({});
-        console.log(res);
         countDocumentsAfterClearDb += await collection.countDocuments({});
         return;
       }),
