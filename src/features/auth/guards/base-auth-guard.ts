@@ -7,9 +7,7 @@ import {
 import { CommandBus } from '@nestjs/cqrs';
 import { Request } from 'express';
 
-import { AuthService } from '../application/auth.service';
 import { BaseAuthCommand } from '../application/use-cases/base-auth.handler';
-import { ConfirmPasswordRecoveryCommand } from '../application/use-cases/confirm-password-recovery.handler';
 
 @Injectable()
 export class BaseAuthGuard implements CanActivate {
