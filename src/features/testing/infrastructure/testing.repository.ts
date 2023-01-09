@@ -33,7 +33,7 @@ export class TestingRepository {
     @InjectModel(Security.name) private securityModel: Model<SecurityDocument>,
   ) {}
 
-  async clearSqlDatabase(): Promise<boolean> {
+  private async clearSqlDatabase(): Promise<boolean> {
     const queryRunner = this.dataSource.createQueryRunner();
     await queryRunner.connect();
 

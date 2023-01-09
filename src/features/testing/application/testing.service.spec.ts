@@ -1,3 +1,4 @@
+import { ConfigService } from '@nestjs/config';
 import { getModelToken } from '@nestjs/mongoose';
 import { Test, TestingModule } from '@nestjs/testing';
 import { addDays } from 'date-fns';
@@ -61,11 +62,11 @@ describe('TestingService', () => {
         { provide: getModelToken(Comment.name), useValue: commentModel },
         { provide: getModelToken(Limit.name), useValue: limitModel },
         { provide: getModelToken(Security.name), useValue: securityModel },
-
         {
           provide: DataSource,
           useValue: jest.fn(),
         },
+        ConfigService,
       ],
     }).compile();
     testingService = app.get<TestingService>(TestingService);
@@ -88,6 +89,9 @@ describe('TestingService', () => {
       id: v4(),
       name: userName,
       websiteUrl: youtubeUrl,
+      description: 'some description',
+      createdAt: new Date(),
+      updatedAt: new Date(),
     });
 
     const testPosts = new Array(countCreatedPosts).fill({
@@ -97,6 +101,8 @@ describe('TestingService', () => {
       content: 'some content',
       shortDescription: 'short description',
       title: 'Some title',
+      createdAt: new Date(),
+      updatedAt: new Date(),
     });
 
     expect(blog).toBeDefined();
@@ -163,21 +169,27 @@ describe('TestingService', () => {
   });
 
   it('clear DB after create', async () => {
-    const collections = mongoConnection.collections;
+    const collections = Object.values(mongoConnection.collections);
 
-    for (const key in collections) {
-      const collection = collections[key];
-      countAll += await collection.countDocuments({});
-    }
+    await Promise.all(
+      collections.map(async (collection) => {
+        countAll += await collection.countDocuments({});
+        return;
+      }),
+    );
 
     const result = await testingService.clearDatabase();
 
     let countDocumentsAfterClearDb = 0;
 
-    for (const key in collections) {
-      const collection = collections[key];
-      countDocumentsAfterClearDb += await collection.countDocuments({});
-    }
+    await Promise.all(
+      collections.map(async (collection) => {
+        const res = await collection.find({});
+        console.log(res);
+        countDocumentsAfterClearDb += await collection.countDocuments({});
+        return;
+      }),
+    );
 
     expect(result).toBeTruthy();
     expect(countDocumentsAfterClearDb).not.toBe(countAll);
