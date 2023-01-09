@@ -4,13 +4,16 @@ import {
   Injectable,
   UnauthorizedException,
 } from '@nestjs/common';
+import { CommandBus } from '@nestjs/cqrs';
 import { Request } from 'express';
 
 import { AuthService } from '../application/auth.service';
+import { BaseAuthCommand } from '../application/use-cases/base-auth.handler';
+import { ConfirmPasswordRecoveryCommand } from '../application/use-cases/confirm-password-recovery.handler';
 
 @Injectable()
 export class BaseAuthGuard implements CanActivate {
-  constructor(private authService: AuthService) {}
+  constructor(private readonly commandBus: CommandBus) {}
 
   async canActivate(context: ExecutionContext): Promise<boolean> {
     const req: Request = context.switchToHttp().getRequest();
@@ -25,7 +28,7 @@ export class BaseAuthGuard implements CanActivate {
 
     const token = req.headers.authorization.split(' ')[1];
 
-    const isAuth = await this.authService.compareBaseAuth(token);
+    const isAuth = await this.commandBus.execute(new BaseAuthCommand(token));
 
     if (!isAuth) {
       throw new UnauthorizedException();

@@ -3,6 +3,7 @@ import { MongooseModule } from '@nestjs/mongoose';
 
 /* eslint import/order: ["error", {"newlines-between": "ignore"}] */
 import { TypeOrmModule } from '@nestjs/typeorm';
+import { CqrsModule } from '@nestjs/cqrs';
 import { configModule } from './constants';
 
 import { AppController } from './app.controller';

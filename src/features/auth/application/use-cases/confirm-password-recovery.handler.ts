@@ -1,0 +1,54 @@
+import { BadRequestException } from '@nestjs/common';
+import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
+import * as bcrypt from 'bcrypt';
+
+import { PasswordRecoveryService } from '../../../password-recovery/application/password-recovery.service';
+import { UsersService } from '../../../users/application/users.service';
+
+export class ConfirmPasswordRecoveryCommand {
+  constructor(
+    public readonly recoveryCode: string,
+    public readonly newPassword: string,
+  ) {}
+}
+
+@CommandHandler(ConfirmPasswordRecoveryCommand)
+export class ConfirmPasswordRecoveryHandler
+  implements ICommandHandler<ConfirmPasswordRecoveryCommand>
+{
+  constructor(
+    private readonly usersService: UsersService,
+    private readonly passwordRecoveryService: PasswordRecoveryService,
+  ) {}
+
+  async execute({ recoveryCode, newPassword }: ConfirmPasswordRecoveryCommand) {
+    const recovery = await this.passwordRecoveryService.findByRecoveryCode(
+      recoveryCode,
+    );
+
+    if (!recovery) {
+      throw new BadRequestException([
+        {
+          message: 'Recovery code is incorrect or expired',
+          field: 'recoveryCode',
+        },
+      ]);
+    }
+
+    const isConfirm =
+      await this.passwordRecoveryService.confirmPasswordRecovery(recoveryCode);
+
+    if (isConfirm) {
+      const password = await this.generateHashPassword(newPassword);
+
+      await this.usersService.updateUserPassword({
+        id: recovery.userId,
+        password,
+      });
+    }
+  }
+
+  async generateHashPassword(password: string) {
+    return bcrypt.hash(password, 10);
+  }
+}
