@@ -2,6 +2,7 @@ import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
 import { v4 } from 'uuid';
 
 import { UsersService } from '../../../users/application/users.service';
+import { User } from '../../../users/domain/schemas/users.schema';
 import { AuthService } from '../auth.service';
 import { JwtATPayload, JwtRTPayload } from '../interfaces/jwtPayload.type';
 import { JwtService } from '../jwt.service';
@@ -41,23 +42,46 @@ export class LoginHandler implements ICommandHandler<LoginCommand> {
 
     const deviceId = v4();
 
-    const atPayload: JwtATPayload = {
-      user: {
-        id,
-        login: user.accountData.login,
-        email,
-      },
-    };
+    const atPayload = this.createAccessTokenPayload(
+      id,
+      user.accountData.login,
+      email,
+    );
+    const rtPayload = this.createRefreshTokenPayload(
+      id,
+      user.accountData.login,
+      email,
+      deviceId,
+    );
 
+    return this.jwtService.createJwtTokens(atPayload, rtPayload);
+  }
+
+  private createRefreshTokenPayload(
+    id: string,
+    login: string,
+    email: string,
+    deviceId: string,
+  ) {
     const rtPayload: JwtRTPayload = {
       user: {
         id,
-        login: user.accountData.login,
+        login,
         email,
       },
       deviceId,
     };
+    return rtPayload;
+  }
 
-    return this.jwtService.createJwtTokens(atPayload, rtPayload);
+  private createAccessTokenPayload(id: string, login: string, email: string) {
+    const atPayload: JwtATPayload = {
+      user: {
+        id,
+        login,
+        email,
+      },
+    };
+    return atPayload;
   }
 }

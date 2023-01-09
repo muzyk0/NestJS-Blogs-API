@@ -23,6 +23,7 @@ import { ConfirmPasswordRecoveryHandler } from './application/use-cases/confirm-
 import { LoginHandler } from './application/use-cases/login.handler';
 import { ResendConfirmationCodeHandler } from './application/use-cases/resend-confirmation-code.handler';
 import { SendRecoveryPasswordTempCodeHandler } from './application/use-cases/send-recovery-password-temp-code.handler';
+import { ValidateUserHandler } from './application/use-cases/validate-user.handler';
 import { AtJwtStrategy } from './strategies/at.jwt.strategy';
 import { LocalStrategy } from './strategies/local.strategy';
 import { RtJwtStrategy } from './strategies/rt.jwt.strategy';
@@ -36,6 +37,7 @@ const CommandHandlers = [
   BaseAuthHandler,
   ConfirmPasswordRecoveryHandler,
   ResendConfirmationCodeHandler,
+  ValidateUserHandler,
 ];
 const Providers = [AuthService, JwtService];
 

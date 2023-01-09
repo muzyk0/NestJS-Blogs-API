@@ -39,13 +39,17 @@ export class ConfirmPasswordRecoveryHandler
       await this.passwordRecoveryService.confirmPasswordRecovery(recoveryCode);
 
     if (isConfirm) {
-      const password = await this.generateHashPassword(newPassword);
-
-      await this.usersService.updateUserPassword({
-        id: recovery.userId,
-        password,
-      });
+      await this.updateUserPassword(recovery.userId, newPassword);
     }
+  }
+
+  private async updateUserPassword(userId: string, newPassword: string) {
+    const password = await this.generateHashPassword(newPassword);
+
+    await this.usersService.updateUserPassword({
+      id: userId,
+      password,
+    });
   }
 
   async generateHashPassword(password: string) {

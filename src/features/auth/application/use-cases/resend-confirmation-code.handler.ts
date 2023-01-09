@@ -4,7 +4,6 @@ import { v4 } from 'uuid';
 
 import { EmailTemplateManager } from '../../../email/application/email-template-manager';
 import { EmailService } from '../../../email/application/email.service';
-import { PasswordRecoveryService } from '../../../password-recovery/application/password-recovery.service';
 import { UsersService } from '../../../users/application/users.service';
 
 export class ResendConfirmationCodeCommand {
@@ -18,7 +17,6 @@ export class ResendConfirmationCodeHandler
   constructor(
     private readonly emailService: EmailService,
     private readonly usersService: UsersService,
-    private readonly recoveryPasswordService: PasswordRecoveryService,
     private readonly emailTemplateManager: EmailTemplateManager,
   ) {}
 

@@ -9,18 +9,9 @@ export class BaseAuthCommand {
 @CommandHandler(BaseAuthCommand)
 export class BaseAuthHandler implements ICommandHandler<BaseAuthCommand> {
   async execute({ token }: BaseAuthCommand): Promise<boolean> {
-    const decodedBaseData = await this.decodeBaseAuth(token);
+    const decodedBaseAuthPayload = await this.decodeBaseAuth(token);
 
-    const baseAuthPayload = await this.getBaseAuthUser();
-
-    if (
-      decodedBaseData.login !== baseAuthPayload.login ||
-      decodedBaseData.password !== baseAuthPayload.password
-    ) {
-      return false;
-    }
-
-    return true;
+    return this.isAuthorizationAllowed(decodedBaseAuthPayload);
   }
 
   private async decodeBaseAuth(token: string) {
@@ -36,7 +27,14 @@ export class BaseAuthHandler implements ICommandHandler<BaseAuthCommand> {
     };
   }
 
-  private async getBaseAuthUser() {
-    return BaseAuthPayload;
+  private isAuthorizationAllowed(decodedBaseAuthPayload) {
+    if (
+      decodedBaseAuthPayload.login !== BaseAuthPayload.login ||
+      decodedBaseAuthPayload.password !== BaseAuthPayload.password
+    ) {
+      return false;
+    }
+
+    return true;
   }
 }
