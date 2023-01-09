@@ -26,7 +26,7 @@ export class ConfirmAccountHandler
   }
 
   private isAvailableConfirmAccount(user: User, code: string) {
-    if (!user || this.isConfirm(user)) {
+    if (!user || this.isConfirmed(user)) {
       return false;
     }
 
@@ -34,12 +34,12 @@ export class ConfirmAccountHandler
       return false;
     }
 
-    if (this.isValidConfirmationCode(user, code)) {
+    if (!this.isValidConfirmationCode(user, code)) {
       return false;
     }
   }
 
-  private isConfirm(user: User) {
+  private isConfirmed(user: User) {
     return user.emailConfirmation.isConfirmed;
   }
 
