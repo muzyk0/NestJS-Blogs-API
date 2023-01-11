@@ -15,6 +15,8 @@ import { ErrorExceptionFilter, HttpExceptionFilter } from './common/filters';
 
   const configService = app.get(ConfigService);
 
+  console.warn('RMQ_URLS', configService.get<string>('RMQ_URLS').split(', '));
+
   app.set('trust proxy');
   app.enableCors();
   app.use(cookieParser());

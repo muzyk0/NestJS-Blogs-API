@@ -4,6 +4,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 
 /* eslint import/order: ["error", {"newlines-between": "ignore"}] */
 import { configModule } from './constants';
+import { EmailModule } from './features/email/email.module';
 
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
@@ -11,7 +12,6 @@ import { AuthModule } from './features/auth/auth.module';
 import { BlogsModule } from './features/blogs/blogs.module';
 import { CommentsModule } from './features/comments/comments.module';
 import configuration from './config/configuration';
-import { EmailModule } from './features/email/email.module';
 import { LimitsModule } from './features/limits/limits.module';
 import { PostsModule } from './features/posts/posts.module';
 import { TestModule } from './features/test-users/test-users.module';
@@ -27,6 +27,7 @@ import typeOrmConfig from './config/typeorm.config';
     configModule,
     MongooseModule.forRoot(configuration().MONGO_URI),
     TypeOrmModule.forRoot(typeOrmConfig.options),
+    EmailModule,
     TestModule,
     BlogsModule,
     PostsModule,
@@ -34,7 +35,6 @@ import typeOrmConfig from './config/typeorm.config';
     UsersModule,
     TestingModule,
     CommentsModule,
-    EmailModule,
     LimitsModule,
     SecurityModule,
     PasswordRecoveryModule,
