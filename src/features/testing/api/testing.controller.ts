@@ -1,4 +1,4 @@
-import { Controller, Delete, HttpStatus, Res } from '@nestjs/common';
+import { Controller, Delete, Get, HttpStatus, Res } from '@nestjs/common';
 import { Response } from 'express';
 
 import { TestingService } from '../application/testing.service';
@@ -12,5 +12,13 @@ export class TestingController {
     await this.testingService.clearDatabase();
 
     res.status(HttpStatus.NO_CONTENT).send();
+  }
+
+  @Get('health-check')
+  async healthCheckMessageService() {
+    await this.testingService.healthCheckMessageService();
+    return {
+      rabbitMQMessageSender: 'OK',
+    };
   }
 }

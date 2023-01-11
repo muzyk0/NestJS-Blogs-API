@@ -2,7 +2,6 @@ import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
 import { addDays } from 'date-fns';
 import { v4 } from 'uuid';
 
-import { EmailTemplateManager } from '../../../email/application/email-template-manager';
 import { EmailService } from '../../../email/application/email.service';
 import { UsersService } from '../../../users/application/users.service';
 
@@ -15,9 +14,8 @@ export class ResendConfirmationCodeHandler
   implements ICommandHandler<ResendConfirmationCodeCommand>
 {
   constructor(
-    private readonly emailService: EmailService,
     private readonly usersService: UsersService,
-    private readonly emailTemplateManager: EmailTemplateManager,
+    private readonly emailService: EmailService,
   ) {}
 
   async execute({ email }: ResendConfirmationCodeCommand): Promise<boolean> {
@@ -37,14 +35,11 @@ export class ResendConfirmationCodeHandler
       return false;
     }
 
-    const emailTemplate =
-      this.emailTemplateManager.getEmailConfirmationMessage(updatedUser);
-
-    await this.emailService.sendEmail(
-      updatedUser.accountData.email,
-      'Confirm your account ✔',
-      emailTemplate,
-    );
+    await this.emailService.SendConfirmationCode({
+      email: email,
+      userName: user.accountData.login,
+      confirmationCode: user.emailConfirmation.confirmationCode,
+    });
     return true;
   }
 }

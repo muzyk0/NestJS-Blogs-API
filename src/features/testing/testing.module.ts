@@ -7,6 +7,7 @@ import {
   Comment,
   CommentSchema,
 } from '../comments/domain/schemas/comments.schema';
+import { EmailModule } from '../email/email.module';
 import { Like } from '../likes/domain/entity/like.entity';
 import { Limit, LimitSchema } from '../limits/domain/schemas/limits.schema';
 import { Post, PostSchema } from '../posts/domain/schemas/posts.schema';
@@ -22,6 +23,7 @@ import { TestingRepository } from './infrastructure/testing.repository';
 
 @Module({
   imports: [
+    EmailModule,
     TypeOrmModule.forFeature([Like]),
 
     MongooseModule.forFeature([{ name: Post.name, schema: PostSchema }]),

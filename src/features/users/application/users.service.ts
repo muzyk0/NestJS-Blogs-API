@@ -3,7 +3,6 @@ import * as bcrypt from 'bcrypt';
 import { addDays } from 'date-fns';
 import { v4 } from 'uuid';
 
-import { EmailTemplateManager } from '../../email/application/email-template-manager';
 import { EmailService } from '../../email/application/email.service';
 import { RevokedTokenType } from '../domain/schemas/revoked-tokens.schema';
 import { UserAccountDBType } from '../domain/schemas/users.schema';
@@ -17,7 +16,6 @@ export class UsersService {
   constructor(
     private readonly usersRepository: UsersRepository,
     private readonly emailService: EmailService,
-    private readonly emailTemplateManager: EmailTemplateManager,
   ) {}
 
   async create({ login, email, password }: CreateUserDto) {
@@ -47,14 +45,11 @@ export class UsersService {
     }
 
     try {
-      const emailTemplate =
-        this.emailTemplateManager.getEmailConfirmationMessage(newUser);
-
-      await this.emailService.sendEmail(
+      await this.emailService.SendConfirmationCode({
         email,
-        `Thanks for registration ${createdUser.accountData.login}`,
-        emailTemplate,
-      );
+        userName: createdUser.accountData.login,
+        confirmationCode: createdUser.emailConfirmation.confirmationCode,
+      });
     } catch (e) {
       console.error(e);
 
