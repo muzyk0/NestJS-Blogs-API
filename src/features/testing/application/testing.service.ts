@@ -18,12 +18,16 @@ export class TestingService implements ITestingService {
     return this.testingRepository.clearDatabase();
   }
 
-  async healthCheckMessageService(): Promise<boolean> {
-    await this.emailService.sendTestEmail({
-      email: 'ru9art@gmail.com',
-      userName: 'muzyk0',
-    });
+  // async healthCheckMessageService(): Promise<boolean> {
+  //   await this.emailService.sendTestEmail({
+  //     email: 'ru9art@gmail.com',
+  //     userName: 'muzyk0',
+  //   });
+  //
+  //   return true;
+  // }
 
-    return true;
+  async healthCheckMessageService() {
+    return await this.emailService.healthCheck();
   }
 }

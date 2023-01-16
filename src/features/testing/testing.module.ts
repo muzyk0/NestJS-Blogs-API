@@ -7,6 +7,7 @@ import {
   Comment,
   CommentSchema,
 } from '../comments/domain/schemas/comments.schema';
+import { rabbitMQModule } from '../email/constants';
 import { EmailModule } from '../email/email.module';
 import { Like } from '../likes/domain/entity/like.entity';
 import { Limit, LimitSchema } from '../limits/domain/schemas/limits.schema';
@@ -34,6 +35,7 @@ import { TestingRepository } from './infrastructure/testing.repository';
     MongooseModule.forFeature([
       { name: Security.name, schema: SecuritySchema },
     ]),
+    rabbitMQModule,
   ],
   controllers: [TestingController],
   providers: [TestingService, TestingRepository],
