@@ -6,10 +6,6 @@ export const rabbitMQModule = ClientsModule.registerAsync([
     name: 'MESSAGE_SENDER_SERVICE',
     imports: [ConfigModule],
     useFactory: (configService: ConfigService) => {
-      console.warn(
-        'RMQ_URLS',
-        configService.get<string>('RMQ_URLS').split(', '),
-      );
       return {
         transport: Transport.RMQ,
         options: {

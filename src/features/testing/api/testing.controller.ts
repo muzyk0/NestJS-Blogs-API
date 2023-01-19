@@ -18,6 +18,10 @@ export class TestingController {
     @Inject('MESSAGE_SENDER_SERVICE') private client: ClientProxy,
   ) {}
 
+  async onApplicationBootstrap() {
+    await this.client.connect();
+  }
+
   @Delete('all-data')
   async clearDatabase(@Res() res: Response) {
     await this.testingService.clearDatabase();
@@ -25,21 +29,20 @@ export class TestingController {
     res.status(HttpStatus.NO_CONTENT).send();
   }
 
-  // @Get('health-check')
-  // async healthCheckMessageService() {
-  //   const res = await this.testingService.healthCheckMessageService();
-  //   return {
-  //     rabbitMQMessageSender: JSON.stringify(res),
-  //   };
-  // }
-  async onApplicationBootstrap() {
-    await this.client.connect();
+  @Get('send-test-email')
+  async healthCheckMessageService() {
+    const res = await this.testingService.sendTestEmail();
+    return {
+      rabbitMQMessageSender: JSON.stringify(res),
+    };
   }
 
   @Get('health-check')
   async healthCheck() {
-    // await this.client.connect();
     console.log('health-check');
-    return this.client.send<string>({ cmd: 'health-check' }, {});
+    return this.client.send<string>(
+      { cmd: 'health-check' },
+      { payload: 'this is payload from blogs service' },
+    );
   }
 }
