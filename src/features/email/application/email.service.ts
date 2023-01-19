@@ -1,26 +1,56 @@
-import { ISendMailOptions, MailerService } from '@nestjs-modules/mailer';
-import { Injectable } from '@nestjs/common';
+import { Inject, Injectable } from '@nestjs/common';
+import { ClientProxy } from '@nestjs/microservices';
+
+import {
+  ISendConfirmationCodeCommand,
+  ISendRecoveryPasswordTempCodeCommand,
+  ISendTestEmailCommand,
+} from './interfaces';
+import { EventPatterns } from './interfaces/enums';
 
 @Injectable()
 export class EmailService {
-  constructor(private readonly mailerService: MailerService) {}
+  constructor(@Inject('MESSAGE_SENDER_SERVICE') private client: ClientProxy) {}
 
-  private async send(mail: ISendMailOptions) {
-    return this.mailerService.sendMail(mail);
+  async onApplicationBootstrap() {
+    await this.client.connect();
   }
 
-  async sendEmail(email: string, subject: string, template: string) {
-    try {
-      const info = await this.send({
-        from: '"9ART.ru 👻" <info@9art.ru>',
-        to: email,
-        subject,
-        html: template,
-      });
+  async healthCheck() {
+    await this.client.connect();
+    console.log('health-check');
+    return this.client.send<string>({ cmd: 'health-check' }, undefined);
+  }
 
-      console.log('Message sent: %s', info);
-    } catch (e) {
-      throw new Error(`Email isn't send. Error: ${e}`);
-    }
+  async sendTestEmail({ email, userName }: ISendTestEmailCommand) {
+    await this.client.emit(EventPatterns.SEND_TEST_EMAIL, {
+      email,
+      userName,
+    });
+  }
+
+  async SendConfirmationCode({
+    email,
+    userName,
+    confirmationCode,
+  }: ISendConfirmationCodeCommand): Promise<void> {
+    console.log('yo');
+    await this.client.emit(EventPatterns.SEND_CONFIRMATION_CODE, {
+      email,
+      userName,
+      confirmationCode,
+    });
+  }
+
+  async SendRecoveryPasswordTempCode({
+    email,
+    userName,
+    recoveryCode,
+  }: ISendRecoveryPasswordTempCodeCommand): Promise<void> {
+    await this.client.emit(EventPatterns.SEND_RECOVERY_PASSWORD_TEMP_CODE, {
+      email,
+      userName,
+      recoveryCode,
+    });
   }
 }

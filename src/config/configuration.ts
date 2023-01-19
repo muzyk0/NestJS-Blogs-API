@@ -13,10 +13,6 @@ export default () => ({
     process.env.REFRESH_TOKEN_SECRET ?? 'this is refresh code for token',
   REFRESH_TOKEN_SECRET_EXPIRES_IN:
     process.env.REFRESH_TOKEN_SECRET_EXPIRES_IN ?? '60m',
-  SMTP: {
-    EMAIL_FROM: process.env.EMAIL_FROM || '',
-    EMAIL_FROM_PASSWORD: process.env.EMAIL_FROM_PASSWORD || '',
-  },
   IS_DEV: process.env.NODE_ENV === 'development',
   IP_RESTRICTION: {
     LIMIT: process.env.IP_RESTRICTION_LIMIT
@@ -24,4 +20,7 @@ export default () => ({
       : 5,
   },
   ENABLE_CLEAR_DB_ENDPOINT: process.env.ENABLE_CLEAR_DB_ENDPOINT === 'true',
+  RMQ_URLS: process.env.RMQ_URLS,
+  MESSAGE_SENDER_HOST: process.env.MESSAGE_SENDER_HOST,
+  MESSAGE_SENDER_PORT: process.env.MESSAGE_SENDER_PORT,
 });

@@ -1,6 +1,5 @@
 import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
 
-import { EmailTemplateManager } from '../../../email/application/email-template-manager';
 import { EmailService } from '../../../email/application/email.service';
 import { PasswordRecoveryService } from '../../../password-recovery/application/password-recovery.service';
 import { PasswordRecoveryDocument } from '../../../password-recovery/domain/schemas/recovery-password.schema';
@@ -15,10 +14,9 @@ export class SendRecoveryPasswordTempCodeHandler
   implements ICommandHandler<SendRecoveryPasswordTempCodeCommand>
 {
   constructor(
-    private readonly emailService: EmailService,
     private readonly usersService: UsersService,
     private readonly recoveryPasswordService: PasswordRecoveryService,
-    private readonly emailTemplateManager: EmailTemplateManager,
+    private readonly emailService: EmailService,
   ) {}
 
   async execute({
@@ -35,16 +33,12 @@ export class SendRecoveryPasswordTempCodeHandler
         user.accountData.id,
       );
 
-    const emailTemplate = this.emailTemplateManager.getRecoveryPasswordMessage({
+    await this.emailService.SendRecoveryPasswordTempCode({
+      email: email,
       userName: user.accountData.login,
       recoveryCode: passwordRecovery.code,
     });
 
-    await this.emailService.sendEmail(
-      email,
-      'Password recovery',
-      emailTemplate,
-    );
     return true;
   }
 }
