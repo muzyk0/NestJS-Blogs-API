@@ -7,7 +7,7 @@ export class PageOptionsDto {
   constructor() {
     Object.defineProperty(this, 'skip', {
       get() {
-        return (this.PageNumber - 1) * this.PageSize;
+        return (this.pageNumber - 1) * this.pageSize;
       },
       set(_val: string) {
         throw Error(`Property "skip" are only getter. Don't set value ${_val}`);
@@ -15,26 +15,30 @@ export class PageOptionsDto {
     });
   }
 
+  @IsString()
+  @IsOptional()
+  readonly sortBy?: string = 'createdAt';
+
   @IsEnum(Order)
   @IsOptional()
-  readonly order?: Order = Order.ASC;
+  readonly sortDirection?: Order = Order.DESC;
 
   @IsString()
   @IsOptional()
-  SearchNameTerm?: string | null = null;
+  searchNameTerm?: string | null = null;
 
   @Type(() => Number)
   @IsInt()
   @Min(1)
   @IsOptional()
-  readonly PageNumber?: number = 1;
+  readonly pageNumber?: number = 1;
 
   @Type(() => Number)
   @IsInt()
   @Min(1)
   @Max(100)
   @IsOptional()
-  readonly PageSize?: number = 10;
+  readonly pageSize?: number = 10;
 
   /**
    * Property "skip" are only getter. Don\'t set value
@@ -43,4 +47,14 @@ export class PageOptionsDto {
   // get skip() {
   //   return (this.PageNumber - 1) * this.PageSize;
   // }
+}
+
+export class PageOptionsForUserDto extends PageOptionsDto {
+  @IsString()
+  @IsOptional()
+  searchLoginTerm?: string | null = null;
+
+  @IsString()
+  @IsOptional()
+  searchEmailTerm?: string | null = null;
 }

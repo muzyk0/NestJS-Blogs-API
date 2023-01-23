@@ -1,14 +1,21 @@
 import { BadRequestException, ValidationPipe } from '@nestjs/common';
+import { ConfigService } from '@nestjs/config';
 import { NestFactory } from '@nestjs/core';
 import { NestExpressApplication } from '@nestjs/platform-express';
-import * as cookieParser from 'cookie-parser';
+import { useContainer } from 'class-validator';
+import cookieParser from 'cookie-parser';
 
 import { AppModule } from './app.module';
 import { ErrorExceptionFilter, HttpExceptionFilter } from './common/filters';
-import configuration from './config/configuration';
 
 (async function bootstrap() {
   const app = await NestFactory.create<NestExpressApplication>(AppModule);
+
+  useContainer(app.select(AppModule), { fallbackOnErrors: true });
+
+  const configService = app.get(ConfigService);
+
+  console.warn('RMQ_URLS', configService.get<string>('RMQ_URLS').split(', '));
 
   app.set('trust proxy');
   app.enableCors();
@@ -31,5 +38,6 @@ import configuration from './config/configuration';
   );
   app.useGlobalFilters(new ErrorExceptionFilter(), new HttpExceptionFilter());
 
-  await app.listen(configuration().PORT);
+  await app.listen(configService.get('PORT'));
+  console.log(`Application is running on: ${await app.getUrl()}`);
 })();
