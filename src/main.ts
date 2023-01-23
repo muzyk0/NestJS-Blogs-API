@@ -21,6 +21,8 @@ import { ErrorExceptionFilter, HttpExceptionFilter } from './common/filters';
   app.enableCors();
   app.use(cookieParser());
 
+  app.setGlobalPrefix(configService.get('BASE_PREFIX'));
+
   app.useGlobalPipes(
     new ValidationPipe({
       transform: true,
