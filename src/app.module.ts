@@ -1,10 +1,13 @@
+import { join } from 'path';
 import { Module } from '@nestjs/common';
 import { MongooseModule } from '@nestjs/mongoose';
 import { TypeOrmModule } from '@nestjs/typeorm';
 
 /* eslint import/order: ["error", {"newlines-between": "ignore"}] */
+import { MailerModule } from '@nestjs-modules/mailer';
+import { ConfigService } from '@nestjs/config';
+import { HandlebarsAdapter } from '@nestjs-modules/mailer/dist/adapters/handlebars.adapter';
 import { configModule } from './constants';
-import { EmailModule } from './features/email/email.module';
 
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
@@ -21,13 +24,41 @@ import { SecurityModule } from './features/security/security.module';
 import { PasswordRecoveryModule } from './features/password-recovery/password-recovery.module';
 import { LikesModule } from './features/likes/likes.module';
 import typeOrmConfig from './config/typeorm.config';
+import { EmailModuleLocal } from './features/email-local/email-local.module';
 
 @Module({
   imports: [
     configModule,
     MongooseModule.forRoot(configuration().MONGO_URI),
     TypeOrmModule.forRoot(typeOrmConfig.options),
-    EmailModule,
+    // EmailModule,
+    MailerModule.forRootAsync({
+      useFactory: async (config: ConfigService) => {
+        return {
+          // or transport: config.get("MAIL_TRANSPORT"),
+          transport: {
+            service: 'Gmail',
+            auth: {
+              user: config.get<string>('EMAIL_FROM'),
+              pass: config.get<string>('EMAIL_FROM_PASSWORD'),
+            },
+          },
+          defaults: {
+            from: `"No Reply" <${config.get<string>('EMAIL_FROM')}>`,
+          },
+          // preview: true,
+          template: {
+            dir: join(__dirname, 'templates'), // or process.cwd() + '/template/'
+            adapter: new HandlebarsAdapter(), // or new PugAdapter() or new EjsAdapter()
+            options: {
+              strict: true,
+            },
+          },
+        };
+      },
+      inject: [ConfigService],
+    }),
+    EmailModuleLocal,
     TestModule,
     BlogsModule,
     PostsModule,
