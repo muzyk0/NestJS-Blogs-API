@@ -1,5 +1,31 @@
 {
   "$schema": "https://json.schemastore.org/nest-cli",
   "collection": "@nestjs/schematics",
-  "sourceRoot": "src"
+  "sourceRoot": "apps/blogs-api/src",
+  "monorepo": true,
+  "root": "apps/blogs-api",
+  "compilerOptions": {
+    "webpack": true,
+    "tsConfigPath": "apps/blogs-api/tsconfig.app.json"
+  },
+  "projects": {
+    "blogs-api": {
+      "type": "application",
+      "root": "apps/blogs-api",
+      "entryFile": "main",
+      "sourceRoot": "apps/blogs-api/src",
+      "compilerOptions": {
+        "tsConfigPath": "apps/blogs-api/tsconfig.app.json"
+      }
+    },
+    "message-service": {
+      "type": "application",
+      "root": "apps/message-service",
+      "entryFile": "main",
+      "sourceRoot": "apps/message-service/src",
+      "compilerOptions": {
+        "tsConfigPath": "apps/message-service/tsconfig.app.json"
+      }
+    }
+  }
 }
