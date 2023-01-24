@@ -11,4 +11,9 @@ export class AppController {
   getHello(@Req() req: Request): string {
     return this.appService.getHello(req.get('host'));
   }
+
+  @Get('blog-platform')
+  healthCheck(): string {
+    return this.appService.healthCheck();
+  }
 }
