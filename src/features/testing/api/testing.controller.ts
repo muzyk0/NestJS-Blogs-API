@@ -1,12 +1,4 @@
-import {
-  Controller,
-  Delete,
-  Get,
-  HttpStatus,
-  Inject,
-  Res,
-} from '@nestjs/common';
-import { ClientProxy } from '@nestjs/microservices';
+import { Controller, Delete, Get, HttpStatus, Res } from '@nestjs/common';
 import { Response } from 'express';
 
 import { TestingService } from '../application/testing.service';
@@ -14,13 +6,12 @@ import { TestingService } from '../application/testing.service';
 @Controller('testing')
 export class TestingController {
   constructor(
-    private readonly testingService: TestingService,
-    @Inject('MESSAGE_SENDER_SERVICE') private client: ClientProxy,
+    private readonly testingService: TestingService, // @Inject('MESSAGE_SENDER_SERVICE') private client: ClientProxy,
   ) {}
 
-  async onApplicationBootstrap() {
-    await this.client.connect();
-  }
+  // async onApplicationBootstrap() {
+  //   await this.client.connect();
+  // }
 
   @Delete('all-data')
   async clearDatabase(@Res() res: Response) {
@@ -37,12 +28,12 @@ export class TestingController {
     };
   }
 
-  @Get('health-check')
-  async healthCheck() {
-    console.log('health-check');
-    return this.client.send<string>(
-      { cmd: 'health-check' },
-      { payload: 'this is payload from blogs service' },
-    );
-  }
+  // @Get('health-check')
+  // async healthCheck() {
+  //   console.log('health-check');
+  //   return this.client.send<string>(
+  //     { cmd: 'health-check' },
+  //     { payload: 'this is payload from blogs service' },
+  //   );
+  // }
 }

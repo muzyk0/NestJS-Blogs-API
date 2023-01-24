@@ -3,7 +3,7 @@ import * as bcrypt from 'bcrypt';
 import { addDays } from 'date-fns';
 import { v4 } from 'uuid';
 
-import { EmailService } from '../../email/application/email.service';
+import { EmailServiceLocal } from '../../email-local/application/email-local.service';
 import { RevokedTokenType } from '../domain/schemas/revoked-tokens.schema';
 import { UserAccountDBType } from '../domain/schemas/users.schema';
 import { UsersRepository } from '../infrastructure/users.repository';
@@ -15,7 +15,7 @@ import { UpdateConfirmationType } from './interfaces/users.interface';
 export class UsersService {
   constructor(
     private readonly usersRepository: UsersRepository,
-    private readonly emailService: EmailService,
+    private readonly emailService: EmailServiceLocal,
   ) {}
 
   async create({ login, email, password }: CreateUserDto) {
