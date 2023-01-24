@@ -1,4 +1,8 @@
-import { BadRequestException, ValidationPipe } from '@nestjs/common';
+import {
+  BadRequestException,
+  RequestMethod,
+  ValidationPipe,
+} from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { NestFactory } from '@nestjs/core';
 import { NestExpressApplication } from '@nestjs/platform-express';
@@ -21,7 +25,9 @@ import { ErrorExceptionFilter, HttpExceptionFilter } from './common/filters';
   app.enableCors();
   app.use(cookieParser());
 
-  app.setGlobalPrefix(configService.get('BASE_PREFIX'));
+  app.setGlobalPrefix(configService.get('BASE_PREFIX'), {
+    exclude: [{ path: '', method: RequestMethod.GET }],
+  });
 
   app.useGlobalPipes(
     new ValidationPipe({
