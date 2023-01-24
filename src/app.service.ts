@@ -15,4 +15,10 @@ export class AppService {
                   </p>
             </div>`;
   }
+
+  healthCheck(): string {
+    return `<div>
+              <h1>This service is currently working!</h1> 
+            </div>`;
+  }
 }
