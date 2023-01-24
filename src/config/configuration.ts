@@ -22,5 +22,5 @@ export default () => ({
   ENABLE_CLEAR_DB_ENDPOINT: process.env.ENABLE_CLEAR_DB_ENDPOINT === 'true',
   RMQ_URLS: process.env.RMQ_URLS,
   MESSAGE_SENDER_HOST: process.env.MESSAGE_SENDER_HOST,
-  MESSAGE_SENDER_PORT: process.env.MESSAGE_SENDER_PORT,
+  MESSAGE_SENDER_PORT: Number(process.env.MESSAGE_SENDER_PORT),
 });

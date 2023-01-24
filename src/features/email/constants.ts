@@ -7,13 +7,10 @@ export const rabbitMQModule = ClientsModule.registerAsync([
     imports: [ConfigModule],
     useFactory: (configService: ConfigService) => {
       return {
-        transport: Transport.RMQ,
+        transport: Transport.TCP,
         options: {
-          urls: configService.get<string>('RMQ_URLS').split(', '),
-          queue: 'message_sender_queue',
-          queueOptions: {
-            durable: false,
-          },
+          host: configService.get('MESSAGE_SENDER_HOST'),
+          port: configService.get('MESSAGE_SENDER_PORT'),
         },
       };
     },
