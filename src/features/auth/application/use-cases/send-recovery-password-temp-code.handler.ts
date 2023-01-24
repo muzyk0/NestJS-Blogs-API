@@ -1,6 +1,6 @@
 import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
 
-import { EmailService } from '../../../email/application/email.service';
+import { EmailServiceLocal } from '../../../email-local/application/email-local.service';
 import { PasswordRecoveryService } from '../../../password-recovery/application/password-recovery.service';
 import { PasswordRecoveryDocument } from '../../../password-recovery/domain/schemas/recovery-password.schema';
 import { UsersService } from '../../../users/application/users.service';
@@ -16,7 +16,7 @@ export class SendRecoveryPasswordTempCodeHandler
   constructor(
     private readonly usersService: UsersService,
     private readonly recoveryPasswordService: PasswordRecoveryService,
-    private readonly emailService: EmailService,
+    private readonly emailService: EmailServiceLocal,
   ) {}
 
   async execute({

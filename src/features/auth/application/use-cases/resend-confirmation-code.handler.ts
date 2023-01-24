@@ -2,7 +2,7 @@ import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
 import { addDays } from 'date-fns';
 import { v4 } from 'uuid';
 
-import { EmailService } from '../../../email/application/email.service';
+import { EmailServiceLocal } from '../../../email-local/application/email-local.service';
 import { UsersService } from '../../../users/application/users.service';
 
 export class ResendConfirmationCodeCommand {
@@ -15,7 +15,7 @@ export class ResendConfirmationCodeHandler
 {
   constructor(
     private readonly usersService: UsersService,
-    private readonly emailService: EmailService,
+    private readonly emailService: EmailServiceLocal,
   ) {}
 
   async execute({ email }: ResendConfirmationCodeCommand): Promise<boolean> {

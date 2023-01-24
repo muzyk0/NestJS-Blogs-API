@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 
-import { EmailService } from '../../email/application/email.service';
+import { EmailServiceLocal } from '../../email-local/application/email-local.service';
 import { TestingRepository } from '../infrastructure/testing.repository';
 
 interface ITestingService {
@@ -11,7 +11,7 @@ interface ITestingService {
 export class TestingService implements ITestingService {
   constructor(
     private readonly testingRepository: TestingRepository,
-    private readonly emailService: EmailService,
+    private readonly emailService: EmailServiceLocal,
   ) {}
 
   clearDatabase(): Promise<boolean> {

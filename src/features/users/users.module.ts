@@ -3,7 +3,7 @@ import { CqrsModule } from '@nestjs/cqrs';
 import { MongooseModule } from '@nestjs/mongoose';
 
 import { AuthModule } from '../auth/auth.module';
-import { EmailModule } from '../email/email.module';
+import { EmailModuleLocal } from '../email-local/email-local.module';
 import { PasswordRecoveryModule } from '../password-recovery/password-recovery.module';
 import { SecurityModule } from '../security/security.module';
 
@@ -18,7 +18,8 @@ import { UsersRepository } from './infrastructure/users.repository';
     CqrsModule,
     forwardRef(() => AuthModule),
     MongooseModule.forFeature([{ name: User.name, schema: UserSchema }]),
-    EmailModule,
+    // EmailModule,
+    EmailModuleLocal,
     SecurityModule,
     PasswordRecoveryModule,
   ],

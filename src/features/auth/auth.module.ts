@@ -4,7 +4,7 @@ import { JwtModule } from '@nestjs/jwt';
 import { MongooseModule } from '@nestjs/mongoose';
 import { PassportModule } from '@nestjs/passport';
 
-import { EmailModule } from '../email/email.module';
+import { EmailModuleLocal } from '../email-local/email-local.module';
 import { LimitsModule } from '../limits/limits.module';
 import { PasswordRecoveryModule } from '../password-recovery/password-recovery.module';
 import {
@@ -45,7 +45,8 @@ const Providers = [AuthService, JwtService];
   imports: [
     CqrsModule,
     JwtModule.register({}),
-    EmailModule,
+    // EmailModule,
+    EmailModuleLocal,
     UsersModule,
     PassportModule,
     LimitsModule,
