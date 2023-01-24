@@ -26,7 +26,10 @@ import { ErrorExceptionFilter, HttpExceptionFilter } from './common/filters';
   app.use(cookieParser());
 
   app.setGlobalPrefix(configService.get('BASE_PREFIX'), {
-    exclude: [{ path: '', method: RequestMethod.GET }],
+    exclude: [
+      { path: '', method: RequestMethod.GET },
+      { path: 'blog-platform', method: RequestMethod.GET },
+    ],
   });
 
   app.useGlobalPipes(
