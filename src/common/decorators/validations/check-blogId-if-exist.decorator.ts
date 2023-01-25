@@ -25,12 +25,14 @@ export class BlogExistsRule implements ValidatorConstraintInterface {
     }
   }
 
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   async validate(id: string, args: ValidationArguments) {
     const user = await this.blogsRepository.findOne(id);
 
     return Boolean(user);
   }
 
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   defaultMessage(args: ValidationArguments) {
     return `Blog doesn't exist`;
   }

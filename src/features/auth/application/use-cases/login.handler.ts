@@ -2,7 +2,6 @@ import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
 import { v4 } from 'uuid';
 
 import { UsersService } from '../../../users/application/users.service';
-import { User } from '../../../users/domain/schemas/users.schema';
 import { AuthService } from '../auth.service';
 import { JwtATPayload, JwtRTPayload } from '../interfaces/jwtPayload.type';
 import { JwtService } from '../jwt.service';
