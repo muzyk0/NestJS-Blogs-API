@@ -11,6 +11,7 @@ import {
   Post,
   UseGuards,
 } from '@nestjs/common';
+import { ApiTags } from '@nestjs/swagger';
 
 import { GetCurrentUserId } from '../../../common/decorators/get-current-user-id.decorator';
 import { GetCurrentJwtContext } from '../../../common/decorators/get-current-user.decorator';
@@ -23,6 +24,7 @@ import { CreateSecurityDto } from '../application/dto/create-security.dto';
 import { SecurityService } from '../application/security.service';
 import { SecurityQueryRepository } from '../infrastructure/security.query.repository';
 
+@ApiTags('securityDevices')
 @UseGuards(JwtRefreshAuthGuard)
 @Controller('security')
 export class SecurityController {

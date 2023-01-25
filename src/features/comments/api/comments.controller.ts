@@ -12,6 +12,7 @@ import {
   Put,
   UseGuards,
 } from '@nestjs/common';
+import { ApiTags } from '@nestjs/swagger';
 
 import { GetCurrentUserId } from '../../../common/decorators/get-current-user-id.decorator';
 import { GetCurrentJwtContextWithoutAuth } from '../../../common/decorators/get-current-user-without-auth.decorator';
@@ -37,6 +38,7 @@ export interface ICommentsService {
   checkCredentials(commentId: string, userId: string): Promise<boolean>;
 }
 
+@ApiTags('comments')
 @Controller('comments')
 export class CommentsController {
   constructor(

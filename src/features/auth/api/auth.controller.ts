@@ -13,6 +13,7 @@ import {
   UseGuards,
 } from '@nestjs/common';
 import { CommandBus } from '@nestjs/cqrs';
+import { ApiTags } from '@nestjs/swagger';
 import { Request, Response } from 'express';
 
 import { GetCurrentUserId } from '../../../common/decorators/get-current-user-id.decorator';
@@ -39,6 +40,7 @@ import { JwtAuthGuard } from '../guards/jwt-auth.guard';
 import { JwtRefreshAuthGuard } from '../guards/jwt-refresh-auth.guard';
 import { LocalAuthGuard } from '../guards/local-auth.guard';
 
+@ApiTags('auth')
 @Controller('auth')
 export class AuthController {
   constructor(
