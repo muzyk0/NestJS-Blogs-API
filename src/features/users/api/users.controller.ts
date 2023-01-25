@@ -12,6 +12,7 @@ import {
   Query,
   UseGuards,
 } from '@nestjs/common';
+import { ApiTags } from '@nestjs/swagger';
 
 import { PageOptionsForUserDto } from '../../../common/paginator/page-options.dto';
 import { BaseAuthGuard } from '../../auth/guards/base-auth-guard';
@@ -19,6 +20,7 @@ import { CreateUserDto } from '../application/dto/create-user.dto';
 import { UsersService } from '../application/users.service';
 import { UsersQueryRepository } from '../infrastructure/users.query.repository';
 
+@ApiTags('users')
 @Controller('users')
 export class UsersController {
   constructor(
