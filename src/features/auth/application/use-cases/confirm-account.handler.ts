@@ -1,7 +1,6 @@
 import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
 import { isAfter } from 'date-fns';
 
-import { PasswordRecoveryService } from '../../../password-recovery/application/password-recovery.service';
 import { UsersService } from '../../../users/application/users.service';
 import { User } from '../../../users/domain/schemas/users.schema';
 

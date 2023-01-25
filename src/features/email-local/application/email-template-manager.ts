@@ -1,4 +1,5 @@
 import { Inject, Injectable } from '@nestjs/common';
+
 import { ConfirmEmail, RecoveryEmail } from './interfaces/template-manager';
 
 @Injectable()
