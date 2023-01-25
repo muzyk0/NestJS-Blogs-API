@@ -10,6 +10,7 @@ import {
   SecuritySchema,
 } from '../security/domain/schemas/security.schema';
 
+import { BloggerController } from './api/blogger.controller';
 import { BlogsController } from './api/blogs.controller';
 import { BlogsService } from './application/blogs.service';
 import { Blog, BlogSchema } from './domain/schemas/blogs.schema';
@@ -26,7 +27,7 @@ import { BlogsRepository } from './infrastructure/blogs.repository';
     AuthModule,
     PostsModule,
   ],
-  controllers: [BlogsController],
+  controllers: [BlogsController, BloggerController],
   providers: [
     BlogsService,
     BlogsRepository,

@@ -18,7 +18,10 @@ export interface IBlogsQueryRepository {
 export class BlogsQueryRepository implements IBlogsQueryRepository {
   constructor(@InjectModel(Blog.name) private blogModel: Model<BlogDocument>) {}
 
-  async findAll(pageOptionsDto: PageOptionsDto): Promise<PageDto<BlogDto>> {
+  async findAll(
+    pageOptionsDto: PageOptionsDto,
+    bloggerId?: string,
+  ): Promise<PageDto<BlogDto>> {
     const filter = {
       ...(pageOptionsDto?.searchNameTerm
         ? { name: { $regex: pageOptionsDto.searchNameTerm, $options: 'i' } }

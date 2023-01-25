@@ -3,10 +3,20 @@ import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 
 import { BASE_PROJECTION } from '../../../common/mongoose/constants';
-import { IBlogsRepository } from '../application/blogs.service';
 import { BlogDto } from '../application/dto/blog.dto';
+import { CreateBlogDto } from '../application/dto/create-blog.dto';
 import { UpdateBlogDto } from '../application/dto/update-blog.dto';
 import { Blog, BlogDocument } from '../domain/schemas/blogs.schema';
+
+export interface IBlogsRepository {
+  create(createBlogDto: CreateBlogDto): Promise<BlogDto>;
+
+  findOne(id: string): Promise<BlogDto>;
+
+  update(id: string, updateBlogDto: UpdateBlogDto): Promise<BlogDto>;
+
+  remove(id: string): Promise<boolean>;
+}
 
 @Injectable()
 export class BlogsRepository implements IBlogsRepository {

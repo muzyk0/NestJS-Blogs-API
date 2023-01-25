@@ -1,15 +1,14 @@
 import { Injectable } from '@nestjs/common';
 import { v4 } from 'uuid';
 
-import { IBlogService } from '../api/blogs.controller';
 import { BlogsRepository } from '../infrastructure/blogs.repository';
 
 import { BlogDto } from './dto/blog.dto';
 import { CreateBlogDto } from './dto/create-blog.dto';
 import { UpdateBlogDto } from './dto/update-blog.dto';
 
-export interface IBlogsRepository {
-  create(createBlogDto: CreateBlogDto): Promise<BlogDto>;
+export interface IBlogService {
+  create(createBlogDto: Omit<CreateBlogDto, 'id'>): Promise<BlogDto>;
 
   findOne(id: string): Promise<BlogDto>;
 
