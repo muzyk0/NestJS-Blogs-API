@@ -23,5 +23,6 @@ export default () => ({
   RMQ_URLS: process.env.RMQ_URLS,
   MESSAGE_SENDER_HOST: process.env.MESSAGE_SENDER_HOST,
   MESSAGE_SENDER_PORT: process.env.MESSAGE_SENDER_PORT,
-  APP_VERSION: process.env.npm_package_version,
+  // eslint-disable-next-line @typescript-eslint/no-var-requires
+  APP_VERSION: require('../../package.json').version,
 });
