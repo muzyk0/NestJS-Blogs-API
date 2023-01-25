@@ -1,8 +1,10 @@
 import { Controller, Delete, Get, HttpStatus, Res } from '@nestjs/common';
+import { ApiTags } from '@nestjs/swagger';
 import { Response } from 'express';
 
 import { TestingService } from '../application/testing.service';
 
+@ApiTags('testing')
 @Controller('testing')
 export class TestingController {
   constructor(

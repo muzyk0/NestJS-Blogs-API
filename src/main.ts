@@ -1,8 +1,4 @@
-import {
-  BadRequestException,
-  RequestMethod,
-  ValidationPipe,
-} from '@nestjs/common';
+import { BadRequestException, Logger, ValidationPipe } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { NestFactory } from '@nestjs/core';
 import { NestExpressApplication } from '@nestjs/platform-express';
@@ -11,27 +7,19 @@ import cookieParser from 'cookie-parser';
 
 import { AppModule } from './app.module';
 import { ErrorExceptionFilter, HttpExceptionFilter } from './common/filters';
+import { buildSwaggerDocument } from './common/utils/swagger/build-swagger-document';
+import { initStaticSwagger } from './common/utils/swagger/init-static-swagger';
 
 (async function bootstrap() {
   const app = await NestFactory.create<NestExpressApplication>(AppModule);
-
-  useContainer(app.select(AppModule), { fallbackOnErrors: true });
-
   const configService = app.get(ConfigService);
-
-  console.warn('RMQ_URLS', configService.get<string>('RMQ_URLS').split(', '));
 
   app.set('trust proxy');
   app.enableCors();
   app.use(cookieParser());
+  app.setGlobalPrefix(configService.get('BASE_PREFIX'));
 
-  app.setGlobalPrefix(configService.get('BASE_PREFIX'), {
-    exclude: [
-      { path: '', method: RequestMethod.GET },
-      { path: 'blog-platform', method: RequestMethod.GET },
-    ],
-  });
-
+  useContainer(app.select(AppModule), { fallbackOnErrors: true });
   app.useGlobalPipes(
     new ValidationPipe({
       transform: true,
@@ -49,6 +37,14 @@ import { ErrorExceptionFilter, HttpExceptionFilter } from './common/filters';
   );
   app.useGlobalFilters(new ErrorExceptionFilter(), new HttpExceptionFilter());
 
+  buildSwaggerDocument(app, configService.get('APP_VERSION'));
+
   await app.listen(configService.get('PORT'));
-  console.log(`Application is running on: ${await app.getUrl()}`);
+  Logger.log(`Application is running on: ${await app.getUrl()}`);
+
+  const serverUrl = configService.get('IS_DEV')
+    ? `http://localhost:${configService.get('PORT')}`
+    : await app.getUrl();
+
+  initStaticSwagger(serverUrl);
 })();

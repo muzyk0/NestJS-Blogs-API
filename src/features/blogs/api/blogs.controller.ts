@@ -12,6 +12,7 @@ import {
   Query,
   UseGuards,
 } from '@nestjs/common';
+import { ApiTags } from '@nestjs/swagger';
 
 import { GetCurrentJwtContextWithoutAuth } from '../../../common/decorators/get-current-user-without-auth.decorator';
 import { PageOptionsDto } from '../../../common/paginator/page-options.dto';
@@ -37,6 +38,7 @@ export interface IBlogService {
   remove(id: string): Promise<boolean>;
 }
 
+@ApiTags('blogs')
 @Controller('blogs')
 export class BlogsController {
   constructor(

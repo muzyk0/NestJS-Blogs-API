@@ -13,6 +13,7 @@ import {
   Query,
   UseGuards,
 } from '@nestjs/common';
+import { ApiTags } from '@nestjs/swagger';
 
 import { GetCurrentUserId } from '../../../common/decorators/get-current-user-id.decorator';
 import { GetCurrentJwtContextWithoutAuth } from '../../../common/decorators/get-current-user-without-auth.decorator';
@@ -43,6 +44,7 @@ export interface IPostService {
   remove(id: string): Promise<boolean>;
 }
 
+@ApiTags('posts')
 @Controller('posts')
 export class PostsController {
   constructor(

@@ -7,6 +7,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { MailerModule } from '@nestjs-modules/mailer';
 import { ConfigService } from '@nestjs/config';
 import { HandlebarsAdapter } from '@nestjs-modules/mailer/dist/adapters/handlebars.adapter';
+import { ServeStaticModule } from '@nestjs/serve-static';
 import { configModule } from './constants';
 
 import { AppController } from './app.controller';
@@ -17,7 +18,6 @@ import { CommentsModule } from './features/comments/comments.module';
 import configuration from './config/configuration';
 import { LimitsModule } from './features/limits/limits.module';
 import { PostsModule } from './features/posts/posts.module';
-import { TestModule } from './features/test-users/test-users.module';
 import { TestingModule } from './features/testing/testing.module';
 import { UsersModule } from './features/users/users.module';
 import { SecurityModule } from './features/security/security.module';
@@ -58,8 +58,11 @@ import { EmailModuleLocal } from './features/email-local/email-local.module';
       },
       inject: [ConfigService],
     }),
+    ServeStaticModule.forRoot({
+      rootPath: join(__dirname, '..', 'swagger-static'),
+      serveRoot: process.env.NODE_ENV === 'development' ? '/' : '/',
+    }),
     EmailModuleLocal,
-    TestModule,
     BlogsModule,
     PostsModule,
     AuthModule,
