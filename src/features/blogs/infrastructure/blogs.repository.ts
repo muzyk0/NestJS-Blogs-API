@@ -6,7 +6,11 @@ import { BASE_PROJECTION } from '../../../common/mongoose/constants';
 import { BlogDto } from '../application/dto/blog.dto';
 import { CreateBlogDto } from '../application/dto/create-blog.dto';
 import { UpdateBlogDto } from '../application/dto/update-blog.dto';
-import { Blog, BlogDocument } from '../domain/schemas/blogs.schema';
+import {
+  Blog,
+  BlogDocument,
+  BlogModelDto,
+} from '../domain/schemas/blogs.schema';
 
 export interface IBlogsRepository {
   create(createBlogDto: CreateBlogDto): Promise<BlogDto>;
@@ -22,7 +26,7 @@ export interface IBlogsRepository {
 export class BlogsRepository implements IBlogsRepository {
   constructor(@InjectModel(Blog.name) private blogModel: Model<BlogDocument>) {}
 
-  async create(createBlogDto: BlogDto) {
+  async create(createBlogDto: BlogModelDto) {
     const blog = await this.blogModel.create(createBlogDto);
     return this.blogModel.findOne({ id: blog.id }, BASE_PROJECTION);
   }

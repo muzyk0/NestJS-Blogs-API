@@ -6,7 +6,6 @@ import { LikeParentTypeEnum } from '../../likes/application/interfaces/like-pare
 import { LikeStringStatus } from '../../likes/application/interfaces/like-status.enum';
 import { LikesService } from '../../likes/application/likes.service';
 import { formatLikeStatusToInt } from '../../likes/utils/formatters';
-import { IPostService } from '../api/posts.controller';
 import { PostsRepository } from '../infrastructure/posts.repository';
 
 import { CreatePostDto } from './dto/create-post.dto';
@@ -14,12 +13,16 @@ import { PostDto } from './dto/post.dto';
 import { UpdatePostDbDto } from './dto/update-post-db.dto';
 import { UpdatePostDto } from './dto/update-post.dto';
 
-export interface IPostsRepository {
-  create(createPostDto: CreatePostDto): Promise<PostDto>;
+export interface IPostService {
+  create(createPostDto: Omit<CreatePostDto, 'id'>): Promise<PostDto>;
 
   findOne(id: string): Promise<PostDto>;
 
-  update(id: string, updatePostDto: UpdatePostDto): Promise<PostDto>;
+  update(
+    postId: string,
+    blogId: string,
+    updatePostDto: UpdatePostDto,
+  ): Promise<PostDto>;
 
   remove(id: string): Promise<boolean>;
 }
@@ -56,8 +59,12 @@ export class PostsService implements IPostService {
     return this.postRepository.findOne(id);
   }
 
-  async update(id: string, updatePostDto: UpdatePostDto) {
-    const blog = await this.blogRepository.findOne(updatePostDto.blogId);
+  async update(
+    postId: string,
+    blogId: string,
+    updatePostDto: UpdatePostDto,
+  ): Promise<PostDto> {
+    const blog = await this.blogRepository.findOne(blogId);
 
     if (!blog) {
       return null;
@@ -70,7 +77,7 @@ export class PostsService implements IPostService {
       shortDescription: updatePostDto.shortDescription,
     };
 
-    return this.postRepository.update(id, updatedPost);
+    return this.postRepository.update(postId, updatedPost);
   }
 
   async remove(id: string) {

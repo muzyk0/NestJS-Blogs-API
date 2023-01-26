@@ -98,7 +98,7 @@ window.onload = function() {
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/CreateBlogDto"
+                  "$ref": "#/components/schemas/CreateBlogInput"
                 }
               }
             }
@@ -125,14 +125,20 @@ window.onload = function() {
         },
         "get": {
           "operationId": "BloggerController_findAll",
-          "summary": "Returns blogs (for which current user is owner) with paging",
+          "summary": "Delete post specified by id",
           "parameters": [],
           "responses": {
-            "200": {
-              "description": "Success"
+            "204": {
+              "description": "No Content"
             },
             "401": {
               "description": "Unauthorized"
+            },
+            "403": {
+              "description": "Forbidden"
+            },
+            "404": {
+              "description": "Not Found"
             }
           },
           "tags": [
@@ -278,13 +284,23 @@ window.onload = function() {
               "bearer": []
             }
           ]
-        },
+        }
+      },
+      "/blogger/blogs/{blogId}/posts/{postId}": {
         "put": {
           "operationId": "BloggerController_updateBlogPost",
           "summary": "Update existing post by id with InputModel",
           "parameters": [
             {
-              "name": "id",
+              "name": "blogId",
+              "required": true,
+              "in": "path",
+              "schema": {
+                "type": "string"
+              }
+            },
+            {
+              "name": "postId",
               "required": true,
               "in": "path",
               "schema": {
@@ -297,7 +313,7 @@ window.onload = function() {
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/CreateBlogPostDto"
+                  "$ref": "#/components/schemas/UpdatePostDto"
                 }
               }
             }
@@ -333,7 +349,15 @@ window.onload = function() {
           "summary": "Delete post specified by id",
           "parameters": [
             {
-              "name": "id",
+              "name": "blogId",
+              "required": true,
+              "in": "path",
+              "schema": {
+                "type": "string"
+              }
+            },
+            {
+              "name": "postId",
               "required": true,
               "in": "path",
               "schema": {
@@ -341,16 +365,6 @@ window.onload = function() {
               }
             }
           ],
-          "requestBody": {
-            "required": true,
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/CreateBlogPostDto"
-                }
-              }
-            }
-          },
           "responses": {
             "204": {
               "description": "No Content"
@@ -694,28 +708,6 @@ window.onload = function() {
         }
       },
       "/posts": {
-        "post": {
-          "operationId": "PostsController_create",
-          "parameters": [],
-          "requestBody": {
-            "required": true,
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/CreatePostDto"
-                }
-              }
-            }
-          },
-          "responses": {
-            "201": {
-              "description": ""
-            }
-          },
-          "tags": [
-            "posts"
-          ]
-        },
         "get": {
           "operationId": "PostsController_findAll",
           "parameters": [],
@@ -744,58 +736,6 @@ window.onload = function() {
           ],
           "responses": {
             "200": {
-              "description": ""
-            }
-          },
-          "tags": [
-            "posts"
-          ]
-        },
-        "put": {
-          "operationId": "PostsController_update",
-          "parameters": [
-            {
-              "name": "id",
-              "required": true,
-              "in": "path",
-              "schema": {
-                "type": "string"
-              }
-            }
-          ],
-          "requestBody": {
-            "required": true,
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/UpdatePostDto"
-                }
-              }
-            }
-          },
-          "responses": {
-            "204": {
-              "description": ""
-            }
-          },
-          "tags": [
-            "posts"
-          ]
-        },
-        "delete": {
-          "operationId": "PostsController_remove",
-          "parameters": [
-            {
-              "name": "id",
-              "required": true,
-              "in": "path",
-              "schema": {
-                "type": "string"
-              }
-            }
-          ],
-          "responses": {
-            "204": {
               "description": ""
             }
           },
@@ -1071,7 +1011,7 @@ window.onload = function() {
     "servers": [],
     "components": {
       "schemas": {
-        "CreateBlogDto": {
+        "CreateBlogInput": {
           "type": "object",
           "properties": {}
         },
@@ -1080,6 +1020,10 @@ window.onload = function() {
           "properties": {}
         },
         "CreateBlogPostDto": {
+          "type": "object",
+          "properties": {}
+        },
+        "UpdatePostDto": {
           "type": "object",
           "properties": {}
         },
@@ -1104,14 +1048,6 @@ window.onload = function() {
           "properties": {}
         },
         "CreateSecurityDto": {
-          "type": "object",
-          "properties": {}
-        },
-        "CreatePostDto": {
-          "type": "object",
-          "properties": {}
-        },
-        "UpdatePostDto": {
           "type": "object",
           "properties": {}
         },

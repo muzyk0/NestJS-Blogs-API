@@ -2,7 +2,6 @@ import {
   BadRequestException,
   Body,
   Controller,
-  Delete,
   Get,
   HttpCode,
   HttpStatus,
@@ -21,28 +20,14 @@ import { GetCurrentJwtContext } from '../../../common/decorators/get-current-use
 import { PageOptionsDto } from '../../../common/paginator/page-options.dto';
 import { JwtATPayload } from '../../auth/application/interfaces/jwtPayload.type';
 import { AuthGuard } from '../../auth/guards/auth-guard';
-import { BaseAuthGuard } from '../../auth/guards/base-auth-guard';
 import { JwtAuthGuard } from '../../auth/guards/jwt-auth.guard';
 import { BlogsService } from '../../blogs/application/blogs.service';
 import { CommentsService } from '../../comments/application/comments.service';
 import { CommentInput } from '../../comments/application/dto/comment.input';
 import { CommentsQueryRepository } from '../../comments/infrastructure/comments.query.repository';
 import { CreateLikeInput } from '../../likes/application/input/create-like.input';
-import { CreatePostDto } from '../application/dto/create-post.dto';
-import { PostDto } from '../application/dto/post.dto';
-import { UpdatePostDto } from '../application/dto/update-post.dto';
 import { PostsService } from '../application/posts.service';
 import { PostsQueryRepository } from '../infrastructure/posts.query.repository';
-
-export interface IPostService {
-  create(createPostDto: Omit<CreatePostDto, 'id'>): Promise<PostDto>;
-
-  findOne(id: string): Promise<PostDto>;
-
-  update(id: string, updatePostDto: UpdatePostDto): Promise<PostDto>;
-
-  remove(id: string): Promise<boolean>;
-}
 
 @ApiTags('posts')
 @Controller('posts')
@@ -54,21 +39,6 @@ export class PostsController {
     private readonly commentsService: CommentsService,
     private readonly commentsQueryRepository: CommentsQueryRepository,
   ) {}
-
-  @UseGuards(BaseAuthGuard)
-  @Post()
-  @HttpCode(HttpStatus.CREATED)
-  async create(@Body() createPostDto: CreatePostDto) {
-    const blog = await this.blogsService.findOne(createPostDto.blogId);
-
-    if (!blog) {
-      throw new BadRequestException();
-    }
-
-    const post = await this.postsService.create(createPostDto);
-
-    return this.postsQueryRepository.findOne(post.id);
-  }
 
   @UseGuards(AuthGuard)
   @Get()
@@ -95,38 +65,6 @@ export class PostsController {
     }
 
     return post;
-  }
-
-  @UseGuards(BaseAuthGuard)
-  @Put(':id')
-  @HttpCode(HttpStatus.NO_CONTENT)
-  async update(@Param('id') id: string, @Body() updatePostDto: UpdatePostDto) {
-    const blog = await this.blogsService.findOne(updatePostDto.blogId);
-
-    if (!blog) {
-      throw new BadRequestException();
-    }
-
-    const post = await this.postsService.update(id, updatePostDto);
-
-    if (!post) {
-      throw new NotFoundException();
-    }
-
-    return;
-  }
-
-  @UseGuards(BaseAuthGuard)
-  @Delete(':id')
-  @HttpCode(HttpStatus.NO_CONTENT)
-  async remove(@Param('id') id: string) {
-    const isDeleted = await this.postsService.remove(id);
-
-    if (!isDeleted) {
-      throw new NotFoundException();
-    }
-
-    return;
   }
 
   @UseGuards(AuthGuard)

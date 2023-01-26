@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { v4 } from 'uuid';
 
+import { BlogModelDto } from '../domain/schemas/blogs.schema';
 import { BlogsRepository } from '../infrastructure/blogs.repository';
 
 import { BlogDto } from './dto/blog.dto';
@@ -22,11 +23,12 @@ export class BlogsService implements IBlogService {
   constructor(private blogsRepository: BlogsRepository) {}
 
   async create(createBlogDto: CreateBlogDto) {
-    const newBlog: BlogDto = {
+    const newBlog: BlogModelDto = {
       id: v4(),
       name: createBlogDto.name,
       description: createBlogDto.description,
       websiteUrl: createBlogDto.websiteUrl,
+      userId: createBlogDto.userId,
     };
     return this.blogsRepository.create(newBlog);
   }

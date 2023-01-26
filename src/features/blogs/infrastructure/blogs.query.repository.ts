@@ -20,12 +20,13 @@ export class BlogsQueryRepository implements IBlogsQueryRepository {
 
   async findAll(
     pageOptionsDto: PageOptionsDto,
-    bloggerId?: string,
+    userId?: string,
   ): Promise<PageDto<BlogDto>> {
     const filter = {
       ...(pageOptionsDto?.searchNameTerm
         ? { name: { $regex: pageOptionsDto.searchNameTerm, $options: 'i' } }
         : {}),
+      ...(userId ? { userId } : {}),
     };
 
     const itemsCount = await this.blogModel.countDocuments(filter);

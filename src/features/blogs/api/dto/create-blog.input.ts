@@ -1,10 +1,10 @@
 import { Transform } from 'class-transformer';
-import { IsNotEmpty, IsString, IsUUID, Length, Matches } from 'class-validator';
+import { IsNotEmpty, IsString, Length, Matches } from 'class-validator';
 
 export const websiteURLPattern =
   /^https:\/\/([a-zA-Z0-9_-]+\.)+[a-zA-Z0-9_-]+$/;
 
-export class CreateBlogDto {
+export class CreateBlogInput {
   @IsString()
   @Length(1, 15)
   @IsNotEmpty()
@@ -17,7 +17,4 @@ export class CreateBlogDto {
   @Length(0, 100)
   @Matches(websiteURLPattern)
   websiteUrl: string;
-
-  @IsUUID()
-  userId: string;
 }

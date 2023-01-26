@@ -1,4 +1,5 @@
 import {
+  BadRequestException,
   Body,
   Controller,
   Delete,
@@ -19,26 +20,25 @@ import {
   ApiForbiddenResponse,
   ApiNoContentResponse,
   ApiNotFoundResponse,
-  ApiOkResponse,
   ApiOperation,
-  ApiResponse,
   ApiTags,
-  ApiTooManyRequestsResponse,
   ApiUnauthorizedResponse,
 } from '@nestjs/swagger';
 
 import { GetCurrentJwtContextWithoutAuth } from '../../../common/decorators/get-current-user-without-auth.decorator';
+import { GetCurrentJwtContext } from '../../../common/decorators/get-current-user.decorator';
 import { PageOptionsDto } from '../../../common/paginator/page-options.dto';
 import { JwtATPayload } from '../../auth/application/interfaces/jwtPayload.type';
-import { AuthGuard } from '../../auth/guards/auth-guard';
 import { JwtAuthGuard } from '../../auth/guards/jwt-auth.guard';
+import { UpdatePostDto } from '../../posts/application/dto/update-post.dto';
 import { PostsService } from '../../posts/application/posts.service';
 import { PostsQueryRepository } from '../../posts/infrastructure/posts.query.repository';
 import { BlogsService } from '../application/blogs.service';
 import { CreateBlogPostDto } from '../application/dto/create-blog-post.dto';
-import { CreateBlogDto } from '../application/dto/create-blog.dto';
 import { UpdateBlogDto } from '../application/dto/update-blog.dto';
 import { BlogsQueryRepository } from '../infrastructure/blogs.query.repository';
+
+import { CreateBlogInput } from './dto/create-blog.input';
 
 @ApiTags('blogger')
 @ApiBearerAuth()
@@ -66,30 +66,41 @@ export class BloggerController {
     status: 401,
     description: 'Unauthorized',
   })
-  async create(@Body() createBlogDto: CreateBlogDto) {
-    const blog = await this.blogsService.create(createBlogDto);
+  async create(
+    @Body() createBlogInput: CreateBlogInput,
+    @GetCurrentJwtContext() ctx: JwtATPayload,
+  ) {
+    const blog = await this.blogsService.create({
+      ...createBlogInput,
+      userId: ctx.user.id,
+    });
 
     return this.blogsQueryRepository.findOne(blog.id);
   }
 
-  @Get('blogs')
-  @ApiOperation({
-    summary: 'Returns blogs (for which current user is owner) with paging',
-  })
-  @ApiOkResponse({
-    status: 200,
-    description: 'Success',
+  @ApiOperation({ summary: 'Delete post specified by id' })
+  @ApiNoContentResponse({
+    status: 204,
+    description: 'No Content',
   })
   @ApiUnauthorizedResponse({
     status: 401,
     description: 'Unauthorized',
   })
+  @ApiForbiddenResponse({
+    status: 403,
+    description: 'Forbidden',
+  })
+  @ApiNotFoundResponse({
+    status: 404,
+    description: 'Not Found',
+  })
+  @Get('blogs')
   findAll(
     @Query() pageOptionsDto: PageOptionsDto,
     @GetCurrentJwtContextWithoutAuth() ctx: JwtATPayload,
   ) {
-    // TODO: Return for which current user is owner
-    return this.blogsQueryRepository.findAll(pageOptionsDto);
+    return this.blogsQueryRepository.findAll(pageOptionsDto, ctx.user.id);
   }
 
   @Put('blogs/:id')
@@ -194,8 +205,6 @@ export class BloggerController {
     return this.postsQueryRepository.findOne(post.id);
   }
 
-  @Put('blogs/:id/posts')
-  @HttpCode(HttpStatus.CREATED)
   @ApiOperation({ summary: 'Update existing post by id with InputModel' })
   @ApiNoContentResponse({
     status: 204,
@@ -218,15 +227,28 @@ export class BloggerController {
     status: 404,
     description: 'Not Found',
   })
+  @Put('blogs/:blogId/posts/:postId')
+  @HttpCode(HttpStatus.CREATED)
   async updateBlogPost(
-    @Param('id') blogId: string,
-    @Body() { shortDescription, content, title }: CreateBlogPostDto,
+    @Param('blogId') blogId: string,
+    @Param('postId') postId: string,
+    @Body() updatePostDto: UpdatePostDto,
   ) {
-    // TODO:
+    const blog = await this.blogsService.findOne(blogId);
+
+    if (!blog) {
+      throw new BadRequestException();
+    }
+
+    const post = await this.postsService.update(postId, blogId, updatePostDto);
+
+    if (!post) {
+      throw new NotFoundException();
+    }
+
+    return;
   }
 
-  @Delete('blogs/:id/posts')
-  @HttpCode(HttpStatus.CREATED)
   @ApiOperation({ summary: 'Delete post specified by id' })
   @ApiNoContentResponse({
     status: 204,
@@ -244,10 +266,24 @@ export class BloggerController {
     status: 404,
     description: 'Not Found',
   })
+  @Delete('blogs/:blogId/posts/:postId')
+  @HttpCode(HttpStatus.CREATED)
   async deleteBlogPost(
-    @Param('id') blogId: string,
-    @Body() { shortDescription, content, title }: CreateBlogPostDto,
+    @Param('blogId') blogId: string,
+    @Param('postId') postId: string,
   ) {
-    // TODO:
+    const blog = await this.blogsService.findOne(blogId);
+
+    if (!blog) {
+      throw new BadRequestException();
+    }
+
+    const isDeleted = await this.postsService.remove(postId);
+
+    if (!isDeleted) {
+      throw new NotFoundException();
+    }
+
+    return;
   }
 }
