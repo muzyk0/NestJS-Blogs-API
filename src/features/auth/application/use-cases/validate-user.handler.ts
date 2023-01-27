@@ -1,7 +1,7 @@
 import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
 
-import { UsersService } from '../../../users/application/users.service';
 import { User } from '../../../users/domain/schemas/users.schema';
+import { UsersRepository } from '../../../users/infrastructure/users.repository';
 import { AuthService } from '../auth.service';
 
 export class ValidateUserCommand {
@@ -16,7 +16,7 @@ export class ValidateUserHandler
   implements ICommandHandler<ValidateUserCommand>
 {
   constructor(
-    private readonly usersService: UsersService,
+    private readonly usersRepository: UsersRepository,
     private readonly authService: AuthService,
   ) {}
 
@@ -24,7 +24,7 @@ export class ValidateUserHandler
     login,
     password,
   }: ValidateUserCommand): Promise<User | null> {
-    const user = await this.usersService.findOneByLoginOrEmail(login);
+    const user = await this.usersRepository.findOneByLoginOrEmail(login);
 
     if (!user) {
       return null;

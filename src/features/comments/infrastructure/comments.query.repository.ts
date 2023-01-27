@@ -11,6 +11,7 @@ import { Like } from '../../likes/domain/entity/like.entity';
 import { LikesRepositorySql } from '../../likes/infrastructure/likes.repository.sql';
 import { getStringLikeStatus } from '../../likes/utils/formatters';
 import { Post, PostDocument } from '../../posts/domain/schemas/posts.schema';
+import { UsersRepository } from '../../users/infrastructure/users.repository';
 import { CommentViewDto } from '../application/dto/comment.view.dto';
 import { Comment, CommentDocument } from '../domain/schemas/comments.schema';
 
@@ -35,10 +36,16 @@ export class CommentsQueryRepository {
     @InjectModel(Post.name)
     private readonly postModel: Model<PostDocument>,
     private readonly likesRepositorySql: LikesRepositorySql,
+    private readonly usersRepository: UsersRepository,
   ) {}
 
   async findOne(id: string, userId?: string): Promise<CommentViewDto> {
     const comment = await this.commentModel.findOne({ id }, projectionFields);
+
+    const user = await this.usersRepository.findOneById(comment.userId);
+    if (Boolean(user.accountData.banned)) {
+      return;
+    }
 
     if (!comment) {
       return;

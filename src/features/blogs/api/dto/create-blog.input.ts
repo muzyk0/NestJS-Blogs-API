@@ -12,6 +12,7 @@ export class CreateBlogInput {
   name: string;
 
   @Length(0, 500)
+  @Transform(({ value }) => value?.trim?.())
   description: string;
 
   @Length(0, 100)

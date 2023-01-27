@@ -1,12 +1,10 @@
 import {
-  BadRequestException,
   Body,
   Controller,
   Delete,
   Get,
   HttpCode,
   HttpStatus,
-  NotFoundException,
   Param,
   Post,
   Query,
@@ -18,15 +16,15 @@ import { ApiTags } from '@nestjs/swagger';
 import { PageOptionsForUserDto } from '../../../common/paginator/page-options.dto';
 import { BaseAuthGuard } from '../../auth/guards/base-auth-guard';
 import { CreateUserDto } from '../application/dto/create-user.dto';
+import { CreateUserCommand } from '../application/use-cases/create-user.handler';
 import { GetUsersCommand } from '../application/use-cases/get-users.handler';
-import { UsersService } from '../application/users.service';
+import { RemoveUserCommand } from '../application/use-cases/remove-user.handler';
 import { UsersQueryRepository } from '../infrastructure/users.query.repository';
 
 @ApiTags('users')
 @Controller('users')
 export class UsersController {
   constructor(
-    private readonly usersService: UsersService,
     private readonly usersQueryRepository: UsersQueryRepository,
     private readonly commandBus: CommandBus,
   ) {}
@@ -34,28 +32,9 @@ export class UsersController {
   @UseGuards(BaseAuthGuard)
   @Post()
   async create(@Body() { login, email, password }: CreateUserDto) {
-    const userAlreadyExistByLogin =
-      await this.usersService.findOneByLoginOrEmail(login);
-
-    if (userAlreadyExistByLogin) {
-      throw new BadRequestException({
-        field: '',
-        message: 'User already exist',
-      });
-    }
-
-    const userAlreadyExistByEmail = await this.usersService.findOneByEmail(
-      email,
+    return this.commandBus.execute(
+      new CreateUserCommand(login, email, password),
     );
-
-    if (userAlreadyExistByEmail) {
-      throw new BadRequestException({
-        field: '',
-        message: 'User already exist',
-      });
-    }
-
-    return this.usersService.create({ login, email, password });
   }
 
   @Get()
@@ -67,12 +46,6 @@ export class UsersController {
   @Delete(':id')
   @HttpCode(HttpStatus.NO_CONTENT)
   async remove(@Param('id') id: string) {
-    const user = await this.usersService.findOneById(id);
-
-    if (!user) {
-      throw new NotFoundException();
-    }
-
-    return this.usersService.remove(id);
+    return this.commandBus.execute(new RemoveUserCommand(id));
   }
 }

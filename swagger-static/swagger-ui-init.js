@@ -969,7 +969,7 @@ window.onload = function() {
       },
       "/sa/blogs": {
         "get": {
-          "operationId": "SuperAdminController_findAll",
+          "operationId": "SuperAdminController_findBlogs",
           "summary": "Returns blogs with paging",
           "parameters": [],
           "responses": {
@@ -981,7 +981,7 @@ window.onload = function() {
             }
           },
           "tags": [
-            "sa"
+            "superAdmin"
           ],
           "security": [
             {
@@ -1013,15 +1013,155 @@ window.onload = function() {
             }
           ],
           "responses": {
-            "200": {
+            "204": {
               "description": "No Content"
+            },
+            "400": {
+              "description": "If the inputModel has incorrect values or blog already bound to any user"
             },
             "401": {
               "description": "Unauthorized"
             }
           },
           "tags": [
-            "sa"
+            "superAdmin"
+          ],
+          "security": [
+            {
+              "basic": []
+            }
+          ]
+        }
+      },
+      "/sa/users/{userId}/ban": {
+        "put": {
+          "operationId": "SuperAdminController_banUser",
+          "summary": "Ban/unban user",
+          "parameters": [
+            {
+              "name": "userId",
+              "required": true,
+              "in": "path",
+              "schema": {
+                "type": "string"
+              }
+            }
+          ],
+          "requestBody": {
+            "required": true,
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BanUnbanUserInput"
+                }
+              }
+            }
+          },
+          "responses": {
+            "204": {
+              "description": "No Content"
+            },
+            "400": {
+              "description": "If the inputModel has incorrect values"
+            },
+            "401": {
+              "description": "Unauthorized"
+            }
+          },
+          "tags": [
+            "superAdmin"
+          ],
+          "security": [
+            {
+              "basic": []
+            }
+          ]
+        }
+      },
+      "/sa/users": {
+        "post": {
+          "operationId": "SuperAdminController_create",
+          "summary": "Add new user to the system",
+          "parameters": [],
+          "requestBody": {
+            "required": true,
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CreateUserDto"
+                }
+              }
+            }
+          },
+          "responses": {
+            "201": {
+              "description": "Returns the newly created user"
+            },
+            "400": {
+              "description": "If the inputModel has incorrect values"
+            },
+            "401": {
+              "description": "Unauthorized"
+            }
+          },
+          "tags": [
+            "superAdmin"
+          ],
+          "security": [
+            {
+              "basic": []
+            }
+          ]
+        },
+        "get": {
+          "operationId": "SuperAdminController_findUsers",
+          "summary": "Returns blogs users",
+          "parameters": [],
+          "responses": {
+            "200": {
+              "description": "Success"
+            },
+            "401": {
+              "description": "Unauthorized"
+            }
+          },
+          "tags": [
+            "superAdmin"
+          ],
+          "security": [
+            {
+              "basic": []
+            }
+          ]
+        }
+      },
+      "/sa/users/{id}": {
+        "delete": {
+          "operationId": "SuperAdminController_remove",
+          "summary": "Delete user specified by id",
+          "parameters": [
+            {
+              "name": "id",
+              "required": true,
+              "in": "path",
+              "schema": {
+                "type": "string"
+              }
+            }
+          ],
+          "responses": {
+            "204": {
+              "description": "No Content"
+            },
+            "401": {
+              "description": "Unauthorized"
+            },
+            "404": {
+              "description": "If specified user is not exists"
+            }
+          },
+          "tags": [
+            "superAdmin"
           ],
           "security": [
             {
@@ -1119,6 +1259,10 @@ window.onload = function() {
           "properties": {}
         },
         "CreateLikeInput": {
+          "type": "object",
+          "properties": {}
+        },
+        "BanUnbanUserInput": {
           "type": "object",
           "properties": {}
         }

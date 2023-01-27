@@ -25,8 +25,9 @@ import { SecurityService } from '../../security/application/security.service';
 import { CreateUserDto } from '../../users/application/dto/create-user.dto';
 import { EmailConfirmationCodeDto } from '../../users/application/dto/email-confirmation-code.dto';
 import { Email } from '../../users/application/dto/email.dto';
-import { UsersService } from '../../users/application/users.service';
+import { CreateUserCommand } from '../../users/application/use-cases/create-user.handler';
 import { RevokedTokenType } from '../../users/domain/schemas/revoked-tokens.schema';
+import { UsersRepository } from '../../users/infrastructure/users.repository';
 import { LoginDto } from '../application/dto/login.dto';
 import { JwtPayloadWithRt } from '../application/interfaces/jwt-payload-with-rt.type';
 import { DecodedJwtRTPayload } from '../application/interfaces/jwtPayload.type';
@@ -44,7 +45,7 @@ import { LocalAuthGuard } from '../guards/local-auth.guard';
 @Controller('auth')
 export class AuthController {
   constructor(
-    private readonly usersService: UsersService,
+    private readonly usersRepository: UsersRepository,
     private readonly securityService: SecurityService,
     private readonly jwtService: JwtService,
     private readonly commandBus: CommandBus,
@@ -92,26 +93,10 @@ export class AuthController {
   @Post('/registration')
   @HttpCode(HttpStatus.NO_CONTENT)
   async registerUser(@Body() { login, email, password }: CreateUserDto) {
-    const userAlreadyExistByLogin =
-      await this.usersService.findOneByLoginOrEmail(login);
-
-    if (userAlreadyExistByLogin) {
-      throw new BadRequestException([
-        { message: 'Login already exist', field: 'login' },
-      ]);
-    }
-
-    const userAlreadyExistByEmail = await this.usersService.findOneByEmail(
-      email,
+    await this.commandBus.execute(
+      new CreateUserCommand(login, email, password),
     );
-
-    if (userAlreadyExistByEmail) {
-      throw new BadRequestException([
-        { message: 'Email already exist', field: 'email' },
-      ]);
-    }
-
-    return this.usersService.create({ login, email, password });
+    return;
   }
 
   @UseGuards(LimitsControlGuard)
@@ -136,7 +121,7 @@ export class AuthController {
   @Post('/registration-email-resending')
   @HttpCode(HttpStatus.NO_CONTENT)
   async resendConfirmationCode(@Body() { email }: Email) {
-    const user = await this.usersService.findOneByEmail(email);
+    const user = await this.usersRepository.findOneByEmail(email);
 
     if (!user) {
       throw new BadRequestException([
@@ -161,7 +146,7 @@ export class AuthController {
   @UseGuards(JwtAuthGuard)
   async me(@GetCurrentUserId() userId: string) {
     console.log(userId);
-    const user = await this.usersService.findOneById(userId);
+    const user = await this.usersRepository.findOneById(userId);
 
     return {
       email: user.accountData.email,
@@ -185,7 +170,7 @@ export class AuthController {
       userAgent,
     };
 
-    const isRevokedBefore = await this.usersService.checkRefreshToken(
+    const isRevokedBefore = await this.usersRepository.checkRefreshToken(
       ctx.user.id,
       revokedToken,
     );
@@ -194,7 +179,7 @@ export class AuthController {
       throw new UnauthorizedException();
     }
 
-    const isRevoked = await this.usersService.revokeRefreshToken(
+    const isRevoked = await this.usersRepository.revokeRefreshToken(
       ctx.user.id,
       revokedToken,
     );
@@ -252,7 +237,7 @@ export class AuthController {
       userAgent,
     };
 
-    const isRevokedBefore = await this.usersService.checkRefreshToken(
+    const isRevokedBefore = await this.usersRepository.checkRefreshToken(
       ctx.user.id,
       revokedToken,
     );
@@ -261,7 +246,7 @@ export class AuthController {
       throw new UnauthorizedException();
     }
 
-    const isRevoked = await this.usersService.revokeRefreshToken(
+    const isRevoked = await this.usersRepository.revokeRefreshToken(
       ctx.user.id,
       revokedToken,
     );

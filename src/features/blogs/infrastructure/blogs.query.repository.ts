@@ -5,6 +5,7 @@ import { Model } from 'mongoose';
 import { BASE_PROJECTION } from '../../../common/mongoose/constants';
 import { PageOptionsDto } from '../../../common/paginator/page-options.dto';
 import { PageDto } from '../../../common/paginator/page.dto';
+import { UsersRepository } from '../../users/infrastructure/users.repository';
 import { BlogDto } from '../application/dto/blog.dto';
 import { Blog, BlogDocument } from '../domain/schemas/blogs.schema';
 
@@ -16,11 +17,15 @@ export interface IBlogsQueryRepository {
 
 @Injectable()
 export class BlogsQueryRepository implements IBlogsQueryRepository {
-  constructor(@InjectModel(Blog.name) private blogModel: Model<BlogDocument>) {}
+  constructor(
+    @InjectModel(Blog.name) private blogModel: Model<BlogDocument>,
+    private readonly usersRepository: UsersRepository,
+  ) {}
 
   async findAll(
     pageOptionsDto: PageOptionsDto,
     userId?: string,
+    withBanned?: boolean,
   ): Promise<PageDto<BlogDto>> {
     const filter = {
       ...(pageOptionsDto?.searchNameTerm
@@ -39,7 +44,27 @@ export class BlogsQueryRepository implements IBlogsQueryRepository {
       })
       .limit(pageOptionsDto.pageSize);
 
-    const mappedItems: BlogDto[] = items.map((item) => this.mapToDto(item));
+    if (withBanned) {
+      const mappedItems: BlogDto[] = items.map((item) => this.mapToDto(item));
+
+      return new PageDto({
+        items: mappedItems,
+        itemsCount,
+        pageOptionsDto,
+      });
+    }
+
+    const ownersBlogs = await this.usersRepository.findByIds(
+      items.map((blog) => blog.id),
+    );
+
+    const ownersBlogsIds = ownersBlogs
+      .filter((user) => Boolean(user.accountData.banned))
+      .map((user) => user.accountData.id);
+
+    const mappedItems: BlogDto[] = items
+      .filter((item) => ownersBlogsIds.includes(item.id))
+      .map((item) => this.mapToDto(item));
 
     return new PageDto({
       items: mappedItems,
@@ -50,6 +75,11 @@ export class BlogsQueryRepository implements IBlogsQueryRepository {
 
   async findOne(id: string): Promise<BlogDto> {
     const blog = await this.blogModel.findOne({ id }, BASE_PROJECTION);
+
+    const user = await this.usersRepository.findOneById(blog.userId);
+    if (Boolean(user.accountData.banned)) {
+      return;
+    }
 
     if (!blog) {
       return;

@@ -3,7 +3,7 @@ import { addDays } from 'date-fns';
 import { v4 } from 'uuid';
 
 import { EmailServiceLocal } from '../../../email-local/application/email-local.service';
-import { UsersService } from '../../../users/application/users.service';
+import { UsersRepository } from '../../../users/infrastructure/users.repository';
 
 export class ResendConfirmationCodeCommand {
   constructor(public readonly email: string) {}
@@ -14,18 +14,18 @@ export class ResendConfirmationCodeHandler
   implements ICommandHandler<ResendConfirmationCodeCommand>
 {
   constructor(
-    private readonly usersService: UsersService,
+    private readonly usersRepository: UsersRepository,
     private readonly emailService: EmailServiceLocal,
   ) {}
 
   async execute({ email }: ResendConfirmationCodeCommand): Promise<boolean> {
-    const user = await this.usersService.findOneByEmail(email);
+    const user = await this.usersRepository.findOneByEmail(email);
 
     if (!user || user.emailConfirmation.isConfirmed) {
       return false;
     }
 
-    const updatedUser = await this.usersService.updateConfirmationCode({
+    const updatedUser = await this.usersRepository.updateConfirmationCode({
       id: user.accountData.id,
       code: v4(),
       expirationDate: addDays(new Date(), 1),
