@@ -25,6 +25,7 @@ import { PasswordRecoveryModule } from './features/password-recovery/password-re
 import { LikesModule } from './features/likes/likes.module';
 import typeOrmConfig from './config/typeorm.config';
 import { EmailModuleLocal } from './features/email-local/email-local.module';
+import { SuperAdminModule } from './features/super-admin/super-admin.module';
 
 @Module({
   imports: [
@@ -73,6 +74,7 @@ import { EmailModuleLocal } from './features/email-local/email-local.module';
     SecurityModule,
     PasswordRecoveryModule,
     LikesModule,
+    SuperAdminModule,
   ],
   controllers: [AppController],
   providers: [AppService],

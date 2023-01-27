@@ -11,7 +11,7 @@ window.onload = function() {
   "swaggerDoc": {
     "openapi": "3.0.0",
     "paths": {
-      "/api": {
+      "/": {
         "get": {
           "operationId": "AppController_getHello",
           "parameters": [],
@@ -22,35 +22,13 @@ window.onload = function() {
           }
         }
       },
-      "/api/blogs": {
-        "post": {
-          "operationId": "BlogsController_create",
-          "parameters": [],
-          "requestBody": {
-            "required": true,
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/CreateBlogDto"
-                }
-              }
-            }
-          },
-          "responses": {
-            "201": {
-              "description": ""
-            }
-          },
-          "tags": [
-            "blogs"
-          ]
-        },
+      "/blogs": {
         "get": {
           "operationId": "BlogsController_findAll",
           "parameters": [],
           "responses": {
             "200": {
-              "description": ""
+              "description": "Success"
             }
           },
           "tags": [
@@ -58,7 +36,7 @@ window.onload = function() {
           ]
         }
       },
-      "/api/blogs/{id}": {
+      "/blogs/{id}": {
         "get": {
           "operationId": "BlogsController_findOne",
           "parameters": [
@@ -73,15 +51,110 @@ window.onload = function() {
           ],
           "responses": {
             "200": {
-              "description": ""
+              "description": "Success"
+            },
+            "404": {
+              "description": "Not Found"
             }
           },
           "tags": [
             "blogs"
           ]
+        }
+      },
+      "/blogs/{id}/posts": {
+        "get": {
+          "operationId": "BlogsController_findBlogPosts",
+          "parameters": [
+            {
+              "name": "id",
+              "required": true,
+              "in": "path",
+              "schema": {
+                "type": "string"
+              }
+            }
+          ],
+          "responses": {
+            "200": {
+              "description": "Success"
+            },
+            "404": {
+              "description": "If specificied blog is not exists"
+            }
+          },
+          "tags": [
+            "blogs"
+          ]
+        }
+      },
+      "/blogger/blogs": {
+        "post": {
+          "operationId": "BloggerController_create",
+          "summary": "Create new blog",
+          "parameters": [],
+          "requestBody": {
+            "required": true,
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CreateBlogInput"
+                }
+              }
+            }
+          },
+          "responses": {
+            "201": {
+              "description": "Returns the newly created blog"
+            },
+            "400": {
+              "description": "If the inputModel has incorrect values"
+            },
+            "401": {
+              "description": "Unauthorized"
+            }
+          },
+          "tags": [
+            "blogger"
+          ],
+          "security": [
+            {
+              "bearer": []
+            }
+          ]
         },
+        "get": {
+          "operationId": "BloggerController_findAll",
+          "summary": "Delete post specified by id",
+          "parameters": [],
+          "responses": {
+            "204": {
+              "description": "No Content"
+            },
+            "401": {
+              "description": "Unauthorized"
+            },
+            "403": {
+              "description": "Forbidden"
+            },
+            "404": {
+              "description": "Not Found"
+            }
+          },
+          "tags": [
+            "blogger"
+          ],
+          "security": [
+            {
+              "bearer": []
+            }
+          ]
+        }
+      },
+      "/blogger/blogs/{id}": {
         "put": {
-          "operationId": "BlogsController_update",
+          "operationId": "BloggerController_update",
+          "summary": "Update existing Blog by id with InputModel",
           "parameters": [
             {
               "name": "id",
@@ -104,15 +177,30 @@ window.onload = function() {
           },
           "responses": {
             "204": {
-              "description": ""
+              "description": "No Content"
+            },
+            "400": {
+              "description": "If the inputModel has incorrect values"
+            },
+            "401": {
+              "description": "Unauthorized"
+            },
+            "403": {
+              "description": "If user try to update blog that doesn't belong to current user"
             }
           },
           "tags": [
-            "blogs"
+            "blogger"
+          ],
+          "security": [
+            {
+              "bearer": []
+            }
           ]
         },
         "delete": {
-          "operationId": "BlogsController_remove",
+          "operationId": "BloggerController_remove",
+          "summary": "Delete blog specified by id",
           "parameters": [
             {
               "name": "id",
@@ -125,38 +213,32 @@ window.onload = function() {
           ],
           "responses": {
             "204": {
-              "description": ""
+              "description": "No Content"
+            },
+            "401": {
+              "description": "Unauthorized"
+            },
+            "403": {
+              "description": "Forbidden"
+            },
+            "404": {
+              "description": "Not Found"
             }
           },
           "tags": [
-            "blogs"
+            "blogger"
+          ],
+          "security": [
+            {
+              "bearer": []
+            }
           ]
         }
       },
-      "/api/blogs/{id}/posts": {
-        "get": {
-          "operationId": "BlogsController_findBlogPosts",
-          "parameters": [
-            {
-              "name": "id",
-              "required": true,
-              "in": "path",
-              "schema": {
-                "type": "string"
-              }
-            }
-          ],
-          "responses": {
-            "200": {
-              "description": ""
-            }
-          },
-          "tags": [
-            "blogs"
-          ]
-        },
+      "/blogger/blogs/{id}/posts": {
         "post": {
-          "operationId": "BlogsController_createBlogPost",
+          "operationId": "BloggerController_createBlogPost",
+          "summary": "Create new post for specific blog",
           "parameters": [
             {
               "name": "id",
@@ -179,15 +261,135 @@ window.onload = function() {
           },
           "responses": {
             "201": {
-              "description": ""
+              "description": "Returns the newly created post"
+            },
+            "400": {
+              "description": "If the inputModel has incorrect values"
+            },
+            "401": {
+              "description": "Unauthorized"
+            },
+            "403": {
+              "description": "If user try to add post to blog that doesn't belong to current user"
+            },
+            "404": {
+              "description": "If specific blog doesn't exists"
             }
           },
           "tags": [
-            "blogs"
+            "blogger"
+          ],
+          "security": [
+            {
+              "bearer": []
+            }
           ]
         }
       },
-      "/api/auth/login": {
+      "/blogger/blogs/{blogId}/posts/{postId}": {
+        "put": {
+          "operationId": "BloggerController_updateBlogPost",
+          "summary": "Update existing post by id with InputModel",
+          "parameters": [
+            {
+              "name": "blogId",
+              "required": true,
+              "in": "path",
+              "schema": {
+                "type": "string"
+              }
+            },
+            {
+              "name": "postId",
+              "required": true,
+              "in": "path",
+              "schema": {
+                "type": "string"
+              }
+            }
+          ],
+          "requestBody": {
+            "required": true,
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UpdatePostDto"
+                }
+              }
+            }
+          },
+          "responses": {
+            "204": {
+              "description": "No Content"
+            },
+            "400": {
+              "description": "If the inputModel has incorrect values"
+            },
+            "401": {
+              "description": "Unauthorized"
+            },
+            "403": {
+              "description": "If user try to update post that belongs to blog that doesn't belong to current user"
+            },
+            "404": {
+              "description": "Not Found"
+            }
+          },
+          "tags": [
+            "blogger"
+          ],
+          "security": [
+            {
+              "bearer": []
+            }
+          ]
+        },
+        "delete": {
+          "operationId": "BloggerController_deleteBlogPost",
+          "summary": "Delete post specified by id",
+          "parameters": [
+            {
+              "name": "blogId",
+              "required": true,
+              "in": "path",
+              "schema": {
+                "type": "string"
+              }
+            },
+            {
+              "name": "postId",
+              "required": true,
+              "in": "path",
+              "schema": {
+                "type": "string"
+              }
+            }
+          ],
+          "responses": {
+            "204": {
+              "description": "No Content"
+            },
+            "401": {
+              "description": "Unauthorized"
+            },
+            "403": {
+              "description": "Forbidden"
+            },
+            "404": {
+              "description": "Not Found"
+            }
+          },
+          "tags": [
+            "blogger"
+          ],
+          "security": [
+            {
+              "bearer": []
+            }
+          ]
+        }
+      },
+      "/auth/login": {
         "post": {
           "operationId": "AuthController_login",
           "parameters": [],
@@ -211,7 +413,7 @@ window.onload = function() {
           ]
         }
       },
-      "/api/auth/registration": {
+      "/auth/registration": {
         "post": {
           "operationId": "AuthController_registerUser",
           "parameters": [],
@@ -235,7 +437,7 @@ window.onload = function() {
           ]
         }
       },
-      "/api/auth/registration-confirmation": {
+      "/auth/registration-confirmation": {
         "post": {
           "operationId": "AuthController_confirmAccount",
           "parameters": [],
@@ -259,7 +461,7 @@ window.onload = function() {
           ]
         }
       },
-      "/api/auth/registration-email-resending": {
+      "/auth/registration-email-resending": {
         "post": {
           "operationId": "AuthController_resendConfirmationCode",
           "parameters": [],
@@ -283,7 +485,7 @@ window.onload = function() {
           ]
         }
       },
-      "/api/auth/me": {
+      "/auth/me": {
         "get": {
           "operationId": "AuthController_me",
           "parameters": [],
@@ -297,7 +499,7 @@ window.onload = function() {
           ]
         }
       },
-      "/api/auth/refresh-token": {
+      "/auth/refresh-token": {
         "post": {
           "operationId": "AuthController_refreshToken",
           "parameters": [],
@@ -311,7 +513,7 @@ window.onload = function() {
           ]
         }
       },
-      "/api/auth/logout": {
+      "/auth/logout": {
         "post": {
           "operationId": "AuthController_logout",
           "parameters": [],
@@ -325,7 +527,7 @@ window.onload = function() {
           ]
         }
       },
-      "/api/auth/password-recovery": {
+      "/auth/password-recovery": {
         "post": {
           "operationId": "AuthController_recoveryPassword",
           "parameters": [],
@@ -349,7 +551,7 @@ window.onload = function() {
           ]
         }
       },
-      "/api/auth/new-password": {
+      "/auth/new-password": {
         "post": {
           "operationId": "AuthController_confirmRecoveryPassword",
           "parameters": [],
@@ -373,7 +575,7 @@ window.onload = function() {
           ]
         }
       },
-      "/api/users": {
+      "/users": {
         "post": {
           "operationId": "UsersController_create",
           "parameters": [],
@@ -409,7 +611,7 @@ window.onload = function() {
           ]
         }
       },
-      "/api/users/{id}": {
+      "/users/{id}": {
         "delete": {
           "operationId": "UsersController_remove",
           "parameters": [
@@ -432,7 +634,7 @@ window.onload = function() {
           ]
         }
       },
-      "/api/security": {
+      "/security": {
         "post": {
           "operationId": "SecurityController_create",
           "parameters": [],
@@ -456,7 +658,7 @@ window.onload = function() {
           ]
         }
       },
-      "/api/security/devices": {
+      "/security/devices": {
         "get": {
           "operationId": "SecurityController_findAll",
           "parameters": [],
@@ -482,7 +684,7 @@ window.onload = function() {
           ]
         }
       },
-      "/api/security/devices/{id}": {
+      "/security/devices/{id}": {
         "delete": {
           "operationId": "SecurityController_remove",
           "parameters": [
@@ -505,29 +707,7 @@ window.onload = function() {
           ]
         }
       },
-      "/api/posts": {
-        "post": {
-          "operationId": "PostsController_create",
-          "parameters": [],
-          "requestBody": {
-            "required": true,
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/CreatePostDto"
-                }
-              }
-            }
-          },
-          "responses": {
-            "201": {
-              "description": ""
-            }
-          },
-          "tags": [
-            "posts"
-          ]
-        },
+      "/posts": {
         "get": {
           "operationId": "PostsController_findAll",
           "parameters": [],
@@ -541,7 +721,7 @@ window.onload = function() {
           ]
         }
       },
-      "/api/posts/{id}": {
+      "/posts/{id}": {
         "get": {
           "operationId": "PostsController_findOne",
           "parameters": [
@@ -562,61 +742,9 @@ window.onload = function() {
           "tags": [
             "posts"
           ]
-        },
-        "put": {
-          "operationId": "PostsController_update",
-          "parameters": [
-            {
-              "name": "id",
-              "required": true,
-              "in": "path",
-              "schema": {
-                "type": "string"
-              }
-            }
-          ],
-          "requestBody": {
-            "required": true,
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/UpdatePostDto"
-                }
-              }
-            }
-          },
-          "responses": {
-            "204": {
-              "description": ""
-            }
-          },
-          "tags": [
-            "posts"
-          ]
-        },
-        "delete": {
-          "operationId": "PostsController_remove",
-          "parameters": [
-            {
-              "name": "id",
-              "required": true,
-              "in": "path",
-              "schema": {
-                "type": "string"
-              }
-            }
-          ],
-          "responses": {
-            "204": {
-              "description": ""
-            }
-          },
-          "tags": [
-            "posts"
-          ]
         }
       },
-      "/api/posts/{id}/comments": {
+      "/posts/{id}/comments": {
         "get": {
           "operationId": "PostsController_findPostComments",
           "parameters": [
@@ -670,7 +798,7 @@ window.onload = function() {
           ]
         }
       },
-      "/api/posts/{id}/like-status": {
+      "/posts/{id}/like-status": {
         "put": {
           "operationId": "PostsController_likeStatus",
           "parameters": [
@@ -703,7 +831,7 @@ window.onload = function() {
           ]
         }
       },
-      "/api/testing/all-data": {
+      "/testing/all-data": {
         "delete": {
           "operationId": "TestingController_clearDatabase",
           "parameters": [],
@@ -717,7 +845,7 @@ window.onload = function() {
           ]
         }
       },
-      "/api/testing/send-test-email": {
+      "/testing/send-test-email": {
         "get": {
           "operationId": "TestingController_healthCheckMessageService",
           "parameters": [],
@@ -731,7 +859,7 @@ window.onload = function() {
           ]
         }
       },
-      "/api/comments/{id}": {
+      "/comments/{id}": {
         "get": {
           "operationId": "CommentsController_findOne",
           "parameters": [
@@ -806,7 +934,7 @@ window.onload = function() {
           ]
         }
       },
-      "/api/comments/{id}/like-status": {
+      "/comments/{id}/like-status": {
         "put": {
           "operationId": "CommentsController_likeStatus",
           "parameters": [
@@ -838,17 +966,84 @@ window.onload = function() {
             "comments"
           ]
         }
+      },
+      "/sa/blogs": {
+        "get": {
+          "operationId": "SuperAdminController_findAll",
+          "summary": "Returns blogs with paging",
+          "parameters": [],
+          "responses": {
+            "200": {
+              "description": "No Content"
+            },
+            "401": {
+              "description": "Unauthorized"
+            }
+          },
+          "tags": [
+            "sa"
+          ],
+          "security": [
+            {
+              "basic": []
+            }
+          ]
+        }
+      },
+      "/sa/blogs/{blogId}/bind-with-user/{userId}": {
+        "put": {
+          "operationId": "SuperAdminController_bindBlogOnUser",
+          "summary": "Bind Blog with user (if blog doesn't have an owner yet)",
+          "parameters": [
+            {
+              "name": "blogId",
+              "required": true,
+              "in": "path",
+              "schema": {
+                "type": "string"
+              }
+            },
+            {
+              "name": "userId",
+              "required": true,
+              "in": "path",
+              "schema": {
+                "type": "string"
+              }
+            }
+          ],
+          "responses": {
+            "200": {
+              "description": "No Content"
+            },
+            "401": {
+              "description": "Unauthorized"
+            }
+          },
+          "tags": [
+            "sa"
+          ],
+          "security": [
+            {
+              "basic": []
+            }
+          ]
+        }
       }
     },
     "info": {
       "title": "Blog platform",
-      "description": "Sorry I'm working on new features and don't have time to write swagger-static documentation",
+      "description": "Sorry I'm working on new features and don't have time to write swagger documentation. But in time it will be completely written",
       "version": "0.14.7",
       "contact": {}
     },
     "tags": [
       {
         "name": "auth",
+        "description": ""
+      },
+      {
+        "name": "blogger",
         "description": ""
       },
       {
@@ -879,7 +1074,7 @@ window.onload = function() {
     "servers": [],
     "components": {
       "schemas": {
-        "CreateBlogDto": {
+        "CreateBlogInput": {
           "type": "object",
           "properties": {}
         },
@@ -888,6 +1083,10 @@ window.onload = function() {
           "properties": {}
         },
         "CreateBlogPostDto": {
+          "type": "object",
+          "properties": {}
+        },
+        "UpdatePostDto": {
           "type": "object",
           "properties": {}
         },
@@ -912,14 +1111,6 @@ window.onload = function() {
           "properties": {}
         },
         "CreateSecurityDto": {
-          "type": "object",
-          "properties": {}
-        },
-        "CreatePostDto": {
-          "type": "object",
-          "properties": {}
-        },
-        "UpdatePostDto": {
           "type": "object",
           "properties": {}
         },

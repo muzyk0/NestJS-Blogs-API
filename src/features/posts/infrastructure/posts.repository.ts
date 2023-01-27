@@ -7,15 +7,26 @@ import { BASE_PROJECTION } from '../../../common/mongoose/constants';
 import { PageOptionsDto } from '../../../common/paginator/page-options.dto';
 import { Blog, BlogDocument } from '../../blogs/domain/schemas/blogs.schema';
 import { CreatePostDbDto } from '../application/dto/create-post-db.dto';
+import { CreatePostDto } from '../application/dto/create-post.dto';
 import { PostDto } from '../application/dto/post.dto';
 import { UpdatePostDbDto } from '../application/dto/update-post-db.dto';
-import { IPostsRepository } from '../application/posts.service';
+import { UpdatePostDto } from '../application/dto/update-post.dto';
 import { Post, PostDocument } from '../domain/schemas/posts.schema';
 
 export class FindAllPostsOptions extends PageOptionsDto {
   @IsInt()
   @IsOptional()
   blogId?: string;
+}
+
+export interface IPostsRepository {
+  create(createPostDto: CreatePostDto): Promise<PostDto>;
+
+  findOne(id: string): Promise<PostDto>;
+
+  update(id: string, updatePostDto: UpdatePostDto): Promise<PostDto>;
+
+  remove(id: string): Promise<boolean>;
 }
 
 @Injectable()

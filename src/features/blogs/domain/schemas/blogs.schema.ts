@@ -5,8 +5,12 @@ import { BlogDto } from '../../application/dto/blog.dto';
 
 export type BlogDocument = Blog & Document;
 
+export type BlogModelDto = Omit<BlogDto, 'createdAt' | 'updatedAt'> & {
+  userId: string;
+};
+
 @Schema({ timestamps: true })
-export class Blog implements Omit<BlogDto, 'createdAt' | 'updatedAt'> {
+export class Blog implements BlogModelDto {
   @Prop({ required: true })
   id: string;
 
@@ -24,6 +28,9 @@ export class Blog implements Omit<BlogDto, 'createdAt' | 'updatedAt'> {
 
   @Prop()
   updatedAt: Date;
+
+  @Prop()
+  userId: string;
 }
 
 export const BlogSchema = SchemaFactory.createForClass(Blog);
