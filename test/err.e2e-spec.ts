@@ -190,5 +190,15 @@ describe('Blogger (e2e)', () => {
 
       console.log(responseComments.body);
     });
+
+    it('POST -> "/auth/login": Shouldn\'t login banned user. Should login unbanned user; status 401; used additional methods: POST => /sa/users, PUT => /sa/users/:id/ban;', async () => {
+      const responseBlogWithoutUserBan2 = await request(app.getHttpServer())
+        .post(`/auth/login`)
+        .send({
+          loginOrEmail: 'asirius',
+          password: 'asirius321',
+        })
+        .expect(401);
+    });
   });
 });

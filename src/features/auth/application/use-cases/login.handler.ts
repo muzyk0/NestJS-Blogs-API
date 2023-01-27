@@ -24,7 +24,7 @@ export class LoginHandler implements ICommandHandler<LoginCommand> {
   async execute({ loginOrEmail, password }: LoginCommand) {
     const user = await this.usersRepository.findOneByLoginOrEmail(loginOrEmail);
 
-    if (!user) {
+    if (!user || Boolean(user?.accountData.banned)) {
       return null;
     }
 

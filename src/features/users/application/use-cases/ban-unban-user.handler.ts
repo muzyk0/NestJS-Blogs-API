@@ -18,12 +18,6 @@ export class BanUnbanUserHandler
   constructor(private readonly usersRepository: UsersRepository) {}
 
   async execute({ userId, payload }: BanUnbanUserCommand) {
-    const user = await this.usersRepository.findOneById(userId);
-
-    if (user?.accountData.banned) {
-      return;
-    }
-
     return this.usersRepository.updateBan(userId, payload);
   }
 }

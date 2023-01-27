@@ -59,13 +59,15 @@ export class AuthController {
     @Req() req: Request,
     @Res({ passthrough: true }) res: Response,
   ) {
-    const { refreshToken, ...tokens } = await this.commandBus.execute(
+    const user = await this.commandBus.execute(
       new LoginCommand(loginDto.loginOrEmail, loginDto.password),
     );
 
-    if (!tokens) {
+    if (!user) {
       throw new UnauthorizedException();
     }
+
+    const { refreshToken, ...tokens } = user;
 
     const decodedAccessToken =
       await this.jwtService.decodeJwtToken<DecodedJwtRTPayload>(refreshToken);

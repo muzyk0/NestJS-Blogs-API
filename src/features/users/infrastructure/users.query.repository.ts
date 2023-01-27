@@ -70,7 +70,7 @@ export class UsersQueryRepository {
       createdAt: users.createdAt,
       banInfo: {
         isBanned: Boolean(users.accountData.banned),
-        banDate: users.accountData.banned?.toISOString(),
+        banDate: users.accountData.banned?.toISOString() ?? null,
         banReason: users.accountData.banReason,
       },
     };
