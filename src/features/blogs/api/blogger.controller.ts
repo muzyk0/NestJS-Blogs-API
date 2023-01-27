@@ -13,6 +13,7 @@ import {
   Query,
   UseGuards,
 } from '@nestjs/common';
+import { CommandBus } from '@nestjs/cqrs';
 import {
   ApiBadRequestResponse,
   ApiBearerAuth,
@@ -36,6 +37,7 @@ import { PostsQueryRepository } from '../../posts/infrastructure/posts.query.rep
 import { BlogsService } from '../application/blogs.service';
 import { CreateBlogPostDto } from '../application/dto/create-blog-post.dto';
 import { UpdateBlogDto } from '../application/dto/update-blog.dto';
+import { GetBlogsCommand } from '../application/use-cases/get-blogs.handler';
 import { BlogsQueryRepository } from '../infrastructure/blogs.query.repository';
 
 import { CreateBlogInput } from './dto/create-blog.input';
@@ -50,6 +52,7 @@ export class BloggerController {
     private readonly blogsQueryRepository: BlogsQueryRepository,
     private readonly postsService: PostsService,
     private readonly postsQueryRepository: PostsQueryRepository,
+    private readonly commandBus: CommandBus,
   ) {}
 
   @Post('blogs')
@@ -100,7 +103,9 @@ export class BloggerController {
     @Query() pageOptionsDto: PageOptionsDto,
     @GetCurrentJwtContextWithoutAuth() ctx: JwtATPayload,
   ) {
-    return this.blogsQueryRepository.findAll(pageOptionsDto, ctx.user.id);
+    return this.commandBus.execute(
+      new GetBlogsCommand(pageOptionsDto, ctx.user.id),
+    );
   }
 
   @Put('blogs/:id')

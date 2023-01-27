@@ -9,13 +9,18 @@ import {
   Security,
   SecuritySchema,
 } from '../security/domain/schemas/security.schema';
+import { UsersModule } from '../users/users.module';
 
 import { BloggerController } from './api/blogger.controller';
 import { BlogsController } from './api/blogs.controller';
 import { BlogsService } from './application/blogs.service';
+import { BindBlogOnUserHandler } from './application/use-cases/bind-blog-on-user.handler';
+import { GetBlogsHandler } from './application/use-cases/get-blogs.handler';
 import { Blog, BlogSchema } from './domain/schemas/blogs.schema';
 import { BlogsQueryRepository } from './infrastructure/blogs.query.repository';
 import { BlogsRepository } from './infrastructure/blogs.repository';
+
+const CommandHandlers = [GetBlogsHandler, BindBlogOnUserHandler];
 
 @Module({
   imports: [
@@ -26,14 +31,21 @@ import { BlogsRepository } from './infrastructure/blogs.repository';
     ]),
     AuthModule,
     PostsModule,
+    UsersModule,
   ],
   controllers: [BlogsController, BloggerController],
   providers: [
+    ...CommandHandlers,
     BlogsService,
     BlogsRepository,
     BlogsQueryRepository,
     BlogExistsRule,
   ],
-  exports: [BlogsService, BlogsRepository, BlogsQueryRepository],
+  exports: [
+    ...CommandHandlers,
+    BlogsService,
+    BlogsRepository,
+    BlogsQueryRepository,
+  ],
 })
 export class BlogsModule {}

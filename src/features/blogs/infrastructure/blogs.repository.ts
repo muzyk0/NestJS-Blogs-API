@@ -48,4 +48,16 @@ export class BlogsRepository implements IBlogsRepository {
 
     return res.deletedCount === 1;
   }
+
+  async bindBlogOnUser(blogId: string, userId: string) {
+    const blog = await this.blogModel.findOneAndUpdate(
+      { id: blogId, userId: null },
+      {
+        $set: {
+          userId: userId,
+        },
+      },
+    );
+    return blog;
+  }
 }

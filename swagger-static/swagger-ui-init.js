@@ -966,6 +966,69 @@ window.onload = function() {
             "comments"
           ]
         }
+      },
+      "/sa/blogs": {
+        "get": {
+          "operationId": "SuperAdminController_findAll",
+          "summary": "Returns blogs with paging",
+          "parameters": [],
+          "responses": {
+            "200": {
+              "description": "No Content"
+            },
+            "401": {
+              "description": "Unauthorized"
+            }
+          },
+          "tags": [
+            "sa"
+          ],
+          "security": [
+            {
+              "basic": []
+            }
+          ]
+        }
+      },
+      "/sa/blogs/{blogId}/bind-with-user/{userId}": {
+        "put": {
+          "operationId": "SuperAdminController_bindBlogOnUser",
+          "summary": "Bind Blog with user (if blog doesn't have an owner yet)",
+          "parameters": [
+            {
+              "name": "blogId",
+              "required": true,
+              "in": "path",
+              "schema": {
+                "type": "string"
+              }
+            },
+            {
+              "name": "userId",
+              "required": true,
+              "in": "path",
+              "schema": {
+                "type": "string"
+              }
+            }
+          ],
+          "responses": {
+            "200": {
+              "description": "No Content"
+            },
+            "401": {
+              "description": "Unauthorized"
+            }
+          },
+          "tags": [
+            "sa"
+          ],
+          "security": [
+            {
+              "basic": []
+            }
+          ]
+        }
       }
     },
     "info": {
