@@ -25,5 +25,7 @@ import { setupApp } from './setup-app';
     ? `http://localhost:${configService.get('PORT')}`
     : await app.getUrl();
 
-  initStaticSwagger(serverUrl);
+  if (configService.get('IS_DEV')) {
+    initStaticSwagger(serverUrl);
+  }
 })();
