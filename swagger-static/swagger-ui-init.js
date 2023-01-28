@@ -575,65 +575,6 @@ window.onload = function() {
           ]
         }
       },
-      "/blog-platform/users": {
-        "post": {
-          "operationId": "UsersController_create",
-          "parameters": [],
-          "requestBody": {
-            "required": true,
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/CreateUserDto"
-                }
-              }
-            }
-          },
-          "responses": {
-            "201": {
-              "description": ""
-            }
-          },
-          "tags": [
-            "users"
-          ]
-        },
-        "get": {
-          "operationId": "UsersController_findAll",
-          "parameters": [],
-          "responses": {
-            "200": {
-              "description": ""
-            }
-          },
-          "tags": [
-            "users"
-          ]
-        }
-      },
-      "/blog-platform/users/{id}": {
-        "delete": {
-          "operationId": "UsersController_remove",
-          "parameters": [
-            {
-              "name": "id",
-              "required": true,
-              "in": "path",
-              "schema": {
-                "type": "string"
-              }
-            }
-          ],
-          "responses": {
-            "204": {
-              "description": ""
-            }
-          },
-          "tags": [
-            "users"
-          ]
-        }
-      },
       "/blog-platform/security": {
         "post": {
           "operationId": "SecurityController_create",
@@ -1207,7 +1148,7 @@ window.onload = function() {
         "description": ""
       },
       {
-        "name": "users",
+        "name": "superAdmin",
         "description": ""
       }
     ],

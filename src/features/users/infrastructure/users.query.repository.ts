@@ -5,7 +5,7 @@ import { FilterQuery, Model } from 'mongoose';
 import { BASE_PROJECTION } from '../../../common/mongoose/constants';
 import { PageOptionsForUserDto } from '../../../common/paginator/page-options.dto';
 import { PageDto } from '../../../common/paginator/page.dto';
-import { UserDtoView } from '../application/dto/user.view.dto';
+import { UserViewModel } from '../application/dto/user.view';
 import { User, UserDocument } from '../domain/schemas/users.schema';
 
 const projectionFields = { ...BASE_PROJECTION, postId: 0 };
@@ -14,14 +14,14 @@ const projectionFields = { ...BASE_PROJECTION, postId: 0 };
 export class UsersQueryRepository {
   constructor(@InjectModel(User.name) private userModel: Model<UserDocument>) {}
 
-  async findOne(id: string): Promise<UserDtoView> {
+  async findOne(id: string): Promise<UserViewModel> {
     const user = await this.userModel.findOne({ id }, BASE_PROJECTION);
     return this.mapToDto(user);
   }
 
   async findAll(
     pageOptionsDto: PageOptionsForUserDto,
-  ): Promise<PageDto<UserDtoView>> {
+  ): Promise<PageDto<UserViewModel>> {
     const filter: FilterQuery<UserDocument> = {
       $or: [
         pageOptionsDto?.searchLoginTerm
@@ -62,7 +62,7 @@ export class UsersQueryRepository {
     });
   }
 
-  mapToDto(users: UserDocument): UserDtoView {
+  mapToDto(users: UserDocument): UserViewModel {
     return {
       id: users.accountData.id,
       login: users.accountData.login,

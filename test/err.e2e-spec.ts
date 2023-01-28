@@ -5,7 +5,7 @@ import request from 'supertest';
 import { AppModule } from '../src/app.module';
 import { BlogDto } from '../src/features/blogs/application/dto/blog.dto';
 import { EmailService } from '../src/features/email-local/application/email.service';
-import { UserDtoView } from '../src/features/users/application/dto/user.view.dto';
+import { UserViewModel } from '../src/features/users/application/dto/user.view';
 import { setupApp } from '../src/setup-app';
 
 jest.setTimeout(120000);
@@ -40,8 +40,8 @@ describe('Blogger (e2e)', () => {
         .delete(`/testing/all-data`)
         .expect(204);
     });
-    let user: UserDtoView;
-    let user2: UserDtoView;
+    let user: UserViewModel;
+    let user2: UserViewModel;
     let validAccessToken: { accessToken: string };
     let validAccessToken2: { accessToken: string };
     let blog: BlogDto;

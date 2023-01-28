@@ -1,4 +1,4 @@
-export class UserDtoView {
+export class UserViewModel {
   id: string;
   login: string;
   email: string;

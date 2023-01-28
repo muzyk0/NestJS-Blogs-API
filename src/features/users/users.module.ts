@@ -7,7 +7,6 @@ import { EmailModuleLocal } from '../email-local/email-local.module';
 import { PasswordRecoveryModule } from '../password-recovery/password-recovery.module';
 import { SecurityModule } from '../security/security.module';
 
-import { UsersController } from './api/users.controller';
 import { BanUnbanUserHandler } from './application/use-cases/ban-unban-user.handler';
 import { CreateUserHandler } from './application/use-cases/create-user.handler';
 import { GetUsersHandler } from './application/use-cases/get-users.handler';
@@ -33,7 +32,7 @@ const CommandHandlers = [
     SecurityModule,
     PasswordRecoveryModule,
   ],
-  controllers: [UsersController],
+  controllers: [],
   providers: [...CommandHandlers, UsersRepository, UsersQueryRepository],
   exports: [...CommandHandlers, UsersRepository, UsersQueryRepository],
 })

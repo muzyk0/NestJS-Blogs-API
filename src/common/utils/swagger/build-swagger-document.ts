@@ -18,7 +18,7 @@ export const buildSwaggerDocument = (
     .addTag('posts')
     .addTag('securityDevices')
     .addTag('testing')
-    .addTag('users')
+    .addTag('superAdmin')
     .build();
   const document = SwaggerModule.createDocument(app, config);
   SwaggerModule.setup('', app, document);

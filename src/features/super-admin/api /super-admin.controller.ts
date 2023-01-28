@@ -15,9 +15,7 @@ import { CommandBus } from '@nestjs/cqrs';
 import {
   ApiBadRequestResponse,
   ApiBasicAuth,
-  ApiBearerAuth,
   ApiCreatedResponse,
-  ApiForbiddenResponse,
   ApiNoContentResponse,
   ApiNotFoundResponse,
   ApiOkResponse,
@@ -25,19 +23,12 @@ import {
   ApiTags,
   ApiUnauthorizedResponse,
 } from '@nestjs/swagger';
-
-import { GetCurrentJwtContextWithoutAuth } from '../../../common/decorators/get-current-user-without-auth.decorator';
 import {
   PageOptionsDto,
   PageOptionsForUserDto,
 } from '../../../common/paginator/page-options.dto';
-import { JwtATPayload } from '../../auth/application/interfaces/jwtPayload.type';
 import { BaseAuthGuard } from '../../auth/guards/base-auth-guard';
-import { JwtAuthGuard } from '../../auth/guards/jwt-auth.guard';
-import {
-  BindBlogOnUserCommand,
-  BindBlogOnUserHandler,
-} from '../../blogs/application/use-cases/bind-blog-on-user.handler';
+import { BindBlogOnUserCommand } from '../../blogs/application/use-cases/bind-blog-on-user.handler';
 import { GetBlogsCommand } from '../../blogs/application/use-cases/get-blogs.handler';
 import { BanUnbanUserInput } from '../../users/application/dto/ban-unban-user.input';
 import { CreateUserDto } from '../../users/application/dto/create-user.dto';
