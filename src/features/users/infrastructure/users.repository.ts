@@ -152,7 +152,7 @@ export class UsersRepository {
       {
         $set: {
           'accountData.banned': payload.isBanned ? new Date() : null,
-          'accountData.banReason': payload.banReason,
+          'accountData.banReason': payload.isBanned ? payload.banReason : null,
         },
       },
       { returnDocument: 'after', projection: projectionFields },

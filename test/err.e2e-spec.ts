@@ -4,6 +4,7 @@ import request from 'supertest';
 
 import { AppModule } from '../src/app.module';
 import { BlogDto } from '../src/features/blogs/application/dto/blog.dto';
+import { CommentDto } from '../src/features/comments/application/dto/comment.dto';
 import { EmailService } from '../src/features/email-local/application/email.service';
 import { UserViewModel } from '../src/features/users/application/dto/user.view';
 import { setupApp } from '../src/setup-app';
@@ -46,6 +47,7 @@ describe('Blogger (e2e)', () => {
     let validAccessToken2: { accessToken: string };
     let blog: BlogDto;
     let post: BlogDto;
+    let responseComment: CommentDto;
 
     it(`01 - should create new blog; status 201; content: created blog, used additional methods: POST -> /sa/users, POST -> /blogger/blogs`, async () => {
       const response00 = await request(app.getHttpServer())
@@ -141,7 +143,7 @@ describe('Blogger (e2e)', () => {
         .expect(201);
       post = responsePost.body;
 
-      const responseComment = await request(app.getHttpServer())
+      const responseGetComment = await request(app.getHttpServer())
         .post(`/posts/${post.id}/comments`)
         .auth(validAccessToken2.accessToken, { type: 'bearer' })
         .send({
@@ -149,7 +151,7 @@ describe('Blogger (e2e)', () => {
         })
         .expect(201);
 
-      console.log('comment', responseComment.body);
+      responseComment = responseGetComment.body;
 
       const responseBan = await request(app.getHttpServer())
         .put(`/sa/users/${user2.id}/ban`)
@@ -165,10 +167,10 @@ describe('Blogger (e2e)', () => {
         .auth('admin', 'qwerty', { type: 'basic' });
 
       console.log('banInfo', resBanIfo.body);
-      console.log('0-0-09-0', responseComment.body.id);
+      console.log('0-0-09-0', responseComment.id);
 
       const responseComments = await request(app.getHttpServer())
-        .get(`/comments/${responseComment.body.id}`)
+        .get(`/comments/${responseComment.id}`)
         .expect(404);
 
       const responseBlogWithoutUserBan = await request(app.getHttpServer())
@@ -187,8 +189,33 @@ describe('Blogger (e2e)', () => {
       const responseBlogWithoutUserBan2 = await request(app.getHttpServer())
         .get(`/blogs/${blog.id}`)
         .expect(404);
+    });
 
-      console.log(responseComments.body);
+    it('02 - should create new blog after unban; status 201; content: created blog, used additional methods: POST -> /sa/users, POST -> /blogger/blogs', async () => {
+      const responseUnban = await request(app.getHttpServer())
+        .put(`/sa/users/${user2.id}/ban`)
+        .auth('admin', 'qwerty', { type: 'basic' })
+        .send({
+          isBanned: false,
+          banReason: 'stringstringstringstst',
+        })
+        .expect(204);
+
+      const users = await request(app.getHttpServer())
+        .get(`/sa/users/`)
+        .auth('admin', 'qwerty', { type: 'basic' })
+        .expect(200);
+
+      const findedUser: UserViewModel = users.body.items.find(
+        (u: UserViewModel) => u.id === user2.id,
+      );
+
+      expect(findedUser.banInfo.isBanned).toBeFalsy();
+      expect(findedUser.banInfo.banReason).toBeNull();
+
+      const responseComments = await request(app.getHttpServer())
+        .get(`/comments/${responseComment.id}`)
+        .expect(200);
     });
 
     it('POST -> "/auth/login": Shouldn\'t login banned user. Should login unbanned user; status 401; used additional methods: POST => /sa/users, PUT => /sa/users/:id/ban;', async () => {
