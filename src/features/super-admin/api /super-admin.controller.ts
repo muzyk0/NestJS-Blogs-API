@@ -23,6 +23,7 @@ import {
   ApiTags,
   ApiUnauthorizedResponse,
 } from '@nestjs/swagger';
+
 import {
   PageOptionsDto,
   PageOptionsForUserDto,
@@ -60,7 +61,7 @@ export class SuperAdminController {
   @Get('blogs')
   findBlogs(@Query() pageOptionsDto: PageOptionsDto) {
     return this.commandBus.execute(
-      new GetBlogsCommand(pageOptionsDto, null, true),
+      new GetBlogsCommand(pageOptionsDto, null, true, 'super-admin'),
     );
   }
 

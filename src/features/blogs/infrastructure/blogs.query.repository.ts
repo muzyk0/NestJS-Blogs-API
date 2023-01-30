@@ -5,9 +5,14 @@ import { Model } from 'mongoose';
 import { BASE_PROJECTION } from '../../../common/mongoose/constants';
 import { PageOptionsDto } from '../../../common/paginator/page-options.dto';
 import { PageDto } from '../../../common/paginator/page.dto';
+import { UserData } from '../../users/domain/schemas/user-data.schema';
 import { UsersRepository } from '../../users/infrastructure/users.repository';
-import { BlogDto } from '../application/dto/blog.dto';
-import { Blog, BlogDocument } from '../domain/schemas/blogs.schema';
+import { BlogDto, BlogDtoForSuperAdmin } from '../application/dto/blog.dto';
+import {
+  Blog,
+  BlogDocument,
+  BlogModelDto,
+} from '../domain/schemas/blogs.schema';
 
 export interface IBlogsQueryRepository {
   findOne(id: string): Promise<BlogDto>;
@@ -26,6 +31,7 @@ export class BlogsQueryRepository implements IBlogsQueryRepository {
     pageOptionsDto: PageOptionsDto,
     userId?: string,
     withBanned?: boolean,
+    role?: 'super-admin' | 'user',
   ): Promise<PageDto<BlogDto>> {
     const filter = {
       ...(pageOptionsDto?.searchNameTerm
@@ -44,30 +50,46 @@ export class BlogsQueryRepository implements IBlogsQueryRepository {
       })
       .limit(pageOptionsDto.pageSize);
 
-    if (withBanned) {
-      const mappedItems: BlogDto[] = items.map((item) => this.mapToDto(item));
+    const ownersBlogs = await this.usersRepository.findByIds(
+      items.map((blog) => blog.userId),
+    );
 
+    if (withBanned) {
       return new PageDto({
-        items: mappedItems,
+        items:
+          role === 'super-admin'
+            ? items.map((item) =>
+                this.mapToDtoForSuperAdmin(
+                  item,
+                  ownersBlogs.find((u) => u.accountData.id === item.userId)
+                    .accountData,
+                ),
+              )
+            : items.map((item) => this.mapToDto(item)),
         itemsCount,
         pageOptionsDto,
       });
     }
 
-    const ownersBlogs = await this.usersRepository.findByIds(
-      items.map((blog) => blog.id),
-    );
-
     const ownersBlogsIds = ownersBlogs
       .filter((user) => Boolean(user.accountData.banned))
       .map((user) => user.accountData.id);
 
-    const mappedItems: BlogDto[] = items
-      .filter((item) => ownersBlogsIds.includes(item.id))
-      .map((item) => this.mapToDto(item));
+    const mappedItems: BlogModelDto[] = items.filter((item) =>
+      ownersBlogsIds.includes(item.id),
+    );
 
     return new PageDto({
-      items: mappedItems,
+      items:
+        role === 'super-admin'
+          ? mappedItems.map((item) =>
+              this.mapToDtoForSuperAdmin(
+                item,
+                ownersBlogs.find((u) => u.accountData.id === item.userId)
+                  .accountData,
+              ),
+            )
+          : mappedItems.map((item) => this.mapToDto(item)),
       itemsCount,
       pageOptionsDto,
     });
@@ -88,13 +110,27 @@ export class BlogsQueryRepository implements IBlogsQueryRepository {
     return this.mapToDto(blog);
   }
 
-  mapToDto(blog: BlogDocument): BlogDto {
+  mapToDto(blog: BlogDto): BlogDto {
     return {
       id: blog.id,
       name: blog.name,
       description: blog.description,
       websiteUrl: blog.websiteUrl,
       createdAt: blog.createdAt,
+    };
+  }
+
+  mapToDtoForSuperAdmin(blog: BlogDto, user: UserData): BlogDtoForSuperAdmin {
+    return {
+      id: blog.id,
+      name: blog.name,
+      description: blog.description,
+      websiteUrl: blog.websiteUrl,
+      createdAt: blog.createdAt,
+      blogOwnerInfo: {
+        userId: user.id,
+        userLogin: user.login,
+      },
     };
   }
 }

@@ -74,6 +74,14 @@ export class UsersRepository {
       .lean();
   }
 
+  async findManyByIds(ids: string[]): Promise<UserAccountDBType[] | null> {
+    const users = await this.userModel
+      .find({ 'accountData.id': { $in: ids }, BASE_PROJECTION })
+      .lean();
+
+    return users;
+  }
+
   async remove(id: string) {
     const result = await this.userModel.deleteOne({ 'accountData.id': id });
     return result.deletedCount === 1;
@@ -163,7 +171,7 @@ export class UsersRepository {
   async findByIds(ids: string[]): Promise<UserAccountDBType[]> {
     return this.userModel
       .find({
-        'accountData.banned': { $in: ids },
+        'accountData.id': { $in: ids },
       })
       .lean();
   }

@@ -33,3 +33,10 @@ export class BlogDto {
   @IsOptional()
   updatedAt?: Date;
 }
+
+export class BlogDtoForSuperAdmin extends BlogDto {
+  blogOwnerInfo: {
+    userId: string;
+    userLogin: string;
+  };
+}
