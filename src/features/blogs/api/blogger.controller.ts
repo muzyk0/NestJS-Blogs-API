@@ -56,7 +56,6 @@ export class BloggerController {
     private readonly commandBus: CommandBus,
   ) {}
 
-  @Post('blogs')
   @ApiOperation({ summary: 'Create new blog' })
   @ApiCreatedResponse({
     status: 201,
@@ -70,6 +69,7 @@ export class BloggerController {
     status: 401,
     description: 'Unauthorized',
   })
+  @Post('blogs')
   async create(
     @Body() createBlogInput: CreateBlogInput,
     @GetCurrentJwtContext() ctx: JwtATPayload,
@@ -109,8 +109,6 @@ export class BloggerController {
     );
   }
 
-  @Put('blogs/:id')
-  @HttpCode(HttpStatus.NO_CONTENT)
   @ApiOperation({ summary: 'Update existing Blog by id with InputModel' })
   @ApiNoContentResponse({
     status: 204,
@@ -129,17 +127,25 @@ export class BloggerController {
     description:
       "If user try to update blog that doesn't belong to current user",
   })
-  async update(@Param('id') id: string, @Body() updateBlogDto: UpdateBlogDto) {
+  @Put('blogs/:id')
+  @HttpCode(HttpStatus.NO_CONTENT)
+  async update(
+    @Param('id') id: string,
+    @GetCurrentJwtContext() ctx: JwtATPayload,
+    @Body() updateBlogDto: UpdateBlogDto,
+  ) {
     const blog = await this.blogsService.update(id, updateBlogDto);
     if (!blog) {
       throw new NotFoundException();
     }
 
+    if (blog.userId !== ctx.user.id) {
+      throw new ForbiddenException();
+    }
+
     return;
   }
 
-  @Delete('blogs/:id')
-  @HttpCode(HttpStatus.NO_CONTENT)
   @ApiOperation({ summary: 'Delete blog specified by id' })
   @ApiNoContentResponse({
     status: 204,
@@ -157,6 +163,8 @@ export class BloggerController {
     status: 404,
     description: 'Not Found',
   })
+  @Delete('blogs/:id')
+  @HttpCode(HttpStatus.NO_CONTENT)
   async remove(
     @Param('id') id: string,
     @GetCurrentJwtContext() ctx: JwtATPayload,
@@ -174,8 +182,6 @@ export class BloggerController {
     return await this.blogsService.remove(id);
   }
 
-  @Post('blogs/:id/posts')
-  @HttpCode(HttpStatus.CREATED)
   @ApiOperation({ summary: 'Create new post for specific blog' })
   @ApiCreatedResponse({
     status: 201,
@@ -198,6 +204,8 @@ export class BloggerController {
     status: 404,
     description: "If specific blog doesn't exists",
   })
+  @Post('blogs/:id/posts')
+  @HttpCode(HttpStatus.CREATED)
   async createBlogPost(
     @Param('id') blogId: string,
     @Body() { shortDescription, content, title }: CreateBlogPostDto,
@@ -241,7 +249,7 @@ export class BloggerController {
     description: 'Not Found',
   })
   @Put('blogs/:blogId/posts/:postId')
-  @HttpCode(HttpStatus.CREATED)
+  @HttpCode(HttpStatus.NO_CONTENT)
   async updateBlogPost(
     @Param('blogId') blogId: string,
     @Param('postId') postId: string,
@@ -280,7 +288,7 @@ export class BloggerController {
     description: 'Not Found',
   })
   @Delete('blogs/:blogId/posts/:postId')
-  @HttpCode(HttpStatus.CREATED)
+  @HttpCode(HttpStatus.NO_CONTENT)
   async deleteBlogPost(
     @Param('blogId') blogId: string,
     @Param('postId') postId: string,

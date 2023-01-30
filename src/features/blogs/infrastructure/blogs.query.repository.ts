@@ -98,12 +98,12 @@ export class BlogsQueryRepository implements IBlogsQueryRepository {
   async findOne(id: string): Promise<BlogDto> {
     const blog = await this.blogModel.findOne({ id }, BASE_PROJECTION);
 
-    const user = await this.usersRepository.findOneById(blog.userId);
-    if (Boolean(user.accountData.banned)) {
+    if (!blog) {
       return;
     }
 
-    if (!blog) {
+    const user = await this.usersRepository.findOneById(blog.userId);
+    if (Boolean(user.accountData.banned)) {
       return;
     }
 
