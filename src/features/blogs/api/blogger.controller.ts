@@ -3,6 +3,7 @@ import {
   Body,
   Controller,
   Delete,
+  ForbiddenException,
   Get,
   HttpCode,
   HttpStatus,
@@ -156,11 +157,18 @@ export class BloggerController {
     status: 404,
     description: 'Not Found',
   })
-  async remove(@Param('id') id: string) {
+  async remove(
+    @Param('id') id: string,
+    @GetCurrentJwtContext() ctx: JwtATPayload,
+  ) {
     const blog = await this.blogsService.findOne(id);
 
     if (!blog) {
       throw new NotFoundException();
+    }
+
+    if (blog.userId !== ctx.user.id) {
+      throw new ForbiddenException();
     }
 
     return await this.blogsService.remove(id);

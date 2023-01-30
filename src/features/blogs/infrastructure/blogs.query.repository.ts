@@ -72,11 +72,11 @@ export class BlogsQueryRepository implements IBlogsQueryRepository {
     }
 
     const ownersBlogsIds = ownersBlogs
-      .filter((user) => Boolean(user.accountData.banned))
+      .filter((user) => Boolean(user.accountData.banned) === false)
       .map((user) => user.accountData.id);
 
     const mappedItems: BlogModelDto[] = items.filter((item) =>
-      ownersBlogsIds.includes(item.id),
+      ownersBlogsIds.includes(item.userId),
     );
 
     return new PageDto({

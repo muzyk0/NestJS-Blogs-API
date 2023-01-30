@@ -21,7 +21,7 @@ export class ErrorExceptionFilter implements ExceptionFilter {
     // }
 
     response
-      .status(500)
+      .status(418)
       .send({ message: exception.message, stack: exception.stack });
   }
 }
