@@ -73,7 +73,7 @@ export class PostsQueryRepository implements IPostsQueryRepository {
 
     const postsWithoutBannedUsers = posts.filter((post) =>
       blogsForPosts
-        .filter((blog) => usersIdsForBannedBlogs.includes(blog.userId))
+        .filter((blog) => !usersIdsForBannedBlogs.includes(blog.userId))
         .some((blog) => blog.id !== post.blogId),
     );
 

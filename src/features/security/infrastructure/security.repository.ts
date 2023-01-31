@@ -40,4 +40,10 @@ export class SecurityRepository {
       deviceId: { $ne: deviceId },
     });
   }
+
+  removeAllDevices(userId: string) {
+    return this.securityModel.deleteMany({
+      userId,
+    });
+  }
 }
