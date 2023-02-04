@@ -117,7 +117,7 @@ export class BlogsQueryRepository implements IBlogsQueryRepository {
       description: blog.description,
       websiteUrl: blog.websiteUrl,
       createdAt: blog.createdAt,
-      isMembership: Boolean(blog.userId),
+      isMembership: false,
     };
   }
 
@@ -131,7 +131,7 @@ export class BlogsQueryRepository implements IBlogsQueryRepository {
       description: blog.description,
       websiteUrl: blog.websiteUrl,
       createdAt: blog.createdAt,
-      isMembership: Boolean(blog.userId),
+      isMembership: false,
       blogOwnerInfo: {
         userId: user.id,
         userLogin: user.login,

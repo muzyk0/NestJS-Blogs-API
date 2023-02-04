@@ -259,7 +259,7 @@ export class BloggerController {
     const blog = await this.blogsService.findOne(blogId);
 
     if (!blog) {
-      throw new BadRequestException();
+      throw new NotFoundException();
     }
 
     if (blog.userId !== ctx.user.id) {
