@@ -1,4 +1,5 @@
 import {
+  IsBoolean,
   IsDate,
   IsNotEmpty,
   IsOptional,
@@ -34,7 +35,23 @@ export class BlogDto {
   updatedAt?: Date;
 }
 
-export class BlogDtoForSuperAdmin extends BlogDto {
+export class BlogView {
+  id: string;
+
+  name: string;
+
+  description: string;
+
+  websiteUrl: string;
+
+  createdAt?: Date;
+
+  updatedAt?: Date;
+
+  isMembership: boolean;
+}
+
+export class BlogDtoForSuperAdmin extends BlogView {
   blogOwnerInfo: {
     userId: string;
     userLogin: string;

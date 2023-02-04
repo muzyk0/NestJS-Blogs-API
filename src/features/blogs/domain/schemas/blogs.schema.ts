@@ -10,7 +10,7 @@ export type BlogModelDto = Omit<BlogDto, 'createdAt' | 'updatedAt'> & {
 };
 
 @Schema({ timestamps: true })
-export class Blog implements BlogModelDto {
+export class Blog {
   @Prop({ required: true })
   id: string;
 

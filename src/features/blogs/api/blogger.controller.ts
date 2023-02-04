@@ -254,11 +254,16 @@ export class BloggerController {
     @Param('blogId') blogId: string,
     @Param('postId') postId: string,
     @Body() updatePostDto: UpdatePostDto,
+    @GetCurrentJwtContext() ctx: JwtATPayload,
   ) {
     const blog = await this.blogsService.findOne(blogId);
 
     if (!blog) {
       throw new BadRequestException();
+    }
+
+    if (blog.userId !== ctx.user.id) {
+      throw new ForbiddenException();
     }
 
     const post = await this.postsService.update(postId, blogId, updatePostDto);
@@ -296,7 +301,7 @@ export class BloggerController {
     const blog = await this.blogsService.findOne(blogId);
 
     if (!blog) {
-      throw new BadRequestException();
+      throw new NotFoundException();
     }
 
     const isDeleted = await this.postsService.remove(postId);

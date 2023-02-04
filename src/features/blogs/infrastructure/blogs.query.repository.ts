@@ -7,12 +7,12 @@ import { PageOptionsDto } from '../../../common/paginator/page-options.dto';
 import { PageDto } from '../../../common/paginator/page.dto';
 import { UserData } from '../../users/domain/schemas/user-data.schema';
 import { UsersRepository } from '../../users/infrastructure/users.repository';
-import { BlogDto, BlogDtoForSuperAdmin } from '../application/dto/blog.dto';
 import {
-  Blog,
-  BlogDocument,
-  BlogModelDto,
-} from '../domain/schemas/blogs.schema';
+  BlogDto,
+  BlogDtoForSuperAdmin,
+  BlogView,
+} from '../application/dto/blog.dto';
+import { Blog, BlogDocument } from '../domain/schemas/blogs.schema';
 
 export interface IBlogsQueryRepository {
   findOne(id: string): Promise<BlogDto>;
@@ -75,7 +75,7 @@ export class BlogsQueryRepository implements IBlogsQueryRepository {
       .filter((user) => Boolean(user.accountData.banned) === false)
       .map((user) => user.accountData.id);
 
-    const mappedItems: BlogModelDto[] = items.filter((item) =>
+    const mappedItems: BlogDocument[] = items.filter((item) =>
       ownersBlogsIds.includes(item.userId),
     );
 
@@ -110,23 +110,28 @@ export class BlogsQueryRepository implements IBlogsQueryRepository {
     return this.mapToDto(blog);
   }
 
-  mapToDto(blog: BlogDto): BlogDto {
+  mapToDto(blog: BlogDocument): BlogView {
     return {
       id: blog.id,
       name: blog.name,
       description: blog.description,
       websiteUrl: blog.websiteUrl,
       createdAt: blog.createdAt,
+      isMembership: Boolean(blog.userId),
     };
   }
 
-  mapToDtoForSuperAdmin(blog: BlogDto, user: UserData): BlogDtoForSuperAdmin {
+  mapToDtoForSuperAdmin(
+    blog: BlogDocument,
+    user: UserData,
+  ): BlogDtoForSuperAdmin {
     return {
       id: blog.id,
       name: blog.name,
       description: blog.description,
       websiteUrl: blog.websiteUrl,
       createdAt: blog.createdAt,
+      isMembership: Boolean(blog.userId),
       blogOwnerInfo: {
         userId: user.id,
         userLogin: user.login,
