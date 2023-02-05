@@ -968,6 +968,51 @@ window.onload = function() {
           ]
         }
       },
+      "/blog-platform/sa/blogs/{blogId}/ban": {
+        "put": {
+          "operationId": "SuperAdminController_banBlog",
+          "summary": "Bun/unban blog",
+          "parameters": [
+            {
+              "name": "blogId",
+              "required": true,
+              "in": "path",
+              "schema": {
+                "type": "string"
+              }
+            }
+          ],
+          "requestBody": {
+            "required": true,
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BanBlogInput"
+                }
+              }
+            }
+          },
+          "responses": {
+            "204": {
+              "description": "No Content"
+            },
+            "400": {
+              "description": "If the inputModel has incorrect values"
+            },
+            "401": {
+              "description": "Unauthorized"
+            }
+          },
+          "tags": [
+            "superAdmin"
+          ],
+          "security": [
+            {
+              "basic": []
+            }
+          ]
+        }
+      },
       "/blog-platform/sa/users/{userId}/ban": {
         "put": {
           "operationId": "SuperAdminController_banUser",
@@ -1109,7 +1154,7 @@ window.onload = function() {
     "info": {
       "title": "Blog platform",
       "description": "Sorry I'm working on new features and don't have time to write swagger documentation. But in time it will be completely written",
-      "version": "0.14.7",
+      "version": "0.15.0",
       "contact": {}
     },
     "tags": [
@@ -1194,6 +1239,10 @@ window.onload = function() {
           "properties": {}
         },
         "CreateLikeInput": {
+          "type": "object",
+          "properties": {}
+        },
+        "BanBlogInput": {
           "type": "object",
           "properties": {}
         },

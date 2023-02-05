@@ -35,8 +35,8 @@ export class BlogsRepository implements IBlogsRepository {
     return this.blogModel.findOne({ id }, BASE_PROJECTION).lean();
   }
 
-  async findMany(ids: string[]): Promise<BlogModelDto[]> {
-    return this.blogModel.find({ $in: ids }, BASE_PROJECTION).lean();
+  async findMany(ids: string[]): Promise<BlogDocument[]> {
+    return this.blogModel.find({ $in: ids }, BASE_PROJECTION);
   }
 
   async update(id: string, updateBlogDto: UpdateBlogDto) {
@@ -63,5 +63,22 @@ export class BlogsRepository implements IBlogsRepository {
       },
     );
     return blog;
+  }
+
+  updateBanStatus(
+    blogId: string,
+    isBanned: boolean,
+    banDate: Date | null = null,
+  ) {
+    return this.blogModel.findOneAndUpdate(
+      { id: blogId },
+      {
+        $set: {
+          isBanned,
+          banDate,
+        },
+      },
+      { returnDocument: 'after', projection: BASE_PROJECTION },
+    );
   }
 }

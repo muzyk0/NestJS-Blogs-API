@@ -9,7 +9,7 @@ import { UserData } from '../../users/domain/schemas/user-data.schema';
 import { UsersRepository } from '../../users/infrastructure/users.repository';
 import {
   BlogDto,
-  BlogDtoForSuperAdmin,
+  BlogViewDtoForSuperAdmin,
   BlogView,
 } from '../application/dto/blog.dto';
 import { Blog, BlogDocument } from '../domain/schemas/blogs.schema';
@@ -124,7 +124,7 @@ export class BlogsQueryRepository implements IBlogsQueryRepository {
   mapToDtoForSuperAdmin(
     blog: BlogDocument,
     user: UserData,
-  ): BlogDtoForSuperAdmin {
+  ): BlogViewDtoForSuperAdmin {
     return {
       id: blog.id,
       name: blog.name,
@@ -135,6 +135,10 @@ export class BlogsQueryRepository implements IBlogsQueryRepository {
       blogOwnerInfo: {
         userId: user.id,
         userLogin: user.login,
+      },
+      banInfo: {
+        isBanned: blog.isBanned,
+        banDate: blog.banDate,
       },
     };
   }

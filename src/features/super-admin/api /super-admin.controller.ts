@@ -37,7 +37,9 @@ import { BanUnbanUserCommand } from '../../users/application/use-cases/ban-unban
 import { CreateUserCommand } from '../../users/application/use-cases/create-user.handler';
 import { GetUsersCommand } from '../../users/application/use-cases/get-users.handler';
 import { RemoveUserCommand } from '../../users/application/use-cases/remove-user.handler';
+import { BanBlogInput } from '../application/input-dto/ban-blog.input';
 import { SuperAdminService } from '../application/super-admin.service';
+import { BanBlogCommand } from '../application/use-cases/ban-blog.handler';
 
 @ApiTags('superAdmin')
 @ApiBasicAuth()
@@ -69,7 +71,7 @@ export class SuperAdminController {
     summary: "Bind Blog with user (if blog doesn't have an owner yet)",
   })
   @ApiNoContentResponse({
-    status: 200,
+    status: 204,
     description: 'No Content',
   })
   @ApiBadRequestResponse({
@@ -87,6 +89,27 @@ export class SuperAdminController {
     @Param('userId') userId: string,
   ) {
     return this.commandBus.execute(new BindBlogOnUserCommand(blogId, userId));
+  }
+
+  @ApiOperation({
+    summary: 'Bun/unban blog',
+  })
+  @ApiNoContentResponse({
+    status: 204,
+    description: 'No Content',
+  })
+  @ApiBadRequestResponse({
+    status: 400,
+    description: 'If the inputModel has incorrect values',
+  })
+  @ApiUnauthorizedResponse({
+    status: 401,
+    description: 'Unauthorized',
+  })
+  @Put('blogs/:blogId/ban')
+  @HttpCode(HttpStatus.NO_CONTENT)
+  banBlog(@Param('blogId') blogId: string, @Body() body: BanBlogInput) {
+    return this.commandBus.execute(new BanBlogCommand(blogId, body.isBanned));
   }
 
   @ApiOperation({ summary: 'Ban/unban user' })
