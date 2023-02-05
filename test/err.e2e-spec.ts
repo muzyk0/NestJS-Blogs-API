@@ -472,6 +472,34 @@ describe('Blogger (e2e)', () => {
       expect(currentPost).toBeUndefined();
     });
 
+    it('should hide banned blogs', async () => {
+      const blogsRes = await request(app.getHttpServer())
+        .get(`/blogs`)
+        .expect(200);
+
+      const blogs = blogsRes.body as PageDto<BlogView>;
+
+      const currentPost = blogs.items.find((b) => b.id === blog.id);
+
+      expect(blogs.items.length).toBe(1);
+      expect(currentPost).toBeUndefined();
+    });
+
+    it('should show banned blogs for super admin', async () => {
+      const blogsRes = await request(app.getHttpServer())
+        .get(`/sa/blogs`)
+        .auth('admin', 'qwerty')
+        .expect(200);
+
+      const blogs = blogsRes.body as PageDto<BlogViewDtoForSuperAdmin>;
+
+      const currentPost = blogs.items.find((b) => b.id === blog.id);
+
+      expect(blogs.items.length).toBe(2);
+      expect(currentPost).not.toBeUndefined();
+      expect(currentPost.banInfo.isBanned).toBeTruthy();
+    });
+
     it('should unban blog', async () => {
       await request(app.getHttpServer())
         .put(`/sa/blogs/${blog.id}/ban`)

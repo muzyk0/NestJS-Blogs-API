@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
-import { Model } from 'mongoose';
+import { FilterQuery, Model } from 'mongoose';
 
 import { BASE_PROJECTION } from '../../../common/mongoose/constants';
 import { PageOptionsDto } from '../../../common/paginator/page-options.dto';
@@ -33,11 +33,12 @@ export class BlogsQueryRepository implements IBlogsQueryRepository {
     withBanned?: boolean,
     role?: 'super-admin' | 'user',
   ): Promise<PageDto<BlogDto>> {
-    const filter = {
+    const filter: FilterQuery<BlogDocument> = {
       ...(pageOptionsDto?.searchNameTerm
         ? { name: { $regex: pageOptionsDto.searchNameTerm, $options: 'i' } }
         : {}),
       ...(userId ? { userId } : {}),
+      ...(withBanned ? {} : { isBanned: false }),
     };
 
     const itemsCount = await this.blogModel.countDocuments(filter);
