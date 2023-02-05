@@ -71,10 +71,12 @@ export class PostsQueryRepository implements IPostsQueryRepository {
         users.filter((u) => u.accountData.banned).map((u) => u.accountData.id),
       );
 
+    const filter1 = blogsForPosts.filter(
+      (blog) => !usersIdsForBannedBlogs.includes(blog.userId),
+    );
+
     const postsWithoutBannedUsers = posts.filter((post) =>
-      blogsForPosts
-        .filter((blog) => !usersIdsForBannedBlogs.includes(blog.userId))
-        .some((blog) => blog.id !== post.blogId),
+      filter1.some((blog) => blog.id === post.blogId),
     );
 
     // FIXMe: End remove after switch to SQL

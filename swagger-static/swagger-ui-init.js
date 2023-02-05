@@ -125,20 +125,14 @@ window.onload = function() {
         },
         "get": {
           "operationId": "BloggerController_findAll",
-          "summary": "Delete post specified by id",
+          "summary": "Returns blogs (for which current user is owner) with paging",
           "parameters": [],
           "responses": {
-            "204": {
+            "200": {
               "description": "No Content"
             },
             "401": {
               "description": "Unauthorized"
-            },
-            "403": {
-              "description": "Forbidden"
-            },
-            "404": {
-              "description": "Not Found"
             }
           },
           "tags": [

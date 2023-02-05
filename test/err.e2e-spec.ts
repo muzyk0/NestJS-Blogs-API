@@ -139,6 +139,7 @@ describe('Blogger (e2e)', () => {
       blog = responseBlog.body;
       expect(blog).toEqual({
         id: expect.any(String),
+        isMembership: false,
         name: 'Mongoose',
         description:
           'A mongoose is a small terrestrial carnivorous mammal belonging to the family Herpestidae. This family is currently split into two subfamilies, the Herpestinae and the Mungotinae. The Herpestinae comprises 23 living species that are native to southern Europe, Africa and Asia, whereas the Mungotinae comprises 11 species native to Africa.[2] The Herpestidae originated about 21.8 ± 3.6 million years ago in the Early Miocene and genetically diverged into two main',

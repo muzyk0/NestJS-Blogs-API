@@ -44,7 +44,8 @@ export class UsersQueryRepository {
             }
           : {},
       ],
-      ...(pageOptionsDto?.banStatus !== UserBanStatus.ALL
+      ...(pageOptionsDto?.banStatus &&
+      pageOptionsDto.banStatus !== UserBanStatus.ALL
         ? {
             'accountData.banned':
               pageOptionsDto.banStatus === UserBanStatus.BANNED
