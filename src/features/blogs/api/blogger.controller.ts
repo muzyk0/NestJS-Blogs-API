@@ -297,11 +297,16 @@ export class BloggerController {
   async deleteBlogPost(
     @Param('blogId') blogId: string,
     @Param('postId') postId: string,
+    @GetCurrentJwtContext() ctx: JwtATPayload,
   ) {
     const blog = await this.blogsService.findOne(blogId);
 
     if (!blog) {
       throw new NotFoundException();
+    }
+
+    if (blog.userId !== ctx.user.id) {
+      throw new ForbiddenException();
     }
 
     const isDeleted = await this.postsService.remove(postId);

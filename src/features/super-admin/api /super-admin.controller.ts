@@ -83,7 +83,6 @@ export class SuperAdminController {
   })
   @Put('blogs/:blogId/bind-with-user/:userId')
   bindBlogOnUser(
-    @Query() pageOptionsDto: PageOptionsDto,
     @Param('blogId') blogId: string,
     @Param('userId') userId: string,
   ) {

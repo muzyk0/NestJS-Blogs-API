@@ -3,7 +3,10 @@ import { InjectModel } from '@nestjs/mongoose';
 import { FilterQuery, Model } from 'mongoose';
 
 import { BASE_PROJECTION } from '../../../common/mongoose/constants';
-import { PageOptionsForUserDto } from '../../../common/paginator/page-options.dto';
+import {
+  PageOptionsForUserDto,
+  UserBanStatus,
+} from '../../../common/paginator/page-options.dto';
 import { PageDto } from '../../../common/paginator/page.dto';
 import { UserViewModel } from '../application/dto/user.view';
 import { User, UserDocument } from '../domain/schemas/users.schema';
@@ -41,6 +44,14 @@ export class UsersQueryRepository {
             }
           : {},
       ],
+      ...(pageOptionsDto?.banStatus !== UserBanStatus.ALL
+        ? {
+            'accountData.banned':
+              pageOptionsDto.banStatus === UserBanStatus.BANNED
+                ? { $ne: null }
+                : null,
+          }
+        : {}),
     };
 
     const itemsCount = await this.userModel.countDocuments(filter);
