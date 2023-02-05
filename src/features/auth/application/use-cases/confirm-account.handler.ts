@@ -1,8 +1,8 @@
 import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
 import { isAfter } from 'date-fns';
 
-import { UsersService } from '../../../users/application/users.service';
 import { User } from '../../../users/domain/schemas/users.schema';
+import { UsersRepository } from '../../../users/infrastructure/users.repository';
 
 export class ConfirmAccountCommand {
   constructor(public readonly code: string) {}
@@ -12,16 +12,16 @@ export class ConfirmAccountCommand {
 export class ConfirmAccountHandler
   implements ICommandHandler<ConfirmAccountCommand>
 {
-  constructor(private readonly usersService: UsersService) {}
+  constructor(private readonly usersRepository: UsersRepository) {}
 
   async execute({ code }: ConfirmAccountCommand): Promise<boolean> {
-    const user = await this.usersService.findOneByConfirmationCode(code);
+    const user = await this.usersRepository.findOneByConfirmationCode(code);
 
     if (!this.isAvailableConfirmAccount(user, code)) {
       return false;
     }
 
-    return this.usersService.setIsConfirmed(user.accountData.id);
+    return this.usersRepository.setIsConfirmedById(user.accountData.id);
   }
 
   private isAvailableConfirmAccount(user: User, code: string) {

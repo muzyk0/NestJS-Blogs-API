@@ -6,7 +6,9 @@ import { BlogsQueryRepository } from '../../infrastructure/blogs.query.repositor
 export class GetBlogsCommand {
   constructor(
     public readonly pageOptionsDto: PageOptionsDto,
-    public readonly userId?: string,
+    public readonly userId?: string | null,
+    public readonly withBanned?: boolean,
+    public readonly role?: 'super-admin' | 'user',
   ) {}
 }
 
@@ -14,7 +16,17 @@ export class GetBlogsCommand {
 export class GetBlogsHandler implements ICommandHandler<GetBlogsCommand> {
   constructor(private readonly blogsQueryRepository: BlogsQueryRepository) {}
 
-  async execute({ pageOptionsDto, userId }: GetBlogsCommand) {
-    return this.blogsQueryRepository.findAll(pageOptionsDto, userId);
+  async execute({
+    pageOptionsDto,
+    userId,
+    withBanned,
+    role = 'user',
+  }: GetBlogsCommand) {
+    return this.blogsQueryRepository.findAll(
+      pageOptionsDto,
+      userId,
+      withBanned,
+      role,
+    );
   }
 }

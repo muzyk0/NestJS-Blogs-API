@@ -6,6 +6,7 @@ import { Model } from 'mongoose';
 import { BASE_PROJECTION } from '../../../common/mongoose/constants';
 import { PageOptionsDto } from '../../../common/paginator/page-options.dto';
 import { PageDto } from '../../../common/paginator/page.dto';
+import { BlogsRepository } from '../../blogs/infrastructure/blogs.repository';
 import { LikeParentTypeEnum } from '../../likes/application/interfaces/like-parent-type.enum';
 import { Like } from '../../likes/domain/entity/like.entity';
 import { LikesRepositorySql } from '../../likes/infrastructure/likes.repository.sql';
@@ -37,6 +38,7 @@ export class PostsQueryRepository implements IPostsQueryRepository {
     @InjectModel(Post.name) private postModel: Model<PostDocument>,
     private readonly likesRepositorySql: LikesRepositorySql,
     private readonly usersRepository: UsersRepository,
+    private readonly blogsRepository: BlogsRepository,
   ) {}
 
   async findAll(options: FindAllPostsOptions) {
@@ -58,8 +60,29 @@ export class PostsQueryRepository implements IPostsQueryRepository {
       .limit(options.pageSize)
       .lean();
 
+    // FIXMe: Remove after switch to SQL
+    const blogsForPosts = await this.blogsRepository.findMany(
+      posts.map((p) => p.blogId),
+    );
+
+    const usersIdsForBannedBlogs = await this.usersRepository
+      .findManyByIds(blogsForPosts.map((blog) => blog.userId))
+      .then((users) =>
+        users.filter((u) => u.accountData.banned).map((u) => u.accountData.id),
+      );
+
+    const filter1 = blogsForPosts.filter(
+      (blog) => !usersIdsForBannedBlogs.includes(blog.userId),
+    );
+
+    const postsWithoutBannedUsers = posts.filter((post) =>
+      filter1.some((blog) => blog.id === post.blogId),
+    );
+
+    // FIXMe: End remove after switch to SQL
+
     const postsWithExtendedLikesInfo: PostViewDto[] = await Promise.all(
-      posts.map(async (post) => {
+      postsWithoutBannedUsers.map(async (post) => {
         const { likesCount, dislikesCount } =
           await this.likesRepositorySql.countLikeAndDislikeByCommentId({
             parentId: post.id,
@@ -123,6 +146,16 @@ export class PostsQueryRepository implements IPostsQueryRepository {
 
     if (!post) {
       return;
+    }
+
+    const blogForPost = await this.blogsRepository.findOne(post.blogId);
+
+    if (blogForPost.userId) {
+      const user = await this.usersRepository.findOneById(blogForPost.userId);
+
+      if (user.accountData.banned) {
+        return;
+      }
     }
 
     const { likesCount, dislikesCount } =

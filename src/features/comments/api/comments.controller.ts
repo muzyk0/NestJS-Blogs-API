@@ -20,6 +20,7 @@ import { JwtATPayload } from '../../auth/application/interfaces/jwtPayload.type'
 import { AuthGuard } from '../../auth/guards/auth-guard';
 import { JwtAuthGuard } from '../../auth/guards/jwt-auth.guard';
 import { CreateLikeInput } from '../../likes/application/input/create-like.input';
+import { UsersRepository } from '../../users/infrastructure/users.repository';
 import { CommentsService } from '../application/comments.service';
 import { CommentDto } from '../application/dto/comment.dto';
 import { CommentInput } from '../application/dto/comment.input';
@@ -43,6 +44,7 @@ export interface ICommentsService {
 export class CommentsController {
   constructor(
     private readonly commentsService: CommentsService,
+    private readonly usersRepository: UsersRepository,
     private readonly commentsQueryRepository: CommentsQueryRepository,
   ) {}
 

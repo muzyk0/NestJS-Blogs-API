@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
-import { DataSource, Repository } from 'typeorm';
+import { DataSource } from 'typeorm';
 
+import { UsersRepository } from '../../users/infrastructure/users.repository';
 import { GetLikeDto } from '../application/dto/get-like.dto';
 import { GetCommentLikeByUser } from '../application/interfaces/get-like.interface';
 import { LikeStatus } from '../application/interfaces/like-status.enum';
@@ -11,8 +11,7 @@ import { Like } from '../domain/entity/like.entity';
 @Injectable()
 export class LikesRepositorySql {
   constructor(
-    @InjectRepository(Like)
-    private usersRepository: Repository<Like>,
+    private usersRepository: UsersRepository,
     private dataSource: DataSource,
   ) {}
 
@@ -20,26 +19,33 @@ export class LikesRepositorySql {
     const queryRunner = this.dataSource.createQueryRunner();
     await queryRunner.connect();
 
+    const bannedUsersIds = await this.usersRepository
+      .findAllBanned()
+      .then((users) => users.map((u) => u.accountData.id))
+      .then((users) => users.join(', '));
+
     // TODO: Optimize in 1 query
     const likesCount = await queryRunner.query(
       `
           select COUNT(*) ::int
           from likes
           where "parentId" = $1
-            and "status" = $2;
+            and "status" = $2
+            and "userId" NOT IN ($3);
 
       `,
-      [parentId, LikeStatus.LIKE],
+      [parentId, LikeStatus.LIKE, bannedUsersIds],
     );
     const dislikesCount = await queryRunner.query(
       `
           select COUNT(*) ::int
           from likes
           where "parentId" = $1
-            and "status" = $2;
+            and "status" = $2
+            and "userId" NOT IN ($3);
 
       `,
-      [parentId, LikeStatus.DISLIKE],
+      [parentId, LikeStatus.DISLIKE, bannedUsersIds],
     );
 
     await queryRunner.release();
@@ -86,6 +92,11 @@ export class LikesRepositorySql {
     const queryRunner = this.dataSource.createQueryRunner();
     await queryRunner.connect();
 
+    const bannedUsersIds = await this.usersRepository
+      .findAllBanned()
+      .then((users) => users.map((u) => u.accountData.id))
+      .then((users) => users.join(', '));
+
     const likes: Like[] = await queryRunner.query(
       `
           SELECT *
@@ -93,10 +104,11 @@ export class LikesRepositorySql {
           WHERE "parentId" = $1
             AND "parentType" = $2
             AND "status" = $3
+            and "userId" NOT IN ($5)
           ORDER BY "createdAt" DESC
           LIMIT $4
       `,
-      [parentId, parentType, LikeStatus.LIKE, limit],
+      [parentId, parentType, LikeStatus.LIKE, limit, bannedUsersIds],
     );
 
     await queryRunner.release();

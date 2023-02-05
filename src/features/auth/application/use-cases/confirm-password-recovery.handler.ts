@@ -3,7 +3,7 @@ import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
 import * as bcrypt from 'bcrypt';
 
 import { PasswordRecoveryService } from '../../../password-recovery/application/password-recovery.service';
-import { UsersService } from '../../../users/application/users.service';
+import { UsersRepository } from '../../../users/infrastructure/users.repository';
 
 export class ConfirmPasswordRecoveryCommand {
   constructor(
@@ -17,7 +17,7 @@ export class ConfirmPasswordRecoveryHandler
   implements ICommandHandler<ConfirmPasswordRecoveryCommand>
 {
   constructor(
-    private readonly usersService: UsersService,
+    private readonly usersRepository: UsersRepository,
     private readonly passwordRecoveryService: PasswordRecoveryService,
   ) {}
 
@@ -46,7 +46,7 @@ export class ConfirmPasswordRecoveryHandler
   private async updateUserPassword(userId: string, newPassword: string) {
     const password = await this.generateHashPassword(newPassword);
 
-    await this.usersService.updateUserPassword({
+    await this.usersRepository.updateUserPassword({
       id: userId,
       password,
     });

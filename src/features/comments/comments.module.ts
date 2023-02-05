@@ -6,6 +6,7 @@ import { Blog, BlogSchema } from '../blogs/domain/schemas/blogs.schema';
 import { LikesModule } from '../likes/likes.module';
 import { Post, PostSchema } from '../posts/domain/schemas/posts.schema';
 import { PostsRepository } from '../posts/infrastructure/posts.repository';
+import { UsersModule } from '../users/users.module';
 
 import { CommentsController } from './api/comments.controller';
 import { CommentsService } from './application/comments.service';
@@ -20,6 +21,7 @@ import { CommentsRepository } from './infrastructure/comments.repository';
     MongooseModule.forFeature([{ name: Blog.name, schema: BlogSchema }]),
     LikesModule,
     AuthModule,
+    UsersModule,
   ],
   controllers: [CommentsController],
   providers: [

@@ -1,8 +1,9 @@
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
-import { Model } from 'mongoose';
+import { FilterQuery, Model } from 'mongoose';
 
 import { BASE_PROJECTION } from '../../../common/mongoose/constants';
+import { BanUnbanUserInput } from '../application/dto/ban-unban-user.input';
 import { UpdateConfirmationType } from '../application/interfaces/users.interface';
 import { RevokedTokenType } from '../domain/schemas/revoked-tokens.schema';
 import {
@@ -37,17 +38,18 @@ export class UsersRepository {
     );
   }
 
-  async findOneByLoginOrEmail(loginOrEmail: string): Promise<User> {
-    const user = await this.userModel.findOne(
-      {
-        $or: [
-          { 'accountData.login': loginOrEmail },
-          { 'accountData.email': loginOrEmail },
-        ],
-      },
-      BASE_PROJECTION,
-    );
-    return user;
+  async findOneByLoginOrEmail(
+    loginOrEmail: string,
+    withBanned?: false,
+  ): Promise<User> {
+    const filter: FilterQuery<UserDocument> = {
+      ...(withBanned ? { 'accountData.banned': { $exists: true } } : {}),
+      $or: [
+        { 'accountData.login': loginOrEmail },
+        { 'accountData.email': loginOrEmail },
+      ],
+    };
+    return this.userModel.findOne(filter, BASE_PROJECTION).lean();
   }
 
   async findOneByEmail(email: string): Promise<User> {
@@ -66,8 +68,18 @@ export class UsersRepository {
     );
   }
 
-  async findOneById(id: string) {
-    return this.userModel.findOne({ 'accountData.id': id }, BASE_PROJECTION);
+  async findOneById(id: string): Promise<UserAccountDBType | null> {
+    return this.userModel
+      .findOne({ 'accountData.id': id }, BASE_PROJECTION)
+      .lean();
+  }
+
+  async findManyByIds(ids: string[]): Promise<UserAccountDBType[] | null> {
+    const users = await this.userModel
+      .find({ 'accountData.id': { $in: ids }, BASE_PROJECTION })
+      .lean();
+
+    return users;
   }
 
   async remove(id: string) {
@@ -140,5 +152,31 @@ export class UsersRepository {
       { returnDocument: 'after', projection: projectionFields },
     );
     return !!user.modifiedCount;
+  }
+
+  async updateBan(id: string, payload: BanUnbanUserInput) {
+    const user = await this.userModel.updateOne(
+      { 'accountData.id': id },
+      {
+        $set: {
+          'accountData.banned': payload.isBanned ? new Date() : null,
+          'accountData.banReason': payload.isBanned ? payload.banReason : null,
+        },
+      },
+      { returnDocument: 'after', projection: projectionFields },
+    );
+    return !!user.modifiedCount;
+  }
+
+  async findByIds(ids: string[]): Promise<UserAccountDBType[]> {
+    return this.userModel
+      .find({
+        'accountData.id': { $in: ids },
+      })
+      .lean();
+  }
+
+  async findAllBanned() {
+    return this.userModel.find({ 'accountData.banned': { $ne: null } });
   }
 }

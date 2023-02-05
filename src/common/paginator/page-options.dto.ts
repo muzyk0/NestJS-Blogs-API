@@ -49,6 +49,12 @@ export class PageOptionsDto {
   // }
 }
 
+export enum UserBanStatus {
+  ALL = 'all',
+  BANNED = 'banned',
+  NOT_BANNED = 'notBanned',
+}
+
 export class PageOptionsForUserDto extends PageOptionsDto {
   @IsString()
   @IsOptional()
@@ -57,4 +63,8 @@ export class PageOptionsForUserDto extends PageOptionsDto {
   @IsString()
   @IsOptional()
   searchEmailTerm?: string | null = null;
+
+  @IsEnum(UserBanStatus)
+  @IsOptional()
+  banStatus?: string | null = null;
 }

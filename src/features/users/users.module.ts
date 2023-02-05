@@ -7,15 +7,20 @@ import { EmailModuleLocal } from '../email-local/email-local.module';
 import { PasswordRecoveryModule } from '../password-recovery/password-recovery.module';
 import { SecurityModule } from '../security/security.module';
 
-import { UsersController } from './api/users.controller';
+import { BanUnbanUserHandler } from './application/use-cases/ban-unban-user.handler';
+import { CreateUserHandler } from './application/use-cases/create-user.handler';
 import { GetUsersHandler } from './application/use-cases/get-users.handler';
 import { RemoveUserHandler } from './application/use-cases/remove-user.handler';
-import { UsersService } from './application/users.service';
 import { User, UserSchema } from './domain/schemas/users.schema';
 import { UsersQueryRepository } from './infrastructure/users.query.repository';
 import { UsersRepository } from './infrastructure/users.repository';
 
-const CommandHandlers = [GetUsersHandler, RemoveUserHandler];
+const CommandHandlers = [
+  GetUsersHandler,
+  RemoveUserHandler,
+  CreateUserHandler,
+  BanUnbanUserHandler,
+];
 
 @Module({
   imports: [
@@ -27,18 +32,8 @@ const CommandHandlers = [GetUsersHandler, RemoveUserHandler];
     SecurityModule,
     PasswordRecoveryModule,
   ],
-  controllers: [UsersController],
-  providers: [
-    ...CommandHandlers,
-    UsersService,
-    UsersRepository,
-    UsersQueryRepository,
-  ],
-  exports: [
-    ...CommandHandlers,
-    UsersService,
-    UsersRepository,
-    UsersQueryRepository,
-  ],
+  controllers: [],
+  providers: [...CommandHandlers, UsersRepository, UsersQueryRepository],
+  exports: [...CommandHandlers, UsersRepository, UsersQueryRepository],
 })
 export class UsersModule {}

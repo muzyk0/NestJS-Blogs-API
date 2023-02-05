@@ -5,6 +5,8 @@ export interface IUser {
   login: string;
   email: string;
   password: string;
+  banned: Date | null;
+  banReason: string | null;
 }
 
 export class UserData implements IUser {
@@ -19,6 +21,12 @@ export class UserData implements IUser {
 
   @Prop({ required: true })
   password: string;
+
+  @Prop({ default: null })
+  banned: Date | null;
+
+  @Prop({ default: null })
+  banReason: string | null;
 }
 
 export const UserDataSchema = SchemaFactory.createForClass(UserData);
