@@ -22,6 +22,7 @@ import {
   ApiForbiddenResponse,
   ApiNoContentResponse,
   ApiNotFoundResponse,
+  ApiOkResponse,
   ApiOperation,
   ApiTags,
   ApiUnauthorizedResponse,
@@ -82,22 +83,16 @@ export class BloggerController {
     return this.blogsQueryRepository.findOne(blog.id);
   }
 
-  @ApiOperation({ summary: 'Delete post specified by id' })
-  @ApiNoContentResponse({
-    status: 204,
+  @ApiOperation({
+    summary: 'Returns blogs (for which current user is owner) with paging',
+  })
+  @ApiOkResponse({
+    status: 200,
     description: 'No Content',
   })
   @ApiUnauthorizedResponse({
     status: 401,
     description: 'Unauthorized',
-  })
-  @ApiForbiddenResponse({
-    status: 403,
-    description: 'Forbidden',
-  })
-  @ApiNotFoundResponse({
-    status: 404,
-    description: 'Not Found',
   })
   @Get('blogs')
   findAll(
@@ -209,11 +204,16 @@ export class BloggerController {
   async createBlogPost(
     @Param('id') blogId: string,
     @Body() { shortDescription, content, title }: CreateBlogPostDto,
+    @GetCurrentJwtContext() ctx: JwtATPayload,
   ) {
     const blog = await this.blogsService.findOne(blogId);
 
     if (!blog) {
       throw new NotFoundException();
+    }
+
+    if (blog.userId !== ctx.user.id) {
+      throw new ForbiddenException();
     }
 
     const post = await this.postsService.create({
