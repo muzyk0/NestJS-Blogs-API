@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { IsInt, IsOptional } from 'class-validator';
-import { Model } from 'mongoose';
+import { FilterQuery, Model } from 'mongoose';
 
 import { BASE_PROJECTION } from '../../../common/mongoose/constants';
 import { PageOptionsDto } from '../../../common/paginator/page-options.dto';
@@ -42,7 +42,7 @@ export class PostsQueryRepository implements IPostsQueryRepository {
   ) {}
 
   async findAll(options: FindAllPostsOptions) {
-    const filter = {
+    const filter: FilterQuery<PostDocument> = {
       ...(options?.searchNameTerm
         ? { title: { $regex: options.searchNameTerm } }
         : {}),
@@ -72,7 +72,7 @@ export class PostsQueryRepository implements IPostsQueryRepository {
       );
 
     const filter1 = blogsForPosts.filter(
-      (blog) => !usersIdsForBannedBlogs.includes(blog.userId),
+      (blog) => !usersIdsForBannedBlogs.includes(blog.userId) && !blog.isBanned,
     );
 
     const postsWithoutBannedUsers = posts.filter((post) =>
@@ -153,7 +153,7 @@ export class PostsQueryRepository implements IPostsQueryRepository {
     if (blogForPost.userId) {
       const user = await this.usersRepository.findOneById(blogForPost.userId);
 
-      if (user.accountData.banned) {
+      if (user.accountData.banned || blogForPost.isBanned) {
         return;
       }
     }

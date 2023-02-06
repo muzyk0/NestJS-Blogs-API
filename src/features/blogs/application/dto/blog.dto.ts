@@ -51,9 +51,13 @@ export class BlogView {
   isMembership: boolean;
 }
 
-export class BlogDtoForSuperAdmin extends BlogView {
+export class BlogViewDtoForSuperAdmin extends BlogView {
   blogOwnerInfo: {
     userId: string;
     userLogin: string;
+  };
+  banInfo: {
+    isBanned: boolean;
+    banDate: Date | null;
   };
 }

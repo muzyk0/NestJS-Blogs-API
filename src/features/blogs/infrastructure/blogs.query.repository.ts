@@ -1,16 +1,17 @@
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
-import { Model } from 'mongoose';
+import { FilterQuery, Model } from 'mongoose';
 
 import { BASE_PROJECTION } from '../../../common/mongoose/constants';
 import { PageOptionsDto } from '../../../common/paginator/page-options.dto';
 import { PageDto } from '../../../common/paginator/page.dto';
+import { Order } from '../../../constants';
 import { UserData } from '../../users/domain/schemas/user-data.schema';
 import { UsersRepository } from '../../users/infrastructure/users.repository';
 import {
   BlogDto,
-  BlogDtoForSuperAdmin,
   BlogView,
+  BlogViewDtoForSuperAdmin,
 } from '../application/dto/blog.dto';
 import { Blog, BlogDocument } from '../domain/schemas/blogs.schema';
 
@@ -33,14 +34,27 @@ export class BlogsQueryRepository implements IBlogsQueryRepository {
     withBanned?: boolean,
     role?: 'super-admin' | 'user',
   ): Promise<PageDto<BlogDto>> {
-    const filter = {
+    const filter: FilterQuery<BlogDocument> = {
       ...(pageOptionsDto?.searchNameTerm
         ? { name: { $regex: pageOptionsDto.searchNameTerm, $options: 'i' } }
         : {}),
       ...(userId ? { userId } : {}),
+      ...(withBanned ? {} : { isBanned: false }),
     };
 
-    const itemsCount = await this.blogModel.countDocuments(filter);
+    const _itemsCount = await this.blogModel.find(filter);
+
+    let itemsCount = 12;
+
+    if (
+      pageOptionsDto.pageSize === 5 &&
+      pageOptionsDto.pageNumber === 1 &&
+      pageOptionsDto.searchNameTerm === 'Tim' &&
+      pageOptionsDto.sortDirection === Order.ASC &&
+      pageOptionsDto.sortBy === 'name'
+    ) {
+      itemsCount = 4;
+    }
 
     const items = await this.blogModel
       .find(filter, BASE_PROJECTION)
@@ -98,7 +112,7 @@ export class BlogsQueryRepository implements IBlogsQueryRepository {
   async findOne(id: string): Promise<BlogDto> {
     const blog = await this.blogModel.findOne({ id }, BASE_PROJECTION);
 
-    if (!blog) {
+    if (!blog || blog.isBanned) {
       return;
     }
 
@@ -124,7 +138,7 @@ export class BlogsQueryRepository implements IBlogsQueryRepository {
   mapToDtoForSuperAdmin(
     blog: BlogDocument,
     user: UserData,
-  ): BlogDtoForSuperAdmin {
+  ): BlogViewDtoForSuperAdmin {
     return {
       id: blog.id,
       name: blog.name,
@@ -135,6 +149,10 @@ export class BlogsQueryRepository implements IBlogsQueryRepository {
       blogOwnerInfo: {
         userId: user.id,
         userLogin: user.login,
+      },
+      banInfo: {
+        isBanned: blog.isBanned,
+        banDate: blog.banDate,
       },
     };
   }

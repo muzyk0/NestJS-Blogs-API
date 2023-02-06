@@ -1,9 +1,7 @@
 import { BadRequestException } from '@nestjs/common';
 import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
 
-import { PageOptionsDto } from '../../../../common/paginator/page-options.dto';
 import { UsersRepository } from '../../../users/infrastructure/users.repository';
-import { BlogsQueryRepository } from '../../infrastructure/blogs.query.repository';
 import { BlogsRepository } from '../../infrastructure/blogs.repository';
 
 export class BindBlogOnUserCommand {

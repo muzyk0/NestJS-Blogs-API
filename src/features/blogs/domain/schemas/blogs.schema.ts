@@ -31,6 +31,12 @@ export class Blog {
 
   @Prop()
   userId: string;
+
+  @Prop({ default: false })
+  isBanned: boolean;
+
+  @Prop({ default: null })
+  banDate: Date | null;
 }
 
 export const BlogSchema = SchemaFactory.createForClass(Blog);
