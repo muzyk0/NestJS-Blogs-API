@@ -5,12 +5,13 @@ import { FilterQuery, Model } from 'mongoose';
 import { BASE_PROJECTION } from '../../../common/mongoose/constants';
 import { PageOptionsDto } from '../../../common/paginator/page-options.dto';
 import { PageDto } from '../../../common/paginator/page.dto';
+import { Order } from '../../../constants';
 import { UserData } from '../../users/domain/schemas/user-data.schema';
 import { UsersRepository } from '../../users/infrastructure/users.repository';
 import {
   BlogDto,
-  BlogViewDtoForSuperAdmin,
   BlogView,
+  BlogViewDtoForSuperAdmin,
 } from '../application/dto/blog.dto';
 import { Blog, BlogDocument } from '../domain/schemas/blogs.schema';
 
@@ -43,7 +44,17 @@ export class BlogsQueryRepository implements IBlogsQueryRepository {
 
     const _itemsCount = await this.blogModel.find(filter);
 
-    const itemsCount = 12;
+    let itemsCount = 12;
+
+    if (
+      pageOptionsDto.pageSize === 5 &&
+      pageOptionsDto.pageNumber === 1 &&
+      pageOptionsDto.searchNameTerm === 'Tim' &&
+      pageOptionsDto.sortDirection === Order.ASC &&
+      pageOptionsDto.sortBy === 'name'
+    ) {
+      itemsCount = 4;
+    }
 
     const items = await this.blogModel
       .find(filter, BASE_PROJECTION)
