@@ -153,7 +153,7 @@ export class PostsQueryRepository implements IPostsQueryRepository {
     if (blogForPost.userId) {
       const user = await this.usersRepository.findOneById(blogForPost.userId);
 
-      if (user.accountData.banned) {
+      if (user.accountData.banned || blogForPost.isBanned) {
         return;
       }
     }

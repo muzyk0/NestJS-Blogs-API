@@ -31,7 +31,7 @@ export class BlogsRepository implements IBlogsRepository {
     return this.blogModel.findOne({ id: blog.id }, BASE_PROJECTION);
   }
 
-  async findOne(id: string): Promise<BlogModelDto> {
+  async findOne(id: string): Promise<BlogDocument> {
     return this.blogModel.findOne({ id }, BASE_PROJECTION).lean();
   }
 
