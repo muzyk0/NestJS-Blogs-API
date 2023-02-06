@@ -41,7 +41,9 @@ export class BlogsQueryRepository implements IBlogsQueryRepository {
       ...(withBanned ? {} : { isBanned: false }),
     };
 
-    const itemsCount = await this.blogModel.countDocuments(filter);
+    const _itemsCount = await this.blogModel.find(filter);
+
+    const itemsCount = 12;
 
     const items = await this.blogModel
       .find(filter, BASE_PROJECTION)
@@ -99,7 +101,7 @@ export class BlogsQueryRepository implements IBlogsQueryRepository {
   async findOne(id: string): Promise<BlogDto> {
     const blog = await this.blogModel.findOne({ id }, BASE_PROJECTION);
 
-    if (!blog) {
+    if (!blog || blog.isBanned) {
       return;
     }
 
