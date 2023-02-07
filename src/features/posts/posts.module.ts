@@ -3,6 +3,9 @@ import { CqrsModule } from '@nestjs/cqrs';
 import { MongooseModule } from '@nestjs/mongoose';
 
 import { AuthModule } from '../auth/auth.module';
+import { BansService } from '../bans/application/bans.service';
+import { BansModule } from '../bans/bans.module';
+import { BansRepositorySql } from '../bans/infrastructure/bans.repository.sql';
 import { BlogsService } from '../blogs/application/blogs.service';
 import { Blog, BlogSchema } from '../blogs/domain/schemas/blogs.schema';
 import { BlogsRepository } from '../blogs/infrastructure/blogs.repository';
@@ -53,6 +56,8 @@ import { PostsRepository } from './infrastructure/posts.repository';
     CommentsService,
     CommentsRepository,
     CommentsQueryRepository,
+    BansService,
+    BansRepositorySql,
   ],
   exports: [PostsService, PostsRepository, PostsQueryRepository],
 })

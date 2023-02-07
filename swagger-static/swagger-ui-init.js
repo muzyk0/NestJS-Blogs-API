@@ -383,6 +383,51 @@ window.onload = function() {
           ]
         }
       },
+      "/blog-platform/blogger/users/{userId}/ban": {
+        "put": {
+          "operationId": "BloggerController_banUserForBlog",
+          "summary": "Ban/unban user for blog",
+          "parameters": [
+            {
+              "name": "userId",
+              "required": true,
+              "in": "path",
+              "schema": {
+                "type": "string"
+              }
+            }
+          ],
+          "requestBody": {
+            "required": true,
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BanUserForBlogInput"
+                }
+              }
+            }
+          },
+          "responses": {
+            "204": {
+              "description": "No Content"
+            },
+            "400": {
+              "description": "If the inputModel has incorrect values"
+            },
+            "401": {
+              "description": "Unauthorized"
+            }
+          },
+          "tags": [
+            "blogger"
+          ],
+          "security": [
+            {
+              "bearer": []
+            }
+          ]
+        }
+      },
       "/blog-platform/auth/login": {
         "post": {
           "operationId": "AuthController_login",
@@ -1207,6 +1252,10 @@ window.onload = function() {
           "properties": {}
         },
         "UpdatePostDto": {
+          "type": "object",
+          "properties": {}
+        },
+        "BanUserForBlogInput": {
           "type": "object",
           "properties": {}
         },

@@ -1,5 +1,4 @@
 import {
-  BadRequestException,
   Body,
   Controller,
   Delete,
@@ -33,6 +32,7 @@ import { GetCurrentJwtContext } from '../../../common/decorators/get-current-use
 import { PageOptionsDto } from '../../../common/paginator/page-options.dto';
 import { JwtATPayload } from '../../auth/application/interfaces/jwtPayload.type';
 import { JwtAuthGuard } from '../../auth/guards/jwt-auth.guard';
+import { UpdateBanUserForBlogCommand } from '../../bans/application/use-cases/update-ban-user-for-blog.handler';
 import { UpdatePostDto } from '../../posts/application/dto/update-post.dto';
 import { PostsService } from '../../posts/application/posts.service';
 import { PostsQueryRepository } from '../../posts/infrastructure/posts.query.repository';
@@ -42,6 +42,7 @@ import { UpdateBlogDto } from '../application/dto/update-blog.dto';
 import { GetBlogsCommand } from '../application/use-cases/get-blogs.handler';
 import { BlogsQueryRepository } from '../infrastructure/blogs.query.repository';
 
+import { BanUserForBlogInput } from './dto/ban-user-for-blog.input';
 import { CreateBlogInput } from './dto/create-blog.input';
 
 @ApiTags('blogger')
@@ -316,5 +317,30 @@ export class BloggerController {
     }
 
     return;
+  }
+
+  @ApiOperation({ summary: 'Ban/unban user for blog' })
+  @ApiNoContentResponse({
+    status: 204,
+    description: 'No Content',
+  })
+  @ApiBadRequestResponse({
+    status: 400,
+    description: 'If the inputModel has incorrect values',
+  })
+  @ApiUnauthorizedResponse({
+    status: 401,
+    description: 'Unauthorized',
+  })
+  @Put('users/:userId/ban')
+  @HttpCode(HttpStatus.NO_CONTENT)
+  async banUserForBlog(
+    @Param('userId') userId: string,
+    @Body() body: BanUserForBlogInput,
+    @GetCurrentJwtContext() ctx: JwtATPayload,
+  ) {
+    return this.commandBus.execute(
+      new UpdateBanUserForBlogCommand(body, userId),
+    );
   }
 }

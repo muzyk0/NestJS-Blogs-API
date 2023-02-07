@@ -7,6 +7,6 @@ export class BaseEntity {
   @UpdateDateColumn()
   updatedAt: Date;
 
-  @Column()
+  @Column({ nullable: true })
   deleted: Date;
 }
