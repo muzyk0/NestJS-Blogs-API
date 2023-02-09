@@ -392,6 +392,11 @@ export class BloggerController {
     @Query() pageOptionsDto: PageOptionsForUserDto,
     @Param('blogId') blogId: string,
   ) {
+    const blog = await this.blogsService.findOne(blogId);
+
+    if (!blog) {
+      throw new NotFoundException();
+    }
     return this.usersQueryRepository.getBannedUsersForBlog(
       pageOptionsDto,
       blogId,

@@ -471,9 +471,6 @@ window.onload = function() {
             },
             "401": {
               "description": "Unauthorized"
-            },
-            "404": {
-              "description": "Not found"
             }
           },
           "tags": [
