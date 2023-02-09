@@ -9,6 +9,7 @@ import {
 } from '../../../common/paginator/page-options.dto';
 import { PageDto } from '../../../common/paginator/page.dto';
 import { BanTypeEnum } from '../../bans/application/interfaces/ban-type.enum';
+import { Ban } from '../../bans/domain/entity/ban.entity';
 import { BansRepositorySql } from '../../bans/infrastructure/bans.repository.sql';
 import {
   UserBloggerViewModel,
@@ -96,14 +97,14 @@ export class UsersQueryRepository {
     };
   }
 
-  mapToBloggerViewDto(users: UserDocument): UserBloggerViewModel {
+  mapToBloggerViewDto(users: UserDocument, ban: Ban): UserBloggerViewModel {
     return {
       id: users.accountData.id,
       login: users.accountData.login,
       banInfo: {
-        isBanned: Boolean(users.accountData.banned),
-        banDate: users.accountData.banned?.toISOString() ?? null,
-        banReason: users.accountData.banReason,
+        isBanned: ban.isBanned,
+        banDate: ban.updatedAt.toISOString(),
+        banReason: ban.banReason,
       },
     };
   }
@@ -162,8 +163,13 @@ export class UsersQueryRepository {
       })
       .limit(pageOptionsDto.pageSize);
 
+    const itemsWithBan = items.map((item) => {
+      const ban = bans.find((ban) => ban.userId === item.accountData.id);
+
+      return this.mapToBloggerViewDto(item, ban);
+    });
     return new PageDto({
-      items: items.map(this.mapToBloggerViewDto),
+      items: itemsWithBan,
       itemsCount,
       pageOptionsDto,
     });
