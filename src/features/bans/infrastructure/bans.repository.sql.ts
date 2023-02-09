@@ -102,8 +102,9 @@ export class BansRepositorySql {
           FROM bans
           WHERE "parentId" = $1
             AND "type" = $2
+            AND "isBanned" = $3
       `,
-      [parentId, type],
+      [parentId, type, false],
     );
 
     await queryRunner.release();
