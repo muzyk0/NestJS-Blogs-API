@@ -451,6 +451,38 @@ window.onload = function() {
           ]
         }
       },
+      "/blog-platform/blogger/users/blog/{blogId}": {
+        "get": {
+          "operationId": "BloggerController_allBanUsersForBlog",
+          "summary": "Returns all banned users for blog",
+          "parameters": [
+            {
+              "name": "blogId",
+              "required": true,
+              "in": "path",
+              "schema": {
+                "type": "string"
+              }
+            }
+          ],
+          "responses": {
+            "200": {
+              "description": "Success"
+            },
+            "401": {
+              "description": "Unauthorized"
+            }
+          },
+          "tags": [
+            "blogger"
+          ],
+          "security": [
+            {
+              "bearer": []
+            }
+          ]
+        }
+      },
       "/blog-platform/auth/login": {
         "post": {
           "operationId": "AuthController_login",

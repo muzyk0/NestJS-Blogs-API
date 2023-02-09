@@ -29,7 +29,10 @@ import {
 
 import { GetCurrentJwtContextWithoutAuth } from '../../../common/decorators/get-current-user-without-auth.decorator';
 import { GetCurrentJwtContext } from '../../../common/decorators/get-current-user.decorator';
-import { PageOptionsDto } from '../../../common/paginator/page-options.dto';
+import {
+  PageOptionsDto,
+  PageOptionsForUserDto,
+} from '../../../common/paginator/page-options.dto';
 import { JwtATPayload } from '../../auth/application/interfaces/jwtPayload.type';
 import { JwtAuthGuard } from '../../auth/guards/jwt-auth.guard';
 import { UpdateBanUserForBlogCommand } from '../../bans/application/use-cases/update-ban-user-for-blog.handler';
@@ -37,6 +40,7 @@ import { GetPostCommentsInsideCurrentUserBlogsCommand } from '../../comments/app
 import { UpdatePostDto } from '../../posts/application/dto/update-post.dto';
 import { PostsService } from '../../posts/application/posts.service';
 import { PostsQueryRepository } from '../../posts/infrastructure/posts.query.repository';
+import { UsersQueryRepository } from '../../users/infrastructure/users.query.repository';
 import { BlogsService } from '../application/blogs.service';
 import { CreateBlogPostDto } from '../application/dto/create-blog-post.dto';
 import { UpdateBlogDto } from '../application/dto/update-blog.dto';
@@ -56,6 +60,7 @@ export class BloggerController {
     private readonly blogsQueryRepository: BlogsQueryRepository,
     private readonly postsService: PostsService,
     private readonly postsQueryRepository: PostsQueryRepository,
+    private readonly usersQueryRepository: UsersQueryRepository,
     private readonly commandBus: CommandBus,
   ) {}
 
@@ -366,6 +371,26 @@ export class BloggerController {
   ) {
     return this.commandBus.execute(
       new UpdateBanUserForBlogCommand(body, userId),
+    );
+  }
+
+  @ApiOperation({ summary: 'Returns all banned users for blog' })
+  @ApiOkResponse({
+    status: 200,
+    description: 'Success',
+  })
+  @ApiUnauthorizedResponse({
+    status: 401,
+    description: 'Unauthorized',
+  })
+  @Get('users/blog/:blogId')
+  async allBanUsersForBlog(
+    @Query() pageOptionsDto: PageOptionsForUserDto,
+    @Param('blogId') blogId: string,
+  ) {
+    return this.usersQueryRepository.getBannedUsersForBlog(
+      pageOptionsDto,
+      blogId,
     );
   }
 }

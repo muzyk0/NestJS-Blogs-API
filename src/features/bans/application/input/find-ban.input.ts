@@ -13,3 +13,12 @@ export class FindBanInput {
   @IsEnum(BanTypeEnum)
   type: BanTypeEnum;
 }
+
+export class FindBanByBlogIdInput {
+  @IsString()
+  @IsNotEmpty()
+  parentId: string;
+
+  @IsEnum(BanTypeEnum)
+  type: BanTypeEnum;
+}

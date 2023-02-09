@@ -2,7 +2,10 @@ import { Injectable } from '@nestjs/common';
 import { DataSource } from 'typeorm';
 
 import { CreateBanInput } from '../application/input/create-ban.input';
-import { FindBanInput } from '../application/input/find-ban.input';
+import {
+  FindBanByBlogIdInput,
+  FindBanInput,
+} from '../application/input/find-ban.input';
 import { Ban } from '../domain/entity/ban.entity';
 
 @Injectable()
@@ -87,5 +90,24 @@ export class BansRepositorySql {
     console.log(ban);
 
     return ban[0];
+  }
+
+  async getBansByBlogId({ parentId, type }: FindBanByBlogIdInput) {
+    const queryRunner = this.dataSource.createQueryRunner();
+    await queryRunner.connect();
+
+    const bans: Ban[] = await queryRunner.query(
+      `
+          SELECT *
+          FROM bans
+          WHERE "parentId" = $1
+            AND "type" = $2
+      `,
+      [parentId, type],
+    );
+
+    await queryRunner.release();
+
+    return bans;
   }
 }
