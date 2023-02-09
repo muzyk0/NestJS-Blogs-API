@@ -30,9 +30,7 @@ export class GetPostCommentsInsideCurrentUserBlogsHandler
       .findByUserId(userId)
       .then((res) => res.map((b) => b.id));
 
-    const posts = await this.postsRepository
-      .findManyByBlogsIds(blogsIds)
-      .then((res) => res.map((p) => p.id));
+    const posts = await this.postsRepository.findManyByBlogsIds(blogsIds);
     return this.commentsQueryRepository.findPostCommentsInsideUserBlogs(
       pageOptionsDto,
       posts,

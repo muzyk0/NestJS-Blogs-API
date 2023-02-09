@@ -7,13 +7,17 @@ import { BASE_PROJECTION } from '../../../common/mongoose/constants';
 import { PageOptionsDto } from '../../../common/paginator/page-options.dto';
 import { PageDto } from '../../../common/paginator/page.dto';
 import { Order } from '../../../constants';
+import { Blog } from '../../blogs/domain/schemas/blogs.schema';
 import { LikeParentTypeEnum } from '../../likes/application/interfaces/like-parent-type.enum';
 import { Like } from '../../likes/domain/entity/like.entity';
 import { LikesRepositorySql } from '../../likes/infrastructure/likes.repository.sql';
 import { getStringLikeStatus } from '../../likes/utils/formatters';
 import { Post, PostDocument } from '../../posts/domain/schemas/posts.schema';
 import { UsersRepository } from '../../users/infrastructure/users.repository';
-import { CommentViewDto } from '../application/dto/comment.view.dto';
+import {
+  CommentForBloggerViewDto,
+  CommentViewDto,
+} from '../application/dto/comment.view.dto';
 import { Comment, CommentDocument } from '../domain/schemas/comments.schema';
 
 const projectionFields = { ...BASE_PROJECTION, postId: 0 };
@@ -97,10 +101,10 @@ export class CommentsQueryRepository {
       userId: userId,
     });
 
-    return this.mapToDto(comment, likesCount, dislikesCount, myStatus);
+    return this.mapToViewDto(comment, likesCount, dislikesCount, myStatus);
   }
 
-  private mapToDto(
+  private mapToViewDto(
     comment: Comment,
     likesCount,
     dislikesCount,
@@ -121,10 +125,31 @@ export class CommentsQueryRepository {
     };
   }
 
+  private mapToBloggerViewDto(
+    comment: Comment,
+    post: Post,
+  ): CommentForBloggerViewDto {
+    return {
+      id: comment.id,
+      content: comment.content,
+      commentatorInfo: {
+        userId: comment.userId,
+        userLogin: comment.userLogin,
+      },
+      createdAt: comment.createdAt,
+      postInfo: {
+        id: comment.postId,
+        title: post.title,
+        blogId: post.blogId,
+        blogName: post.blogName,
+      },
+    };
+  }
+
   async findPostCommentsInsideUserBlogs(
     pageOptionsDto: PageOptionsDto,
     // userId: string,
-    postIds: string[],
+    posts: Post[],
   ) {
     const users = await this.usersRepository
       .findAllWithoutBanned()
@@ -137,7 +162,7 @@ export class CommentsQueryRepository {
     //   ],
     // };
     const filter: FilterQuery<CommentDocument> = {
-      postId: { $in: postIds },
+      postId: { $in: posts.map((p) => p.id) },
       userId: { $in: users },
     };
 
@@ -152,191 +177,15 @@ export class CommentsQueryRepository {
       .limit(pageOptionsDto.pageSize)
       .lean();
 
-    return comments;
+    const items = comments.map((comment) => {
+      const currentPost = posts.find((p) => p.id === comment.postId);
+      return this.mapToBloggerViewDto(comment, currentPost!);
+    });
 
-    const matchCondition = {
-      $expr: {
-        $and: [{ $in: ['$userId', users] }, { $in: ['$postId', postIds] }],
-      },
-    };
-
-    return this._aggregateFindCommentPostsForUser(
-      pageOptionsDto,
-      matchCondition,
-    );
-  }
-
-  async _aggregateFindCommentPostsForUser(dto: PageOptionsDto, match: any) {
-    const result = await this.commentModel.aggregate([
-      {
-        $match: match,
-      },
-      // {
-      //   $sort: {
-      //     [dto.sortBy]: dto.sortDirection === Order.ASC ? 1 : -1,
-      //   },
-      // },
-      // { $setWindowFields: { output: { totalCount: { $count: {} } } } },
-      // {
-      //   $skip: dto.pageNumber > 0 ? (dto.pageNumber - 1) * dto.pageSize : 0,
-      // },
-      // { $limit: dto.pageSize },
-      // {
-      //   $project: {
-      //     _id: 0,
-      //     total: '$totalCount',
-      //     id: '$id',
-      //     content: '$content',
-      //     createdAt: '$createdAt',
-      //     commentatorInfo: {
-      //       userId: '$userId',
-      //       userLogin: '$userLogin',
-      //     },
-      //     postId: '$postId',
-      //     blogId: '$blogId',
-      //   },
-      // },
-      // {
-      //   $lookup: {
-      //     from: 'posts',
-      //     localField: 'postId',
-      //     foreignField: '$id',
-      //     as: 'postInfo',
-      //     pipeline: [
-      //       {
-      //         $lookup: {
-      //           from: 'blogs',
-      //           localField: 'blogId',
-      //           foreignField: '$id',
-      //           as: 'blog',
-      //           pipeline: [],
-      //         },
-      //       },
-      //
-      //       {
-      //         $project: {
-      //           _id: 0,
-      //           id: '$id',
-      //           title: '$title',
-      //           blogId: '$blogId',
-      //           blogName: { $first: '$blog' },
-      //         },
-      //       },
-      //       { $set: { blogName: '$blogName.name' } },
-      //     ],
-      //   },
-      // },
-      // {
-      //   $set: {
-      //     postInfo: { $first: '$postInfo' },
-      //   },
-      // },
-
-      // {
-      //   $lookup: {
-      //     from: 'likes',
-      //     localField: 'id',
-      //     foreignField: 'commentId',
-      //     as: 'likesInfo.likesCount',
-      //     pipeline: [
-      //       {
-      //         $match: {
-      //           $expr: {
-      //             $and: [
-      //               { $eq: ['$status', 'Like'] },
-      //               { $in: ['$userId', dto.bannedUsers] },
-      //             ],
-      //           },
-      //         },
-      //       },
-      //     ],
-      //   },
-      // },
-      // {
-      //   $set: {
-      //     'likesInfo.likesCount': {
-      //       $size: '$likesInfo.likesCount',
-      //     },
-      //   },
-      // },
-      // {
-      //   $lookup: {
-      //     from: 'likes',
-      //     localField: 'id',
-      //     foreignField: 'commentId',
-      //     as: 'likesInfo.myStatus',
-      //     pipeline: [
-      //       {
-      //         $match: {
-      //           $expr: {
-      //             $and: [
-      //               { $eq: ['$userId', dto.userId] },
-      //               { $in: ['$userId', dto.bannedUsers] },
-      //             ],
-      //           },
-      //         },
-      //       },
-      //     ],
-      //   },
-      // },
-      // {
-      //   $set: {
-      //     'likesInfo.myStatus': {
-      //       $ifNull: [
-      //         {
-      //           $first: '$likesInfo.myStatus.status',
-      //         },
-      //         'None',
-      //       ],
-      //     },
-      //   },
-      // },
-      // {
-      //   $lookup: {
-      //     from: 'likes',
-      //     localField: 'id',
-      //     foreignField: 'commentId',
-      //     as: 'likesInfo.dislikesCount',
-      //     pipeline: [
-      //       {
-      //         $match: {
-      //           $expr: {
-      //             $and: [
-      //               { $eq: ['$status', 'Dislike'] },
-      //               { $in: ['$userId', dto.bannedUsers] },
-      //             ],
-      //           },
-      //         },
-      //       },
-      //     ],
-      //   },
-      // },
-      // {
-      //   $set: {
-      //     'likesInfo.dislikesCount': {
-      //       $size: '$likesInfo.dislikesCount',
-      //     },
-      //   },
-      // },
-
-      // {
-      //   $group: {
-      //     _id: dto.sortBy,
-      //     // page: { $first: dto.pageNumber },
-      //     // pageSize: { $first: dto.pageSize },
-      //     // totalCount: { $first: '$$ROOT.total' },
-      //     // pagesCount: {
-      //     //   $first: {
-      //     //     $ceil: [{ $divide: ['$$ROOT.total', dto.pageSize] }],
-      //     //   },
-      //     // },
-      //     items: { $push: '$$ROOT' },
-      //   },
-      // },
-      // {
-      //   $unset: ['items.total', '_id', 'items.blogId', 'items.postId'],
-      // },
-    ]);
-    return result;
+    return new PageDto({
+      items: items,
+      itemsCount,
+      pageOptionsDto: pageOptionsDto,
+    });
   }
 }
