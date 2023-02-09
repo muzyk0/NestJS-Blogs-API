@@ -383,11 +383,20 @@ export class BloggerController {
     status: 401,
     description: 'Unauthorized',
   })
+  @ApiNotFoundResponse({
+    status: 404,
+    description: 'Not found',
+  })
   @Get('users/blog/:blogId')
   async allBanUsersForBlog(
     @Query() pageOptionsDto: PageOptionsForUserDto,
     @Param('blogId') blogId: string,
   ) {
+    const blog = await this.blogsService.findOne(blogId);
+
+    if (!blog) {
+      throw new NotFoundException();
+    }
     return this.usersQueryRepository.getBannedUsersForBlog(
       pageOptionsDto,
       blogId,
