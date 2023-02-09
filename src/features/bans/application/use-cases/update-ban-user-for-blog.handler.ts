@@ -1,4 +1,4 @@
-import { BadRequestException } from '@nestjs/common';
+import { BadRequestException, NotFoundException } from '@nestjs/common';
 import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
 
 import { BanUserForBlogInput } from '../../../blogs/api/dto/ban-user-for-blog.input';
@@ -11,6 +11,7 @@ export class UpdateBanUserForBlogCommand {
   constructor(
     public readonly createBanInput: BanUserForBlogInput,
     public readonly userId: string,
+    public readonly authUserId: string,
   ) {}
 }
 
@@ -23,11 +24,15 @@ export class UpdateBanUserForBlogHandler
     private readonly bansRepositorySql: BansRepositorySql,
   ) {}
 
-  async execute({ createBanInput, userId }: UpdateBanUserForBlogCommand) {
+  async execute({
+    createBanInput,
+    userId,
+    authUserId,
+  }: UpdateBanUserForBlogCommand) {
     const blog = await this.blogsRepository.findOne(userId);
 
-    if (blog && blog.userId === userId) {
-      throw new BadRequestException();
+    if (blog && blog.userId === authUserId) {
+      throw new NotFoundException();
     }
 
     const updateBan: CreateBanInput = {

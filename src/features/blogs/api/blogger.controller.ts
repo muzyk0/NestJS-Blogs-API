@@ -370,7 +370,7 @@ export class BloggerController {
     @GetCurrentJwtContext() ctx: JwtATPayload,
   ) {
     return this.commandBus.execute(
-      new UpdateBanUserForBlogCommand(body, userId),
+      new UpdateBanUserForBlogCommand(body, userId, ctx.user.id),
     );
   }
 
