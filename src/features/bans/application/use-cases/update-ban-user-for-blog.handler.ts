@@ -41,7 +41,7 @@ export class UpdateBanUserForBlogHandler
     }
     const blog = await this.blogsRepository.findOne(userId);
 
-    if (blog.userId !== authUserId) {
+    if (blog && blog.userId !== authUserId) {
       throw new ForbiddenException();
     }
 
