@@ -1,8 +1,13 @@
-import { BadRequestException, NotFoundException } from '@nestjs/common';
+import {
+  BadRequestException,
+  ForbiddenException,
+  NotFoundException,
+} from '@nestjs/common';
 import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
 
 import { BanUserForBlogInput } from '../../../blogs/api/dto/ban-user-for-blog.input';
 import { BlogsRepository } from '../../../blogs/infrastructure/blogs.repository';
+import { UsersRepository } from '../../../users/infrastructure/users.repository';
 import { BansRepositorySql } from '../../infrastructure/bans.repository.sql';
 import { CreateBanInput } from '../input/create-ban.input';
 import { BanTypeEnum } from '../interfaces/ban-type.enum';
@@ -22,6 +27,7 @@ export class UpdateBanUserForBlogHandler
   constructor(
     private readonly blogsRepository: BlogsRepository,
     private readonly bansRepositorySql: BansRepositorySql,
+    private readonly usersRepository: UsersRepository,
   ) {}
 
   async execute({
@@ -29,10 +35,14 @@ export class UpdateBanUserForBlogHandler
     userId,
     authUserId,
   }: UpdateBanUserForBlogCommand) {
+    const user = await this.usersRepository.findOneById(userId);
+    if (!user) {
+      throw new NotFoundException();
+    }
     const blog = await this.blogsRepository.findOne(userId);
 
-    if (blog && blog.userId === authUserId) {
-      throw new NotFoundException();
+    if (blog.userId !== authUserId) {
+      throw new ForbiddenException();
     }
 
     const updateBan: CreateBanInput = {
