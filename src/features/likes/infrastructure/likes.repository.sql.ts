@@ -20,7 +20,7 @@ export class LikesRepositorySql {
     await queryRunner.connect();
 
     const bannedUsersIds = await this.usersRepository
-      .findAllBanned()
+      .findAllWithoutBanned()
       .then((users) => users.map((u) => u.accountData.id))
       .then((users) => users.join(', '));
 
@@ -93,7 +93,7 @@ export class LikesRepositorySql {
     await queryRunner.connect();
 
     const bannedUsersIds = await this.usersRepository
-      .findAllBanned()
+      .findAllWithoutBanned()
       .then((users) => users.map((u) => u.accountData.id))
       .then((users) => users.join(', '));
 

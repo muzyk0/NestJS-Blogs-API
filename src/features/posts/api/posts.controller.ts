@@ -2,6 +2,7 @@ import {
   BadRequestException,
   Body,
   Controller,
+  ForbiddenException,
   Get,
   HttpCode,
   HttpStatus,
@@ -122,7 +123,7 @@ export class PostsController {
     console.log('ban', ban);
 
     if (ban) {
-      throw new NotFoundException();
+      throw new ForbiddenException();
     }
 
     const { id: commentId } = await this.commentsService.create({

@@ -33,6 +33,7 @@ import { PageOptionsDto } from '../../../common/paginator/page-options.dto';
 import { JwtATPayload } from '../../auth/application/interfaces/jwtPayload.type';
 import { JwtAuthGuard } from '../../auth/guards/jwt-auth.guard';
 import { UpdateBanUserForBlogCommand } from '../../bans/application/use-cases/update-ban-user-for-blog.handler';
+import { GetPostCommentsInsideCurrentUserBlogsCommand } from '../../comments/application/use-cases/get-post-comments-inside-current-user-blogs.handler';
 import { UpdatePostDto } from '../../posts/application/dto/update-post.dto';
 import { PostsService } from '../../posts/application/posts.service';
 import { PostsQueryRepository } from '../../posts/infrastructure/posts.query.repository';
@@ -317,6 +318,30 @@ export class BloggerController {
     }
 
     return;
+  }
+
+  @ApiOperation({
+    summary: 'Returns all comments for all posts inside all current user blogs',
+  })
+  @ApiOkResponse({
+    status: 200,
+    description: 'Success',
+  })
+  @ApiUnauthorizedResponse({
+    status: 401,
+    description: 'Unauthorized',
+  })
+  @Get('blogs/comments')
+  findBlogComments(
+    @Query() pageOptionsDto: PageOptionsDto,
+    @GetCurrentJwtContextWithoutAuth() ctx: JwtATPayload,
+  ) {
+    return this.commandBus.execute(
+      new GetPostCommentsInsideCurrentUserBlogsCommand(
+        pageOptionsDto,
+        ctx.user.id,
+      ),
+    );
   }
 
   @ApiOperation({ summary: 'Ban/unban user for blog' })

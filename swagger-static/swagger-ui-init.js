@@ -383,6 +383,29 @@ window.onload = function() {
           ]
         }
       },
+      "/blog-platform/blogger/blogs/comments": {
+        "get": {
+          "operationId": "BloggerController_findBlogComments",
+          "summary": "Returns all comments for all posts inside all current user blogs",
+          "parameters": [],
+          "responses": {
+            "200": {
+              "description": "Success"
+            },
+            "401": {
+              "description": "Unauthorized"
+            }
+          },
+          "tags": [
+            "blogger"
+          ],
+          "security": [
+            {
+              "bearer": []
+            }
+          ]
+        }
+      },
       "/blog-platform/blogger/users/{userId}/ban": {
         "put": {
           "operationId": "BloggerController_banUserForBlog",

@@ -79,4 +79,10 @@ export class PostsRepository implements IPostsRepository {
     const result = await this.postModel.deleteOne({ id });
     return result.deletedCount === 1;
   }
+
+  async findManyByBlogsIds(blogsIds: string[]) {
+    return this.postModel.find({
+      blogId: { $in: blogsIds },
+    });
+  }
 }
