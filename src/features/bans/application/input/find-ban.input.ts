@@ -1,4 +1,4 @@
-import { IsBoolean, IsEnum, IsNotEmpty, IsString } from 'class-validator';
+import { IsEnum, IsNotEmpty, IsString } from 'class-validator';
 
 import { BanTypeEnum } from '../interfaces/ban-type.enum';
 

@@ -6,8 +6,6 @@ import { FilterQuery, Model } from 'mongoose';
 import { BASE_PROJECTION } from '../../../common/mongoose/constants';
 import { PageOptionsDto } from '../../../common/paginator/page-options.dto';
 import { PageDto } from '../../../common/paginator/page.dto';
-import { Order } from '../../../constants';
-import { Blog } from '../../blogs/domain/schemas/blogs.schema';
 import { LikeParentTypeEnum } from '../../likes/application/interfaces/like-parent-type.enum';
 import { Like } from '../../likes/domain/entity/like.entity';
 import { LikesRepositorySql } from '../../likes/infrastructure/likes.repository.sql';

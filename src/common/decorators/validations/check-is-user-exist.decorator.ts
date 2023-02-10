@@ -10,7 +10,6 @@ import {
   ValidatorConstraintInterface,
 } from 'class-validator';
 
-import { BlogsRepository } from '../../../features/blogs/infrastructure/blogs.repository';
 import { UsersRepository } from '../../../features/users/infrastructure/users.repository';
 
 @ValidatorConstraint({ name: 'UserExists', async: true })

@@ -6,7 +6,6 @@ import { BlogExistsRule } from '../../common/decorators/validations/check-blogId
 import { UserExistsRule } from '../../common/decorators/validations/check-is-user-exist.decorator';
 import { AuthModule } from '../auth/auth.module';
 import { UpdateBanUserForBlogHandler } from '../bans/application/use-cases/update-ban-user-for-blog.handler';
-import { BansModule } from '../bans/bans.module';
 import { BansRepositorySql } from '../bans/infrastructure/bans.repository.sql';
 import { PostsModule } from '../posts/posts.module';
 import {

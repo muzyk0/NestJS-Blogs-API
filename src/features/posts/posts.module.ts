@@ -4,7 +4,6 @@ import { MongooseModule } from '@nestjs/mongoose';
 
 import { AuthModule } from '../auth/auth.module';
 import { BansService } from '../bans/application/bans.service';
-import { BansModule } from '../bans/bans.module';
 import { BansRepositorySql } from '../bans/infrastructure/bans.repository.sql';
 import { BlogsService } from '../blogs/application/blogs.service';
 import { Blog, BlogSchema } from '../blogs/domain/schemas/blogs.schema';

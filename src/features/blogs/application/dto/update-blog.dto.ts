@@ -1,7 +1,7 @@
 import { Transform } from 'class-transformer';
 import { IsNotEmpty, IsString, Length, Matches } from 'class-validator';
 
-import { CreateBlogDto, websiteURLPattern } from './create-blog.dto';
+import { websiteURLPattern } from './create-blog.dto';
 
 export class UpdateBlogDto {
   @IsString()

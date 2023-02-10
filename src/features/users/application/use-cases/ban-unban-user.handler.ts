@@ -1,6 +1,5 @@
 import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
 
-import { PageOptionsForUserDto } from '../../../../common/paginator/page-options.dto';
 import { SecurityRepository } from '../../../security/infrastructure/security.repository';
 import { UsersRepository } from '../../infrastructure/users.repository';
 import { BanUnbanUserInput } from '../dto/ban-unban-user.input';
