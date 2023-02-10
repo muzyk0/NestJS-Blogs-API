@@ -9,3 +9,13 @@ export class UserViewModel {
     banReason: string;
   };
 }
+
+export class UserBloggerViewModel {
+  id: string;
+  login: string;
+  banInfo: {
+    isBanned: boolean;
+    banDate: string;
+    banReason: string;
+  };
+}

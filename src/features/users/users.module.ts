@@ -3,6 +3,7 @@ import { CqrsModule } from '@nestjs/cqrs';
 import { MongooseModule } from '@nestjs/mongoose';
 
 import { AuthModule } from '../auth/auth.module';
+import { BansRepositorySql } from '../bans/infrastructure/bans.repository.sql';
 import { EmailModuleLocal } from '../email-local/email-local.module';
 import { PasswordRecoveryModule } from '../password-recovery/password-recovery.module';
 import { SecurityModule } from '../security/security.module';
@@ -33,7 +34,12 @@ const CommandHandlers = [
     PasswordRecoveryModule,
   ],
   controllers: [],
-  providers: [...CommandHandlers, UsersRepository, UsersQueryRepository],
+  providers: [
+    ...CommandHandlers,
+    UsersRepository,
+    UsersQueryRepository,
+    BansRepositorySql,
+  ],
   exports: [...CommandHandlers, UsersRepository, UsersQueryRepository],
 })
 export class UsersModule {}

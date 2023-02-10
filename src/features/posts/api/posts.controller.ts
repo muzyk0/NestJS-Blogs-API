@@ -2,6 +2,7 @@ import {
   BadRequestException,
   Body,
   Controller,
+  ForbiddenException,
   Get,
   HttpCode,
   HttpStatus,
@@ -21,6 +22,8 @@ import { PageOptionsDto } from '../../../common/paginator/page-options.dto';
 import { JwtATPayload } from '../../auth/application/interfaces/jwtPayload.type';
 import { AuthGuard } from '../../auth/guards/auth-guard';
 import { JwtAuthGuard } from '../../auth/guards/jwt-auth.guard';
+import { BansService } from '../../bans/application/bans.service';
+import { BanTypeEnum } from '../../bans/application/interfaces/ban-type.enum';
 import { BlogsService } from '../../blogs/application/blogs.service';
 import { CommentsService } from '../../comments/application/comments.service';
 import { CommentInput } from '../../comments/application/dto/comment.input';
@@ -38,6 +41,7 @@ export class PostsController {
     private readonly blogsService: BlogsService,
     private readonly commentsService: CommentsService,
     private readonly commentsQueryRepository: CommentsQueryRepository,
+    private readonly bansService: BansService,
   ) {}
 
   @UseGuards(AuthGuard)
@@ -108,6 +112,18 @@ export class PostsController {
 
     if (!post) {
       throw new NotFoundException();
+    }
+
+    const ban = await this.bansService.getBan({
+      userId: userId,
+      parentId: post.blogId,
+      type: BanTypeEnum.BLOG,
+    });
+
+    console.log('ban', ban);
+
+    if (ban) {
+      throw new ForbiddenException();
     }
 
     const { id: commentId } = await this.commentsService.create({

@@ -1,5 +1,4 @@
 import {
-  BadRequestException,
   Body,
   Controller,
   Delete,
@@ -30,18 +29,25 @@ import {
 
 import { GetCurrentJwtContextWithoutAuth } from '../../../common/decorators/get-current-user-without-auth.decorator';
 import { GetCurrentJwtContext } from '../../../common/decorators/get-current-user.decorator';
-import { PageOptionsDto } from '../../../common/paginator/page-options.dto';
+import {
+  PageOptionsDto,
+  PageOptionsForUserDto,
+} from '../../../common/paginator/page-options.dto';
 import { JwtATPayload } from '../../auth/application/interfaces/jwtPayload.type';
 import { JwtAuthGuard } from '../../auth/guards/jwt-auth.guard';
+import { UpdateBanUserForBlogCommand } from '../../bans/application/use-cases/update-ban-user-for-blog.handler';
+import { GetPostCommentsInsideCurrentUserBlogsCommand } from '../../comments/application/use-cases/get-post-comments-inside-current-user-blogs.handler';
 import { UpdatePostDto } from '../../posts/application/dto/update-post.dto';
 import { PostsService } from '../../posts/application/posts.service';
 import { PostsQueryRepository } from '../../posts/infrastructure/posts.query.repository';
+import { UsersQueryRepository } from '../../users/infrastructure/users.query.repository';
 import { BlogsService } from '../application/blogs.service';
 import { CreateBlogPostDto } from '../application/dto/create-blog-post.dto';
 import { UpdateBlogDto } from '../application/dto/update-blog.dto';
 import { GetBlogsCommand } from '../application/use-cases/get-blogs.handler';
 import { BlogsQueryRepository } from '../infrastructure/blogs.query.repository';
 
+import { BanUserForBlogInput } from './dto/ban-user-for-blog.input';
 import { CreateBlogInput } from './dto/create-blog.input';
 
 @ApiTags('blogger')
@@ -54,6 +60,7 @@ export class BloggerController {
     private readonly blogsQueryRepository: BlogsQueryRepository,
     private readonly postsService: PostsService,
     private readonly postsQueryRepository: PostsQueryRepository,
+    private readonly usersQueryRepository: UsersQueryRepository,
     private readonly commandBus: CommandBus,
   ) {}
 
@@ -316,5 +323,88 @@ export class BloggerController {
     }
 
     return;
+  }
+
+  @ApiOperation({
+    summary: 'Returns all comments for all posts inside all current user blogs',
+  })
+  @ApiOkResponse({
+    status: 200,
+    description: 'Success',
+  })
+  @ApiUnauthorizedResponse({
+    status: 401,
+    description: 'Unauthorized',
+  })
+  @Get('blogs/comments')
+  async findBlogComments(
+    @Query() pageOptionsDto: PageOptionsDto,
+    @GetCurrentJwtContextWithoutAuth() ctx: JwtATPayload,
+  ) {
+    return this.commandBus.execute(
+      new GetPostCommentsInsideCurrentUserBlogsCommand(
+        pageOptionsDto,
+        ctx.user.id,
+      ),
+    );
+  }
+
+  @ApiOperation({ summary: 'Ban/unban user for blog' })
+  @ApiNoContentResponse({
+    status: 204,
+    description: 'No Content',
+  })
+  @ApiBadRequestResponse({
+    status: 400,
+    description: 'If the inputModel has incorrect values',
+  })
+  @ApiUnauthorizedResponse({
+    status: 401,
+    description: 'Unauthorized',
+  })
+  @Put('users/:userId/ban')
+  @HttpCode(HttpStatus.NO_CONTENT)
+  async banUserForBlog(
+    @Param('userId') userId: string,
+    @Body() body: BanUserForBlogInput,
+    @GetCurrentJwtContext() ctx: JwtATPayload,
+  ) {
+    return this.commandBus.execute(
+      new UpdateBanUserForBlogCommand(body, userId, ctx.user.id),
+    );
+  }
+
+  @ApiOperation({ summary: 'Returns all banned users for blog' })
+  @ApiOkResponse({
+    status: 200,
+    description: 'Success',
+  })
+  @ApiUnauthorizedResponse({
+    status: 401,
+    description: 'Unauthorized',
+  })
+  @ApiNotFoundResponse({
+    status: 404,
+    description: 'Not found',
+  })
+  @Get('users/blog/:blogId')
+  async allBanUsersForBlog(
+    @Query() pageOptionsDto: PageOptionsForUserDto,
+    @Param('blogId') blogId: string,
+    @GetCurrentJwtContext() ctx: JwtATPayload,
+  ) {
+    const blog = await this.blogsService.findOne(blogId);
+
+    if (!blog) {
+      throw new NotFoundException();
+    }
+
+    if (blog.userId !== ctx.user.id) {
+      throw new ForbiddenException();
+    }
+    return this.usersQueryRepository.getBannedUsersForBlog(
+      pageOptionsDto,
+      blogId,
+    );
   }
 }

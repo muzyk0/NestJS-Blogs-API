@@ -176,7 +176,7 @@ export class UsersRepository {
       .lean();
   }
 
-  async findAllBanned() {
-    return this.userModel.find({ 'accountData.banned': { $ne: null } });
+  async findAllWithoutBanned() {
+    return this.userModel.find({ 'accountData.banned': null });
   }
 }

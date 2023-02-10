@@ -3,7 +3,10 @@ import { CqrsModule } from '@nestjs/cqrs';
 import { MongooseModule } from '@nestjs/mongoose';
 
 import { BlogExistsRule } from '../../common/decorators/validations/check-blogId-if-exist.decorator';
+import { UserExistsRule } from '../../common/decorators/validations/check-is-user-exist.decorator';
 import { AuthModule } from '../auth/auth.module';
+import { UpdateBanUserForBlogHandler } from '../bans/application/use-cases/update-ban-user-for-blog.handler';
+import { BansRepositorySql } from '../bans/infrastructure/bans.repository.sql';
 import { PostsModule } from '../posts/posts.module';
 import {
   Security,
@@ -20,7 +23,11 @@ import { Blog, BlogSchema } from './domain/schemas/blogs.schema';
 import { BlogsQueryRepository } from './infrastructure/blogs.query.repository';
 import { BlogsRepository } from './infrastructure/blogs.repository';
 
-const CommandHandlers = [GetBlogsHandler, BindBlogOnUserHandler];
+const CommandHandlers = [
+  GetBlogsHandler,
+  BindBlogOnUserHandler,
+  UpdateBanUserForBlogHandler,
+];
 
 @Module({
   imports: [
@@ -40,12 +47,16 @@ const CommandHandlers = [GetBlogsHandler, BindBlogOnUserHandler];
     BlogsRepository,
     BlogsQueryRepository,
     BlogExistsRule,
+    UserExistsRule,
+    BansRepositorySql,
   ],
   exports: [
     ...CommandHandlers,
     BlogsService,
     BlogsRepository,
     BlogsQueryRepository,
+    BlogExistsRule,
+    UserExistsRule,
   ],
 })
 export class BlogsModule {}

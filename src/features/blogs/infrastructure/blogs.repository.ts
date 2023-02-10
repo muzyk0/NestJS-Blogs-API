@@ -81,4 +81,8 @@ export class BlogsRepository implements IBlogsRepository {
       { returnDocument: 'after', projection: BASE_PROJECTION },
     );
   }
+
+  async findByUserId(userId: string) {
+    return this.blogModel.find({ userId: userId }, BASE_PROJECTION);
+  }
 }

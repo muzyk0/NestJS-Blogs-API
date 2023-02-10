@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { IsInt, IsOptional } from 'class-validator';
-import { Model } from 'mongoose';
+import { FilterQuery, Model } from 'mongoose';
 
 import { BASE_PROJECTION } from '../../../common/mongoose/constants';
 import { PageOptionsDto } from '../../../common/paginator/page-options.dto';
@@ -12,10 +12,13 @@ import { LikesRepositorySql } from '../../likes/infrastructure/likes.repository.
 import { getStringLikeStatus } from '../../likes/utils/formatters';
 import { Post, PostDocument } from '../../posts/domain/schemas/posts.schema';
 import { UsersRepository } from '../../users/infrastructure/users.repository';
-import { CommentViewDto } from '../application/dto/comment.view.dto';
+import {
+  CommentForBloggerViewDto,
+  CommentViewDto,
+} from '../application/dto/comment.view.dto';
 import { Comment, CommentDocument } from '../domain/schemas/comments.schema';
 
-const projectionFields = { ...BASE_PROJECTION, postId: 0 };
+const projectionFields = { ...BASE_PROJECTION };
 
 export class FindAllCommentsOptions extends PageOptionsDto {
   constructor(postId: string) {
@@ -96,10 +99,10 @@ export class CommentsQueryRepository {
       userId: userId,
     });
 
-    return this.mapToDto(comment, likesCount, dislikesCount, myStatus);
+    return this.mapToViewDto(comment, likesCount, dislikesCount, myStatus);
   }
 
-  private mapToDto(
+  private mapToViewDto(
     comment: Comment,
     likesCount,
     dislikesCount,
@@ -118,5 +121,70 @@ export class CommentsQueryRepository {
         myStatus: getStringLikeStatus(myStatus),
       },
     };
+  }
+
+  private mapToBloggerViewDto(
+    comment: Comment,
+    post: Post,
+  ): CommentForBloggerViewDto {
+    return {
+      id: comment.id,
+      content: comment.content,
+      commentatorInfo: {
+        userId: comment.userId,
+        userLogin: comment.userLogin,
+      },
+      likesInfo: { likesCount: 0, dislikesCount: 0, myStatus: 'None' },
+      createdAt: comment.createdAt,
+      postInfo: {
+        id: comment.postId,
+        title: post.title,
+        blogId: post.blogId,
+        blogName: post.blogName,
+      },
+    };
+  }
+
+  async findPostCommentsInsideUserBlogs(
+    pageOptionsDto: PageOptionsDto,
+    // userId: string,
+    posts: Post[],
+  ) {
+    const users = await this.usersRepository
+      .findAllWithoutBanned()
+      .then((u) => u.map((u) => u.accountData.id));
+
+    // const filter: FilterQuery<CommentDocument> = {
+    //   $and: [
+    //     { accountData: { $in: ['$userId', users] } },
+    //     { $in: ['$postId', postIds] },
+    //   ],
+    // };
+    const filter: FilterQuery<CommentDocument> = {
+      postId: { $in: posts.map((p) => p.id) },
+      userId: { $in: users },
+    };
+
+    const itemsCount = await this.commentModel.countDocuments(filter);
+
+    const comments = await this.commentModel
+      .find(filter, projectionFields)
+      .skip(pageOptionsDto.skip)
+      .sort({
+        [pageOptionsDto.sortBy]: pageOptionsDto.sortDirection,
+      })
+      .limit(pageOptionsDto.pageSize)
+      .lean();
+
+    const items = comments.map((comment) => {
+      const currentPost = posts.find((p) => p.id === comment.postId);
+      return this.mapToBloggerViewDto(comment, currentPost!);
+    });
+
+    return new PageDto({
+      items: items,
+      itemsCount,
+      pageOptionsDto: pageOptionsDto,
+    });
   }
 }
