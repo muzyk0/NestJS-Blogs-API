@@ -20,7 +20,7 @@ import {
 } from '../application/dto/comment.view.dto';
 import { Comment, CommentDocument } from '../domain/schemas/comments.schema';
 
-const projectionFields = { ...BASE_PROJECTION, postId: 0 };
+const projectionFields = { ...BASE_PROJECTION };
 
 export class FindAllCommentsOptions extends PageOptionsDto {
   constructor(postId: string) {
