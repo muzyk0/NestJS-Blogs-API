@@ -136,6 +136,7 @@ export class CommentsQueryRepository {
         userId: comment.userId,
         userLogin: comment.userLogin,
       },
+      likesInfo: { likesCount: 0, dislikesCount: 0, myStatus: 'None' },
       createdAt: comment.createdAt,
       postInfo: {
         id: comment.postId,

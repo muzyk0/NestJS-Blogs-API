@@ -49,4 +49,5 @@ export interface CommentForBloggerViewDto {
     blogId: string;
     blogName: string;
   };
+  likesInfo: LikeDto;
 }
