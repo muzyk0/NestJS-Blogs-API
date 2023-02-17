@@ -1,8 +1,8 @@
 import { Injectable } from '@nestjs/common';
-import { InjectModel } from '@nestjs/mongoose';
-import { FilterQuery, Model } from 'mongoose';
+import { InjectDataSource } from '@nestjs/typeorm';
+import { FilterQuery } from 'mongoose';
+import { DataSource } from 'typeorm';
 
-import { BASE_PROJECTION } from '../../../common/mongoose/constants';
 import {
   PageOptionsForUserDto,
   UserBanStatus,
@@ -15,26 +15,48 @@ import {
   UserBloggerViewModel,
   UserViewModel,
 } from '../application/dto/user.view';
-import { User, UserDocument } from '../domain/schemas/users.schema';
+import { User } from '../domain/entities/user.entity';
 
-const projectionFields = { ...BASE_PROJECTION, postId: 0 };
+export abstract class IUsersQueryRepository {
+  abstract findOne(id: string): Promise<UserViewModel>;
+
+  abstract findAll(
+    pageOptionsDto: PageOptionsForUserDto,
+  ): Promise<PageDto<UserViewModel>>;
+
+  abstract mapToDto(users: User): UserViewModel;
+
+  abstract mapToBloggerViewDto(users: User, ban: Ban): UserBloggerViewModel;
+
+  abstract getBannedUsersForBlog(
+    pageOptionsDto: PageOptionsForUserDto,
+    blogId: string,
+  ): Promise<PageDto<unknown>>;
+}
 
 @Injectable()
-export class UsersQueryRepository {
+export class UsersQueryRepository implements IUsersQueryRepository {
   constructor(
-    @InjectModel(User.name) private userModel: Model<UserDocument>,
+    @InjectDataSource() private dataSource: DataSource,
     private readonly bansRepositorySql: BansRepositorySql,
   ) {}
 
   async findOne(id: string): Promise<UserViewModel> {
-    const user = await this.userModel.findOne({ id }, BASE_PROJECTION);
-    return this.mapToDto(user);
+    const users: User[] = await this.dataSource.query(
+      `
+          SELECT *
+          FROM "user"
+          WHERE "user"."id" = $1
+      `,
+      [id],
+    );
+    return this.mapToDto(users[0]);
   }
 
   async findAll(
     pageOptionsDto: PageOptionsForUserDto,
   ): Promise<PageDto<UserViewModel>> {
-    const filter: FilterQuery<UserDocument> = {
+    const filter: FilterQuery<User> = {
       $or: [
         pageOptionsDto?.searchLoginTerm
           ? {
@@ -64,43 +86,57 @@ export class UsersQueryRepository {
         : {}),
     };
 
-    const itemsCount = await this.userModel.countDocuments(filter);
+    const query = `
+        with users as
+                 (select *
+                  from "user"
+--              where (lower("banned") like '%' || lower($1) || '%')
+                  where (lower("banned") is null))
+        select row_to_json(t1)
+        from (select c.total,
+                     jsonb_agg(row_to_json(sub)) as "items"
+              from (table users
+                  order by
+                      case when $2 = 'desc' then "createdAt" end desc,
+                      case when $2 = 'asc' then "createdAt" end asc
+                  limit $3
+                  offset $4) sub
+                       right join (select count(*) from users) c(total) on true
+              group by c.total) t1
+    `;
 
-    const items = await this.userModel
-      .find(filter, projectionFields)
-      .skip(pageOptionsDto.skip)
-      .sort({
-        [pageOptionsDto.sortBy !== 'createdAt'
-          ? `accountData.${pageOptionsDto.sortBy}`
-          : 'createdAt']: pageOptionsDto.sortDirection,
-      })
-      .limit(pageOptionsDto.pageSize);
+    const queryParams = [];
+
+    const users: { total: number; items: User[] } = await this.dataSource.query(
+      query,
+      queryParams,
+    );
 
     return new PageDto({
-      items: items.map(this.mapToDto),
-      itemsCount,
+      items: users.items.map(this.mapToDto),
+      itemsCount: users.total,
       pageOptionsDto,
     });
   }
 
-  mapToDto(users: UserDocument): UserViewModel {
+  mapToDto(users: User): UserViewModel {
     return {
-      id: users.accountData.id,
-      login: users.accountData.login,
-      email: users.accountData.email,
+      id: users.id,
+      login: users.login,
+      email: users.email,
       createdAt: users.createdAt,
       banInfo: {
-        isBanned: Boolean(users.accountData.banned),
-        banDate: users.accountData.banned?.toISOString() ?? null,
-        banReason: users.accountData.banReason,
+        isBanned: Boolean(users.banned),
+        banDate: users.banned?.toISOString() ?? null,
+        banReason: users.banReason,
       },
     };
   }
 
-  mapToBloggerViewDto(users: UserDocument, ban: Ban): UserBloggerViewModel {
+  mapToBloggerViewDto(users: User, ban: Ban): UserBloggerViewModel {
     return {
-      id: users.accountData.id,
-      login: users.accountData.login,
+      id: users.id,
+      login: users.login,
       banInfo: {
         isBanned: ban.isBanned,
         banDate: ban.updatedAt.toISOString(),
@@ -120,7 +156,7 @@ export class UsersQueryRepository {
 
     const bansUserIds = bans.map((ban) => ban.userId);
 
-    const filter: FilterQuery<UserDocument> = {
+    const filter: FilterQuery<User> = {
       'accountData.id': { $in: bansUserIds },
       $or: [
         pageOptionsDto?.searchLoginTerm
@@ -151,26 +187,28 @@ export class UsersQueryRepository {
         : {}),
     };
 
-    const itemsCount = await this.userModel.countDocuments(filter);
+    // const itemsCount = await this.userModel.countDocuments(filter);
+    //
+    // const items = await this.userModel
+    //   .find(filter)
+    //   .skip(pageOptionsDto.skip)
+    //   .sort({
+    //     [pageOptionsDto.sortBy !== 'createdAt'
+    //       ? `accountData.${pageOptionsDto.sortBy}`
+    //       : 'createdAt']: pageOptionsDto.sortDirection,
+    //   })
+    //   .limit(pageOptionsDto.pageSize);
 
-    const items = await this.userModel
-      .find(filter, projectionFields)
-      .skip(pageOptionsDto.skip)
-      .sort({
-        [pageOptionsDto.sortBy !== 'createdAt'
-          ? `accountData.${pageOptionsDto.sortBy}`
-          : 'createdAt']: pageOptionsDto.sortDirection,
-      })
-      .limit(pageOptionsDto.pageSize);
-
-    const itemsWithBan = items.map((item) => {
-      const ban = bans.find((ban) => ban.userId === item.accountData.id);
+    // TODO
+    const itemsWithBan = [].map((item) => {
+      const ban = bans.find((ban) => ban.userId === item.id);
 
       return this.mapToBloggerViewDto(item, ban);
     });
     return new PageDto({
       items: itemsWithBan,
-      itemsCount,
+      // TODO
+      itemsCount: 0,
       pageOptionsDto,
     });
   }

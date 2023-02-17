@@ -21,7 +21,6 @@ import {
   SecuritySchema,
 } from '../security/domain/schemas/security.schema';
 import { SecurityModule } from '../security/security.module';
-import { User, UserSchema } from '../users/domain/schemas/users.schema';
 import { UsersModule } from '../users/users.module';
 
 import { PostsController } from './api/posts.controller';
@@ -39,7 +38,6 @@ import { PostsRepository } from './infrastructure/posts.repository';
     MongooseModule.forFeature([
       { name: Security.name, schema: SecuritySchema },
     ]),
-    MongooseModule.forFeature([{ name: User.name, schema: UserSchema }]),
     AuthModule,
     SecurityModule,
     LikesModule,

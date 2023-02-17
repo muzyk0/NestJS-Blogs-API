@@ -1,6 +1,6 @@
 import { forwardRef, Module } from '@nestjs/common';
 import { CqrsModule } from '@nestjs/cqrs';
-import { MongooseModule } from '@nestjs/mongoose';
+import { TypeOrmModule } from '@nestjs/typeorm';
 
 import { AuthModule } from '../auth/auth.module';
 import { BansRepositorySql } from '../bans/infrastructure/bans.repository.sql';
@@ -8,26 +8,19 @@ import { EmailModuleLocal } from '../email-local/email-local.module';
 import { PasswordRecoveryModule } from '../password-recovery/password-recovery.module';
 import { SecurityModule } from '../security/security.module';
 
-import { BanUnbanUserHandler } from './application/use-cases/ban-unban-user.handler';
-import { CreateUserHandler } from './application/use-cases/create-user.handler';
-import { GetUsersHandler } from './application/use-cases/get-users.handler';
-import { RemoveUserHandler } from './application/use-cases/remove-user.handler';
-import { User, UserSchema } from './domain/schemas/users.schema';
-import { UsersQueryRepository } from './infrastructure/users.query.repository';
-import { UsersRepository } from './infrastructure/users.repository';
-
-const CommandHandlers = [
-  GetUsersHandler,
-  RemoveUserHandler,
-  CreateUserHandler,
-  BanUnbanUserHandler,
-];
+import { CommandHandlers } from './application/use-cases';
+import { User } from './domain/entities/user.entity';
+import {
+  IUsersQueryRepository,
+  UsersQueryRepository,
+} from './infrastructure/users.query.repository.sql';
+import { UsersRepository } from './infrastructure/users.repository.sql';
 
 @Module({
   imports: [
     CqrsModule,
     forwardRef(() => AuthModule),
-    MongooseModule.forFeature([{ name: User.name, schema: UserSchema }]),
+    TypeOrmModule.forFeature([User]),
     // EmailModule,
     EmailModuleLocal,
     SecurityModule,
@@ -37,9 +30,14 @@ const CommandHandlers = [
   providers: [
     ...CommandHandlers,
     UsersRepository,
-    UsersQueryRepository,
+    // UsersQueryRepository,
+    { provide: IUsersQueryRepository, useClass: UsersQueryRepository },
     BansRepositorySql,
   ],
-  exports: [...CommandHandlers, UsersRepository, UsersQueryRepository],
+  exports: [
+    ...CommandHandlers,
+    UsersRepository,
+    { provide: IUsersQueryRepository, useClass: UsersQueryRepository },
+  ],
 })
 export class UsersModule {}

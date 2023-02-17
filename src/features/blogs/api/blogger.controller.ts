@@ -40,7 +40,7 @@ import { GetPostCommentsInsideCurrentUserBlogsCommand } from '../../comments/app
 import { UpdatePostDto } from '../../posts/application/dto/update-post.dto';
 import { PostsService } from '../../posts/application/posts.service';
 import { PostsQueryRepository } from '../../posts/infrastructure/posts.query.repository';
-import { UsersQueryRepository } from '../../users/infrastructure/users.query.repository';
+import { IUsersQueryRepository } from '../../users/infrastructure/users.query.repository.sql';
 import { BlogsService } from '../application/blogs.service';
 import { CreateBlogPostDto } from '../application/dto/create-blog-post.dto';
 import { UpdateBlogDto } from '../application/dto/update-blog.dto';
@@ -60,7 +60,7 @@ export class BloggerController {
     private readonly blogsQueryRepository: BlogsQueryRepository,
     private readonly postsService: PostsService,
     private readonly postsQueryRepository: PostsQueryRepository,
-    private readonly usersQueryRepository: UsersQueryRepository,
+    private readonly usersQueryRepository: IUsersQueryRepository,
     private readonly commandBus: CommandBus,
   ) {}
 

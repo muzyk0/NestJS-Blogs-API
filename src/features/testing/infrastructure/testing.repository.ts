@@ -18,7 +18,6 @@ import {
   Security,
   SecurityDocument,
 } from '../../security/domain/schemas/security.schema';
-import { User, UserDocument } from '../../users/domain/schemas/users.schema';
 
 @Injectable()
 export class TestingRepository {
@@ -27,7 +26,6 @@ export class TestingRepository {
     private dataSource: DataSource,
     @InjectModel(Post.name) private postModel: Model<PostDocument>,
     @InjectModel(Blog.name) private blogModel: Model<BlogDocument>,
-    @InjectModel(User.name) private userModel: Model<UserDocument>,
     @InjectModel(Comment.name) private commentModel: Model<CommentDocument>,
     @InjectModel(Limit.name) private limitModel: Model<LimitDocument>,
     @InjectModel(Security.name) private securityModel: Model<SecurityDocument>,
@@ -53,7 +51,6 @@ export class TestingRepository {
 
       await this.blogModel.deleteMany({});
       await this.postModel.deleteMany({});
-      await this.userModel.deleteMany({});
       await this.commentModel.deleteMany({});
       await this.limitModel.deleteMany({});
       await this.securityModel.deleteMany({});

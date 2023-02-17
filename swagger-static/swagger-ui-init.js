@@ -1257,7 +1257,7 @@ window.onload = function() {
     "info": {
       "title": "Blog platform",
       "description": "Sorry I'm working on new features and don't have time to write swagger documentation. But in time it will be completely written",
-      "version": "0.15.0",
+      "version": "0.16.0",
       "contact": {}
     },
     "tags": [

@@ -6,8 +6,8 @@ import { BASE_PROJECTION } from '../../../common/mongoose/constants';
 import { PageOptionsDto } from '../../../common/paginator/page-options.dto';
 import { PageDto } from '../../../common/paginator/page.dto';
 import { Order } from '../../../constants';
-import { UserData } from '../../users/domain/schemas/user-data.schema';
-import { UsersRepository } from '../../users/infrastructure/users.repository';
+import { User } from '../../users/domain/entities/user.entity';
+import { UsersRepository } from '../../users/infrastructure/users.repository.sql';
 import {
   BlogDto,
   BlogView,
@@ -64,7 +64,7 @@ export class BlogsQueryRepository implements IBlogsQueryRepository {
       })
       .limit(pageOptionsDto.pageSize);
 
-    const ownersBlogs = await this.usersRepository.findByIds(
+    const ownersBlogs = await this.usersRepository.findManyByIds(
       items.map((blog) => blog.userId),
     );
 
@@ -75,8 +75,7 @@ export class BlogsQueryRepository implements IBlogsQueryRepository {
             ? items.map((item) =>
                 this.mapToDtoForSuperAdmin(
                   item,
-                  ownersBlogs.find((u) => u.accountData.id === item.userId)
-                    .accountData,
+                  ownersBlogs.find((u) => u.id === item.userId),
                 ),
               )
             : items.map((item) => this.mapToDto(item)),
@@ -86,8 +85,8 @@ export class BlogsQueryRepository implements IBlogsQueryRepository {
     }
 
     const ownersBlogsIds = ownersBlogs
-      .filter((user) => Boolean(user.accountData.banned) === false)
-      .map((user) => user.accountData.id);
+      .filter((user) => Boolean(user.banned) === false)
+      .map((user) => user.id);
 
     const mappedItems: BlogDocument[] = items.filter((item) =>
       ownersBlogsIds.includes(item.userId),
@@ -99,8 +98,7 @@ export class BlogsQueryRepository implements IBlogsQueryRepository {
           ? mappedItems.map((item) =>
               this.mapToDtoForSuperAdmin(
                 item,
-                ownersBlogs.find((u) => u.accountData.id === item.userId)
-                  .accountData,
+                ownersBlogs.find((u) => u.id === item.userId),
               ),
             )
           : mappedItems.map((item) => this.mapToDto(item)),
@@ -117,7 +115,7 @@ export class BlogsQueryRepository implements IBlogsQueryRepository {
     }
 
     const user = await this.usersRepository.findOneById(blog.userId);
-    if (Boolean(user.accountData.banned)) {
+    if (Boolean(user.banned)) {
       return;
     }
 
@@ -137,7 +135,7 @@ export class BlogsQueryRepository implements IBlogsQueryRepository {
 
   mapToDtoForSuperAdmin(
     blog: BlogDocument,
-    user: UserData,
+    user: User,
   ): BlogViewDtoForSuperAdmin {
     return {
       id: blog.id,

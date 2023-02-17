@@ -22,7 +22,7 @@
 //   User,
 //   UserAccountDBType,
 //   UserSchema,
-// } from '../../users/domain/schemas/users.schema';
+// } from '../../users/domain/entities/user.entity';
 // import { TestingRepository } from '../infrastructure/testing.repository';
 //
 // import { TestingService } from './testing.service';

@@ -3,6 +3,7 @@ import { ConfigService } from '@nestjs/config';
 import { JwtService as NestJwtService } from '@nestjs/jwt';
 
 import { JwtATPayload, JwtRTPayload } from './interfaces/jwtPayload.type';
+import { TokensType } from './interfaces/tokens.type';
 
 @Injectable()
 export class JwtService {
@@ -11,7 +12,10 @@ export class JwtService {
     private readonly config: ConfigService,
   ) {}
 
-  async createJwtTokens(atPayload: JwtATPayload, rtPayload: JwtRTPayload) {
+  async createJwtTokens(
+    atPayload: JwtATPayload,
+    rtPayload: JwtRTPayload,
+  ): Promise<TokensType> {
     const accessToken = this.jwtService.sign(atPayload, {
       secret: this.config.get<string>('ACCESS_TOKEN_SECRET'),
       expiresIn: this.config.get<string>('ACCESS_TOKEN_SECRET_EXPIRES_IN'),

@@ -11,7 +11,7 @@ import { LikeParentTypeEnum } from '../../likes/application/interfaces/like-pare
 import { Like } from '../../likes/domain/entity/like.entity';
 import { LikesRepositorySql } from '../../likes/infrastructure/likes.repository.sql';
 import { getStringLikeStatus } from '../../likes/utils/formatters';
-import { UsersRepository } from '../../users/infrastructure/users.repository';
+import { UsersRepository } from '../../users/infrastructure/users.repository.sql';
 import { PostDto } from '../application/dto/post.dto';
 import { PostViewDto } from '../application/dto/post.view.dto';
 import { Post, PostDocument } from '../domain/schemas/posts.schema';
@@ -67,9 +67,7 @@ export class PostsQueryRepository implements IPostsQueryRepository {
 
     const usersIdsForBannedBlogs = await this.usersRepository
       .findManyByIds(blogsForPosts.map((blog) => blog.userId))
-      .then((users) =>
-        users.filter((u) => u.accountData.banned).map((u) => u.accountData.id),
-      );
+      .then((users) => users.filter((u) => u.banned).map((u) => u.id));
 
     const filter1 = blogsForPosts.filter(
       (blog) => !usersIdsForBannedBlogs.includes(blog.userId) && !blog.isBanned,
@@ -106,7 +104,7 @@ export class PostsQueryRepository implements IPostsQueryRepository {
 
             return {
               userId: like.userId,
-              login: user.accountData.login,
+              login: user.login,
               addedAt: like.createdAt.toISOString(),
             };
           }),
@@ -153,7 +151,7 @@ export class PostsQueryRepository implements IPostsQueryRepository {
     if (blogForPost.userId) {
       const user = await this.usersRepository.findOneById(blogForPost.userId);
 
-      if (user.accountData.banned || blogForPost.isBanned) {
+      if (user.banned || blogForPost.isBanned) {
         return;
       }
     }
@@ -182,7 +180,7 @@ export class PostsQueryRepository implements IPostsQueryRepository {
 
         return {
           userId: like.userId,
-          login: user.accountData.login,
+          login: user.login,
           addedAt: like.createdAt.toISOString(),
         };
       }),
