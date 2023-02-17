@@ -51,16 +51,26 @@ interface IUsersRepository {
 export class UsersRepository implements IUsersRepository {
   constructor(@InjectDataSource() private dataSource: DataSource) {}
 
-  async create({ login, email, password }: CreateUserInput): Promise<User> {
+  async create({
+    login,
+    email,
+    password,
+    confirmationCode,
+    expirationDate,
+    isConfirmed,
+  }: CreateUserInput): Promise<User> {
     const query = `INSERT INTO "user"
-                       (login, email, "password")
-                   VALUES ($1, $2, $3)
+                       (login, email, "password", "confirmationCode", "expirationDate", "isConfirmed")
+                   VALUES ($1, $2, $3, $4, $5, $6)
                    RETURNING *;`;
 
     const result: User[] = await this.dataSource.query(query, [
       login,
       email,
       password,
+      confirmationCode,
+      expirationDate,
+      isConfirmed,
     ]);
 
     return result[0];

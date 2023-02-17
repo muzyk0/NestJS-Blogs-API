@@ -127,7 +127,7 @@ export class UsersQueryRepository implements IUsersQueryRepository {
       id: users.id,
       login: users.login,
       email: users.email,
-      createdAt: users.createdAt,
+      createdAt: new Date(users.createdAt).toISOString(),
       banInfo: {
         isBanned: Boolean(users.banned),
         banDate: users.banned?.toISOString() ?? null,
