@@ -166,9 +166,7 @@ export class UsersRepository implements IUsersRepository {
     await this.dataSource.query(
       `
           UPDATE "user"
-          SET "isConfirmed" = true,
-              "expirationDate" = null,
-              "confirmationCode" = null
+          SET "isConfirmed" = true
           WHERE id = $1
       `,
       [id],
