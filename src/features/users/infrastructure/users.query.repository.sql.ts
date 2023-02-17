@@ -92,25 +92,28 @@ export class UsersQueryRepository implements IUsersQueryRepository {
                   from "user"
 --              where (lower("banned") like '%' || lower($1) || '%')
                   where ("banned" is null))
-        select row_to_json(t1)
+        select row_to_json(t1) as data
         from (select c.total,
                      jsonb_agg(row_to_json(sub)) as "items"
               from (table users
                   order by
-                      case when $2 = 'desc' then "createdAt" end desc,
-                      case when $2 = 'asc' then "createdAt" end asc
-                  limit $3
-                  offset $4) sub
+                      case when $1 = 'desc' then "createdAt" end desc,
+                      case when $1 = 'asc' then "createdAt" end asc
+                  limit $2
+                  offset $3) sub
                        right join (select count(*) from users) c(total) on true
               group by c.total) t1
     `;
 
-    const queryParams = [];
+    const queryParams = [
+      pageOptionsDto.sortDirection,
+      pageOptionsDto.pageSize,
+      pageOptionsDto.skip,
+    ];
 
-    const users: { total: number; items: User[] } = await this.dataSource.query(
-      query,
-      queryParams,
-    );
+    const users: { total: number; items: User[] } = await this.dataSource
+      .query(query, queryParams)
+      .then((res) => res[0]?.data);
 
     return new PageDto({
       items: users.items.map(this.mapToDto),
