@@ -37,7 +37,13 @@ export class TestingRepository {
 
     await queryRunner.query(`
         DELETE
-        FROM likes
+        FROM "likes";
+        DELETE
+        FROM "revoke_token";
+        DELETE
+        FROM "bans";
+        DELETE
+        FROM "user"
     `);
 
     await queryRunner.release();

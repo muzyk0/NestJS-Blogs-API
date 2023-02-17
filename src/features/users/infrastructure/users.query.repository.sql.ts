@@ -91,7 +91,7 @@ export class UsersQueryRepository implements IUsersQueryRepository {
                  (select *
                   from "user"
 --              where (lower("banned") like '%' || lower($1) || '%')
-                  where (lower("banned") is null))
+                  where ("banned" is null))
         select row_to_json(t1)
         from (select c.total,
                      jsonb_agg(row_to_json(sub)) as "items"
