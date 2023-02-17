@@ -94,7 +94,7 @@ export class UsersQueryRepository implements IUsersQueryRepository {
                   where ("banned" is null))
         select row_to_json(t1) as data
         from (select c.total,
-                     jsonb_agg(row_to_json(sub)) as "items"
+                     jsonb_agg(row_to_json(sub)) filter (where sub.id is not null) as "items"
               from (table users
                   order by
                       case when $1 = 'desc' then "createdAt" end desc,
@@ -111,12 +111,12 @@ export class UsersQueryRepository implements IUsersQueryRepository {
       pageOptionsDto.skip,
     ];
 
-    const users: { total: number; items: User[] } = await this.dataSource
+    const users: { total: number; items?: User[] } = await this.dataSource
       .query(query, queryParams)
       .then((res) => res[0]?.data);
 
     return new PageDto({
-      items: users.items.map(this.mapToDto),
+      items: users.items?.map(this.mapToDto) ?? [],
       itemsCount: users.total,
       pageOptionsDto,
     });
