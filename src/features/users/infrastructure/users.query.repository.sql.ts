@@ -87,23 +87,54 @@ export class UsersQueryRepository implements IUsersQueryRepository {
     };
 
     const query = `
-        with users as
-                 (select *
-                  from "user"
+        WITH users AS
+                 (SELECT *
+                  FROM "user"
 --              where (lower("banned") like '%' || lower($1) || '%')
-                  where ("banned" is null))
+                  WHERE (${
+                    pageOptionsDto?.banStatus &&
+                    pageOptionsDto.banStatus !== UserBanStatus.ALL
+                      ? `
+                          ${
+                            pageOptionsDto.banStatus === UserBanStatus.BANNED
+                              ? `banned IS nOt NULL`
+                              : `banned IS NULL`
+                          }
+                        `
+                      : 'banned IS NULL OR banned IS NOT NULL'
+                  }) ${
+      pageOptionsDto.searchLoginTerm || pageOptionsDto.searchEmailTerm
+        ? `AND (${
+            pageOptionsDto.searchLoginTerm
+              ? `LOWER("login") LIKE '%' || LOWER('${pageOptionsDto.searchLoginTerm}') || '%'`
+              : ''
+          } ${
+            pageOptionsDto.searchEmailTerm
+              ? `OR LOWER("email") LIKE '%' || LOWER('${pageOptionsDto.searchEmailTerm}') || '%'`
+              : ''
+          })`
+        : ''
+    })
+
+
         select row_to_json(t1) as data
         from (select c.total,
                      jsonb_agg(row_to_json(sub)) filter (where sub.id is not null) as "items"
               from (table users
                   order by
-                      case when $1 = 'desc' then "createdAt" end desc,
-                      case when $1 = 'asc' then "createdAt" end asc
+                      case when $1 = 'desc' then "${
+                        pageOptionsDto.sortBy
+                      }" end desc,
+                      case when $1 = 'asc' then "${
+                        pageOptionsDto.sortBy
+                      }" end asc
                   limit $2
                   offset $3) sub
                        right join (select count(*) from users) c(total) on true
               group by c.total) t1
     `;
+
+    console.log(query);
 
     const queryParams = [
       pageOptionsDto.sortDirection,
