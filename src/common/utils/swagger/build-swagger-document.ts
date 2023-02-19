@@ -1,3 +1,5 @@
+import { join } from 'path';
+
 import { NestExpressApplication } from '@nestjs/platform-express';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 
@@ -21,5 +23,7 @@ export const buildSwaggerDocument = (
     .addTag('superAdmin')
     .build();
   const document = SwaggerModule.createDocument(app, config);
-  SwaggerModule.setup('', app, document);
+  SwaggerModule.setup('', app, document, {
+    // customfavIcon: '../../../favicon.ico',
+  });
 };

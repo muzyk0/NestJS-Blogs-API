@@ -176,6 +176,7 @@ export class UsersRepository implements IUsersRepository {
 
   async updateBan(id: string, payload: BanUnbanUserInput): Promise<boolean> {
     const banned = payload.isBanned ? new Date() : null;
+    const banReason = payload.isBanned ? payload.banReason : null;
     await this.dataSource.query(
       `
           UPDATE "user"
@@ -184,7 +185,7 @@ export class UsersRepository implements IUsersRepository {
           WHERE id = $1
           RETURNING *
       `,
-      [id, banned, payload.banReason],
+      [id, banned, banReason],
     );
     return true;
   }
