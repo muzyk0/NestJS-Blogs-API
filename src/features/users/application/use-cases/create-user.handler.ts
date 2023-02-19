@@ -29,7 +29,7 @@ export class CreateUserHandler implements ICommandHandler<CreateUserCommand> {
 
     if (userAlreadyExistByLogin) {
       throw new BadRequestException({
-        message: 'Login already exist',
+        message: 'Login already exist!',
         field: 'login',
       });
     }

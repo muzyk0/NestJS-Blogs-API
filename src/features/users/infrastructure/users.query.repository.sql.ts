@@ -153,16 +153,16 @@ export class UsersQueryRepository implements IUsersQueryRepository {
     });
   }
 
-  mapToDto(users: User): UserViewModel {
+  mapToDto(user: User): UserViewModel {
     return {
-      id: users.id,
-      login: users.login,
-      email: users.email,
-      createdAt: new Date(users.createdAt).toISOString(),
+      id: user.id,
+      login: user.login,
+      email: user.email,
+      createdAt: new Date(user.createdAt).toISOString(),
       banInfo: {
-        isBanned: Boolean(users.banned),
-        banDate: users.banned?.toISOString() ?? null,
-        banReason: users.banReason,
+        isBanned: Boolean(user.banned),
+        banDate: new Date(user.banned).toISOString() ?? null,
+        banReason: user.banReason,
       },
     };
   }
