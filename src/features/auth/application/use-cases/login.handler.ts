@@ -22,12 +22,9 @@ export class LoginHandler implements ICommandHandler<LoginCommand> {
   ) {}
 
   async execute({ loginOrEmail, password }: LoginCommand) {
-    const user = await this.usersRepository.findOneByLoginOrEmail(
-      loginOrEmail,
-      true,
-    );
+    const user = await this.usersRepository.findOneByLoginOrEmail(loginOrEmail);
 
-    if (!user /*|| Boolean(user?.banned)*/) {
+    if (!user || Boolean(user?.banned)) {
       return null;
     }
 

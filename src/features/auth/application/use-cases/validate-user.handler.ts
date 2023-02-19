@@ -24,7 +24,7 @@ export class ValidateUserHandler
     login,
     password,
   }: ValidateUserCommand): Promise<User | null> {
-    const user = await this.usersRepository.findOneByLoginOrEmail(login, true);
+    const user = await this.usersRepository.findOneByLoginOrEmail(login);
 
     if (!user) {
       return null;
