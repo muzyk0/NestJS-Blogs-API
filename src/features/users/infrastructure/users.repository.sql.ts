@@ -135,7 +135,7 @@ export class UsersRepository implements IUsersRepository {
 
   async findOneByLoginOrEmail(
     loginOrEmail: string,
-    withBanned?: false,
+    withBanned?: boolean,
   ): Promise<User> {
     const users: User[] = await this.dataSource.query(
       `
