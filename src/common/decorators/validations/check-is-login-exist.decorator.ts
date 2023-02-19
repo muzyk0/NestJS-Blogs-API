@@ -12,9 +12,9 @@ import {
 
 import { UsersRepository } from '../../../features/users/infrastructure/users.repository.sql';
 
-@ValidatorConstraint({ name: 'EmailExists', async: true })
+@ValidatorConstraint({ name: 'LoginNotExist', async: true })
 @Injectable()
-export class LoginExistsRule implements ValidatorConstraintInterface {
+export class LoginNotExistRule implements ValidatorConstraintInterface {
   constructor(private usersRepository: UsersRepository) {
     this.usersRepository = usersRepository;
 
@@ -38,14 +38,14 @@ export class LoginExistsRule implements ValidatorConstraintInterface {
   }
 }
 
-export function IsLoginExist(validationOptions?: ValidationOptions) {
+export function IsLoginNotExist(validationOptions?: ValidationOptions) {
   return function (object: any, propertyName: string) {
     registerDecorator({
-      name: 'LoginExists',
+      name: 'LoginNotExist',
       target: object.constructor,
       propertyName: propertyName,
       options: validationOptions,
-      validator: LoginExistsRule,
+      validator: LoginNotExistRule,
     });
   };
 }

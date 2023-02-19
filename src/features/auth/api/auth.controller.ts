@@ -2,7 +2,6 @@ import {
   BadRequestException,
   Body,
   Controller,
-  ForbiddenException,
   Get,
   HttpCode,
   HttpStatus,
@@ -39,7 +38,6 @@ import { LogoutCommand } from '../application/use-cases/logout.handler';
 import { RefreshTokenCommand } from '../application/use-cases/refresh-token.handler';
 import { ResendConfirmationCodeCommand } from '../application/use-cases/resend-confirmation-code.handler';
 import { SendRecoveryPasswordTempCodeCommand } from '../application/use-cases/send-recovery-password-temp-code.handler';
-import { RevokeToken } from '../domain/entities/revoked-token.entity';
 import { JwtAuthGuard } from '../guards/jwt-auth.guard';
 import { JwtRefreshAuthGuard } from '../guards/jwt-refresh-auth.guard';
 import { LocalAuthGuard } from '../guards/local-auth.guard';
@@ -150,7 +148,6 @@ export class AuthController {
   @Get('/me')
   @UseGuards(JwtAuthGuard)
   async me(@GetCurrentUserId() userId: string) {
-    console.log(userId);
     const user = await this.usersRepository.findOneById(userId);
 
     return {

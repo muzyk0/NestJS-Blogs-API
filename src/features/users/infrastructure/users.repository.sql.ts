@@ -212,12 +212,12 @@ export class UsersRepository implements IUsersRepository {
               SET "confirmationCode" = $2,
                   "expirationDate" = $3
               WHERE id = $1
-              RETURNING *
+              RETURNING "confirmationCode"
           `,
       [id, code, expirationDate],
     );
 
-    return users[0];
+    return users[0][0];
   }
 
   async updateUserPassword({

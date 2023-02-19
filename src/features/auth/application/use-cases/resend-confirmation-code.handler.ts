@@ -38,7 +38,7 @@ export class ResendConfirmationCodeHandler
     await this.emailService.SendConfirmationCode({
       email: email,
       userName: user.login,
-      confirmationCode: user.confirmationCode,
+      confirmationCode: updatedUser.confirmationCode,
     });
     return true;
   }

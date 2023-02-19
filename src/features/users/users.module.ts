@@ -2,8 +2,8 @@ import { forwardRef, Module } from '@nestjs/common';
 import { CqrsModule } from '@nestjs/cqrs';
 import { TypeOrmModule } from '@nestjs/typeorm';
 
-import { EmailExistsRule } from '../../common/decorators/validations/check-is-email-exist.decorator';
-import { LoginExistsRule } from '../../common/decorators/validations/check-is-login-exist.decorator';
+import { EmailNotExistRule } from '../../common/decorators/validations/check-is-email-exist.decorator';
+import { LoginNotExistRule } from '../../common/decorators/validations/check-is-login-exist.decorator';
 import { AuthModule } from '../auth/auth.module';
 import { BansRepositorySql } from '../bans/infrastructure/bans.repository.sql';
 import { EmailModuleLocal } from '../email-local/email-local.module';
@@ -30,8 +30,8 @@ import { UsersRepository } from './infrastructure/users.repository.sql';
   ],
   controllers: [],
   providers: [
-    EmailExistsRule,
-    LoginExistsRule,
+    EmailNotExistRule,
+    LoginNotExistRule,
     ...CommandHandlers,
     UsersRepository,
     // UsersQueryRepository,

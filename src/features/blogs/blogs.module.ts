@@ -3,7 +3,7 @@ import { CqrsModule } from '@nestjs/cqrs';
 import { MongooseModule } from '@nestjs/mongoose';
 
 import { BlogExistsRule } from '../../common/decorators/validations/check-blogId-if-exist.decorator';
-import { UserExistsRule } from '../../common/decorators/validations/check-is-user-exist.decorator';
+import { IsUserAlreadyExistConstraint } from '../../common/decorators/validations/check-is-user-exist.decorator';
 import { AuthModule } from '../auth/auth.module';
 import { UpdateBanUserForBlogHandler } from '../bans/application/use-cases/update-ban-user-for-blog.handler';
 import { BansRepositorySql } from '../bans/infrastructure/bans.repository.sql';
@@ -47,7 +47,7 @@ const CommandHandlers = [
     BlogsRepository,
     BlogsQueryRepository,
     BlogExistsRule,
-    UserExistsRule,
+    IsUserAlreadyExistConstraint,
     BansRepositorySql,
   ],
   exports: [
@@ -56,7 +56,7 @@ const CommandHandlers = [
     BlogsRepository,
     BlogsQueryRepository,
     BlogExistsRule,
-    UserExistsRule,
+    IsUserAlreadyExistConstraint,
   ],
 })
 export class BlogsModule {}

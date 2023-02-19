@@ -24,27 +24,6 @@ export class CreateUserHandler implements ICommandHandler<CreateUserCommand> {
   ) {}
 
   async execute({ login, email, password }: CreateUserCommand) {
-    const userAlreadyExistByLogin =
-      await this.usersRepository.findOneByLoginOrEmail(login);
-
-    if (userAlreadyExistByLogin) {
-      throw new BadRequestException({
-        message: 'Login already exist!',
-        field: 'login',
-      });
-    }
-
-    const userAlreadyExistByEmail = await this.usersRepository.findOneByEmail(
-      email,
-    );
-
-    if (userAlreadyExistByEmail) {
-      throw new BadRequestException({
-        message: 'Email already exist',
-        field: 'email',
-      });
-    }
-
     return this.create({ login, email, password });
   }
 
