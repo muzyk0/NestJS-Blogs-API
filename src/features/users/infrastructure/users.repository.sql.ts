@@ -120,6 +120,17 @@ export class UsersRepository implements IUsersRepository {
     );
     return users[0];
   }
+  async findOneByLogin(login: string): Promise<User> {
+    const users: User[] = await this.dataSource.query(
+      `
+          SELECT *
+          FROM "user"
+          WHERE "login" = $1
+      `,
+      [login],
+    );
+    return users[0];
+  }
 
   async findOneById(id: string): Promise<User | null> {
     const users: User[] = await this.dataSource.query(
