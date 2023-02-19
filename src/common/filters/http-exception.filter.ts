@@ -16,13 +16,11 @@ export class HttpExceptionFilter implements ExceptionFilter {
 
     switch (status) {
       case 400:
-        const exceptionMessage = exception.getResponse() as any;
-        const errors = Array.isArray(exceptionMessage)
-          ? exceptionMessage.flat(1)
-          : exceptionMessage;
+        const message = (exception.getResponse() as any).message;
+        const errors = Array.isArray(message) ? message.flat(1) : message;
 
         response.status(status).json({
-          errorsMessages: [errors],
+          errorsMessages: errors,
         });
         break;
       case 429:
