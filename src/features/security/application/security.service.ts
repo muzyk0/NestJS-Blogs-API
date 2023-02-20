@@ -1,14 +1,12 @@
 import { Injectable } from '@nestjs/common';
-import { v4 } from 'uuid';
 
-import { SecurityRepository } from '../infrastructure/security.repository';
+import { ISecurityRepository } from '../infrastructure/security.sql.repository';
 
 import { CreateSecurityDto } from './dto/create-security.dto';
-import { SecurityDto } from './dto/security.dto';
 
 @Injectable()
 export class SecurityService {
-  constructor(private securityRepository: SecurityRepository) {}
+  constructor(private securityRepository: ISecurityRepository) {}
 
   async create({
     ip,
@@ -18,8 +16,7 @@ export class SecurityService {
     expireAt,
     issuedAt,
   }: CreateSecurityDto) {
-    const session: SecurityDto = {
-      id: v4(),
+    const session: CreateSecurityDto = {
       userId,
       ip,
       deviceId,

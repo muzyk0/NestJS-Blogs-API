@@ -10,10 +10,6 @@ import {
   CommentDocument,
 } from '../../comments/domain/schemas/comments.schema';
 import { Post, PostDocument } from '../../posts/domain/schemas/posts.schema';
-import {
-  Security,
-  SecurityDocument,
-} from '../../security/domain/schemas/security.schema';
 
 @Injectable()
 export class TestingRepository {
@@ -23,7 +19,6 @@ export class TestingRepository {
     @InjectModel(Post.name) private postModel: Model<PostDocument>,
     @InjectModel(Blog.name) private blogModel: Model<BlogDocument>,
     @InjectModel(Comment.name) private commentModel: Model<CommentDocument>,
-    @InjectModel(Security.name) private securityModel: Model<SecurityDocument>,
   ) {}
 
   private async clearSqlDatabase(): Promise<boolean> {
@@ -38,7 +33,9 @@ export class TestingRepository {
         DELETE
         FROM "bans";
         DELETE
-        FROM "user"
+        FROM "user";
+        DELETE
+        FROM security;
     `);
 
     await queryRunner.release();
@@ -53,7 +50,6 @@ export class TestingRepository {
       await this.blogModel.deleteMany({});
       await this.postModel.deleteMany({});
       await this.commentModel.deleteMany({});
-      await this.securityModel.deleteMany({});
     }
 
     return true;

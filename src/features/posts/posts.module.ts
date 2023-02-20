@@ -16,10 +16,6 @@ import {
 import { CommentsQueryRepository } from '../comments/infrastructure/comments.query.repository';
 import { CommentsRepository } from '../comments/infrastructure/comments.repository';
 import { LikesModule } from '../likes/likes.module';
-import {
-  Security,
-  SecuritySchema,
-} from '../security/domain/schemas/security.schema';
 import { SecurityModule } from '../security/security.module';
 import { UsersModule } from '../users/users.module';
 
@@ -35,9 +31,6 @@ import { PostsRepository } from './infrastructure/posts.repository';
     MongooseModule.forFeature([{ name: Post.name, schema: PostSchema }]),
     MongooseModule.forFeature([{ name: Blog.name, schema: BlogSchema }]),
     MongooseModule.forFeature([{ name: Comment.name, schema: CommentSchema }]),
-    MongooseModule.forFeature([
-      { name: Security.name, schema: SecuritySchema },
-    ]),
     AuthModule,
     SecurityModule,
     LikesModule,

@@ -1,20 +1,30 @@
 import { Module } from '@nestjs/common';
-import { MongooseModule } from '@nestjs/mongoose';
+import { TypeOrmModule } from '@nestjs/typeorm';
 
 import { SecurityController } from './api/security.controller';
 import { SecurityService } from './application/security.service';
-import { Security, SecuritySchema } from './domain/schemas/security.schema';
-import { SecurityQueryRepository } from './infrastructure/security.query.repository';
-import { SecurityRepository } from './infrastructure/security.repository';
+import { Security } from './domain/entities/security.entity';
+import {
+  ISecurityQueryRepository,
+  SecurityQuerySqlRepository,
+} from './infrastructure/security.query.sql.repository';
+import {
+  ISecurityRepository,
+  SecurityRepository,
+} from './infrastructure/security.sql.repository';
 
 @Module({
-  imports: [
-    MongooseModule.forFeature([
-      { name: Security.name, schema: SecuritySchema },
-    ]),
-  ],
+  imports: [TypeOrmModule.forFeature([Security])],
   controllers: [SecurityController],
-  providers: [SecurityService, SecurityRepository, SecurityQueryRepository],
-  exports: [SecurityService, SecurityRepository, SecurityQueryRepository],
+  providers: [
+    SecurityService,
+    { provide: ISecurityRepository, useClass: SecurityRepository },
+    { provide: ISecurityQueryRepository, useClass: SecurityQuerySqlRepository },
+  ],
+  exports: [
+    SecurityService,
+    { provide: ISecurityRepository, useClass: SecurityRepository },
+    { provide: ISecurityQueryRepository, useClass: SecurityQuerySqlRepository },
+  ],
 })
 export class SecurityModule {}

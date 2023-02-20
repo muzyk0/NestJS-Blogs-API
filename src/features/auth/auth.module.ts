@@ -8,10 +8,6 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { EmailModuleLocal } from '../email-local/email-local.module';
 import { LimitsModule } from '../limits/limits.module';
 import { PasswordRecoveryModule } from '../password-recovery/password-recovery.module';
-import {
-  Security,
-  SecuritySchema,
-} from '../security/domain/schemas/security.schema';
 import { SecurityModule } from '../security/security.module';
 import { UsersModule } from '../users/users.module';
 
@@ -47,9 +43,6 @@ const Providers: Provider<any>[] = [
     LimitsModule,
     SecurityModule,
     PasswordRecoveryModule,
-    MongooseModule.forFeature([
-      { name: Security.name, schema: SecuritySchema },
-    ]),
     TypeOrmModule.forFeature([RevokeToken]),
   ],
   controllers: [AuthController],

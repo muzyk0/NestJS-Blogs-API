@@ -10,10 +10,6 @@ import {
 import { EmailModuleLocal } from '../email-local/email-local.module';
 import { Like } from '../likes/domain/entity/like.entity';
 import { Post, PostSchema } from '../posts/domain/schemas/posts.schema';
-import {
-  Security,
-  SecuritySchema,
-} from '../security/domain/schemas/security.schema';
 
 import { TestingController } from './api/testing.controller';
 import { TestingService } from './application/testing.service';
@@ -28,9 +24,6 @@ import { TestingRepository } from './infrastructure/testing.repository';
     MongooseModule.forFeature([{ name: Post.name, schema: PostSchema }]),
     MongooseModule.forFeature([{ name: Blog.name, schema: BlogSchema }]),
     MongooseModule.forFeature([{ name: Comment.name, schema: CommentSchema }]),
-    MongooseModule.forFeature([
-      { name: Security.name, schema: SecuritySchema },
-    ]),
     // rabbitMQModule,
   ],
   controllers: [TestingController],
