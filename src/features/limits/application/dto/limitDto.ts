@@ -1,4 +1,4 @@
-import { IsDate, IsString } from 'class-validator';
+import { IsDate, IsOptional, IsString } from 'class-validator';
 
 export class LimitDto {
   @IsString()
@@ -6,6 +6,10 @@ export class LimitDto {
 
   @IsString()
   deviceName: string;
+
+  @IsString()
+  @IsOptional()
+  login?: string;
 
   @IsString()
   ip: string;

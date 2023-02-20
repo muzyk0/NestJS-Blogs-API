@@ -8,6 +8,7 @@ import { MailerModule } from '@nestjs-modules/mailer';
 import { ConfigService } from '@nestjs/config';
 import { HandlebarsAdapter } from '@nestjs-modules/mailer/dist/adapters/handlebars.adapter';
 import { ServeStaticModule } from '@nestjs/serve-static';
+import { ScheduleModule } from '@nestjs/schedule';
 import { configModule } from './constants';
 
 import { AppController } from './app.controller';
@@ -63,6 +64,7 @@ import { SuperAdminModule } from './features/super-admin/super-admin.module';
       rootPath: join(__dirname, '..', 'swagger-static'),
       serveRoot: process.env.NODE_ENV === 'development' ? '/' : '/',
     }),
+    ScheduleModule.forRoot(),
     EmailModuleLocal,
     BlogsModule,
     PostsModule,

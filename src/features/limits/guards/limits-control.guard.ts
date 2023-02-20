@@ -16,7 +16,8 @@ export class LimitsControlGuard implements CanActivate {
     const request = context.switchToHttp().getRequest();
     const { ip, url } = request;
 
-    const maxLimitInterval = 10 * 1000;
+    const maxLimitInterval = 60 * 1000;
+    // TODO: change to get from config
     const maxRequest = 5;
 
     if (this.config.get('IP_RESTRICTION.LIMIT') === LimitEnum.NO_CHECK) {
