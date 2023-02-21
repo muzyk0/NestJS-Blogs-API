@@ -32,9 +32,8 @@ export class RevokeTokenRepository implements IRevokeTokenRepository {
         SELECT COUNT(1) as count
         FROM "revoke_token"
         WHERE "userId" = $1
-          AND "token" = $3
-          AND "userAgent" = $2
-
+          AND "token" = $2
+          AND "userAgent" = $3;
         `,
         [userId, token, userAgent],
       );
