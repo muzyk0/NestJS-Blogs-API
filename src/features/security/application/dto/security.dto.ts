@@ -1,24 +1,15 @@
 import { IsDate, IsString } from 'class-validator';
 
-export class SecurityDto {
-  @IsString()
-  id: string;
-
-  @IsDate()
-  issuedAt: Date;
-
-  @IsDate()
-  expireAt: Date;
-
+export class SecurityViewModel {
   @IsString()
   ip: string;
 
   @IsString()
-  deviceName: string;
+  title: string;
+
+  @IsDate()
+  lastActiveDate: string;
 
   @IsString()
   deviceId: string;
-
-  @IsString()
-  userId: string;
 }
