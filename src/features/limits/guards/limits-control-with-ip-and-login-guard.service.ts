@@ -18,9 +18,9 @@ export class LimitsControlWithIpAndLoginGuard implements CanActivate {
     const login: string | undefined = request.body?.login;
 
     const maxLimitInterval = 10 * 1000;
-    const maxRequest = 5;
+    const maxRequest = this.config.get('IP_RESTRICTION.LIMIT');
 
-    if (this.config.get('IP_RESTRICTION.LIMIT') === LimitEnum.NO_CHECK) {
+    if (maxRequest === LimitEnum.NO_CHECK) {
       return true;
     }
 
