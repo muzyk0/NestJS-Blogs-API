@@ -26,19 +26,20 @@ export class RevokeTokenRepository implements IRevokeTokenRepository {
     userId: string,
     { token, userAgent }: RevokeTokenInput,
   ): Promise<boolean> {
-    const revokedTokenCount: number[] = await this.dataSource.query(
-      `
-        SELECT COUNT(1)
+    const [revokedTokenCount]: [{ count: string }] =
+      await this.dataSource.query(
+        `
+        SELECT COUNT(1) as count
         FROM "revoke_token"
         WHERE "userId" = $1
           AND "token" = $3
           AND "userAgent" = $2
 
         `,
-      [userId, token, userAgent],
-    );
+        [userId, token, userAgent],
+      );
 
-    if (revokedTokenCount[0]) {
+    if (Number(revokedTokenCount.count)) {
       return true;
     }
 
@@ -49,16 +50,16 @@ export class RevokeTokenRepository implements IRevokeTokenRepository {
     userId: string,
     { token, userAgent }: RevokeTokenInput,
   ): Promise<boolean> {
-    const revokedTokenCount: RevokeToken = await this.dataSource.query(
+    const revokedTokenCount: [RevokeToken] = await this.dataSource.query(
       `
-          INSERT INTO "revoke_token" ("userId", "userAgent", token)
+          INSERT INTO "revoke_token" ("userId", token, "userAgent")
           VALUES ($1, $2, $3)
           RETURNING *
       `,
       [userId, token, userAgent],
     );
 
-    if (revokedTokenCount[0]) {
+    if (revokedTokenCount) {
       return true;
     }
 

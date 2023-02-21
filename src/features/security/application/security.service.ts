@@ -8,7 +8,7 @@ import { CreateSecurityDto } from './dto/create-security.dto';
 export class SecurityService {
   constructor(private securityRepository: ISecurityRepository) {}
 
-  async create({
+  async createOrUpdate({
     ip,
     deviceId,
     deviceName,
@@ -25,7 +25,7 @@ export class SecurityService {
       expireAt,
     };
 
-    return this.securityRepository.create(session);
+    return this.securityRepository.createOrUpdate(session);
   }
 
   async getSessionByDeviceId(deviceId: string) {

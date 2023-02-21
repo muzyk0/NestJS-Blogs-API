@@ -35,7 +35,7 @@ export class SecurityController {
 
   @Post()
   create(@Body() createSecurityDto: CreateSecurityDto) {
-    return this.securityService.create(createSecurityDto);
+    return this.securityService.createOrUpdate(createSecurityDto);
   }
 
   @Get('/devices')

@@ -75,7 +75,7 @@ export class AuthController {
 
     const userAgent = req.get('User-Agent');
 
-    await this.securityService.create({
+    await this.securityService.createOrUpdate({
       userId: decodedAccessToken.user.id,
       ip: req.ip,
       deviceId: decodedAccessToken.deviceId,
@@ -85,8 +85,8 @@ export class AuthController {
     });
 
     res.cookie('refreshToken', refreshToken, {
-      httpOnly: true,
-      secure: true,
+      httpOnly: false,
+      secure: false,
     });
 
     return tokens;
@@ -172,8 +172,8 @@ export class AuthController {
     );
 
     res.cookie('refreshToken', tokens.refreshToken, {
-      httpOnly: true,
-      secure: true,
+      httpOnly: false,
+      secure: false,
     });
     return { accessToken: tokens.accessToken };
   }
@@ -189,8 +189,6 @@ export class AuthController {
     const userAgent = req.get('User-Agent');
 
     await this.commandBus.execute(new LogoutCommand(ctx, userAgent));
-
-    await this.securityService.remove(ctx.deviceId);
 
     res.clearCookie('refreshToken');
     return;

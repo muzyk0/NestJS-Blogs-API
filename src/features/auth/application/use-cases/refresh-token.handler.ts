@@ -72,7 +72,7 @@ export class RefreshTokenHandler
         tokens.refreshToken,
       );
 
-    await this.securityService.create({
+    await this.securityService.createOrUpdate({
       userId: decodedAccessToken.user.id,
       ip: userIp,
       deviceId: decodedAccessToken.deviceId,
@@ -81,6 +81,6 @@ export class RefreshTokenHandler
       expireAt: decodedAccessToken.exp,
     });
 
-    return { tokens };
+    return tokens;
   }
 }

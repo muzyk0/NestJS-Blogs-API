@@ -6,7 +6,7 @@ import { CreateSecurityDto } from '../application/dto/create-security.dto';
 import { Security } from '../domain/entities/security.entity';
 
 export abstract class ISecurityRepository {
-  abstract create(securityDto: CreateSecurityDto): any;
+  abstract createOrUpdate(securityDto: CreateSecurityDto): any;
 
   abstract remove(id: string): Promise<boolean>;
 
@@ -23,7 +23,7 @@ export abstract class ISecurityRepository {
 export class SecurityRepository implements ISecurityRepository {
   constructor(@InjectDataSource() private readonly dataSource: DataSource) {}
 
-  async create({
+  async createOrUpdate({
     ip,
     deviceName,
     deviceId,
@@ -52,7 +52,7 @@ export class SecurityRepository implements ISecurityRepository {
   }
 
   async remove(deviceId: string) {
-    const result = await this.dataSource.query(
+    const [_emptyArrayResult, countDeleted] = await this.dataSource.query(
       `DELETE
        FROM security
        WHERE "deviceId" = $1
@@ -60,7 +60,7 @@ export class SecurityRepository implements ISecurityRepository {
       [deviceId],
     );
 
-    return result;
+    return !!countDeleted;
   }
 
   async getSessionByDeviceId(deviceId: string): Promise<Security | undefined> {
