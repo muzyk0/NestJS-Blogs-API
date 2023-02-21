@@ -11,6 +11,7 @@ import {
   UnauthorizedException,
   UseGuards,
 } from '@nestjs/common';
+import { ConfigService } from '@nestjs/config';
 import { CommandBus } from '@nestjs/cqrs';
 import { ApiTags } from '@nestjs/swagger';
 import { Request, Response } from 'express';
@@ -45,12 +46,17 @@ import { LocalAuthGuard } from '../guards/local-auth.guard';
 @ApiTags('auth')
 @Controller('auth')
 export class AuthController {
+  isDev: boolean;
+
   constructor(
     private readonly usersRepository: UsersRepository,
     private readonly securityService: SecurityService,
     private readonly jwtService: JwtService,
     private readonly commandBus: CommandBus,
-  ) {}
+    private readonly config: ConfigService,
+  ) {
+    this.isDev = config.get<boolean>('IS_DEV');
+  }
 
   @UseGuards(LimitsControlWithIpAndLoginGuard, LocalAuthGuard)
   @Post('/login')
@@ -85,8 +91,8 @@ export class AuthController {
     });
 
     res.cookie('refreshToken', refreshToken, {
-      httpOnly: false,
-      secure: false,
+      httpOnly: !this.isDev,
+      secure: !this.isDev,
     });
 
     return tokens;
@@ -172,8 +178,8 @@ export class AuthController {
     );
 
     res.cookie('refreshToken', tokens.refreshToken, {
-      httpOnly: false,
-      secure: false,
+      httpOnly: !this.isDev,
+      secure: !this.isDev,
     });
     return { accessToken: tokens.accessToken };
   }
