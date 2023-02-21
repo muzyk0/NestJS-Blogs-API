@@ -46,8 +46,6 @@ export class SecurityRepository implements ISecurityRepository {
       [ip, deviceName, deviceId, userId, issuedAt, expireAt],
     );
 
-    console.log(ip, deviceName, deviceId, userId, issuedAt, expireAt);
-
     return userDevice;
   }
 

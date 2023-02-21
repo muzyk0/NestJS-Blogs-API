@@ -134,8 +134,6 @@ export class UsersQueryRepository implements IUsersQueryRepository {
               group by c.total) t1
     `;
 
-    console.log(query);
-
     const queryParams = [
       pageOptionsDto.sortDirection,
       pageOptionsDto.pageSize,

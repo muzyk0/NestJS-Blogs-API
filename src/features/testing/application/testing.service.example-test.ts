@@ -185,7 +185,6 @@
 //     await Promise.all(
 //       collections.map(async (collection) => {
 //         const res = await collection.find({});
-//         console.log(res);
 //         countDocumentsAfterClearDb += await collection.countDocuments({});
 //         return;
 //       }),

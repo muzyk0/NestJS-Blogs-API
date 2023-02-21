@@ -17,8 +17,6 @@ export class EmailService {
         subject,
         html: template,
       });
-
-      console.log('Message sent: %s', info);
     } catch (e) {
       throw new Error(`Email isn't send. Error: ${e}`);
     }

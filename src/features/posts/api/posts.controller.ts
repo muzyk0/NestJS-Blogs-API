@@ -120,8 +120,6 @@ export class PostsController {
       type: BanTypeEnum.BLOG,
     });
 
-    console.log('ban', ban);
-
     if (ban) {
       throw new ForbiddenException();
     }
