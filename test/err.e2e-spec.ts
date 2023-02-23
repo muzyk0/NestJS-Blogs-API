@@ -3,17 +3,17 @@ import { Test, TestingModule } from '@nestjs/testing';
 import request from 'supertest';
 
 import { AppModule } from '../src/app.module';
-import { PageDto } from '../src/common/paginator/page.dto';
 import {
   BlogDto,
   BlogView,
   BlogViewDtoForSuperAdmin,
-} from '../src/features/blogs/application/dto/blog.dto';
-import { CommentDto } from '../src/features/comments/application/dto/comment.dto';
-import { PostDto } from '../src/features/posts/application/dto/post.dto';
-import { PostViewDto } from '../src/features/posts/application/dto/post.view.dto';
-import { UserViewModel } from '../src/features/users/application/dto/user.view';
+} from '../src/modules/blogs/application/dto/blog.dto';
+import { CommentDto } from '../src/modules/comments/application/dto/comment.dto';
+import { PostDto } from '../src/modules/posts/application/dto/post.dto';
+import { PostViewDto } from '../src/modules/posts/application/dto/post.view.dto';
+import { UserViewModel } from '../src/modules/users/application/dto/user.view';
 import { setupApp } from '../src/setup-app';
+import { PageDto } from '../src/shared/paginator/page.dto';
 
 import { FakeUser, FakeUserBuilder } from './utils/fake-user.builder';
 

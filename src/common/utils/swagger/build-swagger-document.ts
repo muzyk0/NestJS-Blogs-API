@@ -10,7 +10,7 @@ export const buildSwaggerDocument = (
   const config = new DocumentBuilder()
     .setTitle('Blog platform')
     .setDescription(
-      "Sorry I'm working on new features and don't have time to write swagger documentation. But in time it will be completely written",
+      "Sorry I'm working on new modules and don't have time to write swagger documentation. But in time it will be completely written",
     )
     .setVersion(swaggerVersion)
     .addTag('auth')
