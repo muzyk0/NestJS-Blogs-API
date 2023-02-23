@@ -10,17 +10,19 @@ import {
   ValidatorConstraintInterface,
 } from 'class-validator';
 
-import { UsersRepository } from '../../../features/users/infrastructure/users.repository';
+import { UsersRepository } from '../../../features/users/infrastructure/users.repository.sql';
 
 @ValidatorConstraint({ name: 'UserExists', async: true })
 @Injectable()
-export class UserExistsRule implements ValidatorConstraintInterface {
+export class IsUserAlreadyExistConstraint
+  implements ValidatorConstraintInterface
+{
   constructor(private usersRepository: UsersRepository) {
     this.usersRepository = usersRepository;
 
     if (!usersRepository) {
       throw new Error(
-        'If BlogExistsRule is a provider, is it part of the current Module?',
+        'If IsUserAlreadyExistConstraint is a provider, is it part of the current Module?',
       );
     }
   }
@@ -38,14 +40,14 @@ export class UserExistsRule implements ValidatorConstraintInterface {
   }
 }
 
-export function IsUserExist(validationOptions?: ValidationOptions) {
+export function IsUserAlreadyExist(validationOptions?: ValidationOptions) {
   return function (object: any, propertyName: string) {
     registerDecorator({
       name: 'UserExists',
       target: object.constructor,
       propertyName: propertyName,
       options: validationOptions,
-      validator: UserExistsRule,
+      validator: IsUserAlreadyExistConstraint,
     });
   };
 }

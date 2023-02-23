@@ -9,13 +9,7 @@ import {
 } from '../comments/domain/schemas/comments.schema';
 import { EmailModuleLocal } from '../email-local/email-local.module';
 import { Like } from '../likes/domain/entity/like.entity';
-import { Limit, LimitSchema } from '../limits/domain/schemas/limits.schema';
 import { Post, PostSchema } from '../posts/domain/schemas/posts.schema';
-import {
-  Security,
-  SecuritySchema,
-} from '../security/domain/schemas/security.schema';
-import { User, UserSchema } from '../users/domain/schemas/users.schema';
 
 import { TestingController } from './api/testing.controller';
 import { TestingService } from './application/testing.service';
@@ -29,12 +23,7 @@ import { TestingRepository } from './infrastructure/testing.repository';
 
     MongooseModule.forFeature([{ name: Post.name, schema: PostSchema }]),
     MongooseModule.forFeature([{ name: Blog.name, schema: BlogSchema }]),
-    MongooseModule.forFeature([{ name: User.name, schema: UserSchema }]),
     MongooseModule.forFeature([{ name: Comment.name, schema: CommentSchema }]),
-    MongooseModule.forFeature([{ name: Limit.name, schema: LimitSchema }]),
-    MongooseModule.forFeature([
-      { name: Security.name, schema: SecuritySchema },
-    ]),
     // rabbitMQModule,
   ],
   controllers: [TestingController],

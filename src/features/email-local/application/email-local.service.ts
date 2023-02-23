@@ -18,7 +18,6 @@ export class EmailServiceLocal {
   constructor(private readonly commandBus: CommandBus) {}
 
   async healthCheck(payload?: string) {
-    console.log(payload);
     return `Message service works correctly! Payload: ${JSON.stringify(
       payload,
     )}`;

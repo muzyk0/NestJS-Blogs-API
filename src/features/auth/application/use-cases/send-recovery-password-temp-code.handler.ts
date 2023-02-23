@@ -3,7 +3,7 @@ import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
 import { EmailServiceLocal } from '../../../email-local/application/email-local.service';
 import { PasswordRecoveryService } from '../../../password-recovery/application/password-recovery.service';
 import { PasswordRecoveryDocument } from '../../../password-recovery/domain/schemas/recovery-password.schema';
-import { UsersRepository } from '../../../users/infrastructure/users.repository';
+import { UsersRepository } from '../../../users/infrastructure/users.repository.sql';
 
 export class SendRecoveryPasswordTempCodeCommand {
   constructor(public readonly email: string) {}
@@ -29,13 +29,11 @@ export class SendRecoveryPasswordTempCodeHandler
     }
 
     const passwordRecovery: PasswordRecoveryDocument =
-      await this.recoveryPasswordService.addPasswordRecovery(
-        user.accountData.id,
-      );
+      await this.recoveryPasswordService.addPasswordRecovery(user.id);
 
     await this.emailService.SendRecoveryPasswordTempCode({
       email: email,
-      userName: user.accountData.login,
+      userName: user.login,
       recoveryCode: passwordRecovery.code,
     });
 

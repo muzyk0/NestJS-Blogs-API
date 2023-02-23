@@ -2,7 +2,7 @@ export class UserViewModel {
   id: string;
   login: string;
   email: string;
-  createdAt: Date;
+  createdAt: string;
   banInfo: {
     isBanned: boolean;
     banDate: string;

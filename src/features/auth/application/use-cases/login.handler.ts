@@ -1,7 +1,7 @@
 import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
 import { v4 } from 'uuid';
 
-import { UsersRepository } from '../../../users/infrastructure/users.repository';
+import { UsersRepository } from '../../../users/infrastructure/users.repository.sql';
 import { AuthService } from '../auth.service';
 import { JwtATPayload, JwtRTPayload } from '../interfaces/jwtPayload.type';
 import { JwtService } from '../jwt.service';
@@ -24,11 +24,11 @@ export class LoginHandler implements ICommandHandler<LoginCommand> {
   async execute({ loginOrEmail, password }: LoginCommand) {
     const user = await this.usersRepository.findOneByLoginOrEmail(loginOrEmail);
 
-    if (!user || Boolean(user?.accountData.banned)) {
+    if (!user || Boolean(user?.banned)) {
       return null;
     }
 
-    const { password: userPassword, id, email } = user.accountData;
+    const { password: userPassword, id, email } = user;
 
     const isEqual = await this.authService.comparePassword(
       password,
@@ -41,14 +41,10 @@ export class LoginHandler implements ICommandHandler<LoginCommand> {
 
     const deviceId = v4();
 
-    const atPayload = this.createAccessTokenPayload(
-      id,
-      user.accountData.login,
-      email,
-    );
+    const atPayload = this.createAccessTokenPayload(id, user.login, email);
     const rtPayload = this.createRefreshTokenPayload(
       id,
-      user.accountData.login,
+      user.login,
       email,
       deviceId,
     );

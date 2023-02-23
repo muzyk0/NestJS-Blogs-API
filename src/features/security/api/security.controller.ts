@@ -16,13 +16,13 @@ import { ApiTags } from '@nestjs/swagger';
 import { GetCurrentUserId } from '../../../common/decorators/get-current-user-id.decorator';
 import { GetCurrentJwtContext } from '../../../common/decorators/get-current-user.decorator';
 import {
-  JwtRTPayload,
   JwtATPayload,
+  JwtRTPayload,
 } from '../../auth/application/interfaces/jwtPayload.type';
 import { JwtRefreshAuthGuard } from '../../auth/guards/jwt-refresh-auth.guard';
 import { CreateSecurityDto } from '../application/dto/create-security.dto';
 import { SecurityService } from '../application/security.service';
-import { SecurityQueryRepository } from '../infrastructure/security.query.repository';
+import { ISecurityQueryRepository } from '../infrastructure/security.query.sql.repository';
 
 @ApiTags('securityDevices')
 @UseGuards(JwtRefreshAuthGuard)
@@ -30,12 +30,12 @@ import { SecurityQueryRepository } from '../infrastructure/security.query.reposi
 export class SecurityController {
   constructor(
     private readonly securityService: SecurityService,
-    private readonly securityQueryRepository: SecurityQueryRepository,
+    private readonly securityQueryRepository: ISecurityQueryRepository,
   ) {}
 
   @Post()
   create(@Body() createSecurityDto: CreateSecurityDto) {
-    return this.securityService.create(createSecurityDto);
+    return this.securityService.createOrUpdate(createSecurityDto);
   }
 
   @Get('/devices')

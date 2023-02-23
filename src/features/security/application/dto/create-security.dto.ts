@@ -1,8 +1,6 @@
 import { IsDate, IsString } from 'class-validator';
 
-import { SecurityDto } from './security.dto';
-
-export class CreateSecurityDto implements Partial<SecurityDto> {
+export class CreateSecurityDto {
   @IsDate()
   issuedAt: Date;
 

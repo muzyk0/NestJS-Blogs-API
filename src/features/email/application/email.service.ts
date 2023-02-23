@@ -18,7 +18,6 @@ export class EmailService {
 
   async healthCheck() {
     await this.client.connect();
-    console.log('health-check');
     return this.client.send<string>({ cmd: 'health-check' }, undefined);
   }
 
@@ -34,7 +33,6 @@ export class EmailService {
     userName,
     confirmationCode,
   }: ISendConfirmationCodeCommand): Promise<void> {
-    console.log('yo');
     await this.client.emit(EventPatterns.SEND_CONFIRMATION_CODE, {
       email,
       userName,

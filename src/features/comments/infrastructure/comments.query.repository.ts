@@ -11,7 +11,7 @@ import { Like } from '../../likes/domain/entity/like.entity';
 import { LikesRepositorySql } from '../../likes/infrastructure/likes.repository.sql';
 import { getStringLikeStatus } from '../../likes/utils/formatters';
 import { Post, PostDocument } from '../../posts/domain/schemas/posts.schema';
-import { UsersRepository } from '../../users/infrastructure/users.repository';
+import { UsersRepository } from '../../users/infrastructure/users.repository.sql';
 import {
   CommentForBloggerViewDto,
   CommentViewDto,
@@ -46,7 +46,7 @@ export class CommentsQueryRepository {
     const comment = await this.commentModel.findOne({ id }, projectionFields);
 
     const user = await this.usersRepository.findOneById(comment.userId);
-    if (Boolean(user.accountData.banned)) {
+    if (Boolean(user.banned)) {
       return;
     }
 
@@ -152,7 +152,7 @@ export class CommentsQueryRepository {
   ) {
     const users = await this.usersRepository
       .findAllWithoutBanned()
-      .then((u) => u.map((u) => u.accountData.id));
+      .then((u) => u.map((u) => u.id));
 
     // const filter: FilterQuery<CommentDocument> = {
     //   $and: [

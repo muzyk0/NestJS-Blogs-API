@@ -1,10 +1,8 @@
-import { Injectable } from '@nestjs/common';
-import { InjectModel } from '@nestjs/mongoose';
-import { Model } from 'mongoose';
+import { Injectable, Logger } from '@nestjs/common';
 import { v4 } from 'uuid';
 
 import { CreateLimitsDto } from '../application/dto/create-limits.dto';
-import { Limit, LimitDocument } from '../domain/schemas/limits.schema';
+import { LimitDto } from '../application/dto/limitDto';
 
 export interface ILimitsRepository {
   addAttempt(requestAttempt: CreateLimitsDto): Promise<boolean>;
@@ -21,20 +19,19 @@ export interface ILimitsRepository {
 
 @Injectable()
 export class LimitsRepository implements ILimitsRepository {
-  constructor(
-    @InjectModel(Limit.name) private limitsModel: Model<LimitDocument>,
-  ) {}
+  limitsItems: LimitDto[] = [];
 
   async addAttempt({ login, url, ip, deviceName }: CreateLimitsDto) {
-    await this.limitsModel.create({
+    const limit = {
       id: v4(),
       url,
       ip,
       login,
       deviceName,
       createdAt: new Date(),
-    });
+    };
 
+    this.limitsItems.push(limit);
     return true;
   }
 
@@ -49,18 +46,22 @@ export class LimitsRepository implements ILimitsRepository {
     url: string;
     fromDate: Date;
   }): Promise<number> {
-    return this.limitsModel.countDocuments({
-      url,
-      $or: [{ ip }, { login }],
-      createdAt: { $gt: fromDate },
-    });
+    const items = this.limitsItems.filter(
+      (item) =>
+        item.url === url &&
+        (item.ip === ip || item.login === login) &&
+        // item.ip === ip &&
+        item.createdAt > fromDate,
+    );
+
+    return items.length;
   }
 
   async removeLatestAttempts(toDate: Date): Promise<boolean> {
-    const result = await this.limitsModel.findOneAndDelete({
-      createdAt: { $lt: toDate },
-    });
+    this.limitsItems = this.limitsItems.filter(
+      (item) => item.createdAt > toDate,
+    );
 
-    return !!result;
+    return true;
   }
 }

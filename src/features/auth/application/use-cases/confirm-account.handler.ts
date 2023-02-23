@@ -1,8 +1,8 @@
 import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
 import { isAfter } from 'date-fns';
 
-import { User } from '../../../users/domain/schemas/users.schema';
-import { UsersRepository } from '../../../users/infrastructure/users.repository';
+import { User } from '../../../users/domain/entities/user.entity';
+import { UsersRepository } from '../../../users/infrastructure/users.repository.sql';
 
 export class ConfirmAccountCommand {
   constructor(public readonly code: string) {}
@@ -21,7 +21,7 @@ export class ConfirmAccountHandler
       return false;
     }
 
-    return this.usersRepository.setIsConfirmedById(user.accountData.id);
+    return this.usersRepository.setIsConfirmedById(user.id);
   }
 
   private isAvailableConfirmAccount(user: User, code: string) {
@@ -41,14 +41,14 @@ export class ConfirmAccountHandler
   }
 
   private isConfirmed(user: User) {
-    return user.emailConfirmation.isConfirmed;
+    return user.isConfirmed;
   }
 
   private isExpired(user: User) {
-    return isAfter(new Date(), user.emailConfirmation.expirationDate);
+    return isAfter(new Date(), user.expirationDate);
   }
 
   private isValidConfirmationCode(user: User, code: string) {
-    return code === user.emailConfirmation.confirmationCode;
+    return code === user.confirmationCode;
   }
 }

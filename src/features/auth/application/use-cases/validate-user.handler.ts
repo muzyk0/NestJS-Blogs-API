@@ -1,7 +1,7 @@
 import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
 
-import { User } from '../../../users/domain/schemas/users.schema';
-import { UsersRepository } from '../../../users/infrastructure/users.repository';
+import { User } from '../../../users/domain/entities/user.entity';
+import { UsersRepository } from '../../../users/infrastructure/users.repository.sql';
 import { AuthService } from '../auth.service';
 
 export class ValidateUserCommand {
@@ -30,7 +30,7 @@ export class ValidateUserHandler
       return null;
     }
 
-    const { password: userPassword } = user.accountData;
+    const { password: userPassword } = user;
 
     const isEqual = await this.authService.comparePassword(
       password,

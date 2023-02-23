@@ -32,7 +32,6 @@ export class TestingController {
 
   // @Get('health-check')
   // async healthCheck() {
-  //   console.log('health-check');
   //   return this.client.send<string>(
   //     { cmd: 'health-check' },
   //     { payload: 'this is payload from blogs service' },

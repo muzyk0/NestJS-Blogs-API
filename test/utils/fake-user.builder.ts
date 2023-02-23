@@ -58,15 +58,12 @@ export class FakeUserBuilder {
   }
 
   private async _create() {
-    console.log(this.credentials);
-
     const response00 = await request(this.app.getHttpServer())
       .post(`/sa/users`)
       .auth('admin', 'qwerty', { type: 'basic' })
       .send(this.credentials)
       .expect(201);
 
-    console.log(response00);
     this.user = response00.body;
   }
 

@@ -1,7 +1,7 @@
 import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
 
 import { PageOptionsForUserDto } from '../../../../common/paginator/page-options.dto';
-import { UsersQueryRepository } from '../../infrastructure/users.query.repository';
+import { IUsersQueryRepository } from '../../infrastructure/users.query.repository.sql';
 
 export class GetUsersCommand {
   constructor(public readonly pageOptionsDto: PageOptionsForUserDto) {}
@@ -9,7 +9,7 @@ export class GetUsersCommand {
 
 @CommandHandler(GetUsersCommand)
 export class GetUsersHandler implements ICommandHandler<GetUsersCommand> {
-  constructor(private readonly usersQueryRepository: UsersQueryRepository) {}
+  constructor(private readonly usersQueryRepository: IUsersQueryRepository) {}
 
   async execute({ pageOptionsDto }: GetUsersCommand) {
     return this.usersQueryRepository.findAll(pageOptionsDto);

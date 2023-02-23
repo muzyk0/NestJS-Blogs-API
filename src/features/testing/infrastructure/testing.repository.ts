@@ -9,16 +9,7 @@ import {
   Comment,
   CommentDocument,
 } from '../../comments/domain/schemas/comments.schema';
-import {
-  Limit,
-  LimitDocument,
-} from '../../limits/domain/schemas/limits.schema';
 import { Post, PostDocument } from '../../posts/domain/schemas/posts.schema';
-import {
-  Security,
-  SecurityDocument,
-} from '../../security/domain/schemas/security.schema';
-import { User, UserDocument } from '../../users/domain/schemas/users.schema';
 
 @Injectable()
 export class TestingRepository {
@@ -27,10 +18,7 @@ export class TestingRepository {
     private dataSource: DataSource,
     @InjectModel(Post.name) private postModel: Model<PostDocument>,
     @InjectModel(Blog.name) private blogModel: Model<BlogDocument>,
-    @InjectModel(User.name) private userModel: Model<UserDocument>,
     @InjectModel(Comment.name) private commentModel: Model<CommentDocument>,
-    @InjectModel(Limit.name) private limitModel: Model<LimitDocument>,
-    @InjectModel(Security.name) private securityModel: Model<SecurityDocument>,
   ) {}
 
   private async clearSqlDatabase(): Promise<boolean> {
@@ -39,7 +27,15 @@ export class TestingRepository {
 
     await queryRunner.query(`
         DELETE
-        FROM likes
+        FROM "likes";
+        DELETE
+        FROM "revoke_token";
+        DELETE
+        FROM "bans";
+        DELETE
+        FROM "user";
+        DELETE
+        FROM security;
     `);
 
     await queryRunner.release();
@@ -53,10 +49,7 @@ export class TestingRepository {
 
       await this.blogModel.deleteMany({});
       await this.postModel.deleteMany({});
-      await this.userModel.deleteMany({});
       await this.commentModel.deleteMany({});
-      await this.limitModel.deleteMany({});
-      await this.securityModel.deleteMany({});
     }
 
     return true;

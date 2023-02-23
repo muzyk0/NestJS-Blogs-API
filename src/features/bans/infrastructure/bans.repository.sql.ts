@@ -87,8 +87,6 @@ export class BansRepositorySql {
 
     await queryRunner.release();
 
-    console.log(ban);
-
     return ban[0];
   }
 

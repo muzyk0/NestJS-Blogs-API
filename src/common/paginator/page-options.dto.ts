@@ -25,6 +25,9 @@ export class PageOptionsDto {
 
   @IsString()
   @IsOptional()
+  /**
+   * @deprecated
+   */
   searchNameTerm?: string | null = null;
 
   @Type(() => Number)

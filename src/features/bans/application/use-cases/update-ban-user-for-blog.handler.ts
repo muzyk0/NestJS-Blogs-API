@@ -3,7 +3,7 @@ import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
 
 import { BanUserForBlogInput } from '../../../blogs/api/dto/ban-user-for-blog.input';
 import { BlogsRepository } from '../../../blogs/infrastructure/blogs.repository';
-import { UsersRepository } from '../../../users/infrastructure/users.repository';
+import { UsersRepository } from '../../../users/infrastructure/users.repository.sql';
 import { BansRepositorySql } from '../../infrastructure/bans.repository.sql';
 import { CreateBanInput } from '../input/create-ban.input';
 import { BanTypeEnum } from '../interfaces/ban-type.enum';

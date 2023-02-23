@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { DataSource } from 'typeorm';
 
-import { UsersRepository } from '../../users/infrastructure/users.repository';
+import { UsersRepository } from '../../users/infrastructure/users.repository.sql';
 import { GetLikeDto } from '../application/dto/get-like.dto';
 import { GetCommentLikeByUser } from '../application/interfaces/get-like.interface';
 import { LikeStatus } from '../application/interfaces/like-status.enum';
@@ -21,7 +21,7 @@ export class LikesRepositorySql {
 
     const bannedUsersIds = await this.usersRepository
       .findAllWithoutBanned()
-      .then((users) => users.map((u) => u.accountData.id))
+      .then((users) => users.map((u) => u.id))
       .then((users) => users.join(', '));
 
     // TODO: Optimize in 1 query
@@ -94,7 +94,7 @@ export class LikesRepositorySql {
 
     const bannedUsersIds = await this.usersRepository
       .findAllWithoutBanned()
-      .then((users) => users.map((u) => u.accountData.id))
+      .then((users) => users.map((u) => u.id))
       .then((users) => users.join(', '));
 
     const likes: Like[] = await queryRunner.query(

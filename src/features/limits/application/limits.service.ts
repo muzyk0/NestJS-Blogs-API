@@ -1,4 +1,5 @@
 import { Injectable } from '@nestjs/common';
+import { Cron } from '@nestjs/schedule';
 import { addMilliseconds } from 'date-fns';
 
 import { LimitsRepository } from '../infrastructure/limits.repository';
@@ -38,5 +39,15 @@ export class LimitsService implements ILimitsService {
       return true;
     }
     return false;
+  }
+
+  @Cron('0 * * * * *')
+  async removeOldLimits() {
+    const maxLimitInterval = 10 * 1000;
+
+    const currentDate = new Date();
+    const dateFrom = addMilliseconds(currentDate, -maxLimitInterval);
+
+    await this.limitsRepository.removeLatestAttempts(dateFrom);
   }
 }

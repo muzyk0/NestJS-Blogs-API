@@ -2,7 +2,6 @@ import {
   BadRequestException,
   Body,
   Controller,
-  ForbiddenException,
   Get,
   HttpCode,
   HttpStatus,
@@ -12,6 +11,7 @@ import {
   UnauthorizedException,
   UseGuards,
 } from '@nestjs/common';
+import { ConfigService } from '@nestjs/config';
 import { CommandBus } from '@nestjs/cqrs';
 import { ApiTags } from '@nestjs/swagger';
 import { Request, Response } from 'express';
@@ -26,15 +26,17 @@ import { CreateUserDto } from '../../users/application/dto/create-user.dto';
 import { EmailConfirmationCodeDto } from '../../users/application/dto/email-confirmation-code.dto';
 import { Email } from '../../users/application/dto/email.dto';
 import { CreateUserCommand } from '../../users/application/use-cases/create-user.handler';
-import { RevokedTokenType } from '../../users/domain/schemas/revoked-tokens.schema';
-import { UsersRepository } from '../../users/infrastructure/users.repository';
+import { UsersRepository } from '../../users/infrastructure/users.repository.sql';
 import { LoginDto } from '../application/dto/login.dto';
 import { JwtPayloadWithRt } from '../application/interfaces/jwt-payload-with-rt.type';
 import { DecodedJwtRTPayload } from '../application/interfaces/jwtPayload.type';
+import { TokensType } from '../application/interfaces/tokens.type';
 import { JwtService } from '../application/jwt.service';
 import { ConfirmAccountCommand } from '../application/use-cases/confirm-account.handler';
 import { ConfirmPasswordRecoveryCommand } from '../application/use-cases/confirm-password-recovery.handler';
 import { LoginCommand } from '../application/use-cases/login.handler';
+import { LogoutCommand } from '../application/use-cases/logout.handler';
+import { RefreshTokenCommand } from '../application/use-cases/refresh-token.handler';
 import { ResendConfirmationCodeCommand } from '../application/use-cases/resend-confirmation-code.handler';
 import { SendRecoveryPasswordTempCodeCommand } from '../application/use-cases/send-recovery-password-temp-code.handler';
 import { JwtAuthGuard } from '../guards/jwt-auth.guard';
@@ -44,12 +46,17 @@ import { LocalAuthGuard } from '../guards/local-auth.guard';
 @ApiTags('auth')
 @Controller('auth')
 export class AuthController {
+  isDev: boolean;
+
   constructor(
     private readonly usersRepository: UsersRepository,
     private readonly securityService: SecurityService,
     private readonly jwtService: JwtService,
     private readonly commandBus: CommandBus,
-  ) {}
+    private readonly config: ConfigService,
+  ) {
+    this.isDev = config.get<boolean>('IS_DEV');
+  }
 
   @UseGuards(LimitsControlWithIpAndLoginGuard, LocalAuthGuard)
   @Post('/login')
@@ -74,7 +81,7 @@ export class AuthController {
 
     const userAgent = req.get('User-Agent');
 
-    await this.securityService.create({
+    await this.securityService.createOrUpdate({
       userId: decodedAccessToken.user.id,
       ip: req.ip,
       deviceId: decodedAccessToken.deviceId,
@@ -84,8 +91,8 @@ export class AuthController {
     });
 
     res.cookie('refreshToken', refreshToken, {
-      httpOnly: true,
-      secure: true,
+      httpOnly: !this.isDev,
+      secure: !this.isDev,
     });
 
     return tokens;
@@ -147,12 +154,11 @@ export class AuthController {
   @Get('/me')
   @UseGuards(JwtAuthGuard)
   async me(@GetCurrentUserId() userId: string) {
-    console.log(userId);
     const user = await this.usersRepository.findOneById(userId);
 
     return {
-      email: user.accountData.email,
-      login: user.accountData.login,
+      email: user.email,
+      login: user.login,
       userId,
     };
   }
@@ -167,59 +173,13 @@ export class AuthController {
   ) {
     const userAgent = req.get('User-Agent');
 
-    const revokedToken: RevokedTokenType = {
-      token: ctx.refreshToken,
-      userAgent,
-    };
-
-    const isRevokedBefore = await this.usersRepository.checkRefreshToken(
-      ctx.user.id,
-      revokedToken,
+    const tokens: TokensType = await this.commandBus.execute(
+      new RefreshTokenCommand(ctx, userAgent, req.ip),
     );
-
-    if (isRevokedBefore) {
-      throw new UnauthorizedException();
-    }
-
-    const isRevoked = await this.usersRepository.revokeRefreshToken(
-      ctx.user.id,
-      revokedToken,
-    );
-
-    if (!isRevoked) {
-      throw new ForbiddenException({
-        message: "User isn't existing",
-        field: '',
-      });
-    }
-
-    const tokens = await this.jwtService.createJwtTokens(
-      {
-        user: ctx.user,
-      },
-      {
-        user: ctx.user,
-        deviceId: ctx.deviceId,
-      },
-    );
-
-    const decodedAccessToken =
-      await this.jwtService.decodeJwtToken<DecodedJwtRTPayload>(
-        tokens.refreshToken,
-      );
-
-    await this.securityService.create({
-      userId: decodedAccessToken.user.id,
-      ip: req.ip,
-      deviceId: decodedAccessToken.deviceId,
-      deviceName: userAgent,
-      issuedAt: decodedAccessToken.iat,
-      expireAt: decodedAccessToken.exp,
-    });
 
     res.cookie('refreshToken', tokens.refreshToken, {
-      httpOnly: true,
-      secure: true,
+      httpOnly: !this.isDev,
+      secure: !this.isDev,
     });
     return { accessToken: tokens.accessToken };
   }
@@ -234,33 +194,7 @@ export class AuthController {
   ) {
     const userAgent = req.get('User-Agent');
 
-    const revokedToken: RevokedTokenType = {
-      token: ctx.refreshToken,
-      userAgent,
-    };
-
-    const isRevokedBefore = await this.usersRepository.checkRefreshToken(
-      ctx.user.id,
-      revokedToken,
-    );
-
-    if (isRevokedBefore) {
-      throw new UnauthorizedException();
-    }
-
-    const isRevoked = await this.usersRepository.revokeRefreshToken(
-      ctx.user.id,
-      revokedToken,
-    );
-
-    if (!isRevoked) {
-      throw new ForbiddenException({
-        message: "User isn't existing",
-        field: '',
-      });
-    }
-
-    await this.securityService.remove(ctx.deviceId);
+    await this.commandBus.execute(new LogoutCommand(ctx, userAgent));
 
     res.clearCookie('refreshToken');
     return;

@@ -1,3 +1,5 @@
+import { join } from 'path';
+
 import { Logger } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { NestFactory } from '@nestjs/core';
@@ -13,6 +15,7 @@ import { setupApp } from './setup-app';
   const configService = app.get(ConfigService);
 
   app.set('trust proxy');
+  app.useStaticAssets(join(__dirname, 'assets'));
 
   setupApp(app, configService.get('BASE_PREFIX'));
 
