@@ -16,7 +16,7 @@ export class SecurityQuerySqlRepository implements ISecurityQueryRepository {
   async findAll(userId: string) {
     const userDevices = await this.dataSource.query(
       `SELECT ip, "deviceName", "issuedAt", "deviceId"
-       FROM security
+       FROM devices
        WHERE "userId" = $1`,
       [userId],
     );

@@ -30,7 +30,7 @@ export class RevokeTokenRepository implements IRevokeTokenRepository {
       await this.dataSource.query(
         `
         SELECT COUNT(1) as count
-        FROM "revoke_token"
+        FROM "revoke_tokens"
         WHERE "userId" = $1
           AND "token" = $2
           AND "userAgent" = $3;
@@ -51,7 +51,7 @@ export class RevokeTokenRepository implements IRevokeTokenRepository {
   ): Promise<boolean> {
     const revokedTokenCount: [RevokeToken] = await this.dataSource.query(
       `
-          INSERT INTO "revoke_token" ("userId", token, "userAgent")
+          INSERT INTO "revoke_tokens" ("userId", token, "userAgent")
           VALUES ($1, $2, $3)
           RETURNING *
       `,

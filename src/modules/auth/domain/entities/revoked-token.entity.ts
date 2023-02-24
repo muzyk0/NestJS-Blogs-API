@@ -3,7 +3,7 @@ import { Column, Entity, ManyToOne, PrimaryGeneratedColumn } from 'typeorm';
 import { BaseEntity } from '../../../../shared/base-entity/base.entity';
 import { User } from '../../../users/domain/entities/user.entity';
 
-@Entity()
+@Entity('revoke_tokens')
 export class RevokeToken extends BaseEntity {
   @PrimaryGeneratedColumn('uuid')
   id: string;

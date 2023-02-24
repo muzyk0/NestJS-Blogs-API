@@ -59,8 +59,8 @@ export class UsersRepository implements IUsersRepository {
     expirationDate,
     isConfirmed,
   }: CreateUserInput): Promise<User> {
-    const query = `INSERT INTO "user"
-                       (login, email, "password", "confirmationCode", "expirationDate", "isConfirmed")
+    const query = `INSERT INTO "users"
+                   (login, email, "password", "confirmationCode", "expirationDate", "isConfirmed")
                    VALUES ($1, $2, $3, $4, $5, $6)
                    RETURNING *;`;
 
@@ -79,7 +79,7 @@ export class UsersRepository implements IUsersRepository {
   async findAllWithoutBanned(): Promise<User[]> {
     const users: User[] = await this.dataSource.query(`
         SELECT *
-        FROM "user"
+        FROM "users"
         WHERE banned IS NULL
     `);
     return users;
@@ -89,7 +89,7 @@ export class UsersRepository implements IUsersRepository {
     const users: User[] = await this.dataSource.query(
       `
           SELECT *
-          FROM "user"
+          FROM "users"
           WHERE id IN ($1)
       `,
       [ids],
@@ -101,8 +101,8 @@ export class UsersRepository implements IUsersRepository {
     const users: User[] = await this.dataSource.query(
       `
           SELECT *
-          FROM "user"
-          WHERE "user"."confirmationCode" = $1
+          FROM "users"
+          WHERE "confirmationCode" = $1
       `,
       [code],
     );
@@ -113,18 +113,19 @@ export class UsersRepository implements IUsersRepository {
     const users: User[] = await this.dataSource.query(
       `
           SELECT *
-          FROM "user"
-          WHERE "user"."email" = $1
+          FROM "users"
+          WHERE "email" = $1
       `,
       [email],
     );
     return users[0];
   }
+
   async findOneByLogin(login: string): Promise<User> {
     const users: User[] = await this.dataSource.query(
       `
           SELECT *
-          FROM "user"
+          FROM "users"
           WHERE "login" = $1
       `,
       [login],
@@ -136,8 +137,8 @@ export class UsersRepository implements IUsersRepository {
     const users: User[] = await this.dataSource.query(
       `
           SELECT *
-          FROM "user"
-          WHERE "user"."id" = $1
+          FROM "users"
+          WHERE "id" = $1
       `,
       [id],
     );
@@ -151,9 +152,9 @@ export class UsersRepository implements IUsersRepository {
     const users: User[] = await this.dataSource.query(
       `
           SELECT *
-          FROM "user"
-          WHERE ("user"."login" = $1
-              OR "user"."email" = $1)
+          FROM "users"
+          WHERE ("login" = $1
+              OR "email" = $1)
               ${withBanned ? '' : 'AND "banned" IS NULL'}
       `,
       [loginOrEmail],
@@ -165,7 +166,7 @@ export class UsersRepository implements IUsersRepository {
     await this.dataSource.query(
       `
           DELETE
-          FROM "user"
+          FROM "users"
           WHERE id = $1
       `,
       [id],
@@ -176,7 +177,7 @@ export class UsersRepository implements IUsersRepository {
   async setIsConfirmedById(id: string): Promise<boolean> {
     await this.dataSource.query(
       `
-          UPDATE "user"
+          UPDATE "users"
           SET "isConfirmed" = true
           WHERE id = $1
       `,
@@ -190,7 +191,7 @@ export class UsersRepository implements IUsersRepository {
     const banReason = payload.isBanned ? payload.banReason : null;
     await this.dataSource.query(
       `
-          UPDATE "user"
+          UPDATE "users"
           SET "banned"    = $2,
               "banReason" = $3
           WHERE id = $1
@@ -208,12 +209,12 @@ export class UsersRepository implements IUsersRepository {
   }: UpdateConfirmationType): Promise<User> {
     const users = await this.dataSource.query(
       `
-              UPDATE "user"
-              SET "confirmationCode" = $2,
-                  "expirationDate" = $3
-              WHERE id = $1
-              RETURNING "confirmationCode"
-          `,
+          UPDATE "users"
+          SET "confirmationCode" = $2,
+              "expirationDate"   = $3
+          WHERE id = $1
+          RETURNING "confirmationCode"
+      `,
       [id, code, expirationDate],
     );
 
@@ -229,7 +230,7 @@ export class UsersRepository implements IUsersRepository {
   }): Promise<boolean> {
     await this.dataSource.query(
       `
-          UPDATE "user"
+          UPDATE "users"
           SET "password" = $2
           WHERE id = $1
       `,
