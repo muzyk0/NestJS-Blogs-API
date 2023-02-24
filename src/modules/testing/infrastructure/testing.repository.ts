@@ -29,13 +29,13 @@ export class TestingRepository {
         DELETE
         FROM "likes";
         DELETE
-        FROM "revoke_token";
+        FROM "revoke_tokens";
         DELETE
         FROM "bans";
         DELETE
-        FROM "user";
+        FROM "users";
         DELETE
-        FROM security;
+        FROM devices;
     `);
 
     await queryRunner.release();
