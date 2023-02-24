@@ -33,9 +33,9 @@ export class TestingRepository {
         DELETE
         FROM "bans";
         DELETE
-        FROM "users";
+        FROM "devices";
         DELETE
-        FROM devices;
+        FROM "users";
     `);
 
     await queryRunner.release();
