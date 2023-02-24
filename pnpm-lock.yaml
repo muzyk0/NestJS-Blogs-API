@@ -75,7 +75,7 @@ dependencies:
   '@nestjs/config': 2.3.1_6sysrfnceog466mrogtvxnbmxe
   '@nestjs/core': 9.3.8_iuidzakscyqqzgxw4xz5lr4ijq
   '@nestjs/cqrs': 9.0.3_rfkwsi4anokjnfq4xl4onkvzwa
-  '@nestjs/jwt': 9.0.0_@nestjs+shared@9.3.8
+  '@nestjs/jwt': 9.0.0_@nestjs+common@9.3.8
   '@nestjs/mapped-types': 1.2.2_sf6mjpfx2bxuyqvfxh2ti3e5cq
   '@nestjs/microservices': 9.3.8_se32xwq6mquj4vdchnuyuxeqqe
   '@nestjs/mongoose': 9.2.1_mocgdazr3eq6zszlsqe2a4j6eq
