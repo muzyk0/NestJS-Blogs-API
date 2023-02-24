@@ -3,7 +3,7 @@ import { InjectDataSource } from '@nestjs/typeorm';
 import { DataSource } from 'typeorm';
 
 import { SecurityViewModel } from '../application/dto/security.dto';
-import { Security } from '../domain/entities/security.entity';
+import { Device } from '../domain/entities/security.entity';
 
 export abstract class ISecurityQueryRepository {
   abstract findAll(userId: string): Promise<any>;
@@ -23,7 +23,7 @@ export class SecurityQuerySqlRepository implements ISecurityQueryRepository {
     return userDevices.map(this.mapToViewModel);
   }
 
-  mapToViewModel(userDevice: Security): SecurityViewModel {
+  mapToViewModel(userDevice: Device): SecurityViewModel {
     return {
       ip: userDevice.ip,
       title: userDevice.deviceName,

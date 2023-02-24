@@ -3,16 +3,14 @@ import { InjectDataSource } from '@nestjs/typeorm';
 import { DataSource } from 'typeorm';
 
 import { CreateSecurityDto } from '../application/dto/create-security.dto';
-import { Security } from '../domain/entities/security.entity';
+import { Device } from '../domain/entities/security.entity';
 
 export abstract class ISecurityRepository {
   abstract createOrUpdate(securityDto: CreateSecurityDto): any;
 
   abstract remove(id: string): Promise<boolean>;
 
-  abstract getSessionByDeviceId(
-    deviceId: string,
-  ): Promise<Security | undefined>;
+  abstract getSessionByDeviceId(deviceId: string): Promise<Device | undefined>;
 
   abstract removeAllWithoutMyDevice(userId: string, deviceId: string): any;
 
@@ -61,7 +59,7 @@ export class SecurityRepository implements ISecurityRepository {
     return !!countDeleted;
   }
 
-  async getSessionByDeviceId(deviceId: string): Promise<Security | undefined> {
+  async getSessionByDeviceId(deviceId: string): Promise<Device | undefined> {
     const [userDevice] = await this.dataSource.query(
       `SELECT *
        FROM security

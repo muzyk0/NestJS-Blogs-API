@@ -1,10 +1,17 @@
-import { Column, Entity, PrimaryGeneratedColumn, Unique } from 'typeorm';
+import {
+  Column,
+  Entity,
+  ManyToOne,
+  PrimaryGeneratedColumn,
+  Unique,
+} from 'typeorm';
 
 import { BaseEntity } from '../../../../shared/base-entity/base.entity';
+import { User } from '../../../users/domain/entities/user.entity';
 
-@Entity()
+@Entity('devices')
 @Unique(['deviceId', 'userId'])
-export class Security extends BaseEntity {
+export class Device extends BaseEntity {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
@@ -16,6 +23,9 @@ export class Security extends BaseEntity {
 
   @Column()
   deviceId: string;
+
+  @ManyToOne(() => User, (user) => user.devices)
+  user: User;
 
   @Column()
   userId: string;

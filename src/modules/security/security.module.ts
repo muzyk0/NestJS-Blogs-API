@@ -3,7 +3,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 
 import { SecurityService } from './application/security.service';
 import { SecurityController } from './controllers/security.controller';
-import { Security } from './domain/entities/security.entity';
+import { Device } from './domain/entities/security.entity';
 import {
   ISecurityQueryRepository,
   SecurityQuerySqlRepository,
@@ -14,7 +14,7 @@ import {
 } from './infrastructure/security.sql.repository';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([Security])],
+  imports: [TypeOrmModule.forFeature([Device])],
   controllers: [SecurityController],
   providers: [
     SecurityService,
