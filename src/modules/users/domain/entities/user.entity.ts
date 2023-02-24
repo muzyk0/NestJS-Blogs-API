@@ -2,6 +2,7 @@ import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
 
 import { BaseEntity } from '../../../../shared/base-entity/base.entity';
 import { RevokeToken } from '../../../auth/domain/entities/revoked-token.entity';
+import { Device } from '../../../security/domain/entities/security.entity';
 
 @Entity()
 export class User extends BaseEntity {
@@ -34,4 +35,7 @@ export class User extends BaseEntity {
 
   @OneToMany(() => RevokeToken, (photo) => photo.user)
   revokedTokens: RevokeToken[];
+
+  @OneToMany(() => Device, (device) => device.user)
+  devices: RevokeToken[];
 }

@@ -8,11 +8,11 @@ export class RevokeToken extends BaseEntity {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
-  @Column()
-  userId: string;
-
   @ManyToOne(() => User, (user) => user.revokedTokens)
   user: User;
+
+  @Column()
+  userId: string;
 
   @Column()
   userAgent: string;
