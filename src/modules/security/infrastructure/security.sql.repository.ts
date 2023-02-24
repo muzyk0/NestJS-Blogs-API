@@ -31,7 +31,7 @@ export class SecurityRepository implements ISecurityRepository {
   }: CreateSecurityDto) {
     const [userDevice] = await this.dataSource.query(
       `
-          INSERT INTO security (ip, "deviceName", "deviceId", "userId",
+          INSERT INTO devices (ip, "deviceName", "deviceId", "userId",
                                 "issuedAt", "expireAt")
           VALUES ($1, $2, $3, $4, $5, $6)
           ON CONFLICT ("userId", "deviceId") DO UPDATE
@@ -50,7 +50,7 @@ export class SecurityRepository implements ISecurityRepository {
   async remove(deviceId: string) {
     const [_emptyArrayResult, countDeleted] = await this.dataSource.query(
       `DELETE
-       FROM security
+       FROM devices
        WHERE "deviceId" = $1
       `,
       [deviceId],
@@ -62,7 +62,7 @@ export class SecurityRepository implements ISecurityRepository {
   async getSessionByDeviceId(deviceId: string): Promise<Device | undefined> {
     const [userDevice] = await this.dataSource.query(
       `SELECT *
-       FROM security
+       FROM devices
        WHERE "deviceId" = $1`,
       [deviceId],
     );
@@ -73,7 +73,7 @@ export class SecurityRepository implements ISecurityRepository {
   async removeAllWithoutMyDevice(userId: string, deviceId: string) {
     const result = await this.dataSource.query(
       `DELETE
-       FROM security
+       FROM devices
        WHERE "userId" = $1
          AND "deviceId" <> $2
       `,
@@ -86,7 +86,7 @@ export class SecurityRepository implements ISecurityRepository {
   async removeAllDevices(userId: string) {
     const result = await this.dataSource.query(
       `DELETE
-       FROM security
+       FROM devices
        WHERE "userId" = $1
       `,
       [userId],

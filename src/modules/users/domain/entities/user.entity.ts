@@ -4,7 +4,7 @@ import { BaseEntity } from '../../../../shared/base-entity/base.entity';
 import { RevokeToken } from '../../../auth/domain/entities/revoked-token.entity';
 import { Device } from '../../../security/domain/entities/security.entity';
 
-@Entity()
+@Entity('users')
 export class User extends BaseEntity {
   @PrimaryGeneratedColumn('uuid')
   id: string;

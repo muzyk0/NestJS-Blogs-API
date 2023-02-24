@@ -45,8 +45,8 @@ export class UsersQueryRepository implements IUsersQueryRepository {
     const users: User[] = await this.dataSource.query(
       `
           SELECT *
-          FROM "user"
-          WHERE "user"."id" = $1
+          FROM "users"
+          WHERE id = $1
       `,
       [id],
     );
@@ -89,7 +89,7 @@ export class UsersQueryRepository implements IUsersQueryRepository {
     const query = `
         WITH users AS
                  (SELECT *
-                  FROM "user"
+                  FROM "users"
 --              where (lower("banned") like '%' || lower($1) || '%')
                   WHERE (${
                     pageOptionsDto?.banStatus &&
