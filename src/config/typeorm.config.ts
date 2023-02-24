@@ -2,11 +2,11 @@ import { ConfigService } from '@nestjs/config';
 import { config } from 'dotenv';
 import { DataSource } from 'typeorm';
 
-import { RevokeToken } from '../features/auth/domain/entities/revoked-token.entity';
-import { Ban } from '../features/bans/domain/entity/ban.entity';
-import { Like } from '../features/likes/domain/entity/like.entity';
-import { Security } from '../features/security/domain/entities/security.entity';
-import { User } from '../features/users/domain/entities/user.entity';
+import { RevokeToken } from '../modules/auth/domain/entities/revoked-token.entity';
+import { Ban } from '../modules/bans/domain/entity/ban.entity';
+import { Like } from '../modules/likes/domain/entity/like.entity';
+import { Security } from '../modules/security/domain/entities/security.entity';
+import { User } from '../modules/users/domain/entities/user.entity';
 
 config();
 

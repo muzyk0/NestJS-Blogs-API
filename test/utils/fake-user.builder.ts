@@ -2,8 +2,8 @@ import { faker } from '@faker-js/faker';
 import { INestApplication } from '@nestjs/common';
 import request from 'supertest';
 
-import { CreateUserDto } from '../../src/features/users/application/dto/create-user.dto';
-import { UserViewModel } from '../../src/features/users/application/dto/user.view';
+import { CreateUserDto } from '../../src/modules/users/application/dto/create-user.dto';
+import { UserViewModel } from '../../src/modules/users/application/dto/user.view';
 
 export interface FakeUser {
   user: UserViewModel | null;
