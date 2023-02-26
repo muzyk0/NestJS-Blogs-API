@@ -15,14 +15,14 @@ import { AuthGuard } from '../../auth/guards/auth-guard';
 import { PostsService } from '../../posts/application/posts.service';
 import { PostsQueryRepository } from '../../posts/infrastructure/posts.query.repository';
 import { BlogsService } from '../application/blogs.service';
-import { BlogsQueryRepository } from '../infrastructure/blogs.query.repository';
+import { IBlogsQueryRepository } from '../infrastructure/blogs.query.sql.repository';
 
 @ApiTags('blogs')
 @Controller('blogs')
 export class BlogsController {
   constructor(
     private readonly blogsService: BlogsService,
-    private readonly blogsQueryRepository: BlogsQueryRepository,
+    private readonly blogsQueryRepository: IBlogsQueryRepository,
     private readonly postsService: PostsService,
     private readonly postsQueryRepository: PostsQueryRepository,
   ) {}

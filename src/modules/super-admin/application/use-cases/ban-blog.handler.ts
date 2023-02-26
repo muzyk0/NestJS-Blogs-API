@@ -1,7 +1,7 @@
 import { BadRequestException } from '@nestjs/common';
 import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
 
-import { BlogsRepository } from '../../../blogs/infrastructure/blogs.repository';
+import { IBlogsRepository } from '../../../blogs/infrastructure/blogs.sql.repository';
 
 export class BanBlogCommand {
   constructor(
@@ -12,7 +12,7 @@ export class BanBlogCommand {
 
 @CommandHandler(BanBlogCommand)
 export class BanBlogHandler implements ICommandHandler<BanBlogCommand> {
-  constructor(private readonly blogsRepository: BlogsRepository) {}
+  constructor(private readonly blogsRepository: IBlogsRepository) {}
 
   async execute({ blogId, isBanned }: BanBlogCommand) {
     const blog = await this.blogsRepository.findOne(blogId);
@@ -20,7 +20,6 @@ export class BanBlogHandler implements ICommandHandler<BanBlogCommand> {
     if (!blog) {
       throw new BadRequestException();
     }
-    const banDate = isBanned ? new Date() : null;
-    return this.blogsRepository.updateBanStatus(blogId, isBanned, banDate);
+    return this.blogsRepository.updateBanStatus(blogId, isBanned);
   }
 }

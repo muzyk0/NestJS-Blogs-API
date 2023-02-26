@@ -5,7 +5,6 @@ import { Model } from 'mongoose';
 
 import { BASE_PROJECTION } from '../../../shared/mongoose/constants';
 import { PageOptionsDto } from '../../../shared/paginator/page-options.dto';
-import { Blog, BlogDocument } from '../../blogs/domain/schemas/blogs.schema';
 import { CreatePostDbDto } from '../application/dto/create-post-db.dto';
 import { CreatePostDto } from '../application/dto/create-post.dto';
 import { PostDto } from '../application/dto/post.dto';
@@ -31,10 +30,9 @@ export interface IPostsRepository {
 
 @Injectable()
 export class PostsRepository implements IPostsRepository {
-  constructor(
-    @InjectModel(Post.name) private postModel: Model<PostDocument>,
-    @InjectModel(Blog.name) private blogModel: Model<BlogDocument>,
-  ) {}
+  blogModel: any;
+
+  constructor(@InjectModel(Post.name) private postModel: Model<PostDocument>) {}
 
   async create(createPostDto: CreatePostDbDto) {
     const blog = await this.blogModel.findOne({

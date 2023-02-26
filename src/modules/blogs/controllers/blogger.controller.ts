@@ -44,8 +44,7 @@ import { IUsersQueryRepository } from '../../users/infrastructure/users.query.re
 import { BlogsService } from '../application/blogs.service';
 import { CreateBlogPostDto } from '../application/dto/create-blog-post.dto';
 import { UpdateBlogDto } from '../application/dto/update-blog.dto';
-import { GetBlogsCommand } from '../application/use-cases/get-blogs.handler';
-import { BlogsQueryRepository } from '../infrastructure/blogs.query.repository';
+import { IBlogsQueryRepository } from '../infrastructure/blogs.query.sql.repository';
 
 import { BanUserForBlogInput } from './dto/ban-user-for-blog.input';
 import { CreateBlogInput } from './dto/create-blog.input';
@@ -57,7 +56,7 @@ import { CreateBlogInput } from './dto/create-blog.input';
 export class BloggerController {
   constructor(
     private readonly blogsService: BlogsService,
-    private readonly blogsQueryRepository: BlogsQueryRepository,
+    private readonly blogsQueryRepository: IBlogsQueryRepository,
     private readonly postsService: PostsService,
     private readonly postsQueryRepository: PostsQueryRepository,
     private readonly usersQueryRepository: IUsersQueryRepository,
@@ -106,9 +105,7 @@ export class BloggerController {
     @Query() pageOptionsDto: PageOptionsDto,
     @GetCurrentJwtContextWithoutAuth() ctx: JwtATPayload,
   ) {
-    return this.commandBus.execute(
-      new GetBlogsCommand(pageOptionsDto, ctx.user.id),
-    );
+    return this.blogsQueryRepository.findAll(pageOptionsDto, ctx.user.id);
   }
 
   @ApiOperation({ summary: 'Update existing Blog by id with InputModel' })
@@ -136,7 +133,8 @@ export class BloggerController {
     @GetCurrentJwtContext() ctx: JwtATPayload,
     @Body() updateBlogDto: UpdateBlogDto,
   ) {
-    const blog = await this.blogsService.update(id, updateBlogDto);
+    const blog = await this.blogsService.findOne(id);
+
     if (!blog) {
       throw new NotFoundException();
     }
@@ -144,6 +142,8 @@ export class BloggerController {
     if (blog.userId !== ctx.user.id) {
       throw new ForbiddenException();
     }
+
+    await this.blogsService.update(id, updateBlogDto);
 
     return;
   }

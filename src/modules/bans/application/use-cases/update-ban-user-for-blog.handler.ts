@@ -2,7 +2,7 @@ import { ForbiddenException, NotFoundException } from '@nestjs/common';
 import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
 
 import { BanUserForBlogInput } from '../../../blogs/controllers/dto/ban-user-for-blog.input';
-import { BlogsRepository } from '../../../blogs/infrastructure/blogs.repository';
+import { IBlogsRepository } from '../../../blogs/infrastructure/blogs.sql.repository';
 import { UsersRepository } from '../../../users/infrastructure/users.repository.sql';
 import { BansRepositorySql } from '../../infrastructure/bans.repository.sql';
 import { CreateBanInput } from '../input/create-ban.input';
@@ -21,7 +21,7 @@ export class UpdateBanUserForBlogHandler
   implements ICommandHandler<UpdateBanUserForBlogCommand>
 {
   constructor(
-    private readonly blogsRepository: BlogsRepository,
+    private readonly blogsRepository: IBlogsRepository,
     private readonly bansRepositorySql: BansRepositorySql,
     private readonly usersRepository: UsersRepository,
   ) {}

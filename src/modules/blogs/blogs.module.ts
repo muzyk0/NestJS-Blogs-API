@@ -1,6 +1,6 @@
 import { Module } from '@nestjs/common';
 import { CqrsModule } from '@nestjs/cqrs';
-import { MongooseModule } from '@nestjs/mongoose';
+import { TypeOrmModule } from '@nestjs/typeorm';
 
 import { BlogExistsRule } from '../../shared/decorators/validations/check-blogId-if-exist.decorator';
 import { IsUserAlreadyExistConstraint } from '../../shared/decorators/validations/check-is-user-exist.decorator';
@@ -12,15 +12,21 @@ import { UsersModule } from '../users/users.module';
 
 import { BlogsService } from './application/blogs.service';
 import { BindBlogOnUserHandler } from './application/use-cases/bind-blog-on-user.handler';
-import { GetBlogsHandler } from './application/use-cases/get-blogs.handler';
+import { GetBlogsForAdminHandler } from './application/use-cases/get-blogs-for-admin.handler';
 import { BloggerController } from './controllers/blogger.controller';
 import { BlogsController } from './controllers/blogs.controller';
-import { Blog, BlogSchema } from './domain/schemas/blogs.schema';
-import { BlogsQueryRepository } from './infrastructure/blogs.query.repository';
-import { BlogsRepository } from './infrastructure/blogs.repository';
+import { Blog } from './domain/entities/blog.entity';
+import {
+  BlogsQueryRepository,
+  IBlogsQueryRepository,
+} from './infrastructure/blogs.query.sql.repository';
+import {
+  BlogsRepository,
+  IBlogsRepository,
+} from './infrastructure/blogs.sql.repository';
 
 const CommandHandlers = [
-  GetBlogsHandler,
+  GetBlogsForAdminHandler,
   BindBlogOnUserHandler,
   UpdateBanUserForBlogHandler,
 ];
@@ -28,17 +34,17 @@ const CommandHandlers = [
 @Module({
   imports: [
     CqrsModule,
-    MongooseModule.forFeature([{ name: Blog.name, schema: BlogSchema }]),
     AuthModule,
     PostsModule,
     UsersModule,
+    TypeOrmModule.forFeature([Blog]),
   ],
   controllers: [BlogsController, BloggerController],
   providers: [
     ...CommandHandlers,
     BlogsService,
-    BlogsRepository,
-    BlogsQueryRepository,
+    { provide: IBlogsQueryRepository, useClass: BlogsQueryRepository },
+    { provide: IBlogsRepository, useClass: BlogsRepository },
     BlogExistsRule,
     IsUserAlreadyExistConstraint,
     BansRepositorySql,
@@ -46,8 +52,8 @@ const CommandHandlers = [
   exports: [
     ...CommandHandlers,
     BlogsService,
-    BlogsRepository,
-    BlogsQueryRepository,
+    { provide: IBlogsQueryRepository, useClass: BlogsQueryRepository },
+    { provide: IBlogsRepository, useClass: BlogsRepository },
     BlogExistsRule,
     IsUserAlreadyExistConstraint,
   ],
