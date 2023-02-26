@@ -2,8 +2,10 @@ import { Module } from '@nestjs/common';
 import { MongooseModule } from '@nestjs/mongoose';
 
 import { AuthModule } from '../auth/auth.module';
-import { Blog, BlogSchema } from '../blogs/domain/schemas/blogs.schema';
-import { BlogsRepository } from '../blogs/infrastructure/blogs.repository';
+import {
+  BlogsRepository,
+  IBlogsRepository,
+} from '../blogs/infrastructure/blogs.sql.repository';
 import { LikesModule } from '../likes/likes.module';
 import { Post, PostSchema } from '../posts/domain/schemas/posts.schema';
 import { PostsRepository } from '../posts/infrastructure/posts.repository';
@@ -22,14 +24,13 @@ const CommandHandlers = [GetPostCommentsInsideCurrentUserBlogsHandler];
   imports: [
     MongooseModule.forFeature([{ name: Comment.name, schema: CommentSchema }]),
     MongooseModule.forFeature([{ name: Post.name, schema: PostSchema }]),
-    MongooseModule.forFeature([{ name: Blog.name, schema: BlogSchema }]),
     LikesModule,
     AuthModule,
     UsersModule,
   ],
   controllers: [CommentsController],
   providers: [
-    BlogsRepository,
+    { provide: IBlogsRepository, useClass: BlogsRepository },
     ...CommandHandlers,
     CommentsService,
     CommentsRepository,

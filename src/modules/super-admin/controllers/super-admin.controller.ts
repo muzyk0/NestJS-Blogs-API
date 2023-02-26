@@ -30,7 +30,7 @@ import {
 } from '../../../shared/paginator/page-options.dto';
 import { BaseAuthGuard } from '../../auth/guards/base-auth-guard';
 import { BindBlogOnUserCommand } from '../../blogs/application/use-cases/bind-blog-on-user.handler';
-import { GetBlogsCommand } from '../../blogs/application/use-cases/get-blogs.handler';
+import { GetBlogsForAdminCommand } from '../../blogs/application/use-cases/get-blogs-for-admin.handler';
 import { BanUnbanUserInput } from '../../users/application/dto/ban-unban-user.input';
 import { CreateUserDto } from '../../users/application/dto/create-user.dto';
 import { BanUnbanUserCommand } from '../../users/application/use-cases/ban-unban-user.handler';
@@ -62,9 +62,7 @@ export class SuperAdminController {
   })
   @Get('blogs')
   findBlogs(@Query() pageOptionsDto: PageOptionsDto) {
-    return this.commandBus.execute(
-      new GetBlogsCommand(pageOptionsDto, null, true, 'super-admin'),
-    );
+    return this.commandBus.execute(new GetBlogsForAdminCommand(pageOptionsDto));
   }
 
   @ApiOperation({

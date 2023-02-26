@@ -1,7 +1,5 @@
 import { IsNotEmpty, IsString, Length } from 'class-validator';
 
-import { Blog } from '../../../blogs/domain/schemas/blogs.schema';
-
 export class CreatePostDbDto {
   @Length(1, 30)
   @IsNotEmpty()
@@ -14,7 +12,7 @@ export class CreatePostDbDto {
   content: string;
 
   @IsString()
-  blogId: Blog['id'];
+  blogId: string;
 
   @Length(1)
   blogName: string;

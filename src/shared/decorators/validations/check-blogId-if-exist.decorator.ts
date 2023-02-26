@@ -10,12 +10,12 @@ import {
   ValidatorConstraintInterface,
 } from 'class-validator';
 
-import { BlogsRepository } from '../../../modules/blogs/infrastructure/blogs.repository';
+import { IBlogsRepository } from '../../../modules/blogs/infrastructure/blogs.sql.repository';
 
 @ValidatorConstraint({ name: 'BlogExists', async: true })
 @Injectable()
 export class BlogExistsRule implements ValidatorConstraintInterface {
-  constructor(private blogsRepository: BlogsRepository) {
+  constructor(private blogsRepository: IBlogsRepository) {
     this.blogsRepository = blogsRepository;
 
     if (!blogsRepository) {

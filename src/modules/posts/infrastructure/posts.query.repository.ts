@@ -6,7 +6,7 @@ import { FilterQuery, Model } from 'mongoose';
 import { BASE_PROJECTION } from '../../../shared/mongoose/constants';
 import { PageOptionsDto } from '../../../shared/paginator/page-options.dto';
 import { PageDto } from '../../../shared/paginator/page.dto';
-import { BlogsRepository } from '../../blogs/infrastructure/blogs.repository';
+import { IBlogsRepository } from '../../blogs/infrastructure/blogs.sql.repository';
 import { LikeParentTypeEnum } from '../../likes/application/interfaces/like-parent-type.enum';
 import { Like } from '../../likes/domain/entity/like.entity';
 import { LikesRepositorySql } from '../../likes/infrastructure/likes.repository.sql';
@@ -38,7 +38,7 @@ export class PostsQueryRepository implements IPostsQueryRepository {
     @InjectModel(Post.name) private postModel: Model<PostDocument>,
     private readonly likesRepositorySql: LikesRepositorySql,
     private readonly usersRepository: UsersRepository,
-    private readonly blogsRepository: BlogsRepository,
+    private readonly blogsRepository: IBlogsRepository,
   ) {}
 
   async findAll(options: FindAllPostsOptions) {
@@ -70,7 +70,7 @@ export class PostsQueryRepository implements IPostsQueryRepository {
       .then((users) => users.filter((u) => u.banned).map((u) => u.id));
 
     const filter1 = blogsForPosts.filter(
-      (blog) => !usersIdsForBannedBlogs.includes(blog.userId) && !blog.isBanned,
+      (blog) => !usersIdsForBannedBlogs.includes(blog.userId), // && !blog.isBanned,
     );
 
     const postsWithoutBannedUsers = posts.filter((post) =>
@@ -151,7 +151,7 @@ export class PostsQueryRepository implements IPostsQueryRepository {
     if (blogForPost.userId) {
       const user = await this.usersRepository.findOneById(blogForPost.userId);
 
-      if (user.banned || blogForPost.isBanned) {
+      if (user.banned /*|| blogForPost.isBanned*/) {
         return;
       }
     }

@@ -1,13 +1,16 @@
 import { Module } from '@nestjs/common';
 import { CqrsModule } from '@nestjs/cqrs';
 import { MongooseModule } from '@nestjs/mongoose';
+import { TypeOrmModule } from '@nestjs/typeorm';
 
 import { AuthModule } from '../auth/auth.module';
 import { BansService } from '../bans/application/bans.service';
 import { BansRepositorySql } from '../bans/infrastructure/bans.repository.sql';
 import { BlogsService } from '../blogs/application/blogs.service';
-import { Blog, BlogSchema } from '../blogs/domain/schemas/blogs.schema';
-import { BlogsRepository } from '../blogs/infrastructure/blogs.repository';
+import {
+  BlogsRepository,
+  IBlogsRepository,
+} from '../blogs/infrastructure/blogs.sql.repository';
 import { CommentsService } from '../comments/application/comments.service';
 import {
   Comment,
@@ -29,19 +32,19 @@ import { PostsRepository } from './infrastructure/posts.repository';
   imports: [
     CqrsModule,
     MongooseModule.forFeature([{ name: Post.name, schema: PostSchema }]),
-    MongooseModule.forFeature([{ name: Blog.name, schema: BlogSchema }]),
     MongooseModule.forFeature([{ name: Comment.name, schema: CommentSchema }]),
     AuthModule,
     SecurityModule,
     LikesModule,
     UsersModule,
+    TypeOrmModule.forFeature([Post]),
   ],
   controllers: [PostsController],
   providers: [
     PostsService,
     PostsRepository,
     PostsQueryRepository,
-    BlogsRepository,
+    { provide: IBlogsRepository, useClass: BlogsRepository },
     BlogsService,
     CommentsService,
     CommentsRepository,

@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { v4 } from 'uuid';
 
-import { BlogsRepository } from '../../blogs/infrastructure/blogs.repository';
+import { IBlogsRepository } from '../../blogs/infrastructure/blogs.sql.repository';
 import { LikeParentTypeEnum } from '../../likes/application/interfaces/like-parent-type.enum';
 import { LikeStringStatus } from '../../likes/application/interfaces/like-status.enum';
 import { LikesService } from '../../likes/application/likes.service';
@@ -31,7 +31,7 @@ export interface IPostService {
 export class PostsService implements IPostService {
   constructor(
     private readonly postRepository: PostsRepository,
-    private readonly blogRepository: BlogsRepository,
+    private readonly blogRepository: IBlogsRepository,
     private readonly likeService: LikesService,
   ) {}
 

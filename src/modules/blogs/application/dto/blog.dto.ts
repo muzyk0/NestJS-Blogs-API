@@ -57,6 +57,6 @@ export class BlogViewDtoForSuperAdmin extends BlogView {
   };
   banInfo: {
     isBanned: boolean;
-    banDate: Date | null;
+    banDate: string;
   };
 }
