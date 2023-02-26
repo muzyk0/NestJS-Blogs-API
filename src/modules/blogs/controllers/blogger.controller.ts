@@ -39,7 +39,7 @@ import { UpdateBanUserForBlogCommand } from '../../bans/application/use-cases/up
 import { GetPostCommentsInsideCurrentUserBlogsCommand } from '../../comments/application/use-cases/get-post-comments-inside-current-user-blogs.handler';
 import { UpdatePostDto } from '../../posts/application/dto/update-post.dto';
 import { PostsService } from '../../posts/application/posts.service';
-import { PostsQueryRepository } from '../../posts/infrastructure/posts.query.repository';
+import { IPostsQueryRepository } from '../../posts/infrastructure/posts.query.sql.repository';
 import { IUsersQueryRepository } from '../../users/infrastructure/users.query.repository.sql';
 import { BlogsService } from '../application/blogs.service';
 import { CreateBlogPostDto } from '../application/dto/create-blog-post.dto';
@@ -58,7 +58,7 @@ export class BloggerController {
     private readonly blogsService: BlogsService,
     private readonly blogsQueryRepository: IBlogsQueryRepository,
     private readonly postsService: PostsService,
-    private readonly postsQueryRepository: PostsQueryRepository,
+    private readonly postsQueryRepository: IPostsQueryRepository,
     private readonly usersQueryRepository: IUsersQueryRepository,
     private readonly commandBus: CommandBus,
   ) {}

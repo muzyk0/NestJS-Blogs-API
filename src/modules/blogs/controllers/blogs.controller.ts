@@ -13,7 +13,7 @@ import { PageOptionsDto } from '../../../shared/paginator/page-options.dto';
 import { JwtATPayload } from '../../auth/application/interfaces/jwtPayload.type';
 import { AuthGuard } from '../../auth/guards/auth-guard';
 import { PostsService } from '../../posts/application/posts.service';
-import { PostsQueryRepository } from '../../posts/infrastructure/posts.query.repository';
+import { IPostsQueryRepository } from '../../posts/infrastructure/posts.query.sql.repository';
 import { BlogsService } from '../application/blogs.service';
 import { IBlogsQueryRepository } from '../infrastructure/blogs.query.sql.repository';
 
@@ -24,7 +24,7 @@ export class BlogsController {
     private readonly blogsService: BlogsService,
     private readonly blogsQueryRepository: IBlogsQueryRepository,
     private readonly postsService: PostsService,
-    private readonly postsQueryRepository: PostsQueryRepository,
+    private readonly postsQueryRepository: IPostsQueryRepository,
   ) {}
 
   @ApiOkResponse({
@@ -71,10 +71,11 @@ export class BlogsController {
       throw new NotFoundException();
     }
 
-    return this.postsQueryRepository.findAll({
-      ...pageOptionsDto,
-      blogId: id,
-      userId: ctx?.user.id,
-    });
+    return this.postsQueryRepository.findAll(
+      {
+        ...pageOptionsDto,
+      },
+      { blogId: id, userId: ctx?.user.id },
+    );
   }
 }

@@ -8,14 +8,12 @@ import {
   Comment,
   CommentDocument,
 } from '../../comments/domain/schemas/comments.schema';
-import { Post, PostDocument } from '../../posts/domain/schemas/posts.schema';
 
 @Injectable()
 export class TestingRepository {
   constructor(
     private readonly config: ConfigService,
     private dataSource: DataSource,
-    @InjectModel(Post.name) private postModel: Model<PostDocument>,
     @InjectModel(Comment.name) private commentModel: Model<CommentDocument>,
   ) {}
 
@@ -49,7 +47,6 @@ export class TestingRepository {
     if (this.config.get('ENABLE_CLEAR_DB_ENDPOINT')) {
       await this.clearSqlDatabase();
 
-      await this.postModel.deleteMany({});
       await this.commentModel.deleteMany({});
     }
 

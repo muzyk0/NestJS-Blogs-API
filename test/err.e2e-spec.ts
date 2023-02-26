@@ -9,8 +9,8 @@ import {
   BlogViewDtoForSuperAdmin,
 } from '../src/modules/blogs/application/dto/blog.dto';
 import { CommentDto } from '../src/modules/comments/application/dto/comment.dto';
-import { PostDto } from '../src/modules/posts/application/dto/post.dto';
 import { PostViewDto } from '../src/modules/posts/application/dto/post.view.dto';
+import { PostDomain } from '../src/modules/posts/domain/post.domain';
 import { UserViewModel } from '../src/modules/users/application/dto/user.view';
 import { setupApp } from '../src/setup-app';
 import { PageDto } from '../src/shared/paginator/page.dto';
@@ -64,8 +64,8 @@ describe('Blogger (e2e)', () => {
     let validAccessToken2: { accessToken: string };
     let blog: BlogDto;
     let blog2: BlogDto;
-    let post: PostDto;
-    let post2: PostDto;
+    let post: PostDomain;
+    let post2: PostDomain;
     let responseComment: CommentDto;
 
     beforeAll(async () => {
@@ -299,7 +299,7 @@ describe('Blogger (e2e)', () => {
   describe('super admin should ban or unban blog;', () => {
     let fakeUser: FakeUser;
     let blog: BlogDto;
-    let post: PostDto;
+    let post: PostDomain;
 
     beforeAll(async () => {
       await request(app.getHttpServer())
@@ -458,7 +458,7 @@ describe('Blogger (e2e)', () => {
     let fakeUser: FakeUser;
     let fakeUser2: FakeUser;
     let blog: BlogDto;
-    let post: PostDto;
+    let post: PostDomain;
 
     beforeAll(async () => {
       await request(app.getHttpServer())

@@ -30,14 +30,14 @@ import { CommentInput } from '../../comments/application/dto/comment.input';
 import { CommentsQueryRepository } from '../../comments/infrastructure/comments.query.repository';
 import { CreateLikeInput } from '../../likes/application/input/create-like.input';
 import { PostsService } from '../application/posts.service';
-import { PostsQueryRepository } from '../infrastructure/posts.query.repository';
+import { IPostsQueryRepository } from '../infrastructure/posts.query.sql.repository';
 
 @ApiTags('posts')
 @Controller('posts')
 export class PostsController {
   constructor(
     private readonly postsService: PostsService,
-    private readonly postsQueryRepository: PostsQueryRepository,
+    private readonly postsQueryRepository: IPostsQueryRepository,
     private readonly blogsService: BlogsService,
     private readonly commentsService: CommentsService,
     private readonly commentsQueryRepository: CommentsQueryRepository,
@@ -50,8 +50,7 @@ export class PostsController {
     @GetCurrentJwtContextWithoutAuth() ctx: JwtATPayload | null,
     @Query() pageOptionsDto: PageOptionsDto,
   ) {
-    return this.postsQueryRepository.findAll({
-      ...pageOptionsDto,
+    return this.postsQueryRepository.findAll(pageOptionsDto, {
       userId: ctx?.user?.id,
     });
   }

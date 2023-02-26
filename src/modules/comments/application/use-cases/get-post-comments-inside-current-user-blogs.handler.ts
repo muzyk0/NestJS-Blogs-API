@@ -2,7 +2,7 @@ import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
 
 import { PageOptionsDto } from '../../../../shared/paginator/page-options.dto';
 import { IBlogsRepository } from '../../../blogs/infrastructure/blogs.sql.repository';
-import { PostsRepository } from '../../../posts/infrastructure/posts.repository';
+import { IPostsRepository } from '../../../posts/infrastructure/posts.sql.repository';
 import { CommentsQueryRepository } from '../../infrastructure/comments.query.repository';
 
 export class GetPostCommentsInsideCurrentUserBlogsCommand {
@@ -19,7 +19,7 @@ export class GetPostCommentsInsideCurrentUserBlogsHandler
   constructor(
     private readonly commentsQueryRepository: CommentsQueryRepository,
     private readonly blogsRepository: IBlogsRepository,
-    private readonly postsRepository: PostsRepository,
+    private readonly postsRepository: IPostsRepository,
   ) {}
 
   async execute({

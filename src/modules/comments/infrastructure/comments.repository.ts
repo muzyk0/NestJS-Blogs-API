@@ -5,7 +5,6 @@ import { Model } from 'mongoose';
 
 import { BASE_PROJECTION } from '../../../shared/mongoose/constants';
 import { PageOptionsDto } from '../../../shared/paginator/page-options.dto';
-import { Post, PostDocument } from '../../posts/domain/schemas/posts.schema';
 import { ICommentsRepository } from '../application/comments.service';
 import { CommentDto } from '../application/dto/comment.dto';
 import { CreateCommentDto } from '../application/dto/create-comment.dto';
@@ -27,11 +26,10 @@ export class FindAllCommentsOptions extends PageOptionsDto {
 
 @Injectable()
 export class CommentsRepository implements ICommentsRepository {
+  postModel: any;
   constructor(
     @InjectModel(Comment.name)
     private readonly commentModel: Model<CommentDocument>,
-    @InjectModel(Post.name)
-    private readonly postModel: Model<PostDocument>,
   ) {}
 
   async create(createCommentDto: CreateCommentDto): Promise<CommentDto | null> {

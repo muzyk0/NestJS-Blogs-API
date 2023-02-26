@@ -5,7 +5,7 @@ import { LikeParentTypeEnum } from '../../likes/application/interfaces/like-pare
 import { LikeStringStatus } from '../../likes/application/interfaces/like-status.enum';
 import { LikesService } from '../../likes/application/likes.service';
 import { formatLikeStatusToInt } from '../../likes/utils/formatters';
-import { PostsRepository } from '../../posts/infrastructure/posts.repository';
+import { IPostsRepository } from '../../posts/infrastructure/posts.sql.repository';
 import { ICommentsService } from '../controllers/comments.controller';
 import { CommentsRepository } from '../infrastructure/comments.repository';
 
@@ -28,7 +28,7 @@ export interface ICommentsRepository {
 export class CommentsService implements ICommentsService {
   constructor(
     private readonly commentsRepository: CommentsRepository,
-    private readonly postsRepository: PostsRepository,
+    private readonly postsRepository: IPostsRepository,
     private readonly likeService: LikesService,
   ) {}
 

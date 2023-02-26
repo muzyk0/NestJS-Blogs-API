@@ -18,10 +18,10 @@ export abstract class IBlogsQueryRepository {
   abstract findAll(
     pageOptionsDto: PageOptionsDto,
     userId?: string,
-  ): Promise<PageDto<BlogDto>>;
+  ): Promise<PageDto<BlogView>>;
   abstract findAllForAdmin(
     pageOptionsDto: PageOptionsDto,
-  ): Promise<PageDto<BlogDto>>;
+  ): Promise<PageDto<BlogViewDtoForSuperAdmin>>;
 }
 
 @Injectable()
@@ -31,7 +31,7 @@ export class BlogsQueryRepository implements IBlogsQueryRepository {
   async findAll(
     pageOptionsDto: PageOptionsDto,
     userId?: string,
-  ): Promise<PageDto<BlogDto>> {
+  ): Promise<PageDto<BlogView>> {
     const query = `
         WITH blogs AS
                  (SELECT b.*, u.login as "userLogin"
@@ -78,7 +78,7 @@ export class BlogsQueryRepository implements IBlogsQueryRepository {
 
   async findAllForAdmin(
     pageOptionsDto: PageOptionsDto,
-  ): Promise<PageDto<BlogDto>> {
+  ): Promise<PageDto<BlogViewDtoForSuperAdmin>> {
     const query = `
         WITH blogs AS
                  (SELECT b.*, u.login as "userLogin"
@@ -128,7 +128,6 @@ export class BlogsQueryRepository implements IBlogsQueryRepository {
                    lEFT JOIN users as u ON b."userId" = u.id
           where b.id = $1
             and b.banned is null
-            and u.banned is null
           ORDER BY "createdAt";
       `,
       [id],

@@ -7,8 +7,7 @@ import {
   IBlogsRepository,
 } from '../blogs/infrastructure/blogs.sql.repository';
 import { LikesModule } from '../likes/likes.module';
-import { Post, PostSchema } from '../posts/domain/schemas/posts.schema';
-import { PostsRepository } from '../posts/infrastructure/posts.repository';
+import { PostsModule } from '../posts/posts.module';
 import { UsersModule } from '../users/users.module';
 
 import { CommentsService } from './application/comments.service';
@@ -23,10 +22,10 @@ const CommandHandlers = [GetPostCommentsInsideCurrentUserBlogsHandler];
 @Module({
   imports: [
     MongooseModule.forFeature([{ name: Comment.name, schema: CommentSchema }]),
-    MongooseModule.forFeature([{ name: Post.name, schema: PostSchema }]),
     LikesModule,
     AuthModule,
     UsersModule,
+    PostsModule,
   ],
   controllers: [CommentsController],
   providers: [
@@ -35,7 +34,6 @@ const CommandHandlers = [GetPostCommentsInsideCurrentUserBlogsHandler];
     CommentsService,
     CommentsRepository,
     CommentsQueryRepository,
-    PostsRepository,
   ],
 })
 export class CommentsModule {}
