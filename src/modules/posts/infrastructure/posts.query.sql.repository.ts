@@ -91,18 +91,22 @@ export class PostsQueryRepository implements IPostsQueryRepository {
   }
 
   // TODO: userId for count likes
-  async findOne(id: string, userId?: string): Promise<PostViewDto> {
+  async findOne(id: string, userId?: string): Promise<PostViewDto | null> {
     const [post]: [PostWithBlogNameDto] = await this.dataSource.query(
       `
           SELECT p.*, b.name as "blogName"
           FROM posts as p
                    join blogs as b on p."blogId" = b.id
-          where p.id = $1
+          where p.id::text = $1
             and b.banned is null
 
       `,
       [id],
     );
+
+    if (!post) {
+      return null;
+    }
 
     return this.mapToDtoIterator(post);
   }
