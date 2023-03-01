@@ -95,8 +95,8 @@ export class BlogsQueryRepository implements IBlogsQueryRepository {
                      jsonb_agg(row_to_json(sub)) as "items"
               from (table blogs
                   order by
-                      case when $1 = 'desc' then 'desc' end desc,
-                      case when $1 = 'asc' then 'asc' end asc
+                      case when $1 = 'desc' then "${pageOptionsDto.sortBy}" end desc,
+                      case when $1 = 'asc' then "${pageOptionsDto.sortBy}" end asc
                   limit $2
                   offset $3) sub
                        right join (select count(*) from blogs) c(total) on true
