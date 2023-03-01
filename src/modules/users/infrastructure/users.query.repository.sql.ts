@@ -226,20 +226,11 @@ export class UsersQueryRepository implements IUsersQueryRepository {
                          b2."banReason" as "banReasonForBlog",
                          b2."updatedAt" as "updatedAtForBlog"
                   FROM users as u
-                           LEFT JOIN bans as b2 ON b2."parentId" = $6
+                           LEFT JOIN bans as b2 ON b2."parentId" = $5
                   where u.id = b2."userId"
+                    AND b2."isBanned" = true
                     AND case
                             when cast(null as TEXT) IS NOT NULL THEN u.login ILIKE '%' || $4 || '%'
-                            ELSE true END
-
-                    AND case
-                            when $5 = 'all' THEN true
-                            ELSE true END
-                    AND case
-                            when $5 = 'banned' THEN b2."isBanned" is not null
-                            ELSE true END
-                    AND case
-                            when $5 = 'notBanned' THEN b2."isBanned" is null
                             ELSE true END)
 
         select row_to_json(t1) as data
@@ -260,7 +251,6 @@ export class UsersQueryRepository implements IUsersQueryRepository {
         pageOptionsDto.pageSize,
         pageOptionsDto.skip,
         pageOptionsDto.searchNameTerm,
-        pageOptionsDto.banStatus,
         blogId,
       ])
       .then((res) => res[0]?.data);
