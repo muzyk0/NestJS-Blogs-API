@@ -11,7 +11,7 @@ import {
 import { CommentDto } from '../src/modules/comments/application/dto/comment.dto';
 import { PostViewDto } from '../src/modules/posts/application/dto/post.view.dto';
 import { PostDomain } from '../src/modules/posts/domain/post.domain';
-import { UserViewModel } from '../src/modules/users/application/dto/user.view';
+import { UserViewModel } from '../src/modules/users/infrastructure/dto/user.view';
 import { setupApp } from '../src/setup-app';
 import { PageDto } from '../src/shared/paginator/page.dto';
 

@@ -57,7 +57,7 @@ export class PostsRepository implements IPostsRepository {
       `
           SELECT b.*
           FROM posts as b
-          where b.id = $1
+          where b.id::text = $1
 `,
       [id],
     );
@@ -76,7 +76,7 @@ export class PostsRepository implements IPostsRepository {
           SET title = $2,
               "shortDescription" = $3,
               content = $4
-          WHERE id = $1
+          WHERE id::text = $1
           RETURNING *;
       `,
         [id, title, shortDescription, content],
@@ -91,7 +91,7 @@ export class PostsRepository implements IPostsRepository {
         `
           DELETE
           FROM "posts"
-          WHERE id = $1
+          WHERE id::text = $1
       `,
         [postId],
       );

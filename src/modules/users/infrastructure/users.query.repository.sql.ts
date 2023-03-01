@@ -10,11 +10,10 @@ import {
 import { PageDto } from '../../../shared/paginator/page.dto';
 import { Ban } from '../../bans/domain/entity/ban.entity';
 import { BansRepositorySql } from '../../bans/infrastructure/bans.repository.sql';
-import {
-  UserBloggerViewModel,
-  UserViewModel,
-} from '../application/dto/user.view';
 import { User } from '../domain/entities/user.entity';
+
+import { UserWithBannedInfoForBlogView } from './dto/user-with-banned-info-for-blog.view';
+import { UserBloggerViewModel, UserViewModel } from './dto/user.view';
 
 export abstract class IUsersQueryRepository {
   abstract findOne(id: string): Promise<UserViewModel>;
@@ -134,14 +133,16 @@ export class UsersQueryRepository implements IUsersQueryRepository {
     };
   }
 
-  mapToBloggerViewDto(users: User, ban: Ban): UserBloggerViewModel {
+  mapToBloggerViewDto(
+    user: UserWithBannedInfoForBlogView,
+  ): UserBloggerViewModel {
     return {
-      id: users.id,
-      login: users.login,
+      id: user.id,
+      login: user.login,
       banInfo: {
-        isBanned: ban.isBanned,
-        banDate: ban.updatedAt.toISOString(),
-        banReason: ban.banReason,
+        isBanned: user.isBannedForBlog,
+        banDate: new Date(user.updatedAtForBlog).toISOString(),
+        banReason: user.banReasonForBlog,
       },
     };
   }
@@ -222,7 +223,8 @@ export class UsersQueryRepository implements IUsersQueryRepository {
         WITH users AS
                  (SELECT u.*,
                          b2."isBanned"  as "isBannedForBlog",
-                         b2."banReason" as "banReasonForBlog"
+                         b2."banReason" as "banReasonForBlog",
+                         b2."updatedAt" as "updatedAtForBlog"
                   FROM users as u
                            LEFT JOIN bans as b2 ON b2."parentId" = $6
                   where u.id = b2."userId"
@@ -264,7 +266,7 @@ export class UsersQueryRepository implements IUsersQueryRepository {
       .then((res) => res[0]?.data);
 
     return new PageDto({
-      items: (posts.items ?? []).map(this.mapToDto),
+      items: (posts.items ?? []).map(this.mapToBloggerViewDto),
       itemsCount: posts.total,
       pageOptionsDto,
     });
