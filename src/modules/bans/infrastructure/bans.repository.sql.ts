@@ -14,42 +14,13 @@ export class BansRepositorySql {
   constructor(@InjectDataSource() private dataSource: DataSource) {}
 
   async updateOrCreateBan(createBanInput: CreateBanInput): Promise<Ban> {
-    const ban: Ban[] = await this.dataSource.query(
+    const [ban]: [Ban] = await this.dataSource.query(
       `
-          SELECT *
-          FROM bans
-          WHERE "userId" = $1
-            AND "parentId" = $2
-            AND "type" = $3
-      `,
-      [createBanInput.userId, createBanInput.parentId, createBanInput.type],
-    );
-
-    if (ban?.[0]?.id) {
-      const updatedBan: Ban[] = await this.dataSource.query(
-        `
-            UPDATE bans
-            SET "isBanned"  = $2,
-                "banReason" = $3,
-                "updatedAt" = $4
-            WHERE "id" = $1;
-        `,
-        [
-          ban[0].id,
-          createBanInput.isBanned,
-          createBanInput.banReason,
-          new Date(),
-        ],
-      );
-
-      return updatedBan[0];
-    }
-
-    const createdLike: Ban[] = await this.dataSource.query(
-      `
-          INSERT
-          INTO bans ("userId", "parentId", "type", "isBanned", "banReason")
+          INSERT INTO bans ("userId", "parentId", type, "isBanned", "banReason")
           VALUES ($1, $2, $3, $4, $5)
+          ON CONFLICT (id) DO UPDATE
+              SET "isBanned"  = $4,
+                  "banReason" = $5
           RETURNING *
       `,
       [
@@ -61,7 +32,7 @@ export class BansRepositorySql {
       ],
     );
 
-    return createdLike[0];
+    return ban;
   }
 
   async getBan({ userId, parentId, type }: FindBanInput) {
