@@ -13,12 +13,13 @@ import { Blog } from '../domain/entities/blog.entity';
 import { BlogWithUserLogin } from '../interfaces/BlogWithUserLogin';
 
 export abstract class IBlogsQueryRepository {
-  abstract findOne(id: string): Promise<BlogDto>;
+  abstract findOne(id: string): Promise<BlogView>;
 
   abstract findAll(
     pageOptionsDto: PageOptionsDto,
     userId?: string,
   ): Promise<PageDto<BlogView>>;
+
   abstract findAllForAdmin(
     pageOptionsDto: PageOptionsDto,
   ): Promise<PageDto<BlogViewDtoForSuperAdmin>>;
@@ -50,7 +51,7 @@ export class BlogsQueryRepository implements IBlogsQueryRepository {
         from (select c.total,
                      jsonb_agg(row_to_json(sub)) filter (where sub.id is not null) as "items"
               from (table blogs
-                  order by 
+                  order by
                       case when $1 = 'desc' then "${pageOptionsDto.sortBy}" end desc,
                       case when $1 = 'asc' then "${pageOptionsDto.sortBy}" end asc
                   limit $2
@@ -120,17 +121,17 @@ export class BlogsQueryRepository implements IBlogsQueryRepository {
     });
   }
 
-  async findOne(id: string): Promise<BlogDto> {
+  async findOne(id: string): Promise<BlogView> {
     try {
       const [blog] = await this.dataSource.query(
         `
-          SELECT b.*, u.banned as "isUserBanned"
-          FROM blogs as b
-                   lEFT JOIN users as u ON b."userId" = u.id
-          where b.id = $1
-            and b.banned is null
-          ORDER BY "createdAt";
-      `,
+            SELECT b.*, u.banned as "isUserBanned"
+            FROM blogs as b
+                     lEFT JOIN users as u ON b."userId" = u.id
+            where b.id = $1
+              and b.banned is null
+            ORDER BY "createdAt";
+        `,
         [id],
       );
 
@@ -146,7 +147,7 @@ export class BlogsQueryRepository implements IBlogsQueryRepository {
       name: blog.name,
       description: blog.description,
       websiteUrl: blog.websiteUrl,
-      createdAt: blog.createdAt,
+      createdAt: new Date(blog.createdAt).toISOString(),
       isMembership: false,
     };
   }
@@ -157,7 +158,7 @@ export class BlogsQueryRepository implements IBlogsQueryRepository {
       name: blog.name,
       description: blog.description,
       websiteUrl: blog.websiteUrl,
-      createdAt: blog.createdAt,
+      createdAt: new Date(blog.createdAt).toISOString(),
       isMembership: false,
       blogOwnerInfo: {
         userId: blog.id,

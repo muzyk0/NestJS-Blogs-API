@@ -43,9 +43,7 @@ export class BlogView {
 
   websiteUrl: string;
 
-  createdAt?: Date;
-
-  updatedAt?: Date;
+  createdAt: string;
 
   isMembership: boolean;
 }
