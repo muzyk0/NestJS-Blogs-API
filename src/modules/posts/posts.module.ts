@@ -24,14 +24,19 @@ import { UsersModule } from '../users/users.module';
 
 import { PostsService } from './application/posts.service';
 import { PostsController } from './controllers/posts.controller';
-import { Post, PostSchema } from './domain/schemas/posts.schema';
-import { PostsQueryRepository } from './infrastructure/posts.query.repository';
-import { PostsRepository } from './infrastructure/posts.repository';
+import { Post } from './domain/entities/post.entity';
+import {
+  IPostsQueryRepository,
+  PostsQueryRepository,
+} from './infrastructure/posts.query.sql.repository';
+import {
+  IPostsRepository,
+  PostsRepository,
+} from './infrastructure/posts.sql.repository';
 
 @Module({
   imports: [
     CqrsModule,
-    MongooseModule.forFeature([{ name: Post.name, schema: PostSchema }]),
     MongooseModule.forFeature([{ name: Comment.name, schema: CommentSchema }]),
     AuthModule,
     SecurityModule,
@@ -42,8 +47,8 @@ import { PostsRepository } from './infrastructure/posts.repository';
   controllers: [PostsController],
   providers: [
     PostsService,
-    PostsRepository,
-    PostsQueryRepository,
+    { provide: IPostsRepository, useClass: PostsRepository },
+    { provide: IPostsQueryRepository, useClass: PostsQueryRepository },
     { provide: IBlogsRepository, useClass: BlogsRepository },
     BlogsService,
     CommentsService,
@@ -52,6 +57,10 @@ import { PostsRepository } from './infrastructure/posts.repository';
     BansService,
     BansRepositorySql,
   ],
-  exports: [PostsService, PostsRepository, PostsQueryRepository],
+  exports: [
+    PostsService,
+    { provide: IPostsRepository, useClass: PostsRepository },
+    { provide: IPostsQueryRepository, useClass: PostsQueryRepository },
+  ],
 })
 export class PostsModule {}

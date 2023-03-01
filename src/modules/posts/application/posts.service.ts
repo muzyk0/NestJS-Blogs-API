@@ -1,28 +1,26 @@
 import { Injectable } from '@nestjs/common';
-import { v4 } from 'uuid';
 
 import { IBlogsRepository } from '../../blogs/infrastructure/blogs.sql.repository';
 import { LikeParentTypeEnum } from '../../likes/application/interfaces/like-parent-type.enum';
 import { LikeStringStatus } from '../../likes/application/interfaces/like-status.enum';
 import { LikesService } from '../../likes/application/likes.service';
 import { formatLikeStatusToInt } from '../../likes/utils/formatters';
-import { PostsRepository } from '../infrastructure/posts.repository';
+import { PostDomain } from '../domain/post.domain';
+import { IPostsRepository } from '../infrastructure/posts.sql.repository';
 
 import { CreatePostDto } from './dto/create-post.dto';
-import { PostDto } from './dto/post.dto';
-import { UpdatePostDbDto } from './dto/update-post-db.dto';
 import { UpdatePostDto } from './dto/update-post.dto';
 
 export interface IPostService {
-  create(createPostDto: Omit<CreatePostDto, 'id'>): Promise<PostDto>;
+  create(createPostDto: Omit<CreatePostDto, 'id'>): Promise<PostDomain>;
 
-  findOne(id: string): Promise<PostDto>;
+  findOne(id: string): Promise<PostDomain>;
 
   update(
     postId: string,
     blogId: string,
     updatePostDto: UpdatePostDto,
-  ): Promise<PostDto>;
+  ): Promise<PostDomain>;
 
   remove(id: string): Promise<boolean>;
 }
@@ -30,7 +28,7 @@ export interface IPostService {
 @Injectable()
 export class PostsService implements IPostService {
   constructor(
-    private readonly postRepository: PostsRepository,
+    private readonly postRepository: IPostsRepository,
     private readonly blogRepository: IBlogsRepository,
     private readonly likeService: LikesService,
   ) {}
@@ -42,14 +40,11 @@ export class PostsService implements IPostService {
       return null;
     }
 
-    const newPostInput: PostDto = {
-      id: v4(),
+    const newPostInput: CreatePostDto = {
       blogId: blog.id,
-      blogName: blog.name,
       title: createPostDto.title,
       content: createPostDto.content,
       shortDescription: createPostDto.shortDescription,
-      createdAt: new Date(),
     };
 
     return this.postRepository.create(newPostInput);
@@ -63,15 +58,14 @@ export class PostsService implements IPostService {
     postId: string,
     blogId: string,
     updatePostDto: UpdatePostDto,
-  ): Promise<PostDto> {
+  ): Promise<PostDomain> {
     const blog = await this.blogRepository.findOne(blogId);
 
     if (!blog) {
       return null;
     }
 
-    const updatedPost: UpdatePostDbDto = {
-      blogName: blog.name,
+    const updatedPost: UpdatePostDto = {
       title: updatePostDto.title,
       content: updatePostDto.content,
       shortDescription: updatePostDto.shortDescription,

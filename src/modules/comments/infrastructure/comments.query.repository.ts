@@ -10,7 +10,7 @@ import { LikeParentTypeEnum } from '../../likes/application/interfaces/like-pare
 import { Like } from '../../likes/domain/entity/like.entity';
 import { LikesRepositorySql } from '../../likes/infrastructure/likes.repository.sql';
 import { getStringLikeStatus } from '../../likes/utils/formatters';
-import { Post, PostDocument } from '../../posts/domain/schemas/posts.schema';
+import { PostWithBlogNameDto } from '../../posts/application/dto/post-with-blog-name.dto';
 import { UsersRepository } from '../../users/infrastructure/users.repository.sql';
 import {
   CommentForBloggerViewDto,
@@ -33,11 +33,11 @@ export class FindAllCommentsOptions extends PageOptionsDto {
 
 @Injectable()
 export class CommentsQueryRepository {
+  postModel: any;
+
   constructor(
     @InjectModel(Comment.name)
     private readonly commentModel: Model<CommentDocument>,
-    @InjectModel(Post.name)
-    private readonly postModel: Model<PostDocument>,
     private readonly likesRepositorySql: LikesRepositorySql,
     private readonly usersRepository: UsersRepository,
   ) {}
@@ -125,7 +125,7 @@ export class CommentsQueryRepository {
 
   private mapToBloggerViewDto(
     comment: Comment,
-    post: Post,
+    post: PostWithBlogNameDto,
   ): CommentForBloggerViewDto {
     return {
       id: comment.id,
@@ -148,7 +148,7 @@ export class CommentsQueryRepository {
   async findPostCommentsInsideUserBlogs(
     pageOptionsDto: PageOptionsDto,
     // userId: string,
-    posts: Post[],
+    posts: any[], //Post
   ) {
     const users = await this.usersRepository
       .findAllWithoutBanned()

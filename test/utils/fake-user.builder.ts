@@ -3,7 +3,7 @@ import { INestApplication } from '@nestjs/common';
 import request from 'supertest';
 
 import { CreateUserDto } from '../../src/modules/users/application/dto/create-user.dto';
-import { UserViewModel } from '../../src/modules/users/application/dto/user.view';
+import { UserViewModel } from '../../src/modules/users/infrastructure/dto/user.view';
 
 export interface FakeUser {
   user: UserViewModel | null;

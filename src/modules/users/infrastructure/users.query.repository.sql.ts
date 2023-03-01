@@ -8,14 +8,12 @@ import {
   UserBanStatus,
 } from '../../../shared/paginator/page-options.dto';
 import { PageDto } from '../../../shared/paginator/page.dto';
-import { BanTypeEnum } from '../../bans/application/interfaces/ban-type.enum';
 import { Ban } from '../../bans/domain/entity/ban.entity';
 import { BansRepositorySql } from '../../bans/infrastructure/bans.repository.sql';
-import {
-  UserBloggerViewModel,
-  UserViewModel,
-} from '../application/dto/user.view';
 import { User } from '../domain/entities/user.entity';
+
+import { UserWithBannedInfoForBlogView } from './dto/user-with-banned-info-for-blog.view';
+import { UserBloggerViewModel, UserViewModel } from './dto/user.view';
 
 export abstract class IUsersQueryRepository {
   abstract findOne(id: string): Promise<UserViewModel>;
@@ -56,36 +54,6 @@ export class UsersQueryRepository implements IUsersQueryRepository {
   async findAll(
     pageOptionsDto: PageOptionsForUserDto,
   ): Promise<PageDto<UserViewModel>> {
-    const filter: FilterQuery<User> = {
-      $or: [
-        pageOptionsDto?.searchLoginTerm
-          ? {
-              'accountData.login': {
-                $regex: pageOptionsDto.searchLoginTerm,
-                $options: 'si',
-              },
-            }
-          : {},
-        pageOptionsDto?.searchEmailTerm
-          ? {
-              'accountData.email': {
-                $regex: pageOptionsDto.searchEmailTerm,
-                $options: 'si',
-              },
-            }
-          : {},
-      ],
-      ...(pageOptionsDto?.banStatus &&
-      pageOptionsDto.banStatus !== UserBanStatus.ALL
-        ? {
-            'accountData.banned':
-              pageOptionsDto.banStatus === UserBanStatus.BANNED
-                ? { $ne: null }
-                : null,
-          }
-        : {}),
-    };
-
     const query = `
         WITH users AS
                  (SELECT *
@@ -165,14 +133,16 @@ export class UsersQueryRepository implements IUsersQueryRepository {
     };
   }
 
-  mapToBloggerViewDto(users: User, ban: Ban): UserBloggerViewModel {
+  mapToBloggerViewDto(
+    user: UserWithBannedInfoForBlogView,
+  ): UserBloggerViewModel {
     return {
-      id: users.id,
-      login: users.login,
+      id: user.id,
+      login: user.login,
       banInfo: {
-        isBanned: ban.isBanned,
-        banDate: ban.updatedAt.toISOString(),
-        banReason: ban.banReason,
+        isBanned: user.isBannedForBlog,
+        banDate: new Date(user.updatedAtForBlog).toISOString(),
+        banReason: user.banReasonForBlog,
       },
     };
   }
@@ -181,15 +151,8 @@ export class UsersQueryRepository implements IUsersQueryRepository {
     pageOptionsDto: PageOptionsForUserDto,
     blogId: string,
   ) {
-    const bans = await this.bansRepositorySql.getBansByBlogId({
-      parentId: blogId,
-      type: BanTypeEnum.BLOG,
-    });
-
-    const bansUserIds = bans.map((ban) => ban.userId);
-
     const filter: FilterQuery<User> = {
-      'accountData.id': { $in: bansUserIds },
+      // 'accountData.id': { $in: bansUserIds },
       $or: [
         pageOptionsDto?.searchLoginTerm
           ? {
@@ -219,28 +182,82 @@ export class UsersQueryRepository implements IUsersQueryRepository {
         : {}),
     };
 
-    // const itemsCount = await this.userModel.countDocuments(filter);
+    //     const query = `
+    //         WITH posts AS
+    //                  (SELECT p.*,
+    //                          b2."isBanned"  as "isBannedForBlog",
+    //                          b2."banReason" as "banReasonForBlog"
+    //                   FROM posts as p
+    //                            lEFT JOIN blogs as b ON p."blogId" = b.id
+    // --                            lEFT JOIN users as u ON b."userId" = u.id
+    //                            LEFT JOIN bans as b2 ON b2."userId" = b."userId" and b2."parentId" = p."blogId"
+    //                   where "blogId" = $6
+    //                     AND case
+    //                             when cast($5 as TEXT) IS NOT NULL THEN p.title ILIKE '%' || $4 || '%'
+    //                             ELSE true END
     //
-    // const items = await this.userModel
-    //   .find(filter)
-    //   .skip(pageOptionsDto.skip)
-    //   .sort({
-    //     [pageOptionsDto.sortBy !== 'createdAt'
-    //       ? `accountData.${pageOptionsDto.sortBy}`
-    //       : 'createdAt']: pageOptionsDto.sortDirection,
-    //   })
-    //   .limit(pageOptionsDto.pageSize);
+    //                     AND case
+    //                             when $5 = 'all' THEN true
+    //                             ELSE true END
+    //                     AND case
+    //                             when $5 = 'banned' THEN b2."isBanned" is not null
+    //                             ELSE true END
+    //                     AND case
+    //                             when $5 = 'notBanned' THEN b2."isBanned" is null
+    //                             ELSE true END)
+    //
+    //         select row_to_json(t1) as data
+    //         from (select c.total, jsonb_agg(row_to_json(sub)) filter (where sub.id is not null) as "items"
+    //               from (table posts
+    //                   order by
+    //                       case when $1 = 'desc' then "${pageOptionsDto.sortBy}" end desc,
+    //                       case when $1 = 'asc' then "${pageOptionsDto.sortBy}" end asc
+    //                   limit $2
+    //                   offset $3) sub
+    //                        right join (select count(*) from posts) c (total) on true
+    //               group by c.total) t1;
+    //
+    //     `;
 
-    // TODO
-    const itemsWithBan = [].map((item) => {
-      const ban = bans.find((ban) => ban.userId === item.id);
+    const query = `
+        WITH users AS
+                 (SELECT u.*,
+                         b2."isBanned"  as "isBannedForBlog",
+                         b2."banReason" as "banReasonForBlog",
+                         b2."updatedAt" as "updatedAtForBlog"
+                  FROM users as u
+                           LEFT JOIN bans as b2 ON b2."parentId" = $5
+                  where u.id = b2."userId"
+                    AND b2."isBanned" = true
+                    AND case
+                            when cast(null as TEXT) IS NOT NULL THEN u.login ILIKE '%' || $4 || '%'
+                            ELSE true END)
 
-      return this.mapToBloggerViewDto(item, ban);
-    });
+        select row_to_json(t1) as data
+        from (select c.total, jsonb_agg(row_to_json(sub)) filter (where sub.id is not null) as "items"
+              from (table users
+                  order by
+                      case when $1 = 'desc' then "${pageOptionsDto.sortBy}" end desc,
+                      case when $1 = 'asc' then "${pageOptionsDto.sortBy}" end asc
+                  limit $2
+                  offset $3) sub
+                       right join (select count(*) from users) c (total) on true
+              group by c.total) t1;
+    `;
+
+    const posts: { total: number; items?: User[] } = await this.dataSource
+      .query(query, [
+        pageOptionsDto.sortDirection,
+        pageOptionsDto.pageSize,
+        pageOptionsDto.skip,
+        pageOptionsDto.searchNameTerm,
+        blogId,
+      ])
+      .then((res) => res[0]?.data);
+
     return new PageDto({
-      items: itemsWithBan,
-      // TODO
-      itemsCount: 0,
+      items: (posts.items ?? []).map(this.mapToBloggerViewDto),
+      itemsCount: posts.total,
       pageOptionsDto,
     });
   }

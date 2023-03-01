@@ -1,4 +1,5 @@
 import { Injectable } from '@nestjs/common';
+import { InjectDataSource } from '@nestjs/typeorm';
 import { DataSource } from 'typeorm';
 
 import { CreateBanInput } from '../application/input/create-ban.input';
@@ -10,13 +11,10 @@ import { Ban } from '../domain/entity/ban.entity';
 
 @Injectable()
 export class BansRepositorySql {
-  constructor(private dataSource: DataSource) {}
+  constructor(@InjectDataSource() private dataSource: DataSource) {}
 
   async updateOrCreateBan(createBanInput: CreateBanInput): Promise<Ban> {
-    const queryRunner = this.dataSource.createQueryRunner();
-    await queryRunner.connect();
-
-    const ban: Ban[] = await queryRunner.query(
+    const ban: Ban[] = await this.dataSource.query(
       `
           SELECT *
           FROM bans
@@ -28,7 +26,7 @@ export class BansRepositorySql {
     );
 
     if (ban?.[0]?.id) {
-      const updatedBan: Ban[] = await queryRunner.query(
+      const updatedBan: Ban[] = await this.dataSource.query(
         `
             UPDATE bans
             SET "isBanned"  = $2,
@@ -44,12 +42,10 @@ export class BansRepositorySql {
         ],
       );
 
-      await queryRunner.release();
-
       return updatedBan[0];
     }
 
-    const createdLike: Ban[] = await queryRunner.query(
+    const createdLike: Ban[] = await this.dataSource.query(
       `
           INSERT
           INTO bans ("userId", "parentId", "type", "isBanned", "banReason")
@@ -65,16 +61,11 @@ export class BansRepositorySql {
       ],
     );
 
-    await queryRunner.release();
-
     return createdLike[0];
   }
 
   async getBan({ userId, parentId, type }: FindBanInput) {
-    const queryRunner = this.dataSource.createQueryRunner();
-    await queryRunner.connect();
-
-    const ban: Ban[] = await queryRunner.query(
+    const ban: Ban[] = await this.dataSource.query(
       `
           SELECT *
           FROM bans
@@ -85,16 +76,11 @@ export class BansRepositorySql {
       [userId, parentId, type],
     );
 
-    await queryRunner.release();
-
     return ban[0];
   }
 
   async getBansByBlogId({ parentId, type }: FindBanByBlogIdInput) {
-    const queryRunner = this.dataSource.createQueryRunner();
-    await queryRunner.connect();
-
-    const bans: Ban[] = await queryRunner.query(
+    const bans: Ban[] = await this.dataSource.query(
       `
           SELECT *
           FROM bans
@@ -104,8 +90,6 @@ export class BansRepositorySql {
       `,
       [parentId, type, true],
     );
-
-    await queryRunner.release();
 
     return bans;
   }
