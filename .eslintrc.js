@@ -52,9 +52,9 @@ module.exports = {
   settings: {
     'import/resolver': {
       node: {
-        paths: ['src'],
-        extensions: ['.js', '.ts'],
+        extensions: ['.js', '.jsx', '.ts', '.tsx'],
       },
+      typescript: {},
     },
   },
 };
