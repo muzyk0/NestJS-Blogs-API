@@ -181,18 +181,53 @@ export class UsersQueryRepository implements IUsersQueryRepository {
         : {}),
     };
 
+    //     const query = `
+    //         WITH posts AS
+    //                  (SELECT p.*,
+    //                          b2."isBanned"  as "isBannedForBlog",
+    //                          b2."banReason" as "banReasonForBlog"
+    //                   FROM posts as p
+    //                            lEFT JOIN blogs as b ON p."blogId" = b.id
+    // --                            lEFT JOIN users as u ON b."userId" = u.id
+    //                            LEFT JOIN bans as b2 ON b2."userId" = b."userId" and b2."parentId" = p."blogId"
+    //                   where "blogId" = $6
+    //                     AND case
+    //                             when cast($5 as TEXT) IS NOT NULL THEN p.title ILIKE '%' || $4 || '%'
+    //                             ELSE true END
+    //
+    //                     AND case
+    //                             when $5 = 'all' THEN true
+    //                             ELSE true END
+    //                     AND case
+    //                             when $5 = 'banned' THEN b2."isBanned" is not null
+    //                             ELSE true END
+    //                     AND case
+    //                             when $5 = 'notBanned' THEN b2."isBanned" is null
+    //                             ELSE true END)
+    //
+    //         select row_to_json(t1) as data
+    //         from (select c.total, jsonb_agg(row_to_json(sub)) filter (where sub.id is not null) as "items"
+    //               from (table posts
+    //                   order by
+    //                       case when $1 = 'desc' then "${pageOptionsDto.sortBy}" end desc,
+    //                       case when $1 = 'asc' then "${pageOptionsDto.sortBy}" end asc
+    //                   limit $2
+    //                   offset $3) sub
+    //                        right join (select count(*) from posts) c (total) on true
+    //               group by c.total) t1;
+    //
+    //     `;
+
     const query = `
-        WITH posts AS
-                 (SELECT p.*,
+        WITH users AS
+                 (SELECT u.*,
                          b2."isBanned"  as "isBannedForBlog",
                          b2."banReason" as "banReasonForBlog"
-                  FROM posts as p
-                           lEFT JOIN blogs as b ON p."blogId" = b.id
---                            lEFT JOIN users as u ON b."userId" = u.id
-                           LEFT JOIN bans as b2 ON b2."userId" = b."userId" and b2."parentId" = p."blogId"
-                  where "blogId" = $6
+                  FROM users as u
+                           LEFT JOIN bans as b2 ON b2."parentId" = $6
+                  where u.id = b2."userId"
                     AND case
-                            when cast($5 as TEXT) IS NOT NULL THEN p.title ILIKE '%' || $4 || '%'
+                            when cast(null as TEXT) IS NOT NULL THEN u.login ILIKE '%' || $4 || '%'
                             ELSE true END
 
                     AND case
@@ -207,15 +242,14 @@ export class UsersQueryRepository implements IUsersQueryRepository {
 
         select row_to_json(t1) as data
         from (select c.total, jsonb_agg(row_to_json(sub)) filter (where sub.id is not null) as "items"
-              from (table posts
+              from (table users
                   order by
                       case when $1 = 'desc' then "${pageOptionsDto.sortBy}" end desc,
                       case when $1 = 'asc' then "${pageOptionsDto.sortBy}" end asc
                   limit $2
                   offset $3) sub
-                       right join (select count(*) from posts) c (total) on true
+                       right join (select count(*) from users) c (total) on true
               group by c.total) t1;
-
     `;
 
     const posts: { total: number; items?: User[] } = await this.dataSource
