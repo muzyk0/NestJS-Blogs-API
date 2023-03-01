@@ -46,7 +46,7 @@ export class BlogsRepository implements IBlogsRepository {
       `
           SELECT b.*
           FROM blogs as b
-          where b.id = $1
+          where b.id::text = $1
 `,
       [id],
     );
@@ -59,7 +59,7 @@ export class BlogsRepository implements IBlogsRepository {
       `
           SELECT b.*
           FROM blogs as b
-          where b."userId" = $1
+          where b."userId"::text = $1
 `,
       [userId],
     );
@@ -72,7 +72,7 @@ export class BlogsRepository implements IBlogsRepository {
       `
           SELECT b.*
           FROM blogs as b
-          where b.id IN $1
+          where b.id::text IN $1
           ORDER BY "createdAt"
       `,
       [ids.join(', ')],
@@ -92,7 +92,7 @@ export class BlogsRepository implements IBlogsRepository {
           SET name = $2,
               description = $3,
               "websiteUrl" = $4
-          WHERE id = $1
+          WHERE id::text = $1
           RETURNING *;
       `,
         [id, name, description, websiteUrl],
@@ -107,7 +107,7 @@ export class BlogsRepository implements IBlogsRepository {
         `
           DELETE
           FROM "blogs"
-          WHERE id = $1
+          WHERE id::text = $1
       `,
         [id],
       );
@@ -119,7 +119,7 @@ export class BlogsRepository implements IBlogsRepository {
       `
           UPDATE blogs
           SET "userId" = $2
-          WHERE id = $1
+          WHERE id::text = $1
             and "userId" IS NULL
           RETURNING *;
       `,
@@ -135,7 +135,7 @@ export class BlogsRepository implements IBlogsRepository {
       `
           UPDATE "blogs"
           SET "banned"    = $2
-          WHERE id = $1
+          WHERE id::text = $1
           RETURNING *
       `,
       [blogId, banned],

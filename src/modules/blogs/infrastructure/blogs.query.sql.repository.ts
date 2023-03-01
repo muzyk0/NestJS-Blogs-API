@@ -161,7 +161,7 @@ export class BlogsQueryRepository implements IBlogsQueryRepository {
       createdAt: new Date(blog.createdAt).toISOString(),
       isMembership: false,
       blogOwnerInfo: {
-        userId: blog.id,
+        userId: blog.userId,
         userLogin: blog.userLogin,
       },
       banInfo: {
