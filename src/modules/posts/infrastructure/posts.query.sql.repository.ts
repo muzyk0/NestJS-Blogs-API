@@ -94,7 +94,7 @@ export class PostsQueryRepository implements IPostsQueryRepository {
   async findOne(id: string, userId?: string): Promise<PostViewDto> {
     const [post]: [PostWithBlogNameDto] = await this.dataSource.query(
       `
-          SELECT p.*, b.name as blogName
+          SELECT p.*, b.name as "blogName"
           FROM posts as p
                    join blogs as b on p."blogId" = b.id
           where p.id = $1

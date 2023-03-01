@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectDataSource } from '@nestjs/typeorm';
 import { DataSource } from 'typeorm';
 
@@ -50,9 +50,9 @@ export class BlogsQueryRepository implements IBlogsQueryRepository {
         from (select c.total,
                      jsonb_agg(row_to_json(sub)) filter (where sub.id is not null) as "items"
               from (table blogs
-                  order by
-                      case when $1 = 'desc' then 'desc' end desc,
-                      case when $1 = 'asc' then 'asc' end asc
+                  order by 
+                      case when $1 = 'desc' then "${pageOptionsDto.sortBy}" end desc,
+                      case when $1 = 'asc' then "${pageOptionsDto.sortBy}" end asc
                   limit $2
                   offset $3) sub
                        right join (select count(*) from blogs) c(total) on true
@@ -121,8 +121,9 @@ export class BlogsQueryRepository implements IBlogsQueryRepository {
   }
 
   async findOne(id: string): Promise<BlogDto> {
-    const [blog] = await this.dataSource.query(
-      `
+    try {
+      const [blog] = await this.dataSource.query(
+        `
           SELECT b.*, u.banned as "isUserBanned"
           FROM blogs as b
                    lEFT JOIN users as u ON b."userId" = u.id
@@ -130,10 +131,13 @@ export class BlogsQueryRepository implements IBlogsQueryRepository {
             and b.banned is null
           ORDER BY "createdAt";
       `,
-      [id],
-    );
+        [id],
+      );
 
-    return this.mapToDto(blog);
+      return this.mapToDto(blog);
+    } catch {
+      throw new NotFoundException();
+    }
   }
 
   mapToDto(blog: Blog): BlogView {

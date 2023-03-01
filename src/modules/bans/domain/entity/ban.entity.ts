@@ -8,10 +8,10 @@ export class Ban extends BaseEntity {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
-  @Column()
+  @Column({ nullable: true, type: 'uuid' })
   userId: string;
 
-  @Column({ nullable: true })
+  @Column({ nullable: true, type: 'uuid' })
   parentId: string | null;
 
   @Column({

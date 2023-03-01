@@ -1,9 +1,10 @@
 import { Column, Entity, ManyToOne, PrimaryGeneratedColumn } from 'typeorm';
 
+import { BaseEntity } from '../../../../shared/base-entity/base.entity';
 import { Blog } from '../../../blogs/domain/entities/blog.entity';
 
 @Entity('posts')
-export class Post {
+export class Post extends BaseEntity {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
