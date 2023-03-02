@@ -16,7 +16,10 @@ import {
   IUsersQueryRepository,
   UsersQueryRepository,
 } from './infrastructure/users.query.repository.sql';
-import { UsersRepository } from './infrastructure/users.repository.sql';
+import {
+  IUsersRepository,
+  UsersRepository,
+} from './infrastructure/users.repository.sql';
 
 @Module({
   imports: [
@@ -34,13 +37,13 @@ import { UsersRepository } from './infrastructure/users.repository.sql';
     LoginNotExistRule,
     ...CommandHandlers,
     UsersRepository,
-    // UsersQueryRepository,
+    { provide: IUsersRepository, useClass: UsersRepository },
     { provide: IUsersQueryRepository, useClass: UsersQueryRepository },
     BansRepositorySql,
   ],
   exports: [
     ...CommandHandlers,
-    UsersRepository,
+    { provide: IUsersRepository, useClass: UsersRepository },
     { provide: IUsersQueryRepository, useClass: UsersQueryRepository },
   ],
 })

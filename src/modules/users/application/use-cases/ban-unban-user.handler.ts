@@ -1,7 +1,10 @@
 import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
 
 import { ISecurityRepository } from '../../../security/infrastructure/security.sql.repository';
-import { UsersRepository } from '../../infrastructure/users.repository.sql';
+import {
+  IUsersRepository,
+  UsersRepository,
+} from '../../infrastructure/users.repository.sql';
 import { BanUnbanUserInput } from '../dto/ban-unban-user.input';
 
 export class BanUnbanUserCommand {
@@ -16,7 +19,7 @@ export class BanUnbanUserHandler
   implements ICommandHandler<BanUnbanUserCommand>
 {
   constructor(
-    private readonly usersRepository: UsersRepository,
+    private readonly usersRepository: IUsersRepository,
     private readonly securityRepository: ISecurityRepository,
   ) {}
 

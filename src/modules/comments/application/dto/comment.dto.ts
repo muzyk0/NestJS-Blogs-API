@@ -29,3 +29,33 @@ export class CommentDto implements IComment {
   @IsDate()
   createdAt: Date;
 }
+
+export class CommentForBloggerSqlDto implements IComment {
+  @IsString()
+  id: string;
+
+  @Length(20, 300)
+  @IsNotEmpty()
+  content: string;
+
+  @IsString()
+  userId: string;
+
+  @IsString()
+  userLogin: string;
+
+  @IsString()
+  postId: string;
+
+  @IsString()
+  postTitle: string;
+
+  @IsString()
+  blogId: string;
+
+  @IsString()
+  blogName: string;
+
+  @IsDate()
+  createdAt: Date;
+}

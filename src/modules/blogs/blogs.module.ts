@@ -7,6 +7,7 @@ import { IsUserAlreadyExistConstraint } from '../../shared/decorators/validation
 import { AuthModule } from '../auth/auth.module';
 import { UpdateBanUserForBlogHandler } from '../bans/application/use-cases/update-ban-user-for-blog.handler';
 import { BansRepositorySql } from '../bans/infrastructure/bans.repository.sql';
+import { CommentsModule } from '../comments/comments.module';
 import { PostsModule } from '../posts/posts.module';
 import { UsersModule } from '../users/users.module';
 
@@ -37,6 +38,7 @@ const CommandHandlers = [
     AuthModule,
     PostsModule,
     UsersModule,
+
     TypeOrmModule.forFeature([Blog]),
   ],
   controllers: [BlogsController, BloggerController],

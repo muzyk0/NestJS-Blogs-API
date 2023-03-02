@@ -3,7 +3,10 @@ import { addDays } from 'date-fns';
 import { v4 } from 'uuid';
 
 import { EmailServiceLocal } from '../../../email-local/application/email-local.service';
-import { UsersRepository } from '../../../users/infrastructure/users.repository.sql';
+import {
+  IUsersRepository,
+  UsersRepository,
+} from '../../../users/infrastructure/users.repository.sql';
 
 export class ResendConfirmationCodeCommand {
   constructor(public readonly email: string) {}
@@ -14,7 +17,7 @@ export class ResendConfirmationCodeHandler
   implements ICommandHandler<ResendConfirmationCodeCommand>
 {
   constructor(
-    private readonly usersRepository: UsersRepository,
+    private readonly usersRepository: IUsersRepository,
     private readonly emailService: EmailServiceLocal,
   ) {}
 

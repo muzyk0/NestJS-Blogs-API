@@ -10,12 +10,15 @@ import {
   ValidatorConstraintInterface,
 } from 'class-validator';
 
-import { UsersRepository } from '../../../modules/users/infrastructure/users.repository.sql';
+import {
+  IUsersRepository,
+  UsersRepository,
+} from '../../../modules/users/infrastructure/users.repository.sql';
 
 @ValidatorConstraint({ name: 'LoginNotExist', async: true })
 @Injectable()
 export class LoginNotExistRule implements ValidatorConstraintInterface {
-  constructor(private usersRepository: UsersRepository) {
+  constructor(private usersRepository: IUsersRepository) {
     this.usersRepository = usersRepository;
 
     if (!usersRepository) {

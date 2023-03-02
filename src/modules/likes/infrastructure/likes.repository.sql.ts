@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { DataSource } from 'typeorm';
 
-import { UsersRepository } from '../../users/infrastructure/users.repository.sql';
+import { IUsersRepository } from '../../users/infrastructure/users.repository.sql';
 import { GetLikeDto } from '../application/dto/get-like.dto';
 import { GetCommentLikeByUser } from '../application/interfaces/get-like.interface';
 import { LikeStatus } from '../application/interfaces/like-status.enum';
@@ -11,7 +11,7 @@ import { Like } from '../domain/entity/like.entity';
 @Injectable()
 export class LikesRepositorySql {
   constructor(
-    private usersRepository: UsersRepository,
+    private usersRepository: IUsersRepository,
     private dataSource: DataSource,
   ) {}
 

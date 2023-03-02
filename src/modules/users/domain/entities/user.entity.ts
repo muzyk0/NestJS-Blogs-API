@@ -3,6 +3,7 @@ import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
 import { BaseEntity } from '../../../../shared/base-entity/base.entity';
 import { RevokeToken } from '../../../auth/domain/entities/revoked-token.entity';
 import { Blog } from '../../../blogs/domain/entities/blog.entity';
+import { Comment } from '../../../comments/domain/entities/comment.entity';
 import { Device } from '../../../security/domain/entities/security.entity';
 
 @Entity('users')
@@ -42,4 +43,7 @@ export class User extends BaseEntity {
 
   @OneToMany(() => Blog, (blog) => blog.user, { nullable: true })
   blogs: Blog[];
+
+  @OneToMany(() => Comment, (comment) => comment.user)
+  comments: Comment[];
 }

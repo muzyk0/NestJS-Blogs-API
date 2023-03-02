@@ -3,7 +3,10 @@ import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
 import { EmailServiceLocal } from '../../../email-local/application/email-local.service';
 import { PasswordRecoveryService } from '../../../password-recovery/application/password-recovery.service';
 import { PasswordRecoveryDocument } from '../../../password-recovery/domain/schemas/recovery-password.schema';
-import { UsersRepository } from '../../../users/infrastructure/users.repository.sql';
+import {
+  IUsersRepository,
+  UsersRepository,
+} from '../../../users/infrastructure/users.repository.sql';
 
 export class SendRecoveryPasswordTempCodeCommand {
   constructor(public readonly email: string) {}
@@ -14,7 +17,7 @@ export class SendRecoveryPasswordTempCodeHandler
   implements ICommandHandler<SendRecoveryPasswordTempCodeCommand>
 {
   constructor(
-    private readonly usersRepository: UsersRepository,
+    private readonly usersRepository: IUsersRepository,
     private readonly recoveryPasswordService: PasswordRecoveryService,
     private readonly emailService: EmailServiceLocal,
   ) {}

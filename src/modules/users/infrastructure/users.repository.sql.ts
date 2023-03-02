@@ -8,33 +8,35 @@ import { User } from '../domain/entities/user.entity';
 
 import { CreateUserInput } from './dto/create-user.input';
 
-interface IUsersRepository {
-  create(createUserDto: CreateUserInput): Promise<User>;
+export abstract class IUsersRepository {
+  abstract create(createUserDto: CreateUserInput): Promise<User>;
 
-  findOneByLoginOrEmail(
+  abstract findOneByLoginOrEmail(
     loginOrEmail: string,
     withBanned?: false,
   ): Promise<User>;
 
-  findOneByEmail(email: string): Promise<User>;
+  abstract findOneByEmail(email: string): Promise<User>;
 
-  findOneByConfirmationCode(code: string): Promise<User>;
+  abstract findOneByConfirmationCode(code: string): Promise<User>;
 
-  findOneById(id: string): Promise<User | null>;
+  abstract findOneById(id: string): Promise<User | null>;
 
-  findManyByIds(ids: string[]): Promise<User[]>;
+  abstract findOneByLogin(login: string): Promise<User>;
 
-  remove(id: string): Promise<boolean>;
+  abstract findManyByIds(ids: string[]): Promise<User[]>;
 
-  setIsConfirmedById(id: string): Promise<boolean>;
+  abstract remove(id: string): Promise<boolean>;
 
-  updateConfirmationCode({
+  abstract setIsConfirmedById(id: string): Promise<boolean>;
+
+  abstract updateConfirmationCode({
     id,
     code,
     expirationDate,
   }: UpdateConfirmationType): Promise<User>;
 
-  updateUserPassword({
+  abstract updateUserPassword({
     password,
     id,
   }: {
@@ -42,9 +44,9 @@ interface IUsersRepository {
     id: string;
   }): Promise<boolean>;
 
-  updateBan(id: string, payload: BanUnbanUserInput): Promise<boolean>;
+  abstract updateBan(id: string, payload: BanUnbanUserInput): Promise<boolean>;
 
-  findAllWithoutBanned(): Promise<User[]>;
+  abstract findAllWithoutBanned(): Promise<User[]>;
 }
 
 @Injectable()

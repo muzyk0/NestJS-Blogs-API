@@ -11,13 +11,15 @@ import {
   BlogsRepository,
   IBlogsRepository,
 } from '../blogs/infrastructure/blogs.sql.repository';
-import { CommentsService } from '../comments/application/comments.service';
 import {
-  Comment,
-  CommentSchema,
-} from '../comments/domain/schemas/comments.schema';
-import { CommentsQueryRepository } from '../comments/infrastructure/comments.query.repository';
-import { CommentsRepository } from '../comments/infrastructure/comments.repository';
+  CommentsService,
+  ICommentsRepository,
+} from '../comments/application/comments.service';
+import {
+  CommentsQueryRepository,
+  ICommentsQueryRepository,
+} from '../comments/infrastructure/comments.query.sql.repository';
+import { CommentsRepository } from '../comments/infrastructure/comments.sql.repository';
 import { LikesModule } from '../likes/likes.module';
 import { SecurityModule } from '../security/security.module';
 import { UsersModule } from '../users/users.module';
@@ -37,7 +39,6 @@ import {
 @Module({
   imports: [
     CqrsModule,
-    MongooseModule.forFeature([{ name: Comment.name, schema: CommentSchema }]),
     AuthModule,
     SecurityModule,
     LikesModule,
@@ -52,8 +53,8 @@ import {
     { provide: IBlogsRepository, useClass: BlogsRepository },
     BlogsService,
     CommentsService,
-    CommentsRepository,
-    CommentsQueryRepository,
+    { provide: ICommentsRepository, useClass: CommentsRepository },
+    { provide: ICommentsQueryRepository, useClass: CommentsQueryRepository },
     BansService,
     BansRepositorySql,
   ],

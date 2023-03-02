@@ -5,7 +5,10 @@ import { addDays } from 'date-fns';
 import { v4 } from 'uuid';
 
 import { EmailServiceLocal } from '../../../email-local/application/email-local.service';
-import { UsersRepository } from '../../infrastructure/users.repository.sql';
+import {
+  IUsersRepository,
+  UsersRepository,
+} from '../../infrastructure/users.repository.sql';
 import { CreateUserDto } from '../dto/create-user.dto';
 
 export class CreateUserCommand {
@@ -19,7 +22,7 @@ export class CreateUserCommand {
 @CommandHandler(CreateUserCommand)
 export class CreateUserHandler implements ICommandHandler<CreateUserCommand> {
   constructor(
-    private readonly usersRepository: UsersRepository,
+    private readonly usersRepository: IUsersRepository,
     private readonly emailService: EmailServiceLocal,
   ) {}
 

@@ -9,8 +9,5 @@ export class CreateCommentDto {
   userId: string;
 
   @IsString()
-  userLogin: string;
-
-  @IsString()
   postId: string;
 }

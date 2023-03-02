@@ -18,7 +18,7 @@ export class Like extends BaseEntity {
     type: 'enum',
     enum: LikeParentTypeEnum,
   })
-  parentType: string;
+  parentType: LikeParentTypeEnum;
 
   @Column()
   status: number;

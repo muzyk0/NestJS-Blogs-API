@@ -1,5 +1,4 @@
 import { Injectable } from '@nestjs/common';
-import { v4 } from 'uuid';
 
 import { LikeParentTypeEnum } from '../../likes/application/interfaces/like-parent-type.enum';
 import { LikeStringStatus } from '../../likes/application/interfaces/like-status.enum';
@@ -7,27 +6,31 @@ import { LikesService } from '../../likes/application/likes.service';
 import { formatLikeStatusToInt } from '../../likes/utils/formatters';
 import { IPostsRepository } from '../../posts/infrastructure/posts.sql.repository';
 import { ICommentsService } from '../controllers/comments.controller';
-import { CommentsRepository } from '../infrastructure/comments.repository';
+import { Comment } from '../domain/entities/comment.entity';
 
-import { CommentDto, IComment } from './dto/comment.dto';
 import { CommentInput } from './dto/comment.input';
 import { CreateCommentDto } from './dto/create-comment.dto';
 import { UpdateCommentDto } from './dto/update-comment.dto';
 
-export interface ICommentsRepository {
-  create(createCommentDto: CreateCommentDto): Promise<CommentDto | null>;
+export abstract class ICommentsRepository {
+  abstract create(createCommentDto: CreateCommentDto): Promise<Comment | null>;
 
-  findOne(id: string): Promise<CommentDto>;
+  abstract findOne(id: string): Promise<Comment>;
 
-  update(updateCommentDto: UpdateCommentDto): Promise<CommentDto>;
+  abstract findOneWithUserId(id: string, userId: string): Promise<Comment>;
 
-  remove(id: string): Promise<boolean>;
+  abstract update(
+    commentId: string,
+    updateCommentDto: UpdateCommentDto,
+  ): Promise<Comment>;
+
+  abstract remove(id: string): Promise<boolean>;
 }
 
 @Injectable()
 export class CommentsService implements ICommentsService {
   constructor(
-    private readonly commentsRepository: CommentsRepository,
+    private readonly commentsRepository: ICommentsRepository,
     private readonly postsRepository: IPostsRepository,
     private readonly likeService: LikesService,
   ) {}
@@ -39,13 +42,10 @@ export class CommentsService implements ICommentsService {
       return null;
     }
 
-    const newComment: IComment = {
-      id: v4(),
+    const newComment: CreateCommentDto = {
       content: createCommentDto.content,
       userId: createCommentDto.userId,
-      userLogin: createCommentDto.userLogin,
       postId: post.id,
-      createdAt: new Date(),
     };
 
     return this.commentsRepository.create(newComment);
@@ -59,9 +59,11 @@ export class CommentsService implements ICommentsService {
     return this.commentsRepository.findOneWithUserId(id, userId);
   }
 
-  async update(id: string, updateCommentDto: CommentInput) {
-    const updatedComment = await this.commentsRepository.update({
-      id,
+  async update(
+    commentId: string,
+    updateCommentDto: CommentInput,
+  ): Promise<Comment> {
+    const updatedComment = await this.commentsRepository.update(commentId, {
       content: updateCommentDto.content,
     });
 

@@ -1,7 +1,10 @@
 import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
 import { v4 } from 'uuid';
 
-import { UsersRepository } from '../../../users/infrastructure/users.repository.sql';
+import {
+  IUsersRepository,
+  UsersRepository,
+} from '../../../users/infrastructure/users.repository.sql';
 import { AuthService } from '../auth.service';
 import { JwtATPayload, JwtRTPayload } from '../interfaces/jwtPayload.type';
 import { JwtService } from '../jwt.service';
@@ -16,7 +19,7 @@ export class LoginCommand {
 @CommandHandler(LoginCommand)
 export class LoginHandler implements ICommandHandler<LoginCommand> {
   constructor(
-    private readonly usersRepository: UsersRepository,
+    private readonly usersRepository: IUsersRepository,
     private readonly authService: AuthService,
     private readonly jwtService: JwtService,
   ) {}

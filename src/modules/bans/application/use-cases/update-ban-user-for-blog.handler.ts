@@ -3,7 +3,10 @@ import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
 
 import { BanUserForBlogInput } from '../../../blogs/controllers/dto/ban-user-for-blog.input';
 import { IBlogsRepository } from '../../../blogs/infrastructure/blogs.sql.repository';
-import { UsersRepository } from '../../../users/infrastructure/users.repository.sql';
+import {
+  IUsersRepository,
+  UsersRepository,
+} from '../../../users/infrastructure/users.repository.sql';
 import { BansRepositorySql } from '../../infrastructure/bans.repository.sql';
 import { CreateBanInput } from '../input/create-ban.input';
 import { BanTypeEnum } from '../interfaces/ban-type.enum';
@@ -23,7 +26,7 @@ export class UpdateBanUserForBlogHandler
   constructor(
     private readonly blogsRepository: IBlogsRepository,
     private readonly bansRepositorySql: BansRepositorySql,
-    private readonly usersRepository: UsersRepository,
+    private readonly usersRepository: IUsersRepository,
   ) {}
 
   async execute({
