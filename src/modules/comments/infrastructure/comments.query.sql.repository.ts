@@ -202,8 +202,10 @@ export class CommentsQueryRepository implements ICommentsQueryRepository {
     return {
       id: comment.id,
       content: comment.content,
-      userId: comment.userId,
-      userLogin: comment.userLogin,
+      commentatorInfo: {
+        userId: comment.userId,
+        userLogin: comment.userLogin,
+      },
       postId: comment.postId,
       createdAt: comment.createdAt,
       likesInfo: {
