@@ -53,7 +53,7 @@ export class CommentsQueryRepository implements ICommentsQueryRepository {
   async findOne(commentId: string, userId?: string): Promise<CommentViewDto> {
     const [comment]: [CommentDto] = await this.dataSource.query(
       `
-          SELECT c.*,  u.login as userLogin
+          SELECT c.*,  u.login as "userLogin"
           FROM comments as c
                    JOIN users u on u.id = c."userId"
           where c.id::text = $1
@@ -206,7 +206,6 @@ export class CommentsQueryRepository implements ICommentsQueryRepository {
         userId: comment.userId,
         userLogin: comment.userLogin,
       },
-      postId: comment.postId,
       createdAt: comment.createdAt,
       likesInfo: {
         likesCount,

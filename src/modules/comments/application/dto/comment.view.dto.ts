@@ -18,7 +18,6 @@ export interface CommentViewDto {
     userId: string;
     userLogin: string;
   };
-  postId: string;
   createdAt: Date;
   likesInfo: LikeDto;
 }
