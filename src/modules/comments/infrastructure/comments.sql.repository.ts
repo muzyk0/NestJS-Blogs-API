@@ -78,7 +78,7 @@ export class CommentsRepository implements ICommentsRepository {
       await this.dataSource.query(
         `
           DELETE
-          FROM "posts"
+          FROM "comments"
           WHERE id::text = $1
       `,
         [commentId],
