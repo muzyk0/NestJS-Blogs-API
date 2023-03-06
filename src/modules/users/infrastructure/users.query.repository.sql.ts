@@ -1,6 +1,5 @@
 import { Injectable } from '@nestjs/common';
 import { InjectDataSource } from '@nestjs/typeorm';
-import { FilterQuery } from 'mongoose';
 import { DataSource } from 'typeorm';
 
 import {
@@ -8,7 +7,6 @@ import {
   UserBanStatus,
 } from '../../../shared/paginator/page-options.dto';
 import { PageDto } from '../../../shared/paginator/page.dto';
-import { BlogsBans } from '../../bans/domain/entity/blogger-bans.entity';
 import { BloggerBansRepositorySql } from '../../bans/infrastructure/blogger-bans.repository.sql';
 import { UserRowSqlDto } from '../application/dto/user.dto';
 import { User } from '../domain/entities/user.entity';
@@ -53,9 +51,9 @@ export class UsersQueryRepository implements IUsersQueryRepository {
   ): Promise<PageDto<UserViewModel>> {
     const query = `
         WITH users AS
-                 (SELECT *
+                 (SELECT users.*, bans.banned, bans."banReason"
                   FROM "users"
---              where (lower("banned") like '%' || lower($1) || '%')
+                           LEFT JOIN bans ON bans."userId" = users.id
                   WHERE (${
                     pageOptionsDto?.banStatus &&
                     pageOptionsDto.banStatus !== UserBanStatus.ALL
@@ -126,7 +124,7 @@ export class UsersQueryRepository implements IUsersQueryRepository {
       banInfo: {
         isBanned: Boolean(user.banned),
         banDate: user.banned ? new Date(user.banned).toISOString() : null,
-        banReason: user.banReason,
+        banReason: user.banReason ?? null,
       },
     };
   }
