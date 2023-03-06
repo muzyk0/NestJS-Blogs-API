@@ -2,8 +2,10 @@ import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
 
 import { BaseEntity } from '../../../../shared/base-entity/base.entity';
 import { RevokeToken } from '../../../auth/domain/entities/revoked-token.entity';
+import { Bans } from '../../../bans/domain/entity/bans.entity';
 import { Blog } from '../../../blogs/domain/entities/blog.entity';
 import { Comment } from '../../../comments/domain/entities/comment.entity';
+import { Like } from '../../../likes/domain/entity/like.entity';
 import { Device } from '../../../security/domain/entities/security.entity';
 
 @Entity('users')
@@ -19,12 +21,6 @@ export class User extends BaseEntity {
 
   @Column()
   password: string;
-
-  @Column({ nullable: true })
-  banned: Date | null;
-
-  @Column({ nullable: true })
-  banReason: string | null;
 
   @Column({ default: false })
   isConfirmed: boolean;
@@ -46,4 +42,10 @@ export class User extends BaseEntity {
 
   @OneToMany(() => Comment, (comment) => comment.user)
   comments: Comment[];
+
+  @OneToMany(() => Like, (like) => like.user)
+  likes: Comment[];
+
+  @OneToMany(() => Bans, (like) => like.user)
+  bans: Bans[];
 }

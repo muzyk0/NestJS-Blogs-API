@@ -6,7 +6,10 @@ import { BlogExistsRule } from '../../shared/decorators/validations/check-blogId
 import { IsUserAlreadyExistConstraint } from '../../shared/decorators/validations/check-is-user-exist.decorator';
 import { AuthModule } from '../auth/auth.module';
 import { UpdateBanUserForBlogHandler } from '../bans/application/use-cases/update-ban-user-for-blog.handler';
-import { BansRepositorySql } from '../bans/infrastructure/bans.repository.sql';
+import {
+  BloggerBansRepositorySql,
+  IBloggerBansRepositorySql,
+} from '../bans/infrastructure/blogger-bans.repository.sql';
 import { CommentsModule } from '../comments/comments.module';
 import { PostsModule } from '../posts/posts.module';
 import { UsersModule } from '../users/users.module';
@@ -49,7 +52,7 @@ const CommandHandlers = [
     { provide: IBlogsRepository, useClass: BlogsRepository },
     BlogExistsRule,
     IsUserAlreadyExistConstraint,
-    BansRepositorySql,
+    { provide: IBloggerBansRepositorySql, useClass: BloggerBansRepositorySql },
   ],
   exports: [
     ...CommandHandlers,

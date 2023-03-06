@@ -1,7 +1,6 @@
 import { Injectable } from '@nestjs/common';
 
 import { IBlogsRepository } from '../../blogs/infrastructure/blogs.sql.repository';
-import { LikeParentTypeEnum } from '../../likes/application/interfaces/like-parent-type.enum';
 import { LikeStringStatus } from '../../likes/application/interfaces/like-status.enum';
 import { LikesService } from '../../likes/application/likes.service';
 import { formatLikeStatusToInt } from '../../likes/utils/formatters';
@@ -91,9 +90,8 @@ export class PostsService implements IPostService {
 
     const status = formatLikeStatusToInt(updateLike.likeStatus);
 
-    return this.likeService.updateLikeStatus({
-      parentId: updateLike.postId,
-      parentType: LikeParentTypeEnum.POST,
+    return this.likeService.updatePostLikeStatus({
+      postId: updateLike.postId,
       userId: updateLike.userId,
       likeStatus: status,
     });

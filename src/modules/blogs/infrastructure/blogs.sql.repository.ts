@@ -12,9 +12,9 @@ export abstract class IBlogsRepository {
 
   abstract findOne(id: string): Promise<Blog>;
 
-  abstract findByUserId(userId: string): Promise<Blog[]>;
+  // abstract findByUserId(userId: string): Promise<Blog[]>;
 
-  abstract findMany(ids: string[]): Promise<Blog[]>;
+  // abstract findMany(ids: string[]): Promise<Blog[]>;
 
   abstract update(id: string, updateBlogDto: UpdateBlogDto): Promise<Blog>;
 
@@ -54,32 +54,32 @@ export class BlogsRepository implements IBlogsRepository {
     return blog;
   }
 
-  async findByUserId(userId: string): Promise<Blog[]> {
-    const blog: Blog[] = await this.dataSource.query(
-      `
-          SELECT b.*
-          FROM blogs as b
-          where b."userId"::text = $1
-`,
-      [userId],
-    );
+  //   async findByUserId(userId: string): Promise<Blog[]> {
+  //     const blog: Blog[] = await this.dataSource.query(
+  //       `
+  //           SELECT b.*
+  //           FROM blogs as b
+  //           where b."userId"::text = $1
+  // `,
+  //       [userId],
+  //     );
+  //
+  //     return blog;
+  //   }
 
-    return blog;
-  }
-
-  async findMany(ids: string[]): Promise<Blog[]> {
-    const blogs: Blog[] = await this.dataSource.query(
-      `
-          SELECT b.*
-          FROM blogs as b
-          where b.id::text IN $1
-          ORDER BY "createdAt"
-      `,
-      [ids.join(', ')],
-    );
-
-    return blogs;
-  }
+  // async findMany(ids: string[]): Promise<Blog[]> {
+  //   const blogs: Blog[] = await this.dataSource.query(
+  //     `
+  //         SELECT b.*
+  //         FROM blogs as b
+  //         where b.id::text IN $1
+  //         ORDER BY "createdAt"
+  //     `,
+  //     [ids.join(', ')],
+  //   );
+  //
+  //   return blogs;
+  // }
 
   async update(
     id: string,

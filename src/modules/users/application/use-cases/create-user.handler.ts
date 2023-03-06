@@ -5,6 +5,7 @@ import { addDays } from 'date-fns';
 import { v4 } from 'uuid';
 
 import { EmailServiceLocal } from '../../../email-local/application/email-local.service';
+import { IUsersQueryRepository } from '../../infrastructure/users.query.repository.sql';
 import {
   IUsersRepository,
   UsersRepository,
@@ -23,6 +24,7 @@ export class CreateUserCommand {
 export class CreateUserHandler implements ICommandHandler<CreateUserCommand> {
   constructor(
     private readonly usersRepository: IUsersRepository,
+    private readonly usersQueryRepository: IUsersQueryRepository,
     private readonly emailService: EmailServiceLocal,
   ) {}
 
@@ -60,18 +62,8 @@ export class CreateUserHandler implements ICommandHandler<CreateUserCommand> {
       throw new Error("User isn't created");
     }
 
-    const { id, login: userLogin, email: userEmail } = createdUser;
+    const { id } = createdUser;
 
-    return {
-      id,
-      login: userLogin,
-      email: userEmail,
-      createdAt: createdUser.createdAt,
-      banInfo: {
-        isBanned: Boolean(createdUser.banned),
-        banDate: createdUser.banned,
-        banReason: createdUser.banReason,
-      },
-    };
+    return this.usersQueryRepository.findOne(id);
   }
 }

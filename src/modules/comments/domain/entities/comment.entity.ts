@@ -1,6 +1,13 @@
-import { Column, Entity, ManyToOne, PrimaryGeneratedColumn } from 'typeorm';
+import {
+  Column,
+  Entity,
+  ManyToOne,
+  OneToMany,
+  PrimaryGeneratedColumn,
+} from 'typeorm';
 
 import { BaseEntity } from '../../../../shared/base-entity/base.entity';
+import { Like } from '../../../likes/domain/entity/like.entity';
 import { Post } from '../../../posts/domain/entities/post.entity';
 import { User } from '../../../users/domain/entities/user.entity';
 
@@ -23,4 +30,7 @@ export class Comment extends BaseEntity {
 
   @Column()
   postId: string;
+
+  @OneToMany(() => Like, (like) => like.post)
+  likes: Like[];
 }

@@ -1,6 +1,4 @@
-import { IsEnum, IsNotEmpty, IsString } from 'class-validator';
-
-import { BanTypeEnum } from '../interfaces/ban-type.enum';
+import { IsNotEmpty, IsString } from 'class-validator';
 
 export class FindBanInput {
   @IsString()
@@ -8,17 +6,11 @@ export class FindBanInput {
 
   @IsString()
   @IsNotEmpty()
-  parentId: string;
-
-  @IsEnum(BanTypeEnum)
-  type: BanTypeEnum;
+  blogId: string;
 }
 
 export class FindBanByBlogIdInput {
   @IsString()
   @IsNotEmpty()
-  parentId: string;
-
-  @IsEnum(BanTypeEnum)
-  type: BanTypeEnum;
+  blogId: string;
 }

@@ -25,6 +25,6 @@ export class BanUnbanUserHandler
 
   async execute({ userId, payload }: BanUnbanUserCommand) {
     await this.securityRepository.removeAllDevices(userId);
-    return this.usersRepository.updateBan(userId, payload);
+    return this.usersRepository.createOrUpdateBan(userId, payload);
   }
 }

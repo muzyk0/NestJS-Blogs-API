@@ -19,8 +19,10 @@ export class TestingRepository {
         DELETE
         FROM "bans";
         DELETE
+        FROM "blogs_bans";
+        DELETE
         FROM "devices";
-        DELETE 
+        DELETE
         FROM "comments";
         DELETE
         FROM "posts";
@@ -28,6 +30,7 @@ export class TestingRepository {
         FROM "blogs";
         DELETE
         FROM "users";
+
     `);
 
     return true;

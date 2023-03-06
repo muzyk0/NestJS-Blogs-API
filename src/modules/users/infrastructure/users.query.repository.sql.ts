@@ -8,8 +8,9 @@ import {
   UserBanStatus,
 } from '../../../shared/paginator/page-options.dto';
 import { PageDto } from '../../../shared/paginator/page.dto';
-import { Ban } from '../../bans/domain/entity/ban.entity';
-import { BansRepositorySql } from '../../bans/infrastructure/bans.repository.sql';
+import { BlogsBans } from '../../bans/domain/entity/blogger-bans.entity';
+import { BloggerBansRepositorySql } from '../../bans/infrastructure/blogger-bans.repository.sql';
+import { UserRowSqlDto } from '../application/dto/user.dto';
 import { User } from '../domain/entities/user.entity';
 
 import { UserWithBannedInfoForBlogView } from './dto/user-with-banned-info-for-blog.view';
@@ -22,10 +23,6 @@ export abstract class IUsersQueryRepository {
     pageOptionsDto: PageOptionsForUserDto,
   ): Promise<PageDto<UserViewModel>>;
 
-  abstract mapToDto(users: User): UserViewModel;
-
-  abstract mapToBloggerViewDto(users: User, ban: Ban): UserBloggerViewModel;
-
   abstract getBannedUsersForBlog(
     pageOptionsDto: PageOptionsForUserDto,
     blogId: string,
@@ -36,11 +33,11 @@ export abstract class IUsersQueryRepository {
 export class UsersQueryRepository implements IUsersQueryRepository {
   constructor(
     @InjectDataSource() private dataSource: DataSource,
-    private readonly bansRepositorySql: BansRepositorySql,
+    private readonly bansRepositorySql: BloggerBansRepositorySql,
   ) {}
 
   async findOne(id: string): Promise<UserViewModel> {
-    const users: User[] = await this.dataSource.query(
+    const users: UserRowSqlDto[] = await this.dataSource.query(
       `
           SELECT *
           FROM "users"
@@ -108,9 +105,10 @@ export class UsersQueryRepository implements IUsersQueryRepository {
       pageOptionsDto.skip,
     ];
 
-    const users: { total: number; items?: User[] } = await this.dataSource
-      .query(query, queryParams)
-      .then((res) => res[0]?.data);
+    const users: { total: number; items?: UserRowSqlDto[] } =
+      await this.dataSource
+        .query(query, queryParams)
+        .then((res) => res[0]?.data);
 
     return new PageDto({
       items: users.items?.map(this.mapToDto) ?? [],
@@ -119,7 +117,7 @@ export class UsersQueryRepository implements IUsersQueryRepository {
     });
   }
 
-  mapToDto(user: User): UserViewModel {
+  mapToDto(user: UserRowSqlDto): UserViewModel {
     return {
       id: user.id,
       login: user.login,

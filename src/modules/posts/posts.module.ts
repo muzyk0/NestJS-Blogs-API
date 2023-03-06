@@ -1,11 +1,13 @@
 import { Module } from '@nestjs/common';
 import { CqrsModule } from '@nestjs/cqrs';
-import { MongooseModule } from '@nestjs/mongoose';
 import { TypeOrmModule } from '@nestjs/typeorm';
 
 import { AuthModule } from '../auth/auth.module';
 import { BansService } from '../bans/application/bans.service';
-import { BansRepositorySql } from '../bans/infrastructure/bans.repository.sql';
+import {
+  BloggerBansRepositorySql,
+  IBloggerBansRepositorySql,
+} from '../bans/infrastructure/blogger-bans.repository.sql';
 import { BlogsService } from '../blogs/application/blogs.service';
 import {
   BlogsRepository,
@@ -56,7 +58,7 @@ import {
     { provide: ICommentsRepository, useClass: CommentsRepository },
     { provide: ICommentsQueryRepository, useClass: CommentsQueryRepository },
     BansService,
-    BansRepositorySql,
+    { provide: IBloggerBansRepositorySql, useClass: BloggerBansRepositorySql },
   ],
   exports: [
     PostsService,

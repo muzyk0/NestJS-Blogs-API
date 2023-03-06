@@ -1,17 +1,12 @@
 import { Injectable } from '@nestjs/common';
 import { InjectDataSource } from '@nestjs/typeorm';
-import { IsInt, IsOptional } from 'class-validator';
-import { FilterQuery } from 'mongoose';
 import { DataSource } from 'typeorm';
 
-import { BASE_PROJECTION } from '../../../shared/mongoose/constants';
 import { PageOptionsDto } from '../../../shared/paginator/page-options.dto';
 import { PageDto } from '../../../shared/paginator/page.dto';
-import { LikeParentTypeEnum } from '../../likes/application/interfaces/like-parent-type.enum';
 import { Like } from '../../likes/domain/entity/like.entity';
 import { LikesRepositorySql } from '../../likes/infrastructure/likes.repository.sql';
 import { getStringLikeStatus } from '../../likes/utils/formatters';
-import { PostWithBlogNameDto } from '../../posts/application/dto/post-with-blog-name.dto';
 import {
   CommentDto,
   CommentForBloggerSqlDto,
@@ -20,9 +15,6 @@ import {
   CommentForBloggerViewDto,
   CommentViewDto,
 } from '../application/dto/comment.view.dto';
-import { Comment } from '../domain/entities/comment.entity';
-
-const projectionFields = { ...BASE_PROJECTION };
 
 export abstract class ICommentsQueryRepository {
   abstract findOne(id: string, userId?: string): Promise<CommentViewDto>;
@@ -53,11 +45,12 @@ export class CommentsQueryRepository implements ICommentsQueryRepository {
   async findOne(commentId: string, userId?: string): Promise<CommentViewDto> {
     const [comment]: [CommentDto] = await this.dataSource.query(
       `
-          SELECT c.*,  u.login as "userLogin"
+          SELECT c.*, u.login as "userLogin"
           FROM comments as c
-                   JOIN users u on u.id = c."userId"
+                   LEFT JOIN users u on u.id = c."userId"
+                   LEFT JOIN bans AS b on u.id = b."userId"
           where c.id::text = $1
-            AND u.banned is null
+            AND b.banned is null
       `,
       [commentId],
     );
@@ -78,7 +71,7 @@ export class CommentsQueryRepository implements ICommentsQueryRepository {
                  (SELECT c.*, u.login as "userLogin"
                   FROM comments as c
                            lEFT JOIN users as u ON u.id = c."userId"
-                  where c."postId" = $4
+                  where c."postId"::text = $4
                     )
 
 
@@ -125,8 +118,7 @@ export class CommentsQueryRepository implements ICommentsQueryRepository {
       });
 
     const myStatus = await this.likesRepositorySql.getLikeOrDislike({
-      parentId: comment.id,
-      parentType: LikeParentTypeEnum.COMMENT,
+      commentId: comment.id,
       userId: userId,
     });
 
@@ -151,9 +143,10 @@ export class CommentsQueryRepository implements ICommentsQueryRepository {
                                  left join
                              (select b.*
                               from blogs b
-                                       join users u on b."userId" = u.id
-                              where b."userId" = $4
-                                and u.banned is null) b
+                                      left join users AS u on b."userId" = u.id
+                                      LEFT JOIN bans on u.id = b."userId"
+                              where b."userId"::text = $4
+                                and bans.banned is null) b
                              on p."blogId" = b.id
                         where p."blogId" = b.id) p
                        on c."postId" = p.id

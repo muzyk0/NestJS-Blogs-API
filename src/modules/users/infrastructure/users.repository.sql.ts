@@ -2,7 +2,9 @@ import { Injectable } from '@nestjs/common';
 import { InjectDataSource } from '@nestjs/typeorm';
 import { DataSource } from 'typeorm';
 
+import { Bans } from '../../bans/domain/entity/bans.entity';
 import { BanUnbanUserInput } from '../application/dto/ban-unban-user.input';
+import { UserRowSqlDto } from '../application/dto/user.dto';
 import { UpdateConfirmationType } from '../application/interfaces/users.interface';
 import { User } from '../domain/entities/user.entity';
 
@@ -14,7 +16,7 @@ export abstract class IUsersRepository {
   abstract findOneByLoginOrEmail(
     loginOrEmail: string,
     withBanned?: false,
-  ): Promise<User>;
+  ): Promise<UserRowSqlDto>;
 
   abstract findOneByEmail(email: string): Promise<User>;
 
@@ -24,7 +26,7 @@ export abstract class IUsersRepository {
 
   abstract findOneByLogin(login: string): Promise<User>;
 
-  abstract findManyByIds(ids: string[]): Promise<User[]>;
+  // abstract findManyByIds(ids: string[]): Promise<User[]>;
 
   abstract remove(id: string): Promise<boolean>;
 
@@ -44,9 +46,12 @@ export abstract class IUsersRepository {
     id: string;
   }): Promise<boolean>;
 
-  abstract updateBan(id: string, payload: BanUnbanUserInput): Promise<boolean>;
+  abstract createOrUpdateBan(
+    id: string,
+    payload: BanUnbanUserInput,
+  ): Promise<boolean>;
 
-  abstract findAllWithoutBanned(): Promise<User[]>;
+  // abstract findAllWithoutBanned(): Promise<User[]>;
 }
 
 @Injectable()
@@ -78,26 +83,26 @@ export class UsersRepository implements IUsersRepository {
     return result[0];
   }
 
-  async findAllWithoutBanned(): Promise<User[]> {
-    const users: User[] = await this.dataSource.query(`
-        SELECT *
-        FROM "users"
-        WHERE banned IS NULL
-    `);
-    return users;
-  }
+  // async findAllWithoutBanned(): Promise<User[]> {
+  //   const users: User[] = await this.dataSource.query(`
+  //       SELECT *
+  //       FROM "users"
+  //       WHERE banned IS NULL
+  //   `);
+  //   return users;
+  // }
 
-  async findManyByIds(ids: string[]): Promise<User[]> {
-    const users: User[] = await this.dataSource.query(
-      `
-          SELECT *
-          FROM "users"
-          WHERE id IN ($1)
-      `,
-      [ids],
-    );
-    return users;
-  }
+  // async findManyByIds(ids: string[]): Promise<User[]> {
+  //   const users: User[] = await this.dataSource.query(
+  //     `
+  //         SELECT *
+  //         FROM "users"
+  //         WHERE id IN ($1)
+  //     `,
+  //     [ids],
+  //   );
+  //   return users;
+  // }
 
   async findOneByConfirmationCode(code: string): Promise<User> {
     const users: User[] = await this.dataSource.query(
@@ -150,16 +155,21 @@ export class UsersRepository implements IUsersRepository {
   async findOneByLoginOrEmail(
     loginOrEmail: string,
     withBanned?: boolean,
-  ): Promise<User> {
-    const users: User[] = await this.dataSource.query(
+  ): Promise<UserRowSqlDto> {
+    const users: UserRowSqlDto[] = await this.dataSource.query(
       `
-          SELECT *
-          FROM "users"
-          WHERE ("login" = $1
-              OR "email" = $1)
+          SELECT *, b.banned, b."banReason"
+          FROM "users" as u
+                   left join bans as b on b."userId" = u.id
+          WHERE (u."login" = $1
+              OR u."email" = $1)
+            AND CASE
+                    WHEN $2 IS NOT NULL THEN b.banned IS NULL
+                    ELSE true
+              END
               ${withBanned ? '' : 'AND "banned" IS NULL'}
       `,
-      [loginOrEmail],
+      [loginOrEmail, withBanned],
     );
     return users[0];
   }
@@ -188,19 +198,25 @@ export class UsersRepository implements IUsersRepository {
     return true;
   }
 
-  async updateBan(id: string, payload: BanUnbanUserInput): Promise<boolean> {
+  async createOrUpdateBan(
+    id: string,
+    payload: BanUnbanUserInput,
+  ): Promise<boolean> {
     const banned = payload.isBanned ? new Date() : null;
     const banReason = payload.isBanned ? payload.banReason : null;
-    await this.dataSource.query(
+
+    const [ban]: [Bans] = await this.dataSource.query(
       `
-          UPDATE "users"
-          SET "banned"    = $2,
-              "banReason" = $3
-          WHERE id = $1
+          INSERT INTO bans ("userId", banned, "banReason")
+          VALUES ($1, $2, $3)
+          ON CONFLICT (id) DO UPDATE
+              SET "banned"  = $4,
+                  "banReason" = $5
           RETURNING *
       `,
       [id, banned, banReason],
     );
+
     return true;
   }
 

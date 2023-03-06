@@ -23,7 +23,6 @@ import { JwtATPayload } from '../../auth/application/interfaces/jwtPayload.type'
 import { AuthGuard } from '../../auth/guards/auth-guard';
 import { JwtAuthGuard } from '../../auth/guards/jwt-auth.guard';
 import { BansService } from '../../bans/application/bans.service';
-import { BanTypeEnum } from '../../bans/application/interfaces/ban-type.enum';
 import { BlogsService } from '../../blogs/application/blogs.service';
 import { CommentsService } from '../../comments/application/comments.service';
 import { CommentInput } from '../../comments/application/dto/comment.input';
@@ -115,8 +114,7 @@ export class PostsController {
 
     const ban = await this.bansService.getBan({
       userId: userId,
-      parentId: post.blogId,
-      type: BanTypeEnum.BLOG,
+      blogId: post.blogId,
     });
 
     if (ban) {
