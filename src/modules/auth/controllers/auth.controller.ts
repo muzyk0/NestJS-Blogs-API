@@ -69,36 +69,25 @@ export class AuthController {
     @Req() req: Request,
     @Res({ passthrough: true }) res: Response,
   ) {
-    const user = await this.commandBus.execute(
-      new LoginCommand(loginDto.loginOrEmail, loginDto.password),
-    );
-
-    if (!user) {
-      throw new UnauthorizedException();
-    }
-
-    const { refreshToken, ...tokens } = user;
-
-    const decodedAccessToken =
-      await this.jwtService.decodeJwtToken<DecodedJwtRTPayload>(refreshToken);
-
     const userAgent = req.get('User-Agent');
 
-    await this.securityService.createOrUpdate({
-      userId: decodedAccessToken.user.id,
-      ip: req.ip,
-      deviceId: decodedAccessToken.deviceId,
-      deviceName: userAgent,
-      issuedAt: decodedAccessToken.iat,
-      expireAt: decodedAccessToken.exp,
-    });
+    const tokens = await this.commandBus.execute<LoginCommand, TokensType>(
+      new LoginCommand(
+        loginDto.loginOrEmail,
+        loginDto.password,
+        userAgent,
+        req.ip,
+      ),
+    );
 
-    res.cookie('refreshToken', refreshToken, {
+    res.cookie('refreshToken', tokens.refreshToken, {
       httpOnly: !this.isDev,
       secure: !this.isDev,
     });
 
-    return tokens;
+    return {
+      accessToken: tokens.accessToken,
+    };
   }
 
   @UseGuards(LimitsControlGuard)

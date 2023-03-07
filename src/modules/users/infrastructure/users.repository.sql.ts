@@ -152,24 +152,21 @@ export class UsersRepository implements IUsersRepository {
     return users[0];
   }
 
-  async findOneByLoginOrEmail(
-    loginOrEmail: string,
-    withBanned?: boolean,
-  ): Promise<UserRowSqlDto> {
+  async findOneByLoginOrEmail(loginOrEmail: string): Promise<UserRowSqlDto> {
     const users: UserRowSqlDto[] = await this.dataSource.query(
       `
-          SELECT *, b.banned, b."banReason"
+          SELECT u.*, b.banned, b."banReason"
           FROM "users" as u
                    left join bans as b on b."userId" = u.id
           WHERE (u."login" = $1
               OR u."email" = $1)
-            AND CASE
-                    WHEN $2 IS NOT NULL THEN b.banned IS NULL
-                    ELSE true
-              END
-              ${withBanned ? '' : 'AND "banned" IS NULL'}
+            AND b.banned IS NULL
+          --             AND CASE
+--                     WHEN $2 IS NOT NULL THEN b.banned IS NULL
+--                     ELSE true
+--               END
       `,
-      [loginOrEmail, withBanned],
+      [loginOrEmail],
     );
     return users[0];
   }

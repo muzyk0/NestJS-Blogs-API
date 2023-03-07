@@ -4,34 +4,53 @@ import request from 'supertest';
 
 import { CreateUserDto } from '../../src/modules/users/application/dto/create-user.dto';
 import { UserViewModel } from '../../src/modules/users/infrastructure/dto/user.view';
+import '../jest/toBeTypeOrNull';
 
-export interface FakeUser {
-  user: UserViewModel | null;
-  credentials: CreateUserDto | null;
-  accessToken: string | null;
+export abstract class FakeUser {
+  abstract user: UserViewModel | null;
+  abstract credentials: CreateUserDto | null;
+  abstract accessToken: string | null;
+
+  static checkViewDto(user: UserViewModel | null) {
+    expect(user).toEqual({
+      id: expect.any(String),
+      login: expect.any(String),
+      email: expect.any(String),
+      createdAt: expect.any(String),
+      banInfo: {
+        isBanned: expect.any(Boolean),
+        banDate: expect.toBeTypeOrNull(String),
+        banReason: expect.toBeTypeOrNull(String),
+      },
+    });
+  }
 }
 
 export class FakeUserBuilder {
-  private user: UserViewModel = null;
-  private credentials: CreateUserDto = null;
-  private token: string = null;
+  private user: UserViewModel | null = null;
+  private credentials: CreateUserDto | null = null;
+  private token: string | null = null;
 
   private setting: {
+    isUserCanBeCreated: boolean;
     isLogged: boolean;
   };
 
   constructor(private readonly app: INestApplication) {
     this.setting = {
+      isUserCanBeCreated: false,
       isLogged: false,
     };
   }
 
-  create() {
+  create(createUserDto?: Partial<CreateUserDto>) {
     this.credentials = {
-      login: faker.internet.userName().slice(0, 10),
-      password: faker.internet.password(),
-      email: faker.internet.email(),
+      login: createUserDto?.login ?? faker.internet.userName().slice(0, 10),
+      password: createUserDto?.password ?? faker.internet.password(),
+      email: createUserDto?.email ?? faker.internet.email(),
     };
+
+    this.setting.isUserCanBeCreated = true;
 
     return this;
   }
@@ -42,7 +61,7 @@ export class FakeUserBuilder {
   }
 
   async build(): Promise<FakeUser> {
-    if (!this.user) {
+    if (this.setting.isUserCanBeCreated) {
       await this._create();
     }
 

@@ -1,18 +1,26 @@
+import { UnauthorizedException } from '@nestjs/common';
 import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
 import { v4 } from 'uuid';
 
+import { SecurityService } from '../../../security/application/security.service';
 import {
   IUsersRepository,
   UsersRepository,
 } from '../../../users/infrastructure/users.repository.sql';
 import { AuthService } from '../auth.service';
-import { JwtATPayload, JwtRTPayload } from '../interfaces/jwtPayload.type';
+import {
+  DecodedJwtRTPayload,
+  JwtATPayload,
+  JwtRTPayload,
+} from '../interfaces/jwtPayload.type';
 import { JwtService } from '../jwt.service';
 
 export class LoginCommand {
   constructor(
     public readonly loginOrEmail: string,
     public readonly password: string,
+    public readonly userAgent: string,
+    public readonly userIp: string,
   ) {}
 }
 
@@ -22,9 +30,10 @@ export class LoginHandler implements ICommandHandler<LoginCommand> {
     private readonly usersRepository: IUsersRepository,
     private readonly authService: AuthService,
     private readonly jwtService: JwtService,
+    private readonly securityService: SecurityService,
   ) {}
 
-  async execute({ loginOrEmail, password }: LoginCommand) {
+  async execute({ loginOrEmail, password, userAgent, userIp }: LoginCommand) {
     const user = await this.usersRepository.findOneByLoginOrEmail(loginOrEmail);
 
     if (!user || Boolean(user?.banned)) {
@@ -52,7 +61,26 @@ export class LoginHandler implements ICommandHandler<LoginCommand> {
       deviceId,
     );
 
-    return this.jwtService.createJwtTokens(atPayload, rtPayload);
+    const tokens = await this.jwtService.createJwtTokens(atPayload, rtPayload);
+
+    if (!tokens) {
+      throw new UnauthorizedException();
+    }
+
+    const decodedAccessToken =
+      await this.jwtService.decodeJwtToken<DecodedJwtRTPayload>(
+        tokens.refreshToken,
+      );
+
+    await this.securityService.createOrUpdate({
+      userId: decodedAccessToken.user.id,
+      ip: userIp,
+      deviceId: decodedAccessToken.deviceId,
+      deviceName: userAgent,
+      issuedAt: decodedAccessToken.iat,
+      expireAt: decodedAccessToken.exp,
+    });
+    return tokens;
   }
 
   private createRefreshTokenPayload(
