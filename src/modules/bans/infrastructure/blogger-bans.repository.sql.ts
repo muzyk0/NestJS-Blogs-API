@@ -26,8 +26,8 @@ export class BloggerBansRepositorySql implements IBloggerBansRepositorySql {
           INSERT INTO blogs_bans ("userId", "blogId", "banned", "banReason")
           VALUES ($1, $2, $3, $4)
           ON CONFLICT (id) DO UPDATE
-              SET "banned"    = $4,
-                  "banReason" = $5
+              SET "banned"    = $3,
+                  "banReason" = $4
           RETURNING *
       `,
       [
