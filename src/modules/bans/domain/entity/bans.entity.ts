@@ -1,4 +1,10 @@
-import { Entity, Column, PrimaryGeneratedColumn, ManyToOne } from 'typeorm';
+import {
+  Entity,
+  Column,
+  PrimaryGeneratedColumn,
+  ManyToOne,
+  Unique,
+} from 'typeorm';
 
 import { BaseEntity } from '../../../../shared/base-entity/base.entity';
 import { User } from '../../../users/domain/entities/user.entity';
@@ -11,11 +17,11 @@ export class Bans extends BaseEntity {
   @ManyToOne(() => User, (user) => user.bans)
   user: string;
 
-  @Column({ nullable: true, type: 'uuid' })
+  @Column({ nullable: true, type: 'uuid', unique: true })
   userId: string;
 
-  @Column({ default: false })
-  banned: boolean;
+  @Column({ default: null })
+  banned: Date;
 
   @Column({ nullable: true })
   banReason: string;

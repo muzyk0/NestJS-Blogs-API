@@ -51,21 +51,25 @@ export class UsersQueryRepository implements IUsersQueryRepository {
   ): Promise<PageDto<UserViewModel>> {
     const query = `
         WITH users AS
-                 (SELECT users.*, bans.banned, bans."banReason"
-                  FROM "users"
-                           LEFT JOIN bans ON bans."userId" = users.id
-                  WHERE (${
-                    pageOptionsDto?.banStatus &&
-                    pageOptionsDto.banStatus !== UserBanStatus.ALL
-                      ? `
+                 (SELECT u.*,
+                         b2."banned"    as "banned",
+                         b2."banReason" as "banReason"
+                  FROM users as u
+                           LEFT JOIN bans as b2 ON b2."userId" = u.id
+                  WHERE u.id = b2."userId"
+--                     AND b2."banned" IS NOT NULL
+                    AND (${
+                      pageOptionsDto?.banStatus &&
+                      pageOptionsDto.banStatus !== UserBanStatus.ALL
+                        ? `
                           ${
                             pageOptionsDto.banStatus === UserBanStatus.BANNED
-                              ? `banned IS nOt NULL`
-                              : `banned IS NULL`
+                              ? `b2.banned IS nOt NULL`
+                              : `b2.banned IS NULL`
                           }
                         `
-                      : 'banned IS NULL OR banned IS NOT NULL'
-                  }) ${
+                        : true
+                    }) ${
       pageOptionsDto.searchLoginTerm || pageOptionsDto.searchEmailTerm
         ? `AND (${
             pageOptionsDto.searchLoginTerm
@@ -150,7 +154,7 @@ export class UsersQueryRepository implements IUsersQueryRepository {
     const query = `
         WITH users AS
                  (SELECT u.*,
-                         b2."banned"  as "bannedDateForBlog",
+                         b2."banned"    as "bannedDateForBlog",
                          b2."banReason" as "banReasonForBlog",
                          b2."updatedAt" as "updatedAtForBlog"
                   FROM users as u

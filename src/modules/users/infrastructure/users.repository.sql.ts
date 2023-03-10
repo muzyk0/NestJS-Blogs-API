@@ -206,9 +206,9 @@ export class UsersRepository implements IUsersRepository {
       `
           INSERT INTO bans ("userId", banned, "banReason")
           VALUES ($1, $2, $3)
-          ON CONFLICT (id) DO UPDATE
-              SET "banned"  = $4,
-                  "banReason" = $5
+          ON CONFLICT ("userId") DO UPDATE
+              SET "banned"  = $2,
+                  "banReason" = $3
           RETURNING *
       `,
       [id, banned, banReason],
