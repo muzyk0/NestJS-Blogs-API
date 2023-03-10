@@ -55,9 +55,9 @@ export class PostsRepository implements IPostsRepository {
   async findOne(id: string): Promise<PostDomain> {
     const [post]: [PostDomain] = await this.dataSource.query(
       `
-          SELECT b.*
-          FROM posts as b
-          where b.id::text = $1
+          SELECT p.*
+          FROM posts as p
+          where p.id::text = $1
 `,
       [id],
     );

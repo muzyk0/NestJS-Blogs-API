@@ -136,7 +136,7 @@ export class UsersQueryRepository implements IUsersQueryRepository {
       id: user.id,
       login: user.login,
       banInfo: {
-        isBanned: user.isBannedForBlog,
+        isBanned: Boolean(user.bannedDateForBlog),
         banDate: new Date(user.updatedAtForBlog).toISOString(),
         banReason: user.banReasonForBlog,
       },
@@ -150,13 +150,13 @@ export class UsersQueryRepository implements IUsersQueryRepository {
     const query = `
         WITH users AS
                  (SELECT u.*,
-                         b2."isBanned"  as "isBannedForBlog",
+                         b2."banned"  as "bannedDateForBlog",
                          b2."banReason" as "banReasonForBlog",
                          b2."updatedAt" as "updatedAtForBlog"
                   FROM users as u
-                           LEFT JOIN bans as b2 ON b2."parentId" = $5
+                           LEFT JOIN blogs_bans as b2 ON b2."blogId" = $5
                   where u.id = b2."userId"
-                    AND b2."isBanned" = true
+                    AND b2."banned" IS NOT NULL
                     AND case
                             when cast(null as TEXT) IS NOT NULL THEN u.login ILIKE '%' || $4 || '%'
                             ELSE true END)

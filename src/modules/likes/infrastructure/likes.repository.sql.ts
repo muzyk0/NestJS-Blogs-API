@@ -65,7 +65,7 @@ export class LikesRepositorySql {
           SELECT *
           FROM likes
           WHERE "commentId" = $1
-            AND "userId" = $3
+            AND "userId" = $2
           ORDER BY "createdAt" DESC
           LIMIT 1
       `,
