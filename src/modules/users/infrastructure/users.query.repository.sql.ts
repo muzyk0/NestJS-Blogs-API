@@ -56,20 +56,19 @@ export class UsersQueryRepository implements IUsersQueryRepository {
                          b2."banReason" as "banReason"
                   FROM users as u
                            LEFT JOIN bans as b2 ON b2."userId" = u.id
-                  WHERE u.id = b2."userId"
---                     AND b2."banned" IS NOT NULL
-                    AND (${
-                      pageOptionsDto?.banStatus &&
-                      pageOptionsDto.banStatus !== UserBanStatus.ALL
-                        ? `
+                  WHERE
+                     (${
+                       pageOptionsDto?.banStatus &&
+                       pageOptionsDto.banStatus !== UserBanStatus.ALL
+                         ? `
                           ${
                             pageOptionsDto.banStatus === UserBanStatus.BANNED
                               ? `b2.banned IS nOt NULL`
                               : `b2.banned IS NULL`
                           }
                         `
-                        : true
-                    }) ${
+                         : true
+                     }) ${
       pageOptionsDto.searchLoginTerm || pageOptionsDto.searchEmailTerm
         ? `AND (${
             pageOptionsDto.searchLoginTerm
