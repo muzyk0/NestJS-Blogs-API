@@ -199,7 +199,7 @@ export class CommentsQueryRepository implements ICommentsQueryRepository {
         userId: comment.userId,
         userLogin: comment.userLogin,
       },
-      createdAt: comment.createdAt,
+      createdAt: new Date(comment.createdAt).toISOString(),
       likesInfo: {
         likesCount,
         dislikesCount,
@@ -219,7 +219,7 @@ export class CommentsQueryRepository implements ICommentsQueryRepository {
         userLogin: comment.userLogin,
       },
       likesInfo: { likesCount: 0, dislikesCount: 0, myStatus: 'None' },
-      createdAt: comment.createdAt,
+      createdAt: new Date(comment.createdAt).toISOString(),
       postInfo: {
         id: comment.postId,
         title: comment.postTitle,

@@ -18,7 +18,7 @@ export interface CommentViewDto {
     userId: string;
     userLogin: string;
   };
-  createdAt: Date;
+  createdAt: string;
   likesInfo: LikeDto;
 }
 
@@ -29,7 +29,7 @@ export interface CommentForBloggerViewDto {
     userId: string;
     userLogin: string;
   };
-  createdAt: Date;
+  createdAt: string;
   postInfo: {
     id: string;
     title: string;
