@@ -56,31 +56,22 @@ export class UsersQueryRepository implements IUsersQueryRepository {
                          b2."banReason" as "banReason"
                   FROM users as u
                            LEFT JOIN bans as b2 ON b2."userId" = u.id
-                  WHERE
-                     (${
-                       pageOptionsDto?.banStatus &&
-                       pageOptionsDto.banStatus !== UserBanStatus.ALL
-                         ? `
-                          ${
-                            pageOptionsDto.banStatus === UserBanStatus.BANNED
-                              ? `b2.banned IS nOt NULL`
-                              : `b2.banned IS NULL`
-                          }
-                        `
-                         : true
-                     }) ${
-      pageOptionsDto.searchLoginTerm || pageOptionsDto.searchEmailTerm
-        ? `AND (${
-            pageOptionsDto.searchLoginTerm
-              ? `LOWER("login") LIKE '%' || LOWER('${pageOptionsDto.searchLoginTerm}') || '%'`
-              : ''
-          } ${
-            pageOptionsDto.searchEmailTerm
-              ? `OR LOWER("email") LIKE '%' || LOWER('${pageOptionsDto.searchEmailTerm}') || '%'`
-              : ''
-          })`
-        : ''
-    })
+                  WHERE CASE
+                            WHEN $4::TEXT != 'all'
+            THEN CASE WHEN $4 = 'banned' THEN b2.banned IS NOT NULL ELSE b2.banned IS NULL END
+                            else true END
+                      AND CASE
+                              WHEN $5::text IS NOT NULL
+                     OR $6::text IS NOT NULL THEN
+            (case
+            when $5 is not null
+            then "login" ILIKE '%' || $5 || '%' end OR
+            case
+            when $6 is not null
+            then "email" ILIKE '%' || $6 || '%' end)
+            else true
+        END
+        )
 
 
         select row_to_json(t1) as data
@@ -88,12 +79,8 @@ export class UsersQueryRepository implements IUsersQueryRepository {
                      jsonb_agg(row_to_json(sub)) filter (where sub.id is not null) as "items"
               from (table users
                   order by
-                      case when $1 = 'desc' then "${
-                        pageOptionsDto.sortBy
-                      }" end desc,
-                      case when $1 = 'asc' then "${
-                        pageOptionsDto.sortBy
-                      }" end asc
+                      case when $1 = 'desc' then "${pageOptionsDto.sortBy}" end desc,
+                      case when $1 = 'asc' then "${pageOptionsDto.sortBy}" end asc
                   limit $2
                   offset $3) sub
                        right join (select count(*) from users) c(total) on true
@@ -104,6 +91,9 @@ export class UsersQueryRepository implements IUsersQueryRepository {
       pageOptionsDto.sortDirection,
       pageOptionsDto.pageSize,
       pageOptionsDto.skip,
+      pageOptionsDto?.banStatus,
+      pageOptionsDto.searchLoginTerm,
+      pageOptionsDto.searchEmailTerm,
     ];
 
     const users: { total: number; items?: UserRowSqlDto[] } =
