@@ -1,6 +1,5 @@
 import { Injectable } from '@nestjs/common';
 import { InjectDataSource } from '@nestjs/typeorm';
-import { FilterQuery } from 'mongoose';
 import { DataSource } from 'typeorm';
 
 import {
@@ -8,8 +7,8 @@ import {
   UserBanStatus,
 } from '../../../shared/paginator/page-options.dto';
 import { PageDto } from '../../../shared/paginator/page.dto';
-import { Ban } from '../../bans/domain/entity/ban.entity';
-import { BansRepositorySql } from '../../bans/infrastructure/bans.repository.sql';
+import { BloggerBansRepositorySql } from '../../bans/infrastructure/blogger-bans.repository.sql';
+import { UserRowSqlDto } from '../application/dto/user.dto';
 import { User } from '../domain/entities/user.entity';
 
 import { UserWithBannedInfoForBlogView } from './dto/user-with-banned-info-for-blog.view';
@@ -22,10 +21,6 @@ export abstract class IUsersQueryRepository {
     pageOptionsDto: PageOptionsForUserDto,
   ): Promise<PageDto<UserViewModel>>;
 
-  abstract mapToDto(users: User): UserViewModel;
-
-  abstract mapToBloggerViewDto(users: User, ban: Ban): UserBloggerViewModel;
-
   abstract getBannedUsersForBlog(
     pageOptionsDto: PageOptionsForUserDto,
     blogId: string,
@@ -36,11 +31,11 @@ export abstract class IUsersQueryRepository {
 export class UsersQueryRepository implements IUsersQueryRepository {
   constructor(
     @InjectDataSource() private dataSource: DataSource,
-    private readonly bansRepositorySql: BansRepositorySql,
+    private readonly bansRepositorySql: BloggerBansRepositorySql,
   ) {}
 
   async findOne(id: string): Promise<UserViewModel> {
-    const users: User[] = await this.dataSource.query(
+    const users: UserRowSqlDto[] = await this.dataSource.query(
       `
           SELECT *
           FROM "users"
@@ -56,33 +51,27 @@ export class UsersQueryRepository implements IUsersQueryRepository {
   ): Promise<PageDto<UserViewModel>> {
     const query = `
         WITH users AS
-                 (SELECT *
-                  FROM "users"
---              where (lower("banned") like '%' || lower($1) || '%')
-                  WHERE (${
-                    pageOptionsDto?.banStatus &&
-                    pageOptionsDto.banStatus !== UserBanStatus.ALL
-                      ? `
-                          ${
-                            pageOptionsDto.banStatus === UserBanStatus.BANNED
-                              ? `banned IS nOt NULL`
-                              : `banned IS NULL`
-                          }
-                        `
-                      : 'banned IS NULL OR banned IS NOT NULL'
-                  }) ${
-      pageOptionsDto.searchLoginTerm || pageOptionsDto.searchEmailTerm
-        ? `AND (${
-            pageOptionsDto.searchLoginTerm
-              ? `LOWER("login") LIKE '%' || LOWER('${pageOptionsDto.searchLoginTerm}') || '%'`
-              : ''
-          } ${
-            pageOptionsDto.searchEmailTerm
-              ? `OR LOWER("email") LIKE '%' || LOWER('${pageOptionsDto.searchEmailTerm}') || '%'`
-              : ''
-          })`
-        : ''
-    })
+                 (SELECT u.*,
+                         b2."banned"    as "banned",
+                         b2."banReason" as "banReason"
+                  FROM users as u
+                           LEFT JOIN bans as b2 ON b2."userId" = u.id
+                  WHERE CASE
+                            WHEN $4::TEXT != 'all'
+            THEN CASE WHEN $4 = 'banned' THEN b2.banned IS NOT NULL ELSE b2.banned IS NULL END
+                            else true END
+                      AND CASE
+                              WHEN $5::text IS NOT NULL
+                     OR $6::text IS NOT NULL THEN
+            (case
+            when $5 is not null
+            then "login" ILIKE '%' || $5 || '%' end OR
+            case
+            when $6 is not null
+            then "email" ILIKE '%' || $6 || '%' end)
+            else true
+        END
+        )
 
 
         select row_to_json(t1) as data
@@ -90,12 +79,8 @@ export class UsersQueryRepository implements IUsersQueryRepository {
                      jsonb_agg(row_to_json(sub)) filter (where sub.id is not null) as "items"
               from (table users
                   order by
-                      case when $1 = 'desc' then "${
-                        pageOptionsDto.sortBy
-                      }" end desc,
-                      case when $1 = 'asc' then "${
-                        pageOptionsDto.sortBy
-                      }" end asc
+                      case when $1 = 'desc' then "${pageOptionsDto.sortBy}" end desc,
+                      case when $1 = 'asc' then "${pageOptionsDto.sortBy}" end asc
                   limit $2
                   offset $3) sub
                        right join (select count(*) from users) c(total) on true
@@ -106,11 +91,15 @@ export class UsersQueryRepository implements IUsersQueryRepository {
       pageOptionsDto.sortDirection,
       pageOptionsDto.pageSize,
       pageOptionsDto.skip,
+      pageOptionsDto?.banStatus,
+      pageOptionsDto.searchLoginTerm,
+      pageOptionsDto.searchEmailTerm,
     ];
 
-    const users: { total: number; items?: User[] } = await this.dataSource
-      .query(query, queryParams)
-      .then((res) => res[0]?.data);
+    const users: { total: number; items?: UserRowSqlDto[] } =
+      await this.dataSource
+        .query(query, queryParams)
+        .then((res) => res[0]?.data);
 
     return new PageDto({
       items: users.items?.map(this.mapToDto) ?? [],
@@ -119,7 +108,7 @@ export class UsersQueryRepository implements IUsersQueryRepository {
     });
   }
 
-  mapToDto(user: User): UserViewModel {
+  mapToDto(user: UserRowSqlDto): UserViewModel {
     return {
       id: user.id,
       login: user.login,
@@ -128,7 +117,7 @@ export class UsersQueryRepository implements IUsersQueryRepository {
       banInfo: {
         isBanned: Boolean(user.banned),
         banDate: user.banned ? new Date(user.banned).toISOString() : null,
-        banReason: user.banReason,
+        banReason: user.banReason ?? null,
       },
     };
   }
@@ -140,7 +129,7 @@ export class UsersQueryRepository implements IUsersQueryRepository {
       id: user.id,
       login: user.login,
       banInfo: {
-        isBanned: user.isBannedForBlog,
+        isBanned: Boolean(user.bannedDateForBlog),
         banDate: new Date(user.updatedAtForBlog).toISOString(),
         banReason: user.banReasonForBlog,
       },
@@ -154,13 +143,13 @@ export class UsersQueryRepository implements IUsersQueryRepository {
     const query = `
         WITH users AS
                  (SELECT u.*,
-                         b2."isBanned"  as "isBannedForBlog",
+                         b2."banned"    as "bannedDateForBlog",
                          b2."banReason" as "banReasonForBlog",
                          b2."updatedAt" as "updatedAtForBlog"
                   FROM users as u
-                           LEFT JOIN bans as b2 ON b2."parentId" = $5
+                           LEFT JOIN blogs_bans as b2 ON b2."blogId" = $5
                   where u.id = b2."userId"
-                    AND b2."isBanned" = true
+                    AND b2."banned" IS NOT NULL
                     AND case
                             when cast(null as TEXT) IS NOT NULL THEN u.login ILIKE '%' || $4 || '%'
                             ELSE true END)

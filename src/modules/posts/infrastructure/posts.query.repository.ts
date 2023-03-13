@@ -37,7 +37,7 @@
 //   constructor(
 //     @InjectModel(Post.name) private postModel: Model<PostDocument>,
 //     private readonly likesRepositorySql: LikesRepositorySql,
-//     private readonly usersRepository: UsersRepository,
+//     private readonly usersRepository: IUsersRepository,
 //     private readonly blogsRepository: IBlogsRepository,
 //   ) {}
 //

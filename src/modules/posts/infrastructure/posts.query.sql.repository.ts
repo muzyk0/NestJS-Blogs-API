@@ -42,7 +42,8 @@ export class PostsQueryRepository implements IPostsQueryRepository {
                  (SELECT p.*, u.login as "userLogin"
                   FROM posts as p
                            lEFT JOIN users as u ON u.id = $5
-                           lEFT JOIN blogs as b ON p."blogId" = b.id
+                           LEFT JOIN bans AS bans on u.id = bans."userId"
+                      lEFT JOIN blogs as b ON p."blogId" = b.id
                   where true
                     AND case
                             when cast($4 as TEXT) IS NOT NULL THEN p.title ILIKE '%' || $4 || '%'
@@ -51,7 +52,7 @@ export class PostsQueryRepository implements IPostsQueryRepository {
                             when cast($5 as UUID) IS NOT NULL THEN u.id = $5
                             ELSE true END
                     AND case
-                            when cast($5 as UUID) IS NOT NULL THEN u.banned is null
+                            when cast($5 as UUID) IS NOT NULL THEN bans.banned is null
                             ELSE true END
                     AND case
                             when cast($6 as UUID) IS NOT NULL THEN b.banned is null
@@ -63,8 +64,8 @@ export class PostsQueryRepository implements IPostsQueryRepository {
                      jsonb_agg(row_to_json(sub)) filter (where sub.id is not null) as "items"
               from (table posts
                   order by
-                      case when $1 = 'desc' then 'desc' end desc,
-                      case when $1 = 'asc' then 'asc' end asc
+                      case when $1 = 'desc' then "${pageOptionsDto.sortBy}" end desc,
+                      case when $1 = 'asc' then "${pageOptionsDto.sortBy}" end asc
                   limit $2
                   offset $3) sub
                        right join (select count(*) from posts) c(total) on true

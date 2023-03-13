@@ -2,7 +2,10 @@ import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
 import { isAfter } from 'date-fns';
 
 import { User } from '../../../users/domain/entities/user.entity';
-import { UsersRepository } from '../../../users/infrastructure/users.repository.sql';
+import {
+  IUsersRepository,
+  UsersRepository,
+} from '../../../users/infrastructure/users.repository.sql';
 
 export class ConfirmAccountCommand {
   constructor(public readonly code: string) {}
@@ -12,7 +15,7 @@ export class ConfirmAccountCommand {
 export class ConfirmAccountHandler
   implements ICommandHandler<ConfirmAccountCommand>
 {
-  constructor(private readonly usersRepository: UsersRepository) {}
+  constructor(private readonly usersRepository: IUsersRepository) {}
 
   async execute({ code }: ConfirmAccountCommand): Promise<boolean> {
     const user = await this.usersRepository.findOneByConfirmationCode(code);

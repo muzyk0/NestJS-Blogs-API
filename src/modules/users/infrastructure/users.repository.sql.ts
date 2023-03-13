@@ -2,39 +2,43 @@ import { Injectable } from '@nestjs/common';
 import { InjectDataSource } from '@nestjs/typeorm';
 import { DataSource } from 'typeorm';
 
+import { Bans } from '../../bans/domain/entity/bans.entity';
 import { BanUnbanUserInput } from '../application/dto/ban-unban-user.input';
+import { UserRowSqlDto } from '../application/dto/user.dto';
 import { UpdateConfirmationType } from '../application/interfaces/users.interface';
 import { User } from '../domain/entities/user.entity';
 
 import { CreateUserInput } from './dto/create-user.input';
 
-interface IUsersRepository {
-  create(createUserDto: CreateUserInput): Promise<User>;
+export abstract class IUsersRepository {
+  abstract create(createUserDto: CreateUserInput): Promise<User>;
 
-  findOneByLoginOrEmail(
+  abstract findOneByLoginOrEmail(
     loginOrEmail: string,
     withBanned?: false,
-  ): Promise<User>;
+  ): Promise<UserRowSqlDto>;
 
-  findOneByEmail(email: string): Promise<User>;
+  abstract findOneByEmail(email: string): Promise<User>;
 
-  findOneByConfirmationCode(code: string): Promise<User>;
+  abstract findOneByConfirmationCode(code: string): Promise<User>;
 
-  findOneById(id: string): Promise<User | null>;
+  abstract findOneById(id: string): Promise<User | null>;
 
-  findManyByIds(ids: string[]): Promise<User[]>;
+  abstract findOneByLogin(login: string): Promise<User>;
 
-  remove(id: string): Promise<boolean>;
+  // abstract findManyByIds(ids: string[]): Promise<User[]>;
 
-  setIsConfirmedById(id: string): Promise<boolean>;
+  abstract remove(id: string): Promise<boolean>;
 
-  updateConfirmationCode({
+  abstract setIsConfirmedById(id: string): Promise<boolean>;
+
+  abstract updateConfirmationCode({
     id,
     code,
     expirationDate,
   }: UpdateConfirmationType): Promise<User>;
 
-  updateUserPassword({
+  abstract updateUserPassword({
     password,
     id,
   }: {
@@ -42,9 +46,12 @@ interface IUsersRepository {
     id: string;
   }): Promise<boolean>;
 
-  updateBan(id: string, payload: BanUnbanUserInput): Promise<boolean>;
+  abstract createOrUpdateBan(
+    id: string,
+    payload: BanUnbanUserInput,
+  ): Promise<boolean>;
 
-  findAllWithoutBanned(): Promise<User[]>;
+  // abstract findAllWithoutBanned(): Promise<User[]>;
 }
 
 @Injectable()
@@ -76,26 +83,26 @@ export class UsersRepository implements IUsersRepository {
     return result[0];
   }
 
-  async findAllWithoutBanned(): Promise<User[]> {
-    const users: User[] = await this.dataSource.query(`
-        SELECT *
-        FROM "users"
-        WHERE banned IS NULL
-    `);
-    return users;
-  }
+  // async findAllWithoutBanned(): Promise<User[]> {
+  //   const users: User[] = await this.dataSource.query(`
+  //       SELECT *
+  //       FROM "users"
+  //       WHERE banned IS NULL
+  //   `);
+  //   return users;
+  // }
 
-  async findManyByIds(ids: string[]): Promise<User[]> {
-    const users: User[] = await this.dataSource.query(
-      `
-          SELECT *
-          FROM "users"
-          WHERE id IN ($1)
-      `,
-      [ids],
-    );
-    return users;
-  }
+  // async findManyByIds(ids: string[]): Promise<User[]> {
+  //   const users: User[] = await this.dataSource.query(
+  //     `
+  //         SELECT *
+  //         FROM "users"
+  //         WHERE id IN ($1)
+  //     `,
+  //     [ids],
+  //   );
+  //   return users;
+  // }
 
   async findOneByConfirmationCode(code: string): Promise<User> {
     const users: User[] = await this.dataSource.query(
@@ -145,17 +152,19 @@ export class UsersRepository implements IUsersRepository {
     return users[0];
   }
 
-  async findOneByLoginOrEmail(
-    loginOrEmail: string,
-    withBanned?: boolean,
-  ): Promise<User> {
-    const users: User[] = await this.dataSource.query(
+  async findOneByLoginOrEmail(loginOrEmail: string): Promise<UserRowSqlDto> {
+    const users: UserRowSqlDto[] = await this.dataSource.query(
       `
-          SELECT *
-          FROM "users"
-          WHERE ("login" = $1
-              OR "email" = $1)
-              ${withBanned ? '' : 'AND "banned" IS NULL'}
+          SELECT u.*, b.banned, b."banReason"
+          FROM "users" as u
+                   left join bans as b on b."userId" = u.id
+          WHERE (u."login" = $1
+              OR u."email" = $1)
+            AND b.banned IS NULL
+          --             AND CASE
+--                     WHEN $2 IS NOT NULL THEN b.banned IS NULL
+--                     ELSE true
+--               END
       `,
       [loginOrEmail],
     );
@@ -186,19 +195,25 @@ export class UsersRepository implements IUsersRepository {
     return true;
   }
 
-  async updateBan(id: string, payload: BanUnbanUserInput): Promise<boolean> {
+  async createOrUpdateBan(
+    id: string,
+    payload: BanUnbanUserInput,
+  ): Promise<boolean> {
     const banned = payload.isBanned ? new Date() : null;
     const banReason = payload.isBanned ? payload.banReason : null;
-    await this.dataSource.query(
+
+    const [ban]: [Bans] = await this.dataSource.query(
       `
-          UPDATE "users"
-          SET "banned"    = $2,
-              "banReason" = $3
-          WHERE id = $1
+          INSERT INTO bans ("userId", banned, "banReason")
+          VALUES ($1, $2, $3)
+          ON CONFLICT ("userId") DO UPDATE
+              SET "banned"  = $2,
+                  "banReason" = $3
           RETURNING *
       `,
       [id, banned, banReason],
     );
+
     return true;
   }
 

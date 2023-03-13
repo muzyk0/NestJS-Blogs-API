@@ -1,17 +1,19 @@
 import { IsEnum, IsOptional, IsString } from 'class-validator';
 
-import { LikeParentTypeEnum } from '../interfaces/like-parent-type.enum';
+import { Like } from '../../domain/entity/like.entity';
 import { LikeStatus } from '../interfaces/like-status.enum';
 
-export class CreateLikeDto {
+export class CreateLikeDto implements Partial<Like> {
   @IsString()
   userId: string;
 
   @IsString()
-  parentId: string;
+  @IsOptional()
+  postId?: string;
 
-  @IsEnum(LikeParentTypeEnum)
-  parentType: LikeParentTypeEnum;
+  @IsString()
+  @IsOptional()
+  commentId?: string;
 
   @IsEnum(LikeStatus)
   @IsOptional()

@@ -1,7 +1,10 @@
 import { NotFoundException } from '@nestjs/common';
 import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
 
-import { UsersRepository } from '../../infrastructure/users.repository.sql';
+import {
+  IUsersRepository,
+  UsersRepository,
+} from '../../infrastructure/users.repository.sql';
 
 export class RemoveUserCommand {
   constructor(public readonly userId: string) {}
@@ -9,7 +12,7 @@ export class RemoveUserCommand {
 
 @CommandHandler(RemoveUserCommand)
 export class RemoveUserHandler implements ICommandHandler<RemoveUserCommand> {
-  constructor(private readonly usersRepository: UsersRepository) {}
+  constructor(private readonly usersRepository: IUsersRepository) {}
 
   async execute({ userId }: RemoveUserCommand) {
     const user = await this.usersRepository.findOneById(userId);

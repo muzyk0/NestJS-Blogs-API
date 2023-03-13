@@ -1,7 +1,10 @@
 import { BadRequestException } from '@nestjs/common';
 import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
 
-import { UsersRepository } from '../../../users/infrastructure/users.repository.sql';
+import {
+  IUsersRepository,
+  UsersRepository,
+} from '../../../users/infrastructure/users.repository.sql';
 import { IBlogsRepository } from '../../infrastructure/blogs.sql.repository';
 
 export class BindBlogOnUserCommand {
@@ -14,7 +17,7 @@ export class BindBlogOnUserHandler
 {
   constructor(
     private readonly blogsRepository: IBlogsRepository,
-    private readonly usersRepository: UsersRepository,
+    private readonly usersRepository: IUsersRepository,
   ) {}
 
   async execute({ blogId, userId }: BindBlogOnUserCommand) {

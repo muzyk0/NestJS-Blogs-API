@@ -10,7 +10,7 @@ import {
   BlogViewDtoForSuperAdmin,
 } from '../application/dto/blog.dto';
 import { Blog } from '../domain/entities/blog.entity';
-import { BlogWithUserLogin } from '../interfaces/BlogWithUserLogin';
+import { BlogRowSqlDto } from '../interfaces/BlogRowSqlDto';
 
 export abstract class IBlogsQueryRepository {
   abstract findOne(id: string): Promise<BlogView>;
@@ -102,7 +102,7 @@ export class BlogsQueryRepository implements IBlogsQueryRepository {
                        right join (select count(*) from blogs) c(total) on true
               group by c.total) t1;
     `;
-    const blogs: { total: number; items?: BlogWithUserLogin[] } =
+    const blogs: { total: number; items?: BlogRowSqlDto[] } =
       await this.dataSource
         .query(query, [
           pageOptionsDto.sortDirection,
@@ -125,9 +125,8 @@ export class BlogsQueryRepository implements IBlogsQueryRepository {
     try {
       const [blog] = await this.dataSource.query(
         `
-            SELECT b.*, u.banned as "isUserBanned"
+            SELECT b.*
             FROM blogs as b
-                     lEFT JOIN users as u ON b."userId" = u.id
             where b.id = $1
               and b.banned is null
             ORDER BY "createdAt";
@@ -152,7 +151,7 @@ export class BlogsQueryRepository implements IBlogsQueryRepository {
     };
   }
 
-  mapToDtoForSuperAdmin(blog: BlogWithUserLogin): BlogViewDtoForSuperAdmin {
+  mapToDtoForSuperAdmin(blog: BlogRowSqlDto): BlogViewDtoForSuperAdmin {
     return {
       id: blog.id,
       name: blog.name,

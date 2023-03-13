@@ -26,7 +26,10 @@ import { CreateUserDto } from '../../users/application/dto/create-user.dto';
 import { EmailConfirmationCodeDto } from '../../users/application/dto/email-confirmation-code.dto';
 import { Email } from '../../users/application/dto/email.dto';
 import { CreateUserCommand } from '../../users/application/use-cases/create-user.handler';
-import { UsersRepository } from '../../users/infrastructure/users.repository.sql';
+import {
+  IUsersRepository,
+  UsersRepository,
+} from '../../users/infrastructure/users.repository.sql';
 import { LoginDto } from '../application/dto/login.dto';
 import { JwtPayloadWithRt } from '../application/interfaces/jwt-payload-with-rt.type';
 import { DecodedJwtRTPayload } from '../application/interfaces/jwtPayload.type';
@@ -49,7 +52,7 @@ export class AuthController {
   isDev: boolean;
 
   constructor(
-    private readonly usersRepository: UsersRepository,
+    private readonly usersRepository: IUsersRepository,
     private readonly securityService: SecurityService,
     private readonly jwtService: JwtService,
     private readonly commandBus: CommandBus,
@@ -66,36 +69,25 @@ export class AuthController {
     @Req() req: Request,
     @Res({ passthrough: true }) res: Response,
   ) {
-    const user = await this.commandBus.execute(
-      new LoginCommand(loginDto.loginOrEmail, loginDto.password),
-    );
-
-    if (!user) {
-      throw new UnauthorizedException();
-    }
-
-    const { refreshToken, ...tokens } = user;
-
-    const decodedAccessToken =
-      await this.jwtService.decodeJwtToken<DecodedJwtRTPayload>(refreshToken);
-
     const userAgent = req.get('User-Agent');
 
-    await this.securityService.createOrUpdate({
-      userId: decodedAccessToken.user.id,
-      ip: req.ip,
-      deviceId: decodedAccessToken.deviceId,
-      deviceName: userAgent,
-      issuedAt: decodedAccessToken.iat,
-      expireAt: decodedAccessToken.exp,
-    });
+    const tokens = await this.commandBus.execute<LoginCommand, TokensType>(
+      new LoginCommand(
+        loginDto.loginOrEmail,
+        loginDto.password,
+        userAgent,
+        req.ip,
+      ),
+    );
 
-    res.cookie('refreshToken', refreshToken, {
+    res.cookie('refreshToken', tokens.refreshToken, {
       httpOnly: !this.isDev,
       secure: !this.isDev,
     });
 
-    return tokens;
+    return {
+      accessToken: tokens.accessToken,
+    };
   }
 
   @UseGuards(LimitsControlGuard)

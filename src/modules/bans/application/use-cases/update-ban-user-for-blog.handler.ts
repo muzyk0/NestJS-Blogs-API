@@ -3,10 +3,9 @@ import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
 
 import { BanUserForBlogInput } from '../../../blogs/controllers/dto/ban-user-for-blog.input';
 import { IBlogsRepository } from '../../../blogs/infrastructure/blogs.sql.repository';
-import { UsersRepository } from '../../../users/infrastructure/users.repository.sql';
-import { BansRepositorySql } from '../../infrastructure/bans.repository.sql';
+import { IUsersRepository } from '../../../users/infrastructure/users.repository.sql';
+import { IBloggerBansRepositorySql } from '../../infrastructure/blogger-bans.repository.sql';
 import { CreateBanInput } from '../input/create-ban.input';
-import { BanTypeEnum } from '../interfaces/ban-type.enum';
 
 export class UpdateBanUserForBlogCommand {
   constructor(
@@ -22,8 +21,8 @@ export class UpdateBanUserForBlogHandler
 {
   constructor(
     private readonly blogsRepository: IBlogsRepository,
-    private readonly bansRepositorySql: BansRepositorySql,
-    private readonly usersRepository: UsersRepository,
+    private readonly bansRepositorySql: IBloggerBansRepositorySql,
+    private readonly usersRepository: IUsersRepository,
   ) {}
 
   async execute({
@@ -45,8 +44,7 @@ export class UpdateBanUserForBlogHandler
       isBanned: createBanInput.isBanned,
       banReason: createBanInput.banReason,
       userId: userId,
-      parentId: createBanInput.blogId,
-      type: BanTypeEnum.BLOG,
+      blogId: createBanInput.blogId,
     };
     return this.bansRepositorySql.updateOrCreateBan(updateBan);
   }

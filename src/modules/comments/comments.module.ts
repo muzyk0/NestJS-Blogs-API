@@ -1,5 +1,5 @@
 import { Module } from '@nestjs/common';
-import { MongooseModule } from '@nestjs/mongoose';
+import { TypeOrmModule } from '@nestjs/typeorm';
 
 import { AuthModule } from '../auth/auth.module';
 import {
@@ -10,18 +10,24 @@ import { LikesModule } from '../likes/likes.module';
 import { PostsModule } from '../posts/posts.module';
 import { UsersModule } from '../users/users.module';
 
-import { CommentsService } from './application/comments.service';
+import {
+  CommentsService,
+  ICommentsRepository,
+} from './application/comments.service';
 import { GetPostCommentsInsideCurrentUserBlogsHandler } from './application/use-cases/get-post-comments-inside-current-user-blogs.handler';
 import { CommentsController } from './controllers/comments.controller';
-import { Comment, CommentSchema } from './domain/schemas/comments.schema';
-import { CommentsQueryRepository } from './infrastructure/comments.query.repository';
-import { CommentsRepository } from './infrastructure/comments.repository';
+import { Comment } from './domain/entities/comment.entity';
+import {
+  CommentsQueryRepository,
+  ICommentsQueryRepository,
+} from './infrastructure/comments.query.sql.repository';
+import { CommentsRepository } from './infrastructure/comments.sql.repository';
 
 const CommandHandlers = [GetPostCommentsInsideCurrentUserBlogsHandler];
 
 @Module({
   imports: [
-    MongooseModule.forFeature([{ name: Comment.name, schema: CommentSchema }]),
+    TypeOrmModule.forFeature([Comment]),
     LikesModule,
     AuthModule,
     UsersModule,
@@ -32,8 +38,8 @@ const CommandHandlers = [GetPostCommentsInsideCurrentUserBlogsHandler];
     { provide: IBlogsRepository, useClass: BlogsRepository },
     ...CommandHandlers,
     CommentsService,
-    CommentsRepository,
-    CommentsQueryRepository,
+    { provide: ICommentsRepository, useClass: CommentsRepository },
+    { provide: ICommentsQueryRepository, useClass: CommentsQueryRepository },
   ],
 })
 export class CommentsModule {}

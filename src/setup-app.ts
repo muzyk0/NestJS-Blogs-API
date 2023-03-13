@@ -11,7 +11,10 @@ import cookieParser from 'cookie-parser';
 import { AppModule } from './app.module';
 import { ErrorExceptionFilter, HttpExceptionFilter } from './common/filters';
 
-export function setupApp(app: INestApplication, globalPrefix: string) {
+export function setupApp(
+  app: INestApplication,
+  globalPrefix: string,
+): INestApplication {
   app.enableCors();
   app.use(cookieParser());
   app.setGlobalPrefix(globalPrefix);

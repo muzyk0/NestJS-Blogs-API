@@ -5,7 +5,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { EmailNotExistRule } from '../../shared/decorators/validations/check-is-email-exist.decorator';
 import { LoginNotExistRule } from '../../shared/decorators/validations/check-is-login-exist.decorator';
 import { AuthModule } from '../auth/auth.module';
-import { BansRepositorySql } from '../bans/infrastructure/bans.repository.sql';
+import { BloggerBansRepositorySql } from '../bans/infrastructure/blogger-bans.repository.sql';
 import { EmailModuleLocal } from '../email-local/email-local.module';
 import { PasswordRecoveryModule } from '../password-recovery/password-recovery.module';
 import { SecurityModule } from '../security/security.module';
@@ -16,7 +16,10 @@ import {
   IUsersQueryRepository,
   UsersQueryRepository,
 } from './infrastructure/users.query.repository.sql';
-import { UsersRepository } from './infrastructure/users.repository.sql';
+import {
+  IUsersRepository,
+  UsersRepository,
+} from './infrastructure/users.repository.sql';
 
 @Module({
   imports: [
@@ -34,13 +37,13 @@ import { UsersRepository } from './infrastructure/users.repository.sql';
     LoginNotExistRule,
     ...CommandHandlers,
     UsersRepository,
-    // UsersQueryRepository,
+    { provide: IUsersRepository, useClass: UsersRepository },
     { provide: IUsersQueryRepository, useClass: UsersQueryRepository },
-    BansRepositorySql,
+    BloggerBansRepositorySql,
   ],
   exports: [
     ...CommandHandlers,
-    UsersRepository,
+    { provide: IUsersRepository, useClass: UsersRepository },
     { provide: IUsersQueryRepository, useClass: UsersQueryRepository },
   ],
 })

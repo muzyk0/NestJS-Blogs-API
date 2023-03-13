@@ -4,7 +4,7 @@ import { User } from '../../domain/entities/user.entity';
 
 export class UserWithBannedInfoForBlogView extends User {
   @IsBoolean()
-  isBannedForBlog: boolean;
+  bannedDateForBlog: boolean;
 
   @IsString()
   banReasonForBlog: string;

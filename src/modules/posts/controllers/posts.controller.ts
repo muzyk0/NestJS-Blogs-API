@@ -23,11 +23,10 @@ import { JwtATPayload } from '../../auth/application/interfaces/jwtPayload.type'
 import { AuthGuard } from '../../auth/guards/auth-guard';
 import { JwtAuthGuard } from '../../auth/guards/jwt-auth.guard';
 import { BansService } from '../../bans/application/bans.service';
-import { BanTypeEnum } from '../../bans/application/interfaces/ban-type.enum';
 import { BlogsService } from '../../blogs/application/blogs.service';
 import { CommentsService } from '../../comments/application/comments.service';
 import { CommentInput } from '../../comments/application/dto/comment.input';
-import { CommentsQueryRepository } from '../../comments/infrastructure/comments.query.repository';
+import { ICommentsQueryRepository } from '../../comments/infrastructure/comments.query.sql.repository';
 import { CreateLikeInput } from '../../likes/application/input/create-like.input';
 import { PostsService } from '../application/posts.service';
 import { IPostsQueryRepository } from '../infrastructure/posts.query.sql.repository';
@@ -40,7 +39,7 @@ export class PostsController {
     private readonly postsQueryRepository: IPostsQueryRepository,
     private readonly blogsService: BlogsService,
     private readonly commentsService: CommentsService,
-    private readonly commentsQueryRepository: CommentsQueryRepository,
+    private readonly commentsQueryRepository: ICommentsQueryRepository,
     private readonly bansService: BansService,
   ) {}
 
@@ -89,9 +88,9 @@ export class PostsController {
     return this.commentsQueryRepository.findPostComments(
       {
         ...pageOptionsDto,
-        postId: id,
       },
       {
+        postId: id,
         userId: ctx?.user.id,
       },
     );
@@ -105,7 +104,7 @@ export class PostsController {
     @Body() createCommentDto: CommentInput,
     @GetCurrentJwtContext() ctx: JwtATPayload,
   ) {
-    const { id: userId, login: userLogin } = ctx.user;
+    const { id: userId } = ctx.user;
 
     const post = await this.postsService.findOne(id);
 
@@ -115,8 +114,7 @@ export class PostsController {
 
     const ban = await this.bansService.getBan({
       userId: userId,
-      parentId: post.blogId,
-      type: BanTypeEnum.BLOG,
+      blogId: post.blogId,
     });
 
     if (ban) {
@@ -127,7 +125,6 @@ export class PostsController {
       postId: id,
       content: createCommentDto.content,
       userId,
-      userLogin,
     });
 
     const comment = await this.commentsQueryRepository.findOne(

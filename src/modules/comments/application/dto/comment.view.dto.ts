@@ -11,27 +11,14 @@ export interface IComment {
   postId: string;
 }
 
-export class CommentViewDto implements IComment {
-  @IsString()
+export interface CommentViewDto {
   id: string;
-
-  @Length(20, 300)
-  @IsNotEmpty()
   content: string;
-
-  @IsString()
-  userId: string;
-
-  @IsString()
-  userLogin: string;
-
-  @IsString()
-  postId: string;
-
-  @IsDate()
-  createdAt: Date;
-
-  @IsArray()
+  commentatorInfo: {
+    userId: string;
+    userLogin: string;
+  };
+  createdAt: string;
   likesInfo: LikeDto;
 }
 
@@ -42,7 +29,7 @@ export interface CommentForBloggerViewDto {
     userId: string;
     userLogin: string;
   };
-  createdAt: Date;
+  createdAt: string;
   postInfo: {
     id: string;
     title: string;

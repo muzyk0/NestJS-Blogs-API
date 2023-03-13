@@ -1,25 +1,37 @@
-import { Entity, Column, PrimaryGeneratedColumn } from 'typeorm';
+import { Entity, Column, PrimaryGeneratedColumn, ManyToOne } from 'typeorm';
 
 import { BaseEntity } from '../../../../shared/base-entity/base.entity';
-import { LikeParentTypeEnum } from '../../application/interfaces/like-parent-type.enum';
+import { Comment } from '../../../comments/domain/entities/comment.entity';
+import { Post } from '../../../posts/domain/entities/post.entity';
+import { User } from '../../../users/domain/entities/user.entity';
+import { LikeStatus } from '../../application/interfaces/like-status.enum';
 
 @Entity('likes')
 export class Like extends BaseEntity {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
-  @Column()
+  @ManyToOne(() => User, (user) => user.likes)
+  user: User;
+
+  @Column('uuid')
   userId: string;
 
-  @Column()
-  parentId: string;
+  @ManyToOne(() => Post, (post) => post.likes)
+  post: Post;
+
+  @Column('uuid', { nullable: true })
+  postId: string;
+
+  @ManyToOne(() => Comment, (comment) => comment.likes)
+  comment: Comment;
+
+  @Column('uuid', { nullable: true })
+  commentId: string;
 
   @Column({
     type: 'enum',
-    enum: LikeParentTypeEnum,
+    enum: LikeStatus,
   })
-  parentType: string;
-
-  @Column()
-  status: number;
+  status: LikeStatus;
 }

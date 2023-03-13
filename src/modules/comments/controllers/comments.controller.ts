@@ -20,19 +20,22 @@ import { JwtATPayload } from '../../auth/application/interfaces/jwtPayload.type'
 import { AuthGuard } from '../../auth/guards/auth-guard';
 import { JwtAuthGuard } from '../../auth/guards/jwt-auth.guard';
 import { CreateLikeInput } from '../../likes/application/input/create-like.input';
-import { UsersRepository } from '../../users/infrastructure/users.repository.sql';
+import {
+  IUsersRepository,
+  UsersRepository,
+} from '../../users/infrastructure/users.repository.sql';
 import { CommentsService } from '../application/comments.service';
-import { CommentDto } from '../application/dto/comment.dto';
 import { CommentInput } from '../application/dto/comment.input';
 import { CreateCommentDto } from '../application/dto/create-comment.dto';
-import { CommentsQueryRepository } from '../infrastructure/comments.query.repository';
+import { Comment } from '../domain/entities/comment.entity';
+import { ICommentsQueryRepository } from '../infrastructure/comments.query.sql.repository';
 
 export interface ICommentsService {
-  create(createCommentDto: CreateCommentDto): Promise<CommentDto | null>;
+  create(createCommentDto: CreateCommentDto): Promise<Comment | null>;
 
-  findOne(id: string): Promise<CommentDto>;
+  findOne(id: string): Promise<Comment>;
 
-  update(id: string, updateCommentDto: CommentInput): Promise<CommentDto>;
+  update(commentId: string, updateCommentDto: CommentInput): Promise<Comment>;
 
   remove(id: string): Promise<boolean>;
 
@@ -44,8 +47,8 @@ export interface ICommentsService {
 export class CommentsController {
   constructor(
     private readonly commentsService: CommentsService,
-    private readonly usersRepository: UsersRepository,
-    private readonly commentsQueryRepository: CommentsQueryRepository,
+    private readonly usersRepository: IUsersRepository,
+    private readonly commentsQueryRepository: ICommentsQueryRepository,
   ) {}
 
   @UseGuards(AuthGuard)

@@ -1,27 +1,17 @@
 import { Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
-import { InjectModel } from '@nestjs/mongoose';
-import { Model } from 'mongoose';
+import { InjectDataSource } from '@nestjs/typeorm';
 import { DataSource } from 'typeorm';
-
-import {
-  Comment,
-  CommentDocument,
-} from '../../comments/domain/schemas/comments.schema';
 
 @Injectable()
 export class TestingRepository {
   constructor(
     private readonly config: ConfigService,
-    private dataSource: DataSource,
-    @InjectModel(Comment.name) private commentModel: Model<CommentDocument>,
+    @InjectDataSource() private dataSource: DataSource,
   ) {}
 
   private async clearSqlDatabase(): Promise<boolean> {
-    const queryRunner = this.dataSource.createQueryRunner();
-    await queryRunner.connect();
-
-    await queryRunner.query(`
+    await this.dataSource.query(`
         DELETE
         FROM "likes";
         DELETE
@@ -29,16 +19,19 @@ export class TestingRepository {
         DELETE
         FROM "bans";
         DELETE
+        FROM "blogs_bans";
+        DELETE
         FROM "devices";
+        DELETE
+        FROM "comments";
         DELETE
         FROM "posts";
         DELETE
         FROM "blogs";
         DELETE
         FROM "users";
-    `);
 
-    await queryRunner.release();
+    `);
 
     return true;
   }
@@ -46,8 +39,6 @@ export class TestingRepository {
   async clearDatabase(): Promise<boolean> {
     if (this.config.get('ENABLE_CLEAR_DB_ENDPOINT')) {
       await this.clearSqlDatabase();
-
-      await this.commentModel.deleteMany({});
     }
 
     return true;
