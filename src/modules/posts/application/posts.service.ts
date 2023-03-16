@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 
 import { IBlogsRepository } from '../../blogs/infrastructure/blogs.sql.repository';
 import { LikeStringStatus } from '../../likes/application/interfaces/like-status.enum';
@@ -77,7 +77,7 @@ export class PostsService implements IPostService {
     return this.postRepository.remove(id);
   }
 
-  async updatePostLikeStatus(updateLike: {
+  async createOrUpdatePostLikeStatus(updateLike: {
     postId: string;
     userId: string;
     likeStatus: LikeStringStatus;
@@ -85,12 +85,12 @@ export class PostsService implements IPostService {
     const post = await this.postRepository.findOne(updateLike.postId);
 
     if (!post) {
-      return null;
+      throw new NotFoundException();
     }
 
     const status = formatLikeStatusToInt(updateLike.likeStatus);
 
-    return this.likeService.updatePostLikeStatus({
+    return this.likeService.createOrUpdatePostLikeStatus({
       postId: updateLike.postId,
       userId: updateLike.userId,
       likeStatus: status,

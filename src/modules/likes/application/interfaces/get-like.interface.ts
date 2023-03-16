@@ -1,4 +1,5 @@
 export interface GetCommentLikeByUser {
   userId?: string;
-  commentId: string;
+  postId?: string;
+  commentId?: string;
 }

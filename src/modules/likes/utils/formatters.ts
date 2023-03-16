@@ -5,10 +5,8 @@ import {
 import { intLikeStatuses, stringLikeStatuses } from '../constants';
 import { Like } from '../domain/entity/like.entity';
 
-export const getStringLikeStatus = (like: Like | null) => {
-  return (
-    stringLikeStatuses[like?.status] ?? stringLikeStatuses[LikeStatus.NONE]
-  );
+export const getStringLikeStatus = (status: LikeStatus): LikeStringStatus => {
+  return stringLikeStatuses[status] ?? stringLikeStatuses[LikeStatus.NONE];
 };
 
 export const formatLikeStatusToInt = (

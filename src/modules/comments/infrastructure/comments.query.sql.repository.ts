@@ -203,7 +203,7 @@ export class CommentsQueryRepository implements ICommentsQueryRepository {
       likesInfo: {
         likesCount,
         dislikesCount,
-        myStatus: getStringLikeStatus(myStatus),
+        myStatus: getStringLikeStatus(myStatus.status),
       },
     };
   }

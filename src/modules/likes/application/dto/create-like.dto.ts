@@ -17,5 +17,5 @@ export class CreateLikeDto implements Partial<Like> {
 
   @IsEnum(LikeStatus)
   @IsOptional()
-  likeStatus: number;
+  likeStatus: LikeStatus;
 }

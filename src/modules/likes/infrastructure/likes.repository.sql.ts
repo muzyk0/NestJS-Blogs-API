@@ -5,6 +5,7 @@ import { DataSource } from 'typeorm';
 import { IUsersRepository } from '../../users/infrastructure/users.repository.sql';
 import { GetLikeDto } from '../application/dto/get-like.dto';
 import { GetCommentLikeByUser } from '../application/interfaces/get-like.interface';
+import { LikeStatus } from '../application/interfaces/like-status.enum';
 import { LikeInterface } from '../application/interfaces/like.interface';
 import { Like } from '../domain/entity/like.entity';
 
@@ -75,100 +76,66 @@ export class LikesRepositorySql {
     return like[0];
   }
 
-  // async getLatestLikes({
-  //   parentId,
-  //   parentType,
-  //   limit = 3,
-  // }: Pick<GetCommentLikeByUser, 'parentId' | 'parentType'> & {
-  //   limit?: number;
-  // }): Promise<Like[]> {
-  //   const queryRunner = this.dataSource.createQueryRunner();
-  //   await queryRunner.connect();
-  //
-  //   const bannedUsersIds = await this.usersRepository
-  //     .findAllWithoutBanned()
-  //     .then((users) => users.map((u) => u.id))
-  //     .then((users) => users.join(', '));
-  //
-  //   const likes: Like[] = await this.dataSource.query(
-  //     `
-  //         SELECT *
-  //         FROM likes
-  //         WHERE "parentId" = $1
-  //           AND "parentType" = $2
-  //           AND "status" = $3
-  //           and "userId" NOT IN ($5)
-  //         ORDER BY "createdAt" DESC
-  //         LIMIT $4
-  //     `,
-  //     [parentId, parentType, LikeStatus.LIKE, limit, bannedUsersIds],
-  //   );
-  //
-  //   await queryRunner.release();
-  //
-  //   return likes;
-  // }
+  async getLatestLikesForPost({
+    postId,
+    limit = 3,
+  }: Omit<GetCommentLikeByUser, 'commentId'> & {
+    limit?: number;
+  }): Promise<Like[]> {
+    const likes: Like[] = await this.dataSource.query(
+      `
+          SELECT *
+          FROM likes
+          WHERE "postId" = $1
+            AND "status" = $2
+          ORDER BY "createdAt" DESC
+          LIMIT $3
+      `,
+      [postId, LikeStatus.LIKE, limit],
+    );
 
-  async create(createLike: LikeInterface): Promise<Like | null> {
-    // const [ban]: [Ban] = await this.dataSource.query(
-    //   `
-    //       INSERT INTO likes ("userId", "parentId", "parentType", status)
-    //       VALUES ($1, $2, $3, $4,)
-    //       ON CONFLICT (id) DO UPDATE
-    //           SET "isBanned"  = $4,
-    //               "banReason" = $5
-    //       RETURNING *
-    //   `,
-    //   [
-    //     createLike.userId,
-    //     createLike.parentId,
-    //     createLike.status ?? LikeStatus.NONE,
-    //     createLike.parentType,
-    //   ],
-    // );
-    //
-    // return ban;
-    //
-    // const like: Like[] = await this.dataSource.query(
-    //   `
-    //       SELECT id
-    //       FROM likes
-    //       WHERE "userId" = $1
-    //         AND "parentId" = $2
-    //         AND "parentType" = $3
-    //   `,
-    //   [createLike.userId, createLike.parentId, createLike.parentType],
-    // );
-    //
-    // if (like?.[0]?.id) {
-    //   const updatedLike: Like[] = await this.dataSource.query(
-    //     `
-    //         UPDATE likes
-    //         SET status      = $2,
-    //             "updatedAt" = $3
-    //         WHERE "id" = $1;
-    //     `,
-    //     [like[0].id, createLike.status, new Date()],
-    //   );
-    //
-    //   return updatedLike[0];
-    // }
-    //
-    // const createdLike: Like[] = await this.dataSource.query(
-    //   `
-    //       INSERT
-    //       INTO likes ("userId", "parentId", status, "parentType")
-    //       VALUES ($1, $2, $3, $4)
-    //       RETURNING *
-    //   `,
-    //   [
-    //     createLike.userId,
-    //     createLike.parentId,
-    //     createLike.status ?? LikeStatus.NONE,
-    //     createLike.parentType,
-    //   ],
-    // );
+    return likes;
+  }
 
-    return null;
+  async createOrUpdatePostLikeStatus(
+    createLike: Omit<LikeInterface, 'commentId'>,
+  ): Promise<Like | null> {
+    const [like]: [Like] = await this.dataSource.query(
+      `
+          INSERT INTO likes ("userId", "postId", status)
+          VALUES ($1, $2, $3)
+          ON CONFLICT ("userId", "postId") DO UPDATE
+              SET "status"  = $3
+          RETURNING *
+      `,
+      [
+        createLike.userId,
+        createLike.postId,
+        createLike.status ?? LikeStatus.NONE,
+      ],
+    );
+
+    return like;
+  }
+
+  async createOrUpdateCommentLikeStatus(
+    createLike: Omit<LikeInterface, 'postId'>,
+  ): Promise<Like | null> {
+    const [like]: [Like] = await this.dataSource.query(
+      `
+          INSERT INTO likes ("userId", "commentId", status)
+          VALUES ($1, $2, $3)
+          ON CONFLICT ("userId", "commentId") DO UPDATE
+              SET "status"  = $3
+          RETURNING *
+      `,
+      [
+        createLike.userId,
+        createLike.commentId,
+        createLike.status ?? LikeStatus.NONE,
+      ],
+    );
+
+    return like;
   }
 }
