@@ -19,11 +19,10 @@ export class LikesService {
   }
 
   async updateCommentLikeStatus(createLike: CreateLikeDto) {
-    return null;
-    // return this.likesRepositorySql.create({
-    //   commentId: createLike.commentId,
-    //   userId: createLike.userId,
-    //   status: createLike.likeStatus,
-    // });
+    return this.likesRepositorySql.createOrUpdateCommentLikeStatus({
+      commentId: createLike.commentId,
+      userId: createLike.userId,
+      status: createLike.likeStatus,
+    });
   }
 }
