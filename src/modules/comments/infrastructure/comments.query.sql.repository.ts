@@ -81,7 +81,7 @@ export class CommentsQueryRepository implements ICommentsQueryRepository {
       return;
     }
 
-    return this.mapToViewDtoForRowSqlMapper(comment);
+    return this.mapToViewDtoForRawSqlMapper(comment);
   }
 
   async findPostComments(
@@ -149,7 +149,7 @@ export class CommentsQueryRepository implements ICommentsQueryRepository {
         .then((res) => res[0]?.data);
 
     return new PageDto({
-      items: (comments.items ?? []).map(this.mapToViewDtoForRowSqlMapper),
+      items: (comments.items ?? []).map(this.mapToViewDtoForRawSqlMapper),
       itemsCount: comments.total,
       pageOptionsDto,
     });
@@ -238,7 +238,7 @@ export class CommentsQueryRepository implements ICommentsQueryRepository {
     };
   }
 
-  private mapToViewDtoForRowSqlMapper(
+  private mapToViewDtoForRawSqlMapper(
     comment: CommentInputViewDto,
   ): CommentViewDto {
     return {

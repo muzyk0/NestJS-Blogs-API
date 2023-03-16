@@ -126,7 +126,7 @@ export class PostsQueryRepository implements IPostsQueryRepository {
         .then((res) => res[0]?.data);
 
     return new PageDto({
-      items: (posts.items ?? []).map(this.mapToDtoForRowSqlMapper),
+      items: (posts.items ?? []).map(this.mapToDtoForRawSqlMapper),
       itemsCount: posts.total,
       pageOptionsDto,
     });
@@ -181,7 +181,7 @@ export class PostsQueryRepository implements IPostsQueryRepository {
       return null;
     }
 
-    return this.mapToDtoForRowSqlMapper(post);
+    return this.mapToDtoForRawSqlMapper(post);
   }
 
   private mapToDtoIterator(post: PostWithBlogNameDto): PostViewDto {
@@ -202,7 +202,7 @@ export class PostsQueryRepository implements IPostsQueryRepository {
     };
   }
 
-  private mapToDtoForRowSqlMapper(post: PostViewDto): PostViewDto {
+  private mapToDtoForRawSqlMapper(post: PostViewDto): PostViewDto {
     return {
       id: post.id,
       title: post.title,

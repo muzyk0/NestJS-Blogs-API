@@ -7,4 +7,4 @@
  * @example For delete
  * [data: [], updatedCount: number]
  */
-export type UpdateOrDeleteEntityRowSqlResponse<D = null> = [[D], number];
+export type UpdateOrDeleteEntityRawSqlResponse<D = null> = [[D], number];

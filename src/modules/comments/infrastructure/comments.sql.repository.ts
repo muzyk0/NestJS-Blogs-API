@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { InjectDataSource } from '@nestjs/typeorm';
 import { DataSource } from 'typeorm';
 
-import { UpdateOrDeleteEntityRowSqlResponse } from '../../../shared/interfaces/row-sql.types';
+import { UpdateOrDeleteEntityRawSqlResponse } from '../../../shared/interfaces/row-sql.types';
 import { ICommentsRepository } from '../application/comments.service';
 import { CreateCommentDto } from '../application/dto/create-comment.dto';
 import { UpdateCommentDto } from '../application/dto/update-comment.dto';
@@ -59,7 +59,7 @@ export class CommentsRepository implements ICommentsRepository {
     commentId: string,
     { content }: UpdateCommentDto,
   ): Promise<Comment> {
-    const [[comment]]: UpdateOrDeleteEntityRowSqlResponse<Comment> =
+    const [[comment]]: UpdateOrDeleteEntityRawSqlResponse<Comment> =
       await this.dataSource.query(
         `
           UPDATE comments
@@ -74,7 +74,7 @@ export class CommentsRepository implements ICommentsRepository {
   }
 
   async remove(commentId: string): Promise<boolean> {
-    const [, deletedCount]: UpdateOrDeleteEntityRowSqlResponse =
+    const [, deletedCount]: UpdateOrDeleteEntityRawSqlResponse =
       await this.dataSource.query(
         `
           DELETE

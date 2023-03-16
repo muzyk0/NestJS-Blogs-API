@@ -1,6 +1,6 @@
 import { BaseEntityDto } from '../../../../shared/base-entity/base.entity.dto';
 
-export class UserRowSqlDto extends BaseEntityDto {
+export class UserRawSqlDto extends BaseEntityDto {
   id: string;
 
   login: string;

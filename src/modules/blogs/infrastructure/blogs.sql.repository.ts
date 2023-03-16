@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { InjectDataSource } from '@nestjs/typeorm';
 import { DataSource } from 'typeorm';
 
-import { UpdateOrDeleteEntityRowSqlResponse } from '../../../shared/interfaces/row-sql.types';
+import { UpdateOrDeleteEntityRawSqlResponse } from '../../../shared/interfaces/row-sql.types';
 import { CreateBlogDto } from '../application/dto/create-blog.dto';
 import { UpdateBlogDto } from '../application/dto/update-blog.dto';
 import { Blog } from '../domain/entities/blog.entity';
@@ -85,7 +85,7 @@ export class BlogsRepository implements IBlogsRepository {
     id: string,
     { name, description, websiteUrl }: UpdateBlogDto,
   ): Promise<Blog> {
-    const [[blog]]: UpdateOrDeleteEntityRowSqlResponse<Blog> =
+    const [[blog]]: UpdateOrDeleteEntityRawSqlResponse<Blog> =
       await this.dataSource.query(
         `
           UPDATE blogs
@@ -102,7 +102,7 @@ export class BlogsRepository implements IBlogsRepository {
   }
 
   async remove(id: string): Promise<boolean> {
-    const [, deletedCount]: UpdateOrDeleteEntityRowSqlResponse =
+    const [, deletedCount]: UpdateOrDeleteEntityRawSqlResponse =
       await this.dataSource.query(
         `
           DELETE

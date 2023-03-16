@@ -1,6 +1,6 @@
 import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
 
-import { UserRowSqlDto } from '../../../users/application/dto/user.dto';
+import { UserRawSqlDto } from '../../../users/application/dto/user.dto';
 import { IUsersRepository } from '../../../users/infrastructure/users.repository.sql';
 import { AuthService } from '../auth.service';
 
@@ -23,7 +23,7 @@ export class ValidateUserHandler
   async execute({
     login,
     password,
-  }: ValidateUserCommand): Promise<UserRowSqlDto | null> {
+  }: ValidateUserCommand): Promise<UserRawSqlDto | null> {
     const user = await this.usersRepository.findOneByLoginOrEmail(login);
 
     if (!user) {

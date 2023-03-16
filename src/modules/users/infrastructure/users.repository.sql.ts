@@ -4,7 +4,7 @@ import { DataSource } from 'typeorm';
 
 import { Bans } from '../../bans/domain/entity/bans.entity';
 import { BanUnbanUserInput } from '../application/dto/ban-unban-user.input';
-import { UserRowSqlDto } from '../application/dto/user.dto';
+import { UserRawSqlDto } from '../application/dto/user.dto';
 import { UpdateConfirmationType } from '../application/interfaces/users.interface';
 import { User } from '../domain/entities/user.entity';
 
@@ -16,7 +16,7 @@ export abstract class IUsersRepository {
   abstract findOneByLoginOrEmail(
     loginOrEmail: string,
     withBanned?: false,
-  ): Promise<UserRowSqlDto>;
+  ): Promise<UserRawSqlDto>;
 
   abstract findOneByEmail(email: string): Promise<User>;
 
@@ -152,8 +152,8 @@ export class UsersRepository implements IUsersRepository {
     return users[0];
   }
 
-  async findOneByLoginOrEmail(loginOrEmail: string): Promise<UserRowSqlDto> {
-    const users: UserRowSqlDto[] = await this.dataSource.query(
+  async findOneByLoginOrEmail(loginOrEmail: string): Promise<UserRawSqlDto> {
+    const users: UserRawSqlDto[] = await this.dataSource.query(
       `
           SELECT u.*, b.banned, b."banReason"
           FROM "users" as u

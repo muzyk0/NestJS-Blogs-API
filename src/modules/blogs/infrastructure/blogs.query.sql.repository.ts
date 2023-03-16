@@ -10,7 +10,7 @@ import {
   BlogViewDtoForSuperAdmin,
 } from '../application/dto/blog.dto';
 import { Blog } from '../domain/entities/blog.entity';
-import { BlogRowSqlDto } from '../interfaces/BlogRowSqlDto';
+import { BlogRawSqlDto } from '../interfaces/BlogRawSqlDto';
 
 export abstract class IBlogsQueryRepository {
   abstract findOne(id: string): Promise<BlogView>;
@@ -102,7 +102,7 @@ export class BlogsQueryRepository implements IBlogsQueryRepository {
                        right join (select count(*) from blogs) c(total) on true
               group by c.total) t1;
     `;
-    const blogs: { total: number; items?: BlogRowSqlDto[] } =
+    const blogs: { total: number; items?: BlogRawSqlDto[] } =
       await this.dataSource
         .query(query, [
           pageOptionsDto.sortDirection,
@@ -151,7 +151,7 @@ export class BlogsQueryRepository implements IBlogsQueryRepository {
     };
   }
 
-  mapToDtoForSuperAdmin(blog: BlogRowSqlDto): BlogViewDtoForSuperAdmin {
+  mapToDtoForSuperAdmin(blog: BlogRawSqlDto): BlogViewDtoForSuperAdmin {
     return {
       id: blog.id,
       name: blog.name,
