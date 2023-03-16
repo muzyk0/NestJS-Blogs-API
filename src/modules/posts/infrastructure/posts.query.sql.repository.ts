@@ -50,11 +50,15 @@ export class PostsQueryRepository implements IPostsQueryRepository {
                           from (select *
                                 from (SELECT count(*) as "likesCount"
                                       FROM likes l
+                                               LEFT join bans ub on ub."userId" = l."userId"
                                       WHERE l."postId" = p.id
+                                        AND ub.banned IS NULL
                                         AND l.status = '1'::likes_status_enum) as "likesCount",
                                      (SELECT count(*) as "dislikesCount"
                                       FROM likes l
+                                               LEFT join bans ub on ub."userId" = l."userId"
                                       WHERE l."postId" = p.id
+                                        AND ub.banned IS NULL
                                         AND l.status = '0'::likes_status_enum) as "dislikesCount",
 
                                      -- if like doesn't exist with postId and userId return -1 like status enum
@@ -90,6 +94,9 @@ export class PostsQueryRepository implements IPostsQueryRepository {
                             ELSE true END
                     AND case
                             when cast($6 as UUID) IS NOT NULL THEN b.banned is null
+                            ELSE true END
+                    AND case
+                            when cast($6 as UUID) IS NOT NULL THEN p."blogId" = cast($6 as UUID)
                             ELSE true END)
 
 
@@ -135,11 +142,15 @@ export class PostsQueryRepository implements IPostsQueryRepository {
                   from (select *
                         from (SELECT count(*) as "likesCount"
                               FROM likes l
+                                       LEFT join bans ub on ub."userId" = l."userId"
                               WHERE l."postId" = p.id
+                                AND ub.banned IS NULL
                                 AND l.status = '1'::likes_status_enum) as "likesCount",
                              (SELECT count(*) as "dislikesCount"
                               FROM likes l
+                                       LEFT join bans ub on ub."userId" = l."userId"
                               WHERE l."postId" = p.id
+                                AND ub.banned IS NULL
                                 AND l.status = '0'::likes_status_enum) as "dislikesCount",
 
                              -- if like doesn't exist with postId and userId return -1 like status enum
