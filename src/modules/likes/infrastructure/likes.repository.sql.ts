@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { InjectDataSource } from '@nestjs/typeorm';
 import { DataSource } from 'typeorm';
 
+import { UpdateOrDeleteEntityRawSqlResponse } from '../../../shared/interfaces/row-sql.types';
 import { IUsersRepository } from '../../users/infrastructure/users.repository.sql';
 import { GetLikeDto } from '../application/dto/get-like.dto';
 import { GetCommentLikeByUser } from '../application/interfaces/get-like.interface';
@@ -19,7 +20,10 @@ export class LikesRepositorySql {
   async createOrUpdatePostLikeStatus(
     createLike: Omit<LikeInterface, 'commentId'>,
   ): Promise<Like | null> {
-    const [updatedLike]: [Like] = await this.dataSource.query(
+    const [
+      updatedLike,
+      updatedCount,
+    ]: UpdateOrDeleteEntityRawSqlResponse<Like> = await this.dataSource.query(
       `
           UPDATE likes
           SET "status" = $3
@@ -35,8 +39,8 @@ export class LikesRepositorySql {
       ],
     );
 
-    if (updatedLike) {
-      return updatedLike;
+    if (updatedCount) {
+      return updatedLike[0];
     }
 
     const [createdLike]: [Like] = await this.dataSource.query(
@@ -48,6 +52,7 @@ export class LikesRepositorySql {
                            FROM likes
                            WHERE "userId" = $1
                              AND "postId" = $2)
+          RETURNING *
           ;
       `,
       [
@@ -63,7 +68,10 @@ export class LikesRepositorySql {
   async createOrUpdateCommentLikeStatus(
     createLike: Omit<LikeInterface, 'postId'>,
   ): Promise<Like | null> {
-    const [updatedLike]: [Like] = await this.dataSource.query(
+    const [
+      updatedLike,
+      updatedCount,
+    ]: UpdateOrDeleteEntityRawSqlResponse<Like> = await this.dataSource.query(
       `
           UPDATE likes
           SET "status" = $3
@@ -79,8 +87,8 @@ export class LikesRepositorySql {
       ],
     );
 
-    if (updatedLike) {
-      return updatedLike;
+    if (updatedCount) {
+      return updatedLike[0];
     }
 
     const [createdLike]: [Like] = await this.dataSource.query(
@@ -92,6 +100,7 @@ export class LikesRepositorySql {
                            FROM likes
                            WHERE "userId" = $1
                              AND "commentId" = $2)
+          RETURNING *
           ;
       `,
       [
