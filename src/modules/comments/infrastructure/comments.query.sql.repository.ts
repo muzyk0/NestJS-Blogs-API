@@ -47,13 +47,13 @@ export class CommentsQueryRepository implements ICommentsQueryRepository {
                         from (SELECT count(*) as "likesCount"
                               FROM likes l
                                        LEFT join bans ub on ub."userId" = l."userId"
-                              WHERE l."postId" = c.id
+                              WHERE l."commentId" = c.id
                                 AND ub.banned IS NULL
                                 AND l.status = '1'::likes_status_enum) as "likesCount",
                              (SELECT count(*) as "dislikesCount"
                               FROM likes l
                                        LEFT join bans ub on ub."userId" = l."userId"
-                              WHERE l."postId" = c.id
+                              WHERE l."commentId" = c.id
                                 AND ub.banned IS NULL
                                 AND l.status = '0'::likes_status_enum) as "dislikesCount",
 
@@ -98,13 +98,13 @@ export class CommentsQueryRepository implements ICommentsQueryRepository {
                                 from (SELECT count(*) as "likesCount"
                                       FROM likes l
                                                LEFT join bans ub on ub."userId" = l."userId"
-                                      WHERE l."postId" = c.id
+                                      WHERE l."commentId" = c.id
                                         AND ub.banned IS NULL
                                         AND l.status = '1'::likes_status_enum) as "likesCount",
                                      (SELECT count(*) as "dislikesCount"
                                       FROM likes l
                                                LEFT join bans ub on ub."userId" = l."userId"
-                                      WHERE l."postId" = c.id
+                                      WHERE l."commentId" = c.id
                                         AND ub.banned IS NULL
                                         AND l.status = '0'::likes_status_enum) as "dislikesCount",
 
