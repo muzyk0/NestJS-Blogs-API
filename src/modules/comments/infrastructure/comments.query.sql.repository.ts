@@ -4,6 +4,7 @@ import { DataSource } from 'typeorm';
 
 import { PageOptionsDto } from '../../../shared/paginator/page-options.dto';
 import { PageDto } from '../../../shared/paginator/page.dto';
+import { LikeStringStatus } from '../../likes/application/interfaces/like-status.enum';
 import { Like } from '../../likes/domain/entity/like.entity';
 import { LikesRepositorySql } from '../../likes/infrastructure/likes.repository.sql';
 import { getStringLikeStatus } from '../../likes/utils/formatters';
@@ -13,6 +14,7 @@ import {
 } from '../application/dto/comment.dto';
 import {
   CommentForBloggerViewDto,
+  CommentInputViewDto,
   CommentViewDto,
 } from '../application/dto/comment.view.dto';
 
@@ -24,11 +26,6 @@ export abstract class ICommentsQueryRepository {
     { postId, userId }: { postId: string; userId: string },
   ): Promise<PageDto<CommentViewDto>>;
 
-  abstract getLikesInfo(
-    comment: CommentDto,
-    userId: string,
-  ): Promise<CommentViewDto>;
-
   abstract findPostCommentsInsideUserBlogs(
     pageOptionsDto: PageOptionsDto,
     userId: string,
@@ -37,29 +34,54 @@ export abstract class ICommentsQueryRepository {
 
 @Injectable()
 export class CommentsQueryRepository implements ICommentsQueryRepository {
-  constructor(
-    @InjectDataSource() private readonly dataSource: DataSource,
-    private readonly likesRepositorySql: LikesRepositorySql,
-  ) {}
+  constructor(@InjectDataSource() private readonly dataSource: DataSource) {}
 
   async findOne(commentId: string, userId?: string): Promise<CommentViewDto> {
-    const [comment]: [CommentDto] = await this.dataSource.query(
+    const [comment]: [CommentInputViewDto] = await this.dataSource.query(
       `
-          SELECT c.*, u.login as "userLogin"
+          SELECT c.id,
+                 c.content,
+                 c."createdAt",
+                 (select row_to_json(row) as "likesInfo"
+                  from (select *
+                        from (SELECT count(*) as "likesCount"
+                              FROM likes l
+                                       LEFT join bans ub on ub."userId" = l."userId"
+                              WHERE l."postId" = c.id
+                                AND ub.banned IS NULL
+                                AND l.status = '1'::likes_status_enum) as "likesCount",
+                             (SELECT count(*) as "dislikesCount"
+                              FROM likes l
+                                       LEFT join bans ub on ub."userId" = l."userId"
+                              WHERE l."postId" = c.id
+                                AND ub.banned IS NULL
+                                AND l.status = '0'::likes_status_enum) as "dislikesCount",
+
+                             -- if like doesn't exist with postId and userId return -1 like status enum
+                             COALESCE((SELECT status as "myStatus"
+                                       FROM likes l
+                                       WHERE l."commentId" = c.id
+                                         AND l."userId" = $2), '-1'::likes_status_enum) as "myStatus") as row),
+                 (select row_to_json(row) as "commentatorInfo"
+                  from (select u2.id as "userId", u2.login as "userLogin"
+                        from users as u2
+                        where u2.id = c."userId") as row)
           FROM comments as c
                    LEFT JOIN users u on u.id = c."userId"
                    LEFT JOIN bans AS b on u.id = b."userId"
           where c.id::text = $1
             AND b.banned is null
+          group by c.id, c.content,
+                   c."createdAt";
       `,
-      [commentId],
+      [commentId, userId],
     );
 
     if (!comment) {
       return;
     }
 
-    return await this.getLikesInfo(comment, userId);
+    return this.mapToViewDtoForRowSqlMapper(comment);
   }
 
   async findPostComments(
@@ -68,11 +90,38 @@ export class CommentsQueryRepository implements ICommentsQueryRepository {
   ): Promise<PageDto<CommentViewDto>> {
     const query = `
         WITH comments AS
-                 (SELECT c.*, u.login as "userLogin"
+                 (SELECT c.id,
+                         c.content,
+                         c."createdAt",
+                         (select row_to_json(row) as "likesInfo"
+                          from (select *
+                                from (SELECT count(*) as "likesCount"
+                                      FROM likes l
+                                               LEFT join bans ub on ub."userId" = l."userId"
+                                      WHERE l."postId" = c.id
+                                        AND ub.banned IS NULL
+                                        AND l.status = '1'::likes_status_enum) as "likesCount",
+                                     (SELECT count(*) as "dislikesCount"
+                                      FROM likes l
+                                               LEFT join bans ub on ub."userId" = l."userId"
+                                      WHERE l."postId" = c.id
+                                        AND ub.banned IS NULL
+                                        AND l.status = '0'::likes_status_enum) as "dislikesCount",
+
+                                     -- if like doesn't exist with postId and userId return -1 like status enum
+                                     COALESCE((SELECT status as "myStatus"
+                                               FROM likes l
+                                               WHERE l."commentId" = c.id
+                                                 AND l."userId" = $5), '-1'::likes_status_enum) as "myStatus") as row),
+                         (select row_to_json(row) as "commentatorInfo"
+                          from (select u2.id as "userId", u2.login as "userLogin"
+                                from users as u2
+                                where u2.id = c."userId") as row)
                   FROM comments as c
                            lEFT JOIN users as u ON u.id = c."userId"
                   where c."postId"::text = $4
-                    )
+                  group by c.id, c.content,
+                           c."createdAt")
 
 
         select row_to_json(t1) as data
@@ -88,41 +137,22 @@ export class CommentsQueryRepository implements ICommentsQueryRepository {
               group by c.total) t1;
     `;
 
-    const comments: { total: number; items?: CommentDto[] } =
+    const comments: { total: number; items?: CommentInputViewDto[] } =
       await this.dataSource
         .query(query, [
           pageOptionsDto.sortDirection,
           pageOptionsDto.pageSize,
           pageOptionsDto.skip,
           postId,
+          userId,
         ])
         .then((res) => res[0]?.data);
 
-    const commentsWithLikesInfo: CommentViewDto[] = await Promise.all(
-      (comments.items ?? []).map(async (comment) => {
-        return this.getLikesInfo(comment, userId);
-      }),
-    );
-
     return new PageDto({
-      items: commentsWithLikesInfo,
+      items: (comments.items ?? []).map(this.mapToViewDtoForRowSqlMapper),
       itemsCount: comments.total,
       pageOptionsDto,
     });
-  }
-
-  async getLikesInfo(comment: CommentDto, userId: string) {
-    const { likesCount, dislikesCount } =
-      await this.likesRepositorySql.countLikeAndDislikeByCommentId({
-        parentId: comment.id,
-      });
-
-    const myStatus = await this.likesRepositorySql.getLikeOrDislike({
-      commentId: comment.id,
-      userId: userId,
-    });
-
-    return this.mapToViewDto(comment, likesCount, dislikesCount, myStatus);
   }
 
   async findPostCommentsInsideUserBlogs(
@@ -143,8 +173,8 @@ export class CommentsQueryRepository implements ICommentsQueryRepository {
                                  left join
                              (select b.*
                               from blogs b
-                                      left join users AS u on b."userId" = u.id
-                                      LEFT JOIN bans on u.id = b."userId"
+                                       left join users AS u on b."userId" = u.id
+                                       LEFT JOIN bans on u.id = b."userId"
                               where b."userId"::text = $4
                                 and bans.banned is null) b
                              on p."blogId" = b.id
@@ -208,6 +238,25 @@ export class CommentsQueryRepository implements ICommentsQueryRepository {
     };
   }
 
+  private mapToViewDtoForRowSqlMapper(
+    comment: CommentInputViewDto,
+  ): CommentViewDto {
+    return {
+      id: comment.id,
+      content: comment.content,
+      commentatorInfo: {
+        userId: comment.commentatorInfo.userId,
+        userLogin: comment.commentatorInfo.userLogin,
+      },
+      createdAt: new Date(comment.createdAt).toISOString(),
+      likesInfo: {
+        likesCount: comment.likesInfo.likesCount,
+        dislikesCount: comment.likesInfo.dislikesCount,
+        myStatus: getStringLikeStatus(comment.likesInfo.myStatus),
+      },
+    };
+  }
+
   private mapToBloggerViewDto(
     comment: CommentForBloggerSqlDto,
   ): CommentForBloggerViewDto {
@@ -218,7 +267,11 @@ export class CommentsQueryRepository implements ICommentsQueryRepository {
         userId: comment.userId,
         userLogin: comment.userLogin,
       },
-      likesInfo: { likesCount: 0, dislikesCount: 0, myStatus: 'None' },
+      likesInfo: {
+        likesCount: 0,
+        dislikesCount: 0,
+        myStatus: LikeStringStatus.NONE,
+      },
       createdAt: new Date(comment.createdAt).toISOString(),
       postInfo: {
         id: comment.postId,

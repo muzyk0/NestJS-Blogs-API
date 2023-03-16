@@ -157,7 +157,7 @@ export class PostsQueryRepository implements IPostsQueryRepository {
                              COALESCE((SELECT status as "myStatus"
                                        FROM likes l
                                        WHERE l."postId" = p.id
-                                         AND l."userId" = $2), '-1') as "myStatus",
+                                         AND l."userId" = $2), '-1'::likes_status_enum) as "myStatus",
 
                              (select array_to_json(array_agg(row_to_json(t))) as "newestLikes"
                               from (select l3."userId", l3."updatedAt" as "addedAt", u.login
@@ -184,7 +184,7 @@ export class PostsQueryRepository implements IPostsQueryRepository {
     return this.mapToDtoForRowSqlMapper(post);
   }
 
-  mapToDtoIterator(post: PostWithBlogNameDto): PostViewDto {
+  private mapToDtoIterator(post: PostWithBlogNameDto): PostViewDto {
     return {
       id: post.id,
       title: post.title,
@@ -202,7 +202,7 @@ export class PostsQueryRepository implements IPostsQueryRepository {
     };
   }
 
-  mapToDtoForRowSqlMapper(post: PostViewDto): PostViewDto {
+  private mapToDtoForRowSqlMapper(post: PostViewDto): PostViewDto {
     return {
       id: post.id,
       title: post.title,
