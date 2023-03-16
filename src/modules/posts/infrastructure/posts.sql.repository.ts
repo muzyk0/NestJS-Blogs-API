@@ -3,7 +3,7 @@ import { InjectDataSource } from '@nestjs/typeorm';
 import { IsInt, IsOptional } from 'class-validator';
 import { DataSource } from 'typeorm';
 
-import { UpdateOrDeleteEntityRowSqlResponse } from '../../../shared/interfaces/row-sql.types';
+import { UpdateOrDeleteEntityRawSqlResponse } from '../../../shared/interfaces/row-sql.types';
 import { PageOptionsDto } from '../../../shared/paginator/page-options.dto';
 import { CreatePostDbDto } from '../application/dto/create-post-db.dto';
 import { CreatePostDto } from '../application/dto/create-post.dto';
@@ -69,7 +69,7 @@ export class PostsRepository implements IPostsRepository {
     id: string,
     { title, shortDescription, content }: UpdatePostDto,
   ): Promise<PostDomain | null> {
-    const [[post]]: UpdateOrDeleteEntityRowSqlResponse<PostDomain> =
+    const [[post]]: UpdateOrDeleteEntityRawSqlResponse<PostDomain> =
       await this.dataSource.query(
         `
           UPDATE posts
@@ -86,7 +86,7 @@ export class PostsRepository implements IPostsRepository {
   }
 
   async remove(postId: string): Promise<boolean> {
-    const [, deletedCount]: UpdateOrDeleteEntityRowSqlResponse =
+    const [, deletedCount]: UpdateOrDeleteEntityRawSqlResponse =
       await this.dataSource.query(
         `
           DELETE

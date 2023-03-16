@@ -6,7 +6,11 @@ import { v4 } from 'uuid';
 
 import { PageOptionsDto } from '../../../shared/paginator/page-options.dto';
 import { PageDto } from '../../../shared/paginator/page.dto';
-import { LikeStringStatus } from '../../likes/application/interfaces/like-status.enum';
+import {
+  LikeStatus,
+  LikeStringStatus,
+} from '../../likes/application/interfaces/like-status.enum';
+import { getStringLikeStatus } from '../../likes/utils/formatters';
 import { PostWithBlogNameDto } from '../application/dto/post-with-blog-name.dto';
 import { PostViewDto } from '../application/dto/post.view.dto';
 
@@ -39,11 +43,45 @@ export class PostsQueryRepository implements IPostsQueryRepository {
   ) {
     const query = `
         WITH posts AS
-                 (SELECT p.*, u.login as "userLogin"
+                 (SELECT p.*,
+                         u.login as "userLogin",
+                         b.name  as "blogName",
+                         (select row_to_json(row) as "extendedLikesInfo"
+                          from (select *
+                                from (SELECT count(*) as "likesCount"
+                                      FROM likes l
+                                               LEFT join bans ub on ub."userId" = l."userId"
+                                      WHERE l."postId" = p.id
+                                        AND ub.banned IS NULL
+                                        AND l.status = '1'::likes_status_enum) as "likesCount",
+                                     (SELECT count(*) as "dislikesCount"
+                                      FROM likes l
+                                               LEFT join bans ub on ub."userId" = l."userId"
+                                      WHERE l."postId" = p.id
+                                        AND ub.banned IS NULL
+                                        AND l.status = '0'::likes_status_enum) as "dislikesCount",
+
+                                     -- if like doesn't exist with postId and userId return -1 like status enum
+                                     COALESCE((SELECT status as "myStatus"
+                                               FROM likes l
+                                               WHERE l."postId" = p.id
+                                                 AND l."userId" = cast($5 as UUID)),
+                                              '-1'::likes_status_enum) as "myStatus",
+
+                                     (select array_to_json(array_agg(row_to_json(t))) as "newestLikes"
+                                      from (select l3."userId", l3."updatedAt" as "addedAt", u.login
+                                            from likes as l3
+                                                     left join users as u on l3."userId" = u.id
+                                                     left join bans ub on l3."userId" = ub."userId"
+                                            where l3.status = '1'::likes_status_enum
+                                              and l3."postId" = p.id
+                                              and ub.banned is null
+                                            order by l3."createdAt" desc
+                                            limit 3) t) as "newestLikes") as row)
                   FROM posts as p
-                           lEFT JOIN users as u ON u.id = $5
+                           lEFT JOIN users as u ON u.id = cast($5 as UUID)
                            LEFT JOIN bans AS bans on u.id = bans."userId"
-                      lEFT JOIN blogs as b ON p."blogId" = b.id
+                           lEFT JOIN blogs as b ON p."blogId" = b.id
                   where true
                     AND case
                             when cast($4 as TEXT) IS NOT NULL THEN p.title ILIKE '%' || $4 || '%'
@@ -56,6 +94,9 @@ export class PostsQueryRepository implements IPostsQueryRepository {
                             ELSE true END
                     AND case
                             when cast($6 as UUID) IS NOT NULL THEN b.banned is null
+                            ELSE true END
+                    AND case
+                            when cast($6 as UUID) IS NOT NULL THEN p."blogId" = cast($6 as UUID)
                             ELSE true END)
 
 
@@ -72,7 +113,7 @@ export class PostsQueryRepository implements IPostsQueryRepository {
               group by c.total) t1;
     `;
 
-    const posts: { total: number; items?: PostWithBlogNameDto[] } =
+    const posts: { total: number; items?: PostViewDto[] } =
       await this.dataSource
         .query(query, [
           pageOptionsDto.sortDirection,
@@ -85,7 +126,7 @@ export class PostsQueryRepository implements IPostsQueryRepository {
         .then((res) => res[0]?.data);
 
     return new PageDto({
-      items: (posts.items ?? []).map(this.mapToDtoIterator),
+      items: (posts.items ?? []).map(this.mapToDtoForRawSqlMapper),
       itemsCount: posts.total,
       pageOptionsDto,
     });
@@ -93,26 +134,57 @@ export class PostsQueryRepository implements IPostsQueryRepository {
 
   // TODO: userId for count likes
   async findOne(id: string, userId?: string): Promise<PostViewDto | null> {
-    const [post]: [PostWithBlogNameDto] = await this.dataSource.query(
+    const [post]: [PostViewDto] = await this.dataSource.query(
       `
-          SELECT p.*, b.name as "blogName"
+          SELECT p.*,
+                 b.name as "blogName",
+                 (select row_to_json(row) as "extendedLikesInfo"
+                  from (select *
+                        from (SELECT count(*) as "likesCount"
+                              FROM likes l
+                                       LEFT join bans ub on ub."userId" = l."userId"
+                              WHERE l."postId" = p.id
+                                AND ub.banned IS NULL
+                                AND l.status = '1'::likes_status_enum) as "likesCount",
+                             (SELECT count(*) as "dislikesCount"
+                              FROM likes l
+                                       LEFT join bans ub on ub."userId" = l."userId"
+                              WHERE l."postId" = p.id
+                                AND ub.banned IS NULL
+                                AND l.status = '0'::likes_status_enum) as "dislikesCount",
+
+                             -- if like doesn't exist with postId and userId return -1 like status enum
+                             COALESCE((SELECT status as "myStatus"
+                                       FROM likes l
+                                       WHERE l."postId" = p.id
+                                         AND l."userId" = $2), '-1'::likes_status_enum) as "myStatus",
+
+                             (select array_to_json(array_agg(row_to_json(t))) as "newestLikes"
+                              from (select l3."userId", l3."updatedAt" as "addedAt", u.login
+                                    from likes as l3
+                                             left join users as u on l3."userId" = u.id
+                                             left join bans ub on l3."userId" = ub."userId"
+                                    where l3.status = '1'::likes_status_enum
+                                      and l3."postId" = p.id
+                                      and ub.banned is null
+                                    order by l3."createdAt" desc
+                                    limit 3) t) as "newestLikes") as row)
           FROM posts as p
                    join blogs as b on p."blogId" = b.id
           where p.id::text = $1
-            and b.banned is null
-
+            and b.banned is null;
       `,
-      [id],
+      [id, userId],
     );
 
     if (!post) {
       return null;
     }
 
-    return this.mapToDtoIterator(post);
+    return this.mapToDtoForRawSqlMapper(post);
   }
 
-  mapToDtoIterator(post: PostWithBlogNameDto): PostViewDto {
+  private mapToDtoIterator(post: PostWithBlogNameDto): PostViewDto {
     return {
       id: post.id,
       title: post.title,
@@ -120,12 +192,35 @@ export class PostsQueryRepository implements IPostsQueryRepository {
       content: post.content,
       blogId: post.blogId,
       blogName: post.blogName,
-      createdAt: post.createdAt,
+      createdAt: post.createdAt.toISOString(),
       extendedLikesInfo: {
         likesCount: 0,
         dislikesCount: 0,
         myStatus: LikeStringStatus.NONE,
         newestLikes: [],
+      },
+    };
+  }
+
+  private mapToDtoForRawSqlMapper(post: PostViewDto): PostViewDto {
+    return {
+      id: post.id,
+      title: post.title,
+      shortDescription: post.shortDescription,
+      content: post.content,
+      blogId: post.blogId,
+      blogName: post.blogName,
+      createdAt: new Date(post.createdAt).toISOString(),
+      extendedLikesInfo: {
+        likesCount: post.extendedLikesInfo.likesCount,
+        dislikesCount: post.extendedLikesInfo.dislikesCount,
+        myStatus: getStringLikeStatus(
+          post.extendedLikesInfo.myStatus as unknown as LikeStatus,
+        ),
+        newestLikes: (post.extendedLikesInfo.newestLikes ?? []).map((nl) => ({
+          ...nl,
+          addedAt: new Date(nl.addedAt).toISOString(),
+        })),
       },
     };
   }

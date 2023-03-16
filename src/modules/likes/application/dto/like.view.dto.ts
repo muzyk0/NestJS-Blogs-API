@@ -1,6 +1,8 @@
 import { IsInt, IsString } from 'class-validator';
 
-export class LikeDto {
+import { LikeStringStatus } from '../interfaces/like-status.enum';
+
+export class LikeViewDto {
   @IsInt()
   likesCount: number;
 
@@ -8,5 +10,5 @@ export class LikeDto {
   dislikesCount: number;
 
   @IsString()
-  myStatus: string;
+  myStatus: LikeStringStatus;
 }

@@ -7,7 +7,7 @@ export interface PostViewDto {
   content: string;
   blogId: string;
   blogName: string;
-  createdAt: Date;
+  createdAt: string;
   extendedLikesInfo: {
     likesCount: number;
     dislikesCount: number;

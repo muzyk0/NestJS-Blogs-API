@@ -3,10 +3,10 @@ import {
   LikeStringStatus,
 } from './application/interfaces/like-status.enum';
 
-export const stringLikeStatuses = {
-  [LikeStatus.LIKE]: 'Like',
-  [LikeStatus.DISLIKE]: 'Dislike',
-  [LikeStatus.NONE]: 'None',
+export const stringLikeStatuses: Record<LikeStatus, LikeStringStatus> = {
+  [LikeStatus.LIKE]: LikeStringStatus.LIKE,
+  [LikeStatus.DISLIKE]: LikeStringStatus.DISLIKE,
+  [LikeStatus.NONE]: LikeStringStatus.NONE,
 };
 
 export const intLikeStatuses = {

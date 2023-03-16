@@ -1,6 +1,8 @@
 import { IsArray, IsDate, IsNotEmpty, IsString, Length } from 'class-validator';
 
-import { LikeDto } from '../../../likes/application/dto/like.dto';
+import { LikeViewDto } from '../../../likes/application/dto/like.view.dto';
+import { LikeInputDto } from '../../../likes/application/dto/likeInputDto';
+import { LikeStringStatus } from '../../../likes/application/interfaces/like-status.enum';
 
 export interface IComment {
   id: string;
@@ -11,6 +13,17 @@ export interface IComment {
   postId: string;
 }
 
+export interface CommentInputViewDto {
+  id: string;
+  content: string;
+  commentatorInfo: {
+    userId: string;
+    userLogin: string;
+  };
+  createdAt: string;
+  likesInfo: LikeInputDto;
+}
+
 export interface CommentViewDto {
   id: string;
   content: string;
@@ -19,7 +32,7 @@ export interface CommentViewDto {
     userLogin: string;
   };
   createdAt: string;
-  likesInfo: LikeDto;
+  likesInfo: LikeViewDto;
 }
 
 export interface CommentForBloggerViewDto {
@@ -36,5 +49,5 @@ export interface CommentForBloggerViewDto {
     blogId: string;
     blogName: string;
   };
-  likesInfo: LikeDto;
+  likesInfo: LikeViewDto;
 }

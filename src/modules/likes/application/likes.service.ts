@@ -10,8 +10,8 @@ import { LikeStatus } from './interfaces/like-status.enum';
 export class LikesService {
   constructor(private readonly likesRepositorySql: LikesRepositorySql) {}
 
-  async updatePostLikeStatus(createLike: CreateLikeDto) {
-    return this.likesRepositorySql.create({
+  async createOrUpdatePostLikeStatus(createLike: CreateLikeDto) {
+    return this.likesRepositorySql.createOrUpdatePostLikeStatus({
       postId: createLike.postId,
       userId: createLike.userId,
       status: createLike.likeStatus,
@@ -19,7 +19,7 @@ export class LikesService {
   }
 
   async updateCommentLikeStatus(createLike: CreateLikeDto) {
-    return this.likesRepositorySql.create({
+    return this.likesRepositorySql.createOrUpdateCommentLikeStatus({
       commentId: createLike.commentId,
       userId: createLike.userId,
       status: createLike.likeStatus,

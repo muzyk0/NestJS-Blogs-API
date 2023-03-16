@@ -150,7 +150,7 @@ export class PostsController {
     @Param('id') postId: string,
     @Body() body: CreateLikeInput,
   ) {
-    const comment = await this.postsService.updatePostLikeStatus({
+    const comment = await this.postsService.createOrUpdatePostLikeStatus({
       postId,
       userId,
       likeStatus: body.likeStatus,

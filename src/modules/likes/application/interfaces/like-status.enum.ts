@@ -1,11 +1,11 @@
 export enum LikeStatus {
-  NONE = 0,
-  DISLIKE = 1,
-  LIKE = 2,
+  NONE = '-1',
+  DISLIKE = '0',
+  LIKE = '1',
 }
 
 export enum LikeStringStatus {
   NONE = 'None',
-  DISLIKE = 'Dislike',
   LIKE = 'Like',
+  DISLIKE = 'Dislike',
 }

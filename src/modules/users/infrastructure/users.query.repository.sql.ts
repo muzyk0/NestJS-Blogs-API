@@ -8,7 +8,7 @@ import {
 } from '../../../shared/paginator/page-options.dto';
 import { PageDto } from '../../../shared/paginator/page.dto';
 import { BloggerBansRepositorySql } from '../../bans/infrastructure/blogger-bans.repository.sql';
-import { UserRowSqlDto } from '../application/dto/user.dto';
+import { UserRawSqlDto } from '../application/dto/user.dto';
 import { User } from '../domain/entities/user.entity';
 
 import { UserWithBannedInfoForBlogView } from './dto/user-with-banned-info-for-blog.view';
@@ -35,7 +35,7 @@ export class UsersQueryRepository implements IUsersQueryRepository {
   ) {}
 
   async findOne(id: string): Promise<UserViewModel> {
-    const users: UserRowSqlDto[] = await this.dataSource.query(
+    const users: UserRawSqlDto[] = await this.dataSource.query(
       `
           SELECT *
           FROM "users"
@@ -96,7 +96,7 @@ export class UsersQueryRepository implements IUsersQueryRepository {
       pageOptionsDto.searchEmailTerm,
     ];
 
-    const users: { total: number; items?: UserRowSqlDto[] } =
+    const users: { total: number; items?: UserRawSqlDto[] } =
       await this.dataSource
         .query(query, queryParams)
         .then((res) => res[0]?.data);
@@ -108,7 +108,7 @@ export class UsersQueryRepository implements IUsersQueryRepository {
     });
   }
 
-  mapToDto(user: UserRowSqlDto): UserViewModel {
+  mapToDto(user: UserRawSqlDto): UserViewModel {
     return {
       id: user.id,
       login: user.login,
