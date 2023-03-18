@@ -11,7 +11,7 @@ export class EmailService {
 
   async sendEmail(email: string, subject: string, template: string) {
     try {
-      const info = await this.send({
+      await this.send({
         from: '"9ART.ru 👻" <info@9art.ru>',
         to: email,
         subject,

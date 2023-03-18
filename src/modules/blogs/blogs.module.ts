@@ -10,7 +10,6 @@ import {
   BloggerBansRepositorySql,
   IBloggerBansRepositorySql,
 } from '../bans/infrastructure/blogger-bans.repository.sql';
-import { CommentsModule } from '../comments/comments.module';
 import { PostsModule } from '../posts/posts.module';
 import { UsersModule } from '../users/users.module';
 

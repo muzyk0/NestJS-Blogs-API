@@ -1,10 +1,7 @@
 import { BadRequestException } from '@nestjs/common';
 import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
 
-import {
-  IUsersRepository,
-  UsersRepository,
-} from '../../../users/infrastructure/users.repository.sql';
+import { IUsersRepository } from '../../../users/infrastructure/users.repository.sql';
 import { IBlogsRepository } from '../../infrastructure/blogs.sql.repository';
 
 export class BindBlogOnUserCommand {

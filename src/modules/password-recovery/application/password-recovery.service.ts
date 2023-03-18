@@ -14,8 +14,6 @@ export class PasswordRecoveryService {
   async addPasswordRecovery(userId: string) {
     const passwordRecovery: CreateRecoveryPasswordDto = {
       code: v4(),
-      createdAt: new Date(),
-      isValid: true,
     };
 
     return this.recoveryPasswordRepository.addPasswordRecovery(

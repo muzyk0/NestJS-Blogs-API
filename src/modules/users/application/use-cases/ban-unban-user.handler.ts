@@ -1,10 +1,7 @@
 import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
 
 import { ISecurityRepository } from '../../../security/infrastructure/security.sql.repository';
-import {
-  IUsersRepository,
-  UsersRepository,
-} from '../../infrastructure/users.repository.sql';
+import { IUsersRepository } from '../../infrastructure/users.repository.sql';
 import { BanUnbanUserInput } from '../dto/ban-unban-user.input';
 
 export class BanUnbanUserCommand {

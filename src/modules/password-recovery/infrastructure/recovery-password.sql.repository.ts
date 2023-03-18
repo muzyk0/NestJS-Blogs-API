@@ -25,26 +25,22 @@ export class RecoveryPasswordRepository implements IRecoveryPasswordRepository {
 
   async addPasswordRecovery(
     userId: string,
-    { isValid, code }: CreateRecoveryPasswordDto,
+    { code }: CreateRecoveryPasswordDto,
   ): Promise<PasswordRecoveryAttempt> {
-    const [
-      _attempt,
-      updatedCount,
-    ]: UpdateOrDeleteEntityRawSqlResponse<PasswordRecoveryAttempt> =
-      await this.dataSource.query(
-        `
-            UPDATE "passwordRecoveryAttempts"
+    await this.dataSource.query(
+      `
+            UPDATE "password_recovery_attempts"
             SET "isValid" = false
             WHERE "userId" = $1
               AND "isValid" IS TRUE
 
         `,
-        [userId],
-      );
+      [userId],
+    );
 
     const [attempt]: [PasswordRecoveryAttempt] = await this.dataSource.query(
       `
-          INSERT INTO "passwordRecoveryAttempts" ("userId", code, "isValid")
+          INSERT INTO "password_recovery_attempts" ("userId", code, "isValid")
           VALUES ($1, $2, true)
           RETURNING *
 
@@ -60,7 +56,7 @@ export class RecoveryPasswordRepository implements IRecoveryPasswordRepository {
     const [attempt]: [PasswordRecoveryAttempt] = await this.dataSource.query(
       `
           SELECT *
-          FROM "passwordRecoveryAttempts"
+          FROM "password_recovery_attempts"
           WHERE "code" = $1
             AND "isValid" is true
       `,
@@ -72,12 +68,13 @@ export class RecoveryPasswordRepository implements IRecoveryPasswordRepository {
 
   async confirmPasswordRecovery(recoveryCode: string): Promise<boolean> {
     const [
-      attempt,
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
+      _,
       updatedCount,
     ]: UpdateOrDeleteEntityRawSqlResponse<PasswordRecoveryAttempt> =
       await this.dataSource.query(
         `
-            UPDATE "passwordRecoveryAttempts"
+            UPDATE "password_recovery_attempts"
             SET "isValid" = false
             WHERE "code" = $1
               AND "isValid" IS TRUE

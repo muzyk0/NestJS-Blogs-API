@@ -5,7 +5,6 @@ import { DataSource } from 'typeorm';
 import { PageOptionsDto } from '../../../shared/paginator/page-options.dto';
 import { PageDto } from '../../../shared/paginator/page.dto';
 import {
-  BlogDto,
   BlogView,
   BlogViewDtoForSuperAdmin,
 } from '../application/dto/blog.dto';

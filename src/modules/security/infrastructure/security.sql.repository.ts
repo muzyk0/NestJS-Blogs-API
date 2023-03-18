@@ -48,6 +48,7 @@ export class SecurityRepository implements ISecurityRepository {
   }
 
   async remove(deviceId: string) {
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const [_emptyArrayResult, countDeleted] = await this.dataSource.query(
       `DELETE
        FROM devices

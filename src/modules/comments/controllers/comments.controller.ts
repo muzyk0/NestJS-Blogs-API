@@ -20,10 +20,7 @@ import { JwtATPayload } from '../../auth/application/interfaces/jwtPayload.type'
 import { AuthGuard } from '../../auth/guards/auth-guard';
 import { JwtAuthGuard } from '../../auth/guards/jwt-auth.guard';
 import { CreateLikeInput } from '../../likes/application/input/create-like.input';
-import {
-  IUsersRepository,
-  UsersRepository,
-} from '../../users/infrastructure/users.repository.sql';
+import { IUsersRepository } from '../../users/infrastructure/users.repository.sql';
 import { CommentsService } from '../application/comments.service';
 import { CommentInput } from '../application/dto/comment.input';
 import { CreateCommentDto } from '../application/dto/create-comment.dto';

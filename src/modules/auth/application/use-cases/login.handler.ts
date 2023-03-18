@@ -3,10 +3,7 @@ import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
 import { v4 } from 'uuid';
 
 import { SecurityService } from '../../../security/application/security.service';
-import {
-  IUsersRepository,
-  UsersRepository,
-} from '../../../users/infrastructure/users.repository.sql';
+import { IUsersRepository } from '../../../users/infrastructure/users.repository.sql';
 import { AuthService } from '../auth.service';
 import {
   DecodedJwtRTPayload,

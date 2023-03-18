@@ -3,10 +3,7 @@ import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
 import * as bcrypt from 'bcrypt';
 
 import { PasswordRecoveryService } from '../../../password-recovery/application/password-recovery.service';
-import {
-  IUsersRepository,
-  UsersRepository,
-} from '../../../users/infrastructure/users.repository.sql';
+import { IUsersRepository } from '../../../users/infrastructure/users.repository.sql';
 
 export class ConfirmPasswordRecoveryCommand {
   constructor(

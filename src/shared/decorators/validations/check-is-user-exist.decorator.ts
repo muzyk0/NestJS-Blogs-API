@@ -10,10 +10,7 @@ import {
   ValidatorConstraintInterface,
 } from 'class-validator';
 
-import {
-  IUsersRepository,
-  UsersRepository,
-} from '../../../modules/users/infrastructure/users.repository.sql';
+import { IUsersRepository } from '../../../modules/users/infrastructure/users.repository.sql';
 
 @ValidatorConstraint({ name: 'UserExists', async: true })
 @Injectable()
