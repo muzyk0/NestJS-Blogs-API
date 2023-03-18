@@ -1,21 +1,29 @@
 import { Module } from '@nestjs/common';
-import { MongooseModule } from '@nestjs/mongoose';
+import { TypeOrmModule } from '@nestjs/typeorm';
 
 import { PasswordRecoveryService } from './application/password-recovery.service';
+import { PasswordRecoveryAttempt } from './domain/entities/password-recovery.entity';
 import {
-  PasswordRecovery,
-  PasswordRecoverySchema,
-} from './domain/schemas/recovery-password.schema';
-import { RecoveryPasswordRepository } from './infrastructure/recovery-password.repository';
+  IRecoveryPasswordRepository,
+  RecoveryPasswordRepository,
+} from './infrastructure/recovery-password.sql.repository';
 
 @Module({
-  imports: [
-    MongooseModule.forFeature([
-      { name: PasswordRecovery.name, schema: PasswordRecoverySchema },
-    ]),
-  ],
+  imports: [TypeOrmModule.forFeature([PasswordRecoveryAttempt])],
   controllers: [],
-  providers: [PasswordRecoveryService, RecoveryPasswordRepository],
-  exports: [PasswordRecoveryService, RecoveryPasswordRepository],
+  providers: [
+    PasswordRecoveryService,
+    {
+      provide: IRecoveryPasswordRepository,
+      useClass: RecoveryPasswordRepository,
+    },
+  ],
+  exports: [
+    PasswordRecoveryService,
+    {
+      provide: IRecoveryPasswordRepository,
+      useClass: RecoveryPasswordRepository,
+    },
+  ],
 })
 export class PasswordRecoveryModule {}
