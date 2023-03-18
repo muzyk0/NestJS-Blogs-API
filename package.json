@@ -1,6 +1,6 @@
 {
-  "name": "blogs-api",
-  "version": "0.19.0-sql.alpha.3",
+  "name": "blogs-platform-api",
+  "version": "0.20.0-sql.beta.1",
   "description": "",
   "author": "MIT",
   "private": true,
