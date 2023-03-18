@@ -2,11 +2,8 @@ import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
 
 import { EmailServiceLocal } from '../../../email-local/application/email-local.service';
 import { PasswordRecoveryService } from '../../../password-recovery/application/password-recovery.service';
-import { PasswordRecoveryDocument } from '../../../password-recovery/domain/schemas/recovery-password.schema';
-import {
-  IUsersRepository,
-  UsersRepository,
-} from '../../../users/infrastructure/users.repository.sql';
+import { PasswordRecoveryAttempt } from '../../../password-recovery/domain/entities/password-recovery.entity';
+import { IUsersRepository } from '../../../users/infrastructure/users.repository.sql';
 
 export class SendRecoveryPasswordTempCodeCommand {
   constructor(public readonly email: string) {}
@@ -31,7 +28,7 @@ export class SendRecoveryPasswordTempCodeHandler
       return false;
     }
 
-    const passwordRecovery: PasswordRecoveryDocument =
+    const passwordRecovery: PasswordRecoveryAttempt =
       await this.recoveryPasswordService.addPasswordRecovery(user.id);
 
     await this.emailService.SendRecoveryPasswordTempCode({

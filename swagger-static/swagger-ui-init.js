@@ -1257,7 +1257,7 @@ window.onload = function() {
     "info": {
       "title": "Blog platform",
       "description": "Sorry I'm working on new modules and don't have time to write swagger documentation. But in time it will be completely written",
-      "version": "0.18.0",
+      "version": "0.19.0-sql.alpha.3",
       "contact": {}
     },
     "tags": [

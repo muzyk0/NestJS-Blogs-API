@@ -1,6 +1,5 @@
 import { join } from 'path';
 import { Module } from '@nestjs/common';
-import { MongooseModule } from '@nestjs/mongoose';
 import { TypeOrmModule } from '@nestjs/typeorm';
 
 /* eslint import/order: ["error", {"newlines-between": "ignore"}] */
@@ -31,7 +30,6 @@ import { SuperAdminModule } from './modules/super-admin/super-admin.module';
 @Module({
   imports: [
     configModule,
-    MongooseModule.forRoot(configuration().MONGO_URI),
     TypeOrmModule.forRoot(typeOrmConfig.options),
     // EmailModule,
     MailerModule.forRootAsync({
