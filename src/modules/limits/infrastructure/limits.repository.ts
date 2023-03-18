@@ -1,4 +1,4 @@
-import { Injectable, Logger } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { v4 } from 'uuid';
 
 import { CreateLimitsDto } from '../application/dto/create-limits.dto';

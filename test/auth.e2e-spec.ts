@@ -1,4 +1,3 @@
-import { faker } from '@faker-js/faker';
 import { expect } from '@jest/globals';
 import { INestApplication } from '@nestjs/common';
 import request from 'supertest';

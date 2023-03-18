@@ -2,10 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { InjectDataSource } from '@nestjs/typeorm';
 import { DataSource } from 'typeorm';
 
-import {
-  PageOptionsForUserDto,
-  UserBanStatus,
-} from '../../../shared/paginator/page-options.dto';
+import { PageOptionsForUserDto } from '../../../shared/paginator/page-options.dto';
 import { PageDto } from '../../../shared/paginator/page.dto';
 import { BloggerBansRepositorySql } from '../../bans/infrastructure/blogger-bans.repository.sql';
 import { UserRawSqlDto } from '../application/dto/user.dto';

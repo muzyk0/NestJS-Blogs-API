@@ -1,10 +1,7 @@
 import { NotFoundException } from '@nestjs/common';
 import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
 
-import {
-  IUsersRepository,
-  UsersRepository,
-} from '../../infrastructure/users.repository.sql';
+import { IUsersRepository } from '../../infrastructure/users.repository.sql';
 
 export class RemoveUserCommand {
   constructor(public readonly userId: string) {}

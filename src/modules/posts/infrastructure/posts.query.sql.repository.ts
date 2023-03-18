@@ -2,7 +2,6 @@ import { Injectable } from '@nestjs/common';
 import { InjectDataSource } from '@nestjs/typeorm';
 import { IsInt, IsOptional } from 'class-validator';
 import { DataSource } from 'typeorm';
-import { v4 } from 'uuid';
 
 import { PageOptionsDto } from '../../../shared/paginator/page-options.dto';
 import { PageDto } from '../../../shared/paginator/page.dto';

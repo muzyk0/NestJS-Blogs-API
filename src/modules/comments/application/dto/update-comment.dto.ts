@@ -1,4 +1,4 @@
-import { IsNotEmpty, IsString, Length } from 'class-validator';
+import { IsNotEmpty, Length } from 'class-validator';
 
 import { CreateCommentDto } from './create-comment.dto';
 

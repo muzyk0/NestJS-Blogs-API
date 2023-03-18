@@ -2,10 +2,7 @@ import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
 import { isAfter } from 'date-fns';
 
 import { User } from '../../../users/domain/entities/user.entity';
-import {
-  IUsersRepository,
-  UsersRepository,
-} from '../../../users/infrastructure/users.repository.sql';
+import { IUsersRepository } from '../../../users/infrastructure/users.repository.sql';
 
 export class ConfirmAccountCommand {
   constructor(public readonly code: string) {}

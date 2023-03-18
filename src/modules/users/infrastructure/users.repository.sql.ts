@@ -202,7 +202,8 @@ export class UsersRepository implements IUsersRepository {
     const banned = payload.isBanned ? new Date() : null;
     const banReason = payload.isBanned ? payload.banReason : null;
 
-    const [ban]: [Bans] = await this.dataSource.query(
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    const [_ban]: [Bans] = await this.dataSource.query(
       `
           INSERT INTO bans ("userId", banned, "banReason")
           VALUES ($1, $2, $3)

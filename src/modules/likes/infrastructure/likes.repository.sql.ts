@@ -4,8 +4,6 @@ import { DataSource } from 'typeorm';
 
 import { UpdateOrDeleteEntityRawSqlResponse } from '../../../shared/interfaces/row-sql.types';
 import { IUsersRepository } from '../../users/infrastructure/users.repository.sql';
-import { GetLikeDto } from '../application/dto/get-like.dto';
-import { GetCommentLikeByUser } from '../application/interfaces/get-like.interface';
 import { LikeStatus } from '../application/interfaces/like-status.enum';
 import { LikeInterface } from '../application/interfaces/like.interface';
 import { Like } from '../domain/entity/like.entity';

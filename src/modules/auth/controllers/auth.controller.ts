@@ -8,7 +8,6 @@ import {
   Post,
   Req,
   Res,
-  UnauthorizedException,
   UseGuards,
 } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
@@ -26,13 +25,9 @@ import { CreateUserDto } from '../../users/application/dto/create-user.dto';
 import { EmailConfirmationCodeDto } from '../../users/application/dto/email-confirmation-code.dto';
 import { Email } from '../../users/application/dto/email.dto';
 import { CreateUserCommand } from '../../users/application/use-cases/create-user.handler';
-import {
-  IUsersRepository,
-  UsersRepository,
-} from '../../users/infrastructure/users.repository.sql';
+import { IUsersRepository } from '../../users/infrastructure/users.repository.sql';
 import { LoginDto } from '../application/dto/login.dto';
 import { JwtPayloadWithRt } from '../application/interfaces/jwt-payload-with-rt.type';
-import { DecodedJwtRTPayload } from '../application/interfaces/jwtPayload.type';
 import { TokensType } from '../application/interfaces/tokens.type';
 import { JwtService } from '../application/jwt.service';
 import { ConfirmAccountCommand } from '../application/use-cases/confirm-account.handler';

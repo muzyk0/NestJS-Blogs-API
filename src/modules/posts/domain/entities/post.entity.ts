@@ -7,11 +7,9 @@ import {
 } from 'typeorm';
 
 import { BaseEntity } from '../../../../shared/base-entity/base.entity';
-import { RevokeToken } from '../../../auth/domain/entities/revoked-token.entity';
 import { Blog } from '../../../blogs/domain/entities/blog.entity';
 import { Comment } from '../../../comments/domain/entities/comment.entity';
 import { Like } from '../../../likes/domain/entity/like.entity';
-import { Device } from '../../../security/domain/entities/security.entity';
 
 @Entity('posts')
 export class Post extends BaseEntity {

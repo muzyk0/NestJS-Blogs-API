@@ -1,17 +1,10 @@
-import {
-  ForbiddenException,
-  NotFoundException,
-  UnauthorizedException,
-} from '@nestjs/common';
+import { ForbiddenException, UnauthorizedException } from '@nestjs/common';
 import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
 
 import { SecurityService } from '../../../security/application/security.service';
-import { UsersRepository } from '../../../users/infrastructure/users.repository.sql';
 import { RevokeTokenInput } from '../../infrastructure/dto/revoke-token.input';
 import { IRevokeTokenRepository } from '../../infrastructure/revoke-token.repository.sql';
 import { JwtPayloadWithRt } from '../interfaces/jwt-payload-with-rt.type';
-import { DecodedJwtRTPayload } from '../interfaces/jwtPayload.type';
-import { JwtService } from '../jwt.service';
 
 export class LogoutCommand {
   constructor(

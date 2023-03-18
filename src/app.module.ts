@@ -15,7 +15,6 @@ import { AppService } from './app.service';
 import { AuthModule } from './modules/auth/auth.module';
 import { BlogsModule } from './modules/blogs/blogs.module';
 import { CommentsModule } from './modules/comments/comments.module';
-import configuration from './config/configuration';
 import { LimitsModule } from './modules/limits/limits.module';
 import { PostsModule } from './modules/posts/posts.module';
 import { TestingModule } from './modules/testing/testing.module';

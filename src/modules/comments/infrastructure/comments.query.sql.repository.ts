@@ -6,7 +6,6 @@ import { PageOptionsDto } from '../../../shared/paginator/page-options.dto';
 import { PageDto } from '../../../shared/paginator/page.dto';
 import { LikeStringStatus } from '../../likes/application/interfaces/like-status.enum';
 import { Like } from '../../likes/domain/entity/like.entity';
-import { LikesRepositorySql } from '../../likes/infrastructure/likes.repository.sql';
 import { getStringLikeStatus } from '../../likes/utils/formatters';
 import {
   CommentDto,

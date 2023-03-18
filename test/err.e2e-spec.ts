@@ -214,17 +214,15 @@ describe('Blogger (e2e)', () => {
         //   .get(`/sa/users/`)
         //   .auth('admin', 'qwerty', { type: 'basic' });
 
-        const responseComments = await request(app.getHttpServer())
+        await request(app.getHttpServer())
           .get(`/comments/${responseComment.id}`)
           .expect(404);
       });
 
       it('should return status 404 after get blog if owner user1', async () => {
-        const responseBlogWithoutUserBan = await request(app.getHttpServer())
-          .get(`/blogs/${blog.id}`)
-          .expect(200);
+        await request(app.getHttpServer()).get(`/blogs/${blog.id}`).expect(200);
 
-        const responseBanForBlog1 = await request(app.getHttpServer())
+        await request(app.getHttpServer())
           .put(`/sa/users/${user.id}/ban`)
           .auth('admin', 'qwerty', { type: 'basic' })
           .send({
@@ -233,13 +231,11 @@ describe('Blogger (e2e)', () => {
           })
           .expect(204);
 
-        const responseBlogWithoutUserBan2 = await request(app.getHttpServer())
-          .get(`/blogs/${blog.id}`)
-          .expect(404);
+        await request(app.getHttpServer()).get(`/blogs/${blog.id}`).expect(404);
       });
 
       it('should return status unban user2', async () => {
-        const responseUnban = await request(app.getHttpServer())
+        await request(app.getHttpServer())
           .put(`/sa/users/${user2.id}/ban`)
           .auth('admin', 'qwerty', { type: 'basic' })
           .send({
@@ -260,13 +256,13 @@ describe('Blogger (e2e)', () => {
         expect(findedUser.banInfo.isBanned).toBeFalsy();
         expect(findedUser.banInfo.banReason).toBeNull();
 
-        const responseComments = await request(app.getHttpServer())
+        await request(app.getHttpServer())
           .get(`/comments/${responseComment.id}`)
           .expect(200);
       });
 
       it('POST -> "/auth/login": Shouldn\'t login banned user. Should login unbanned user; status 401; used additional methods: POST => /sa/users, PUT => /sa/users/:id/ban;', async () => {
-        const responseBlogWithoutUserBan2 = await request(app.getHttpServer())
+        await request(app.getHttpServer())
           .post(`/auth/login`)
           .send({
             loginOrEmail: 'asirius',
@@ -276,9 +272,7 @@ describe('Blogger (e2e)', () => {
       });
 
       it("Shouldn' show posts on banned user1", async () => {
-        const responsePostWithoutBanUser1 = await request(app.getHttpServer())
-          .get(`/posts/${post.id}`)
-          .expect(404);
+        await request(app.getHttpServer()).get(`/posts/${post.id}`).expect(404);
         const postsWithoutBannedUsers = await request(app.getHttpServer())
           .get(`/posts`)
           .expect(200);
@@ -289,7 +283,7 @@ describe('Blogger (e2e)', () => {
 
         expect(result).toBeFalsy();
 
-        const responsePostWithBanUser2 = await request(app.getHttpServer())
+        await request(app.getHttpServer())
           .get(`/posts/${post2.id}`)
           .expect(200);
       });
@@ -516,7 +510,7 @@ describe('Blogger (e2e)', () => {
     });
 
     it('should bad created comment for blog post by banned user for blog', async () => {
-      const responsePostComment = await request(app.getHttpServer())
+      await request(app.getHttpServer())
         .post(`/posts/${post.id}/comments`)
         .auth(fakeUser2.accessToken, { type: 'bearer' })
         .send({
