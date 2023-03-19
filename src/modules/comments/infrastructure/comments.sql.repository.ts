@@ -20,8 +20,13 @@ export class CommentsRepository implements ICommentsRepository {
     const [comment]: [Comment] = await this.dataSource.query(
       `
           INSERT INTO comments (content, "userId", "postId")
-          values ($1, $2, $3)
-          RETURNING *;
+          select $1,
+                 $2,
+                 $3
+          where not exists(
+                  select * from bloggers_ban_users b where b."userId" = $2::uuid and b.banned is not null
+              )
+          returning *
       `,
       [content, userId, postId],
     );

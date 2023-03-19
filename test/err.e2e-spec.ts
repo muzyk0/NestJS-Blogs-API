@@ -271,7 +271,7 @@ describe('Blogger (e2e)', () => {
           .expect(401);
       });
 
-      it("Shouldn' show posts on banned user1", async () => {
+      it("Shouldn't show posts on banned user1", async () => {
         await request(app.getHttpServer()).get(`/posts/${post.id}`).expect(404);
         const postsWithoutBannedUsers = await request(app.getHttpServer())
           .get(`/posts`)

@@ -4,7 +4,7 @@ import { DataSource } from 'typeorm';
 
 import { PageOptionsForUserDto } from '../../../shared/paginator/page-options.dto';
 import { PageDto } from '../../../shared/paginator/page.dto';
-import { BloggerBansRepositorySql } from '../../bans/infrastructure/blogger-bans.repository.sql';
+import { BloggersBanUsersRepository } from '../../bans/infrastructure/bloggers-ban-users-repository.service';
 import { UserRawSqlDto } from '../application/dto/user.dto';
 import { User } from '../domain/entities/user.entity';
 
@@ -28,7 +28,7 @@ export abstract class IUsersQueryRepository {
 export class UsersQueryRepository implements IUsersQueryRepository {
   constructor(
     @InjectDataSource() private dataSource: DataSource,
-    private readonly bansRepositorySql: BloggerBansRepositorySql,
+    private readonly bansRepositorySql: BloggersBanUsersRepository,
   ) {}
 
   async findOne(id: string): Promise<UserViewModel> {
@@ -144,7 +144,7 @@ export class UsersQueryRepository implements IUsersQueryRepository {
                          b2."banReason" as "banReasonForBlog",
                          b2."updatedAt" as "updatedAtForBlog"
                   FROM users as u
-                           LEFT JOIN blogs_bans as b2 ON b2."blogId" = $5
+                           LEFT JOIN bloggers_ban_users as b2 ON b2."blogId" = $5
                   where u.id = b2."userId"
                     AND b2."banned" IS NOT NULL
                     AND case

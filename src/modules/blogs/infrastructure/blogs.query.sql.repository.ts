@@ -36,8 +36,9 @@ export class BlogsQueryRepository implements IBlogsQueryRepository {
         WITH blogs AS
                  (SELECT b.*, u.login as "userLogin"
                   FROM blogs as b
-                           lEFT JOIN users as u ON b."userId" = u.id
-                  where b.banned IS NULL
+                           lEFT JOIN users u ON b."userId" = u.id
+                           LEFT JOIN bans ub on b."userId" = ub."userId"
+                  where b.banned IS NULL and ub.banned IS NULL
                     AND case
                             when cast($5 as UUID) IS NOT NULL THEN b."userId" = $5
                             ELSE true END
@@ -84,7 +85,7 @@ export class BlogsQueryRepository implements IBlogsQueryRepository {
                  (SELECT b.*, u.login as "userLogin"
                   FROM blogs as b
                            lEFT JOIN users as u ON b."userId" = u.id
-                  where (b.banned IS NULL OR b.banned IS NOT NULL)
+                  WHERE true
                     AND case
                             when cast($4 as TEXT) IS NOT NULL THEN b.name ILIKE '%' || $4 || '%'
                             ELSE true END)
@@ -126,8 +127,10 @@ export class BlogsQueryRepository implements IBlogsQueryRepository {
         `
             SELECT b.*
             FROM blogs as b
+                     LEFT JOIN bans ub on b."userId" = ub."userId"
             where b.id = $1
               and b.banned is null
+              and ub.banned is null
             ORDER BY "createdAt";
         `,
         [id],

@@ -112,23 +112,30 @@ export class PostsController {
       throw new NotFoundException();
     }
 
-    const ban = await this.bansService.getBan({
-      userId: userId,
-      blogId: post.blogId,
-    });
+    // const ban = await this.bansService.getBan({
+    //   userId: userId,
+    //   blogId: post.blogId,
+    // });
+    //
+    // if (ban) {
+    //   throw new ForbiddenException();
+    // }
 
-    if (ban) {
-      throw new ForbiddenException();
-    }
-
-    const { id: commentId } = await this.commentsService.create({
+    const createdComment = await this.commentsService.create({
       postId: id,
       content: createCommentDto.content,
       userId,
     });
 
+    if (!createdComment) {
+      throw new NotFoundException({
+        field: '',
+        message: 'You are banned for this blog',
+      });
+    }
+
     const comment = await this.commentsQueryRepository.findOne(
-      commentId,
+      createdComment.id,
       userId,
     );
 
