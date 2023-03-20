@@ -2,7 +2,7 @@ import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
 
 import { UserRawSqlDto } from '../../../users/application/dto/user.dto';
 import { IUsersRepository } from '../../../users/infrastructure/users.repository.sql';
-import { AuthService } from '../auth.service';
+import { CryptService } from '../crypt.service';
 
 export class ValidateUserCommand {
   constructor(
@@ -17,7 +17,7 @@ export class ValidateUserHandler
 {
   constructor(
     private readonly usersRepository: IUsersRepository,
-    private readonly authService: AuthService,
+    private readonly authService: CryptService,
   ) {}
 
   async execute({

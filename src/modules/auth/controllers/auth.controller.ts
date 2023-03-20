@@ -1,5 +1,4 @@
 import {
-  BadRequestException,
   Body,
   Controller,
   Get,
@@ -20,16 +19,14 @@ import { GetCurrentJwtContext } from '../../../shared/decorators/get-current-use
 import { LimitsControlWithIpAndLoginGuard } from '../../limits/guards/limits-control-with-ip-and-login-guard.service';
 import { LimitsControlGuard } from '../../limits/guards/limits-control.guard';
 import { CreateRecoveryPasswordDto } from '../../password-recovery/application/dto/confirm-password-recovery.dto';
-import { SecurityService } from '../../security/application/security.service';
 import { CreateUserDto } from '../../users/application/dto/create-user.dto';
 import { EmailConfirmationCodeDto } from '../../users/application/dto/email-confirmation-code.dto';
 import { Email } from '../../users/application/dto/email.dto';
 import { CreateUserCommand } from '../../users/application/use-cases/create-user.handler';
-import { IUsersRepository } from '../../users/infrastructure/users.repository.sql';
+import { IUsersQueryRepository } from '../../users/infrastructure/users.query.repository.sql';
 import { LoginDto } from '../application/dto/login.dto';
 import { JwtPayloadWithRt } from '../application/interfaces/jwt-payload-with-rt.type';
 import { TokensType } from '../application/interfaces/tokens.type';
-import { JwtService } from '../application/jwt.service';
 import { ConfirmAccountCommand } from '../application/use-cases/confirm-account.handler';
 import { ConfirmPasswordRecoveryCommand } from '../application/use-cases/confirm-password-recovery.handler';
 import { LoginCommand } from '../application/use-cases/login.handler';
@@ -47,9 +44,7 @@ export class AuthController {
   isDev: boolean;
 
   constructor(
-    private readonly usersRepository: IUsersRepository,
-    private readonly securityService: SecurityService,
-    private readonly jwtService: JwtService,
+    private readonly usersQueryRepository: IUsersQueryRepository,
     private readonly commandBus: CommandBus,
     private readonly config: ConfigService,
   ) {
@@ -99,55 +94,22 @@ export class AuthController {
   @Post('/registration-confirmation')
   @HttpCode(HttpStatus.NO_CONTENT)
   async confirmAccount(@Body() { code }: EmailConfirmationCodeDto) {
-    const isConfirmed = await this.commandBus.execute<
-      ConfirmAccountCommand,
-      boolean
-    >(new ConfirmAccountCommand(code));
-
-    if (!isConfirmed) {
-      throw new BadRequestException([
-        { message: "Code isn't correct", field: 'code' },
-      ]);
-    }
-
-    return;
+    return this.commandBus.execute<ConfirmAccountCommand, boolean>(
+      new ConfirmAccountCommand(code),
+    );
   }
 
   @UseGuards(LimitsControlGuard)
   @Post('/registration-email-resending')
   @HttpCode(HttpStatus.NO_CONTENT)
   async resendConfirmationCode(@Body() { email }: Email) {
-    const user = await this.usersRepository.findOneByEmail(email);
-
-    if (!user) {
-      throw new BadRequestException([
-        { message: "Email isn't exist", field: 'email' },
-      ]);
-    }
-
-    const isConfirmed = await this.commandBus.execute(
-      new ResendConfirmationCodeCommand(email),
-    );
-
-    if (!isConfirmed) {
-      throw new BadRequestException([
-        { message: 'Email already confirm', field: 'email' },
-      ]);
-    }
-
-    return;
+    return this.commandBus.execute(new ResendConfirmationCodeCommand(email));
   }
 
   @Get('/me')
   @UseGuards(JwtAuthGuard)
   async me(@GetCurrentUserId() userId: string) {
-    const user = await this.usersRepository.findOneById(userId);
-
-    return {
-      email: user.email,
-      login: user.login,
-      userId,
-    };
+    return this.usersQueryRepository.findOneForMeQuery(userId);
   }
 
   @Post('/refresh-token')

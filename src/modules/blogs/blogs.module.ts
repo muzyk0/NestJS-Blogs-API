@@ -9,7 +9,7 @@ import { UpdateBanUserForBlogHandler } from '../bans/application/use-cases/updat
 import {
   BloggersBanUsersRepository,
   IBloggersBanUsersRepository,
-} from '../bans/infrastructure/bloggers-ban-users-repository.service';
+} from '../bans/infrastructure/bloggers-ban-users.repository.';
 import { PostsModule } from '../posts/posts.module';
 import { UsersModule } from '../users/users.module';
 

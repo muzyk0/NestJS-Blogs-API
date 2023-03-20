@@ -15,8 +15,8 @@ export class Bans extends BaseEntity {
   userId: string;
 
   @Column({ default: null })
-  banned: Date;
+  banned: Date | null;
 
   @Column({ nullable: true })
-  banReason: string;
+  banReason: string | null;
 }

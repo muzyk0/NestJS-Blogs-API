@@ -4,14 +4,19 @@ import { DataSource } from 'typeorm';
 
 import { PageOptionsForUserDto } from '../../../shared/paginator/page-options.dto';
 import { PageDto } from '../../../shared/paginator/page.dto';
-import { BloggersBanUsersRepository } from '../../bans/infrastructure/bloggers-ban-users-repository.service';
 import { UserRawSqlDto } from '../application/dto/user.dto';
 import { User } from '../domain/entities/user.entity';
 
 import { UserWithBannedInfoForBlogView } from './dto/user-with-banned-info-for-blog.view';
-import { UserBloggerViewModel, UserViewModel } from './dto/user.view';
+import {
+  UserBloggerViewModel,
+  UserMeQueryViewModel,
+  UserViewModel,
+} from './dto/user.view';
 
 export abstract class IUsersQueryRepository {
+  abstract findOneForMeQuery(id: string): Promise<UserMeQueryViewModel>;
+
   abstract findOne(id: string): Promise<UserViewModel>;
 
   abstract findAll(
@@ -26,21 +31,45 @@ export abstract class IUsersQueryRepository {
 
 @Injectable()
 export class UsersQueryRepository implements IUsersQueryRepository {
-  constructor(
-    @InjectDataSource() private dataSource: DataSource,
-    private readonly bansRepositorySql: BloggersBanUsersRepository,
-  ) {}
+  constructor(@InjectDataSource() private dataSource: DataSource) {}
 
-  async findOne(id: string): Promise<UserViewModel> {
-    const users: UserRawSqlDto[] = await this.dataSource.query(
+  async findOneForMeQuery(id: string): Promise<UserMeQueryViewModel | null> {
+    const [user]: User[] = await this.dataSource.query(
       `
-          SELECT *
-          FROM "users"
-          WHERE id = $1
+          SELECT u.*
+          FROM "users" u
+                   LEFT JOIN bans b ON b."userId" = u.id
+          WHERE u.id = $1
+            and b.banned is null
       `,
       [id],
     );
-    return this.mapToDto(users[0]);
+
+    if (!user) {
+      return null;
+    }
+    return {
+      email: user.email,
+      login: user.login,
+      userId: user.id,
+    };
+  }
+
+  async findOne(id: string): Promise<UserViewModel | null> {
+    const [user]: UserRawSqlDto[] = await this.dataSource.query(
+      `
+          SELECT u.*, b.banned, b."banReason"
+          FROM "users" u
+                   LEFT JOIN bans b ON b."userId" = u.id
+          WHERE u.id = $1
+      `,
+      [id],
+    );
+
+    if (!user) {
+      return null;
+    }
+    return this.mapToDto(user);
   }
 
   async findAll(

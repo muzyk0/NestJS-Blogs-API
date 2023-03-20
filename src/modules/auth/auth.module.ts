@@ -10,7 +10,7 @@ import { PasswordRecoveryModule } from '../password-recovery/password-recovery.m
 import { SecurityModule } from '../security/security.module';
 import { UsersModule } from '../users/users.module';
 
-import { AuthService } from './application/auth.service';
+import { CryptService } from './application/crypt.service';
 import { JwtService } from './application/jwt.service';
 import { CommandHandlers } from './application/use-cases';
 import { AuthController } from './controllers/auth.controller';
@@ -26,7 +26,7 @@ import { RtJwtStrategy } from './strategies/rt.jwt.strategy';
 const Strategies = [LocalStrategy, AtJwtStrategy, RtJwtStrategy];
 
 const Providers: Provider<any>[] = [
-  AuthService,
+  CryptService,
   JwtService,
   { provide: IRevokeTokenRepository, useClass: RevokeTokenRepository },
 ];

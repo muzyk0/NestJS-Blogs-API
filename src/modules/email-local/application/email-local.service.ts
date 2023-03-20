@@ -27,7 +27,7 @@ export class EmailServiceLocal {
     return this.commandBus.execute(new SendTestEmailCommand(email, userName));
   }
 
-  async SendConfirmationCode({
+  async sendConfirmationCode({
     email,
     userName,
     confirmationCode,
@@ -37,7 +37,7 @@ export class EmailServiceLocal {
     );
   }
 
-  async SendRecoveryPasswordTempCode({
+  async sendRecoveryPasswordTempCode({
     email,
     userName,
     recoveryCode,
