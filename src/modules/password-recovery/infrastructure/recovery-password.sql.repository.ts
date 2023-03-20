@@ -9,7 +9,7 @@ import { PasswordRecoveryAttempt } from '../domain/entities/password-recovery.en
 export abstract class IRecoveryPasswordRepository {
   abstract addPasswordRecovery(
     userId: string,
-    { isValid, code }: CreateRecoveryPasswordDto,
+    { code }: CreateRecoveryPasswordDto,
   ): Promise<PasswordRecoveryAttempt>;
 
   abstract findByRecoveryCode(

@@ -1,10 +1,4 @@
-import {
-  Entity,
-  Column,
-  PrimaryGeneratedColumn,
-  ManyToOne,
-  Unique,
-} from 'typeorm';
+import { Column, Entity, ManyToOne, PrimaryGeneratedColumn } from 'typeorm';
 
 import { BaseEntity } from '../../../../shared/base-entity/base.entity';
 import { Comment } from '../../../comments/domain/entities/comment.entity';
@@ -13,7 +7,6 @@ import { User } from '../../../users/domain/entities/user.entity';
 import { LikeStatus } from '../../application/interfaces/like-status.enum';
 
 @Entity('likes')
-@Unique(['userId', 'postId'])
 export class Like extends BaseEntity {
   @PrimaryGeneratedColumn('uuid')
   id: string;

@@ -4,8 +4,8 @@ import { BaseEntity } from '../../../../shared/base-entity/base.entity';
 import { Blog } from '../../../blogs/domain/entities/blog.entity';
 import { User } from '../../../users/domain/entities/user.entity';
 
-@Entity('blogs_bans')
-export class BlogsBans extends BaseEntity {
+@Entity('bloggers_ban_users')
+export class BloggerBanUser extends BaseEntity {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
@@ -17,11 +17,11 @@ export class BlogsBans extends BaseEntity {
 
   @ManyToOne(() => User, (user) => user.bans)
   user: string;
-  @Column({ nullable: true, type: 'uuid' })
+  @Column()
   userId: string;
 
   @ManyToOne(() => Blog, (blog) => blog.bans)
   blog: string;
-  @Column({ nullable: true, type: 'uuid' })
+  @Column()
   blogId: string | null;
 }

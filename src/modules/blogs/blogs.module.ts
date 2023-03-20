@@ -7,9 +7,9 @@ import { IsUserAlreadyExistConstraint } from '../../shared/decorators/validation
 import { AuthModule } from '../auth/auth.module';
 import { UpdateBanUserForBlogHandler } from '../bans/application/use-cases/update-ban-user-for-blog.handler';
 import {
-  BloggerBansRepositorySql,
-  IBloggerBansRepositorySql,
-} from '../bans/infrastructure/blogger-bans.repository.sql';
+  BloggersBanUsersRepository,
+  IBloggersBanUsersRepository,
+} from '../bans/infrastructure/bloggers-ban-users-repository.service';
 import { PostsModule } from '../posts/posts.module';
 import { UsersModule } from '../users/users.module';
 
@@ -51,7 +51,10 @@ const CommandHandlers = [
     { provide: IBlogsRepository, useClass: BlogsRepository },
     BlogExistsRule,
     IsUserAlreadyExistConstraint,
-    { provide: IBloggerBansRepositorySql, useClass: BloggerBansRepositorySql },
+    {
+      provide: IBloggersBanUsersRepository,
+      useClass: BloggersBanUsersRepository,
+    },
   ],
   exports: [
     ...CommandHandlers,

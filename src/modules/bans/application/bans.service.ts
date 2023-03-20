@@ -1,12 +1,12 @@
 import { Injectable } from '@nestjs/common';
 
-import { IBloggerBansRepositorySql } from '../infrastructure/blogger-bans.repository.sql';
+import { IBloggersBanUsersRepository } from '../infrastructure/bloggers-ban-users-repository.service';
 
 import { FindBanInput } from './input/find-ban.input';
 
 @Injectable()
 export class BansService {
-  constructor(private readonly bansRepo: IBloggerBansRepositorySql) {}
+  constructor(private readonly bansRepo: IBloggersBanUsersRepository) {}
 
   async getBan(data: FindBanInput) {
     return this.bansRepo.findOne(data);

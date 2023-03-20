@@ -4,26 +4,28 @@ import { DataSource } from 'typeorm';
 
 import { CreateBanInput } from '../application/input/create-ban.input';
 import { FindBanInput } from '../application/input/find-ban.input';
-import { BlogsBans } from '../domain/entity/blogger-bans.entity';
+import { BloggerBanUser } from '../domain/entity/blogger-ban-user';
 
-export abstract class IBloggerBansRepositorySql {
+export abstract class IBloggersBanUsersRepository {
   abstract updateOrCreateBan(
     createBanInput: CreateBanInput,
-  ): Promise<BlogsBans>;
+  ): Promise<BloggerBanUser>;
 
-  abstract findOne({ userId, blogId }: FindBanInput): Promise<BlogsBans>;
+  abstract findOne({ userId, blogId }: FindBanInput): Promise<BloggerBanUser>;
 }
 
 @Injectable()
-export class BloggerBansRepositorySql implements IBloggerBansRepositorySql {
+export class BloggersBanUsersRepository implements IBloggersBanUsersRepository {
   constructor(@InjectDataSource() private dataSource: DataSource) {}
 
-  async updateOrCreateBan(createBanInput: CreateBanInput): Promise<BlogsBans> {
+  async updateOrCreateBan(
+    createBanInput: CreateBanInput,
+  ): Promise<BloggerBanUser> {
     const banned = createBanInput.isBanned ? new Date() : null;
 
-    const [ban]: [BlogsBans] = await this.dataSource.query(
+    const [ban]: [BloggerBanUser] = await this.dataSource.query(
       `
-          INSERT INTO blogs_bans ("userId", "blogId", "banned", "banReason")
+          INSERT INTO bloggers_ban_users ("userId", "blogId", "banned", "banReason")
           VALUES ($1, $2, $3, $4)
           ON CONFLICT (id) DO UPDATE
               SET "banned"    = $3,
@@ -42,10 +44,10 @@ export class BloggerBansRepositorySql implements IBloggerBansRepositorySql {
   }
 
   async findOne({ userId, blogId }: FindBanInput) {
-    const ban: BlogsBans[] = await this.dataSource.query(
+    const ban: BloggerBanUser[] = await this.dataSource.query(
       `
           SELECT *
-          FROM blogs_bans
+          FROM bloggers_ban_users
           WHERE "userId" = $1
             AND "blogId" = $2
       `,
@@ -59,7 +61,7 @@ export class BloggerBansRepositorySql implements IBloggerBansRepositorySql {
   //   const bans: BlogsBans[] = await this.dataSource.query(
   //     `
   //         SELECT *
-  //         FROM blogs_bans
+  //         FROM bloggers_ban_users
   //         WHERE "parentId" = $1
   //           AND "isBanned" = $3
   //     `,

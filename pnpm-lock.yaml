@@ -25,6 +25,7 @@ specifiers:
   '@types/cron': ^2.0.0
   '@types/express': ^4.17.17
   '@types/jest': 29.4.0
+  '@types/jsonwebtoken': ^9.0.1
   '@types/node': ^18.14.2
   '@types/nodemailer': ^6.4.7
   '@types/passport-local': ^1.0.35
@@ -114,6 +115,7 @@ devDependencies:
   '@types/cron': 2.0.0
   '@types/express': 4.17.17
   '@types/jest': 29.4.0
+  '@types/jsonwebtoken': 9.0.1
   '@types/node': 18.14.2
   '@types/nodemailer': 6.4.7
   '@types/passport-local': 1.0.35
@@ -1615,7 +1617,6 @@ packages:
     resolution: {integrity: sha512-c5ltxazpWabia/4UzhIoaDcIza4KViOQhdbjRlfcIGVnsE3c3brkz9Z+F/EeJIECOQP7W7US2hNE930cWWkPiw==}
     dependencies:
       '@types/node': 18.14.2
-    dev: false
 
   /@types/luxon/3.2.0:
     resolution: {integrity: sha512-lGmaGFoaXHuOLXFvuju2bfvZRqxAqkHPx9Y9IQdQABrinJJshJwfNCKV+u7rR3kJbiqfTF/NhOkcxxAFrObyaA==}

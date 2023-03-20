@@ -51,14 +51,20 @@ export class PostsQueryRepository implements IPostsQueryRepository {
                                       FROM likes l
                                                LEFT join bans ub on ub."userId" = l."userId"
                                       WHERE l."postId" = p.id
-                                        AND ub.banned IS NULL
-                                        AND l.status = '1'::likes_status_enum) as "likesCount",
+--                                         AND ub.banned IS NULL
+                                        AND l.status = '1'::likes_status_enum
+                                        AND case
+                                                when cast($5 as UUID) IS NOT NULL THEN ub.banned is null
+                                                ELSE true END) as "likesCount",
                                      (SELECT count(*) as "dislikesCount"
                                       FROM likes l
                                                LEFT join bans ub on ub."userId" = l."userId"
                                       WHERE l."postId" = p.id
-                                        AND ub.banned IS NULL
-                                        AND l.status = '0'::likes_status_enum) as "dislikesCount",
+--                                         AND ub.banned IS NULL
+                                        AND l.status = '0'::likes_status_enum
+                                        AND case
+                                                when cast($5 as UUID) IS NOT NULL THEN ub.banned is null
+                                                ELSE true END) as "dislikesCount",
 
                                      -- if like doesn't exist with postId and userId return -1 like status enum
                                      COALESCE((SELECT status as "myStatus"
@@ -74,23 +80,25 @@ export class PostsQueryRepository implements IPostsQueryRepository {
                                                      left join bans ub on l3."userId" = ub."userId"
                                             where l3.status = '1'::likes_status_enum
                                               and l3."postId" = p.id
-                                              and ub.banned is null
+                                              AND case
+                                                      when cast($5 as UUID) IS NOT NULL THEN bans.banned is null
+                                                      ELSE true END
                                             order by l3."createdAt" desc
-                                            limit 3) t) as "newestLikes") as row)
+                                             limit 3) t) as "newestLikes") as row)
                   FROM posts as p
                            lEFT JOIN users as u ON u.id = cast($5 as UUID)
-                           LEFT JOIN bans AS bans on u.id = bans."userId"
                            lEFT JOIN blogs as b ON p."blogId" = b.id
-                  where true
+                           LEFT JOIN bans AS bans on b."userId" = bans."userId"
+                  where b.banned is null and bans.banned is null 
                     AND case
                             when cast($4 as TEXT) IS NOT NULL THEN p.title ILIKE '%' || $4 || '%'
                             ELSE true END
-                    AND case
-                            when cast($5 as UUID) IS NOT NULL THEN u.id = $5
-                            ELSE true END
-                    AND case
-                            when cast($5 as UUID) IS NOT NULL THEN bans.banned is null
-                            ELSE true END
+--                     AND case
+--                             when cast($5 as UUID) IS NOT NULL THEN u.id = $5
+--                             ELSE true END
+--                     AND case
+--                             when cast($5 as UUID) IS NOT NULL THEN bans.banned is null
+--                             ELSE true END
                     AND case
                             when cast($6 as UUID) IS NOT NULL THEN b.banned is null
                             ELSE true END
@@ -131,7 +139,6 @@ export class PostsQueryRepository implements IPostsQueryRepository {
     });
   }
 
-  // TODO: userId for count likes
   async findOne(id: string, userId?: string): Promise<PostViewDto | null> {
     const [post]: [PostViewDto] = await this.dataSource.query(
       `
@@ -169,9 +176,11 @@ export class PostsQueryRepository implements IPostsQueryRepository {
                                     order by l3."createdAt" desc
                                     limit 3) t) as "newestLikes") as row)
           FROM posts as p
-                   join blogs as b on p."blogId" = b.id
+                   left join blogs as b on p."blogId" = b.id
+                   left join bans ub on b."userId" = ub."userId"
           where p.id::text = $1
-            and b.banned is null;
+            and b.banned is null
+            and ub.banned is null;
       `,
       [id, userId],
     );

@@ -7,7 +7,7 @@ import {
 } from 'typeorm';
 
 import { BaseEntity } from '../../../../shared/base-entity/base.entity';
-import { BlogsBans } from '../../../bans/domain/entity/blogger-bans.entity';
+import { BloggerBanUser } from '../../../bans/domain/entity/blogger-ban-user';
 import { Post } from '../../../posts/domain/entities/post.entity';
 import { User } from '../../../users/domain/entities/user.entity';
 
@@ -36,6 +36,6 @@ export class Blog extends BaseEntity {
   @OneToMany(() => Post, (post) => post.blog)
   posts: Blog[];
 
-  @OneToMany(() => BlogsBans, (blogBans) => blogBans.blog)
-  bans: BlogsBans[];
+  @OneToMany(() => BloggerBanUser, (blogBans) => blogBans.blog)
+  bans: BloggerBanUser[];
 }

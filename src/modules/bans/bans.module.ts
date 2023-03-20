@@ -8,18 +8,18 @@ import { BlogsModule } from '../blogs/blogs.module';
 
 import { UpdateBanUserForBlogHandler } from './application/use-cases/update-ban-user-for-blog.handler';
 import { Bans } from './domain/entity/bans.entity';
-import { BlogsBans } from './domain/entity/blogger-bans.entity';
+import { BloggerBanUser } from './domain/entity/blogger-ban-user';
 import {
-  BloggerBansRepositorySql,
-  IBloggerBansRepositorySql,
-} from './infrastructure/blogger-bans.repository.sql';
+  BloggersBanUsersRepository,
+  IBloggersBanUsersRepository,
+} from './infrastructure/bloggers-ban-users-repository.service';
 
 const CommandHandlers = [UpdateBanUserForBlogHandler];
 
 @Module({
   imports: [
     CqrsModule,
-    TypeOrmModule.forFeature([BlogsBans, Bans]),
+    TypeOrmModule.forFeature([BloggerBanUser, Bans]),
     BlogsModule,
   ],
   controllers: [],
@@ -27,11 +27,17 @@ const CommandHandlers = [UpdateBanUserForBlogHandler];
     IsUserAlreadyExistConstraint,
     BlogExistsRule,
     ...CommandHandlers,
-    { provide: IBloggerBansRepositorySql, useClass: BloggerBansRepositorySql },
+    {
+      provide: IBloggersBanUsersRepository,
+      useClass: BloggersBanUsersRepository,
+    },
   ],
   exports: [
     ...CommandHandlers,
-    { provide: IBloggerBansRepositorySql, useClass: BloggerBansRepositorySql },
+    {
+      provide: IBloggersBanUsersRepository,
+      useClass: BloggersBanUsersRepository,
+    },
   ],
 })
 export class BansModule {}

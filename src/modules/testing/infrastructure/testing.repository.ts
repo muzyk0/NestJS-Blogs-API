@@ -19,7 +19,7 @@ export class TestingRepository {
         DELETE
         FROM "bans";
         DELETE
-        FROM "blogs_bans";
+        FROM "bloggers_ban_users";
         DELETE
         FROM "devices";
         DELETE

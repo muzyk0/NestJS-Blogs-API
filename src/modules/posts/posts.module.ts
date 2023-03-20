@@ -5,9 +5,9 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { AuthModule } from '../auth/auth.module';
 import { BansService } from '../bans/application/bans.service';
 import {
-  BloggerBansRepositorySql,
-  IBloggerBansRepositorySql,
-} from '../bans/infrastructure/blogger-bans.repository.sql';
+  BloggersBanUsersRepository,
+  IBloggersBanUsersRepository,
+} from '../bans/infrastructure/bloggers-ban-users-repository.service';
 import { BlogsService } from '../blogs/application/blogs.service';
 import {
   BlogsRepository,
@@ -58,7 +58,10 @@ import {
     { provide: ICommentsRepository, useClass: CommentsRepository },
     { provide: ICommentsQueryRepository, useClass: CommentsQueryRepository },
     BansService,
-    { provide: IBloggerBansRepositorySql, useClass: BloggerBansRepositorySql },
+    {
+      provide: IBloggersBanUsersRepository,
+      useClass: BloggersBanUsersRepository,
+    },
   ],
   exports: [
     PostsService,
