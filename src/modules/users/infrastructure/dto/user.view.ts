@@ -1,3 +1,9 @@
+export class UserMeQueryViewModel {
+  userId: string;
+  login: string;
+  email: string;
+}
+
 export class UserViewModel {
   id: string;
   login: string;

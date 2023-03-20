@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 
-import { IBloggersBanUsersRepository } from '../infrastructure/bloggers-ban-users-repository.service';
+import { IBloggersBanUsersRepository } from '../infrastructure/bloggers-ban-users.repository.';
 
 import { FindBanInput } from './input/find-ban.input';
 

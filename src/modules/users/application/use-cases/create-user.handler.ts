@@ -45,7 +45,7 @@ export class CreateUserHandler implements ICommandHandler<CreateUserCommand> {
     }
 
     try {
-      await this.emailService.SendConfirmationCode({
+      await this.emailService.sendConfirmationCode({
         email,
         userName: createdUser.login,
         confirmationCode: createdUser.confirmationCode,

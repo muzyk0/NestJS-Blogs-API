@@ -31,7 +31,7 @@ export class SendRecoveryPasswordTempCodeHandler
     const passwordRecovery: PasswordRecoveryAttempt =
       await this.recoveryPasswordService.addPasswordRecovery(user.id);
 
-    await this.emailService.SendRecoveryPasswordTempCode({
+    await this.emailService.sendRecoveryPasswordTempCode({
       email: email,
       userName: user.login,
       recoveryCode: passwordRecovery.code,

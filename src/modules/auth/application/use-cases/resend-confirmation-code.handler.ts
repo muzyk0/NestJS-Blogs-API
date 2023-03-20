@@ -1,3 +1,4 @@
+import { BadRequestException } from '@nestjs/common';
 import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
 import { addDays } from 'date-fns';
 import { v4 } from 'uuid';
@@ -21,8 +22,16 @@ export class ResendConfirmationCodeHandler
   async execute({ email }: ResendConfirmationCodeCommand): Promise<boolean> {
     const user = await this.usersRepository.findOneByEmail(email);
 
-    if (!user || user.isConfirmed) {
-      return false;
+    if (!user) {
+      throw new BadRequestException([
+        { message: "Email isn't exist", field: 'email' },
+      ]);
+    }
+
+    if (user.isConfirmed) {
+      throw new BadRequestException([
+        { message: 'Email already confirm', field: 'email' },
+      ]);
     }
 
     const updatedUser = await this.usersRepository.updateConfirmationCode({
@@ -35,7 +44,7 @@ export class ResendConfirmationCodeHandler
       return false;
     }
 
-    await this.emailService.SendConfirmationCode({
+    await this.emailService.sendConfirmationCode({
       email: email,
       userName: user.login,
       confirmationCode: updatedUser.confirmationCode,

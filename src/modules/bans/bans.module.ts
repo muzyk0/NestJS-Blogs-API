@@ -12,7 +12,11 @@ import { BloggerBanUser } from './domain/entity/blogger-ban-user';
 import {
   BloggersBanUsersRepository,
   IBloggersBanUsersRepository,
-} from './infrastructure/bloggers-ban-users-repository.service';
+} from './infrastructure/bloggers-ban-users.repository.';
+import {
+  IUserBanRepository,
+  UserBanRepository,
+} from './infrastructure/user-bans.repository.';
 
 const CommandHandlers = [UpdateBanUserForBlogHandler];
 
@@ -31,12 +35,20 @@ const CommandHandlers = [UpdateBanUserForBlogHandler];
       provide: IBloggersBanUsersRepository,
       useClass: BloggersBanUsersRepository,
     },
+    {
+      provide: IUserBanRepository,
+      useClass: UserBanRepository,
+    },
   ],
   exports: [
     ...CommandHandlers,
     {
       provide: IBloggersBanUsersRepository,
       useClass: BloggersBanUsersRepository,
+    },
+    {
+      provide: IUserBanRepository,
+      useClass: UserBanRepository,
     },
   ],
 })

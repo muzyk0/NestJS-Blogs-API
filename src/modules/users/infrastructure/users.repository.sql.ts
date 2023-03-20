@@ -26,8 +26,6 @@ export abstract class IUsersRepository {
 
   abstract findOneByLogin(login: string): Promise<User>;
 
-  // abstract findManyByIds(ids: string[]): Promise<User[]>;
-
   abstract remove(id: string): Promise<boolean>;
 
   abstract setIsConfirmedById(id: string): Promise<boolean>;
@@ -45,13 +43,6 @@ export abstract class IUsersRepository {
     password: string;
     id: string;
   }): Promise<boolean>;
-
-  abstract createOrUpdateBan(
-    id: string,
-    payload: BanUnbanUserInput,
-  ): Promise<boolean>;
-
-  // abstract findAllWithoutBanned(): Promise<User[]>;
 }
 
 @Injectable()
@@ -82,27 +73,6 @@ export class UsersRepository implements IUsersRepository {
 
     return result[0];
   }
-
-  // async findAllWithoutBanned(): Promise<User[]> {
-  //   const users: User[] = await this.dataSource.query(`
-  //       SELECT *
-  //       FROM "users"
-  //       WHERE banned IS NULL
-  //   `);
-  //   return users;
-  // }
-
-  // async findManyByIds(ids: string[]): Promise<User[]> {
-  //   const users: User[] = await this.dataSource.query(
-  //     `
-  //         SELECT *
-  //         FROM "users"
-  //         WHERE id IN ($1)
-  //     `,
-  //     [ids],
-  //   );
-  //   return users;
-  // }
 
   async findOneByConfirmationCode(code: string): Promise<User> {
     const users: User[] = await this.dataSource.query(
@@ -192,29 +162,6 @@ export class UsersRepository implements IUsersRepository {
       `,
       [id],
     );
-    return true;
-  }
-
-  async createOrUpdateBan(
-    id: string,
-    payload: BanUnbanUserInput,
-  ): Promise<boolean> {
-    const banned = payload.isBanned ? new Date() : null;
-    const banReason = payload.isBanned ? payload.banReason : null;
-
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    const [_ban]: [Bans] = await this.dataSource.query(
-      `
-          INSERT INTO bans ("userId", banned, "banReason")
-          VALUES ($1, $2, $3)
-          ON CONFLICT ("userId") DO UPDATE
-              SET "banned"  = $2,
-                  "banReason" = $3
-          RETURNING *
-      `,
-      [id, banned, banReason],
-    );
-
     return true;
   }
 

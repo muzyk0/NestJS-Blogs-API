@@ -4,7 +4,7 @@ import { v4 } from 'uuid';
 
 import { SecurityService } from '../../../security/application/security.service';
 import { IUsersRepository } from '../../../users/infrastructure/users.repository.sql';
-import { AuthService } from '../auth.service';
+import { CryptService } from '../crypt.service';
 import {
   DecodedJwtRTPayload,
   JwtATPayload,
@@ -25,7 +25,7 @@ export class LoginCommand {
 export class LoginHandler implements ICommandHandler<LoginCommand> {
   constructor(
     private readonly usersRepository: IUsersRepository,
-    private readonly authService: AuthService,
+    private readonly authService: CryptService,
     private readonly jwtService: JwtService,
     private readonly securityService: SecurityService,
   ) {}

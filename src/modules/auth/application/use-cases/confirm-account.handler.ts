@@ -1,3 +1,4 @@
+import { BadRequestException } from '@nestjs/common';
 import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
 import { isAfter } from 'date-fns';
 
@@ -18,7 +19,9 @@ export class ConfirmAccountHandler
     const user = await this.usersRepository.findOneByConfirmationCode(code);
 
     if (!this.isAvailableConfirmAccount(user, code)) {
-      return false;
+      throw new BadRequestException([
+        { message: "Code isn't correct", field: 'code' },
+      ]);
     }
 
     return this.usersRepository.setIsConfirmedById(user.id);

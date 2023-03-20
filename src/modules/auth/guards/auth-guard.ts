@@ -2,16 +2,13 @@ import { CanActivate, ExecutionContext, Injectable } from '@nestjs/common';
 import { Request } from 'express';
 import { Observable } from 'rxjs';
 
-import { AuthService } from '../application/auth.service';
+import { CryptService } from '../application/crypt.service';
 import { JwtATPayload } from '../application/interfaces/jwtPayload.type';
 import { JwtService } from '../application/jwt.service';
 
 @Injectable()
 export class AuthGuard implements CanActivate {
-  constructor(
-    private readonly authService: AuthService,
-    private readonly jwtService: JwtService,
-  ) {}
+  constructor(private readonly jwtService: JwtService) {}
 
   canActivate(
     context: ExecutionContext,

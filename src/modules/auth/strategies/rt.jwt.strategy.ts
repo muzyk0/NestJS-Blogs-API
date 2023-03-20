@@ -4,14 +4,14 @@ import { PassportStrategy } from '@nestjs/passport';
 import { Request } from 'express';
 import { ExtractJwt, Strategy } from 'passport-jwt';
 
-import { AuthService } from '../application/auth.service';
+import { CryptService } from '../application/crypt.service';
 import { JwtATPayload } from '../application/interfaces/jwtPayload.type';
 
 @Injectable()
 export class RtJwtStrategy extends PassportStrategy(Strategy, 'jwt-refresh') {
   constructor(
     private readonly config: ConfigService,
-    private readonly authService: AuthService,
+    private readonly authService: CryptService,
   ) {
     super({
       jwtFromRequest: ExtractJwt.fromExtractors([
