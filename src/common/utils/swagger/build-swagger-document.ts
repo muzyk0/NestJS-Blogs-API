@@ -8,17 +8,20 @@ export const buildSwaggerDocument = (
   const config = new DocumentBuilder()
     .setTitle('Blog platform')
     .setDescription(
-      "Sorry I'm working on new features and don't have time to write swagger-static documentation. But in time it will be completely written",
+      "Sorry I'm working on new modules and don't have time to write swagger documentation. But in time it will be completely written",
     )
     .setVersion(swaggerVersion)
     .addTag('auth')
+    .addTag('blogger')
     .addTag('blogs')
     .addTag('comments')
     .addTag('posts')
     .addTag('securityDevices')
     .addTag('testing')
-    .addTag('users')
+    .addTag('superAdmin')
     .build();
   const document = SwaggerModule.createDocument(app, config);
-  SwaggerModule.setup('', app, document);
+  SwaggerModule.setup('', app, document, {
+    // customfavIcon: '../../../favicon.ico',
+  });
 };

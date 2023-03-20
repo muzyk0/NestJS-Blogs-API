@@ -1,6 +1,5 @@
 import { join } from 'path';
 import { Module } from '@nestjs/common';
-import { MongooseModule } from '@nestjs/mongoose';
 import { TypeOrmModule } from '@nestjs/typeorm';
 
 /* eslint import/order: ["error", {"newlines-between": "ignore"}] */
@@ -8,28 +7,28 @@ import { MailerModule } from '@nestjs-modules/mailer';
 import { ConfigService } from '@nestjs/config';
 import { HandlebarsAdapter } from '@nestjs-modules/mailer/dist/adapters/handlebars.adapter';
 import { ServeStaticModule } from '@nestjs/serve-static';
+import { ScheduleModule } from '@nestjs/schedule';
 import { configModule } from './constants';
 
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
-import { AuthModule } from './features/auth/auth.module';
-import { BlogsModule } from './features/blogs/blogs.module';
-import { CommentsModule } from './features/comments/comments.module';
-import configuration from './config/configuration';
-import { LimitsModule } from './features/limits/limits.module';
-import { PostsModule } from './features/posts/posts.module';
-import { TestingModule } from './features/testing/testing.module';
-import { UsersModule } from './features/users/users.module';
-import { SecurityModule } from './features/security/security.module';
-import { PasswordRecoveryModule } from './features/password-recovery/password-recovery.module';
-import { LikesModule } from './features/likes/likes.module';
+import { AuthModule } from './modules/auth/auth.module';
+import { BlogsModule } from './modules/blogs/blogs.module';
+import { CommentsModule } from './modules/comments/comments.module';
+import { LimitsModule } from './modules/limits/limits.module';
+import { PostsModule } from './modules/posts/posts.module';
+import { TestingModule } from './modules/testing/testing.module';
+import { UsersModule } from './modules/users/users.module';
+import { SecurityModule } from './modules/security/security.module';
+import { PasswordRecoveryModule } from './modules/password-recovery/password-recovery.module';
+import { LikesModule } from './modules/likes/likes.module';
 import typeOrmConfig from './config/typeorm.config';
-import { EmailModuleLocal } from './features/email-local/email-local.module';
+import { EmailModuleLocal } from './modules/email-local/email-local.module';
+import { SuperAdminModule } from './modules/super-admin/super-admin.module';
 
 @Module({
   imports: [
     configModule,
-    MongooseModule.forRoot(configuration().MONGO_URI),
     TypeOrmModule.forRoot(typeOrmConfig.options),
     // EmailModule,
     MailerModule.forRootAsync({
@@ -62,6 +61,7 @@ import { EmailModuleLocal } from './features/email-local/email-local.module';
       rootPath: join(__dirname, '..', 'swagger-static'),
       serveRoot: process.env.NODE_ENV === 'development' ? '/' : '/',
     }),
+    ScheduleModule.forRoot(),
     EmailModuleLocal,
     BlogsModule,
     PostsModule,
@@ -73,6 +73,7 @@ import { EmailModuleLocal } from './features/email-local/email-local.module';
     SecurityModule,
     PasswordRecoveryModule,
     LikesModule,
+    SuperAdminModule,
   ],
   controllers: [AppController],
   providers: [AppService],
