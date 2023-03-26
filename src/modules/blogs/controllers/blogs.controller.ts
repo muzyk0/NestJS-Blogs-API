@@ -10,20 +10,19 @@ import { ApiNotFoundResponse, ApiOkResponse, ApiTags } from '@nestjs/swagger';
 
 import { GetCurrentJwtContextWithoutAuth } from '../../../shared/decorators/get-current-user-without-auth.decorator';
 import { PageOptionsDto } from '../../../shared/paginator/page-options.dto';
+import { PageDto } from '../../../shared/paginator/page.dto';
 import { JwtATPayload } from '../../auth/application/interfaces/jwtPayload.type';
 import { AuthGuard } from '../../auth/guards/auth-guard';
-import { PostsService } from '../../posts/application/posts.service';
+import { PostViewDto } from '../../posts/application/dto/post.view.dto';
 import { IPostsQueryRepository } from '../../posts/infrastructure/posts.query.sql.repository';
-import { BlogsService } from '../application/blogs.service';
+import { BlogView } from '../application/dto/blog.dto';
 import { IBlogsQueryRepository } from '../infrastructure/blogs.query.sql.repository';
 
 @ApiTags('blogs')
 @Controller('blogs')
 export class BlogsController {
   constructor(
-    private readonly blogsService: BlogsService,
     private readonly blogsQueryRepository: IBlogsQueryRepository,
-    private readonly postsService: PostsService,
     private readonly postsQueryRepository: IPostsQueryRepository,
   ) {}
 
@@ -41,15 +40,15 @@ export class BlogsController {
   @ApiNotFoundResponse({
     description: 'Not Found',
   })
-  @Get(':id')
-  async findOne(@Param('id') id: string) {
-    const blog = await this.blogsQueryRepository.findOne(id);
+  @Get(':blogId')
+  async findOne(@Param('blogId') blogId: string): Promise<BlogView> {
+    const blog = await this.blogsQueryRepository.findOne(blogId);
 
     if (!blog) {
       throw new NotFoundException();
     }
 
-    return blog;
+    return this.blogsQueryRepository.findOne(blogId);
   }
 
   @ApiOkResponse({
@@ -64,13 +63,7 @@ export class BlogsController {
     @GetCurrentJwtContextWithoutAuth() ctx: JwtATPayload | null,
     @Query() pageOptionsDto: PageOptionsDto,
     @Param('id') id: string,
-  ) {
-    const blog = await this.blogsService.findOne(id);
-
-    if (!blog) {
-      throw new NotFoundException();
-    }
-
+  ): Promise<PageDto<PostViewDto>> {
     return this.postsQueryRepository.findAll(
       {
         ...pageOptionsDto,

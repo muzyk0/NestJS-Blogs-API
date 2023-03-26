@@ -8,7 +8,6 @@ import {
   BloggersBanUsersRepository,
   IBloggersBanUsersRepository,
 } from '../bans/infrastructure/bloggers-ban-users.repository.';
-import { BlogsService } from '../blogs/application/blogs.service';
 import {
   BlogsRepository,
   IBlogsRepository,
@@ -27,6 +26,7 @@ import { SecurityModule } from '../security/security.module';
 import { UsersModule } from '../users/users.module';
 
 import { PostsService } from './application/posts.service';
+import { CommandHandlers } from './application/use-cases';
 import { PostsController } from './controllers/posts.controller';
 import { Post } from './domain/entities/post.entity';
 import {
@@ -49,11 +49,11 @@ import {
   ],
   controllers: [PostsController],
   providers: [
+    ...CommandHandlers,
     PostsService,
     { provide: IPostsRepository, useClass: PostsRepository },
     { provide: IPostsQueryRepository, useClass: PostsQueryRepository },
     { provide: IBlogsRepository, useClass: BlogsRepository },
-    BlogsService,
     CommentsService,
     { provide: ICommentsRepository, useClass: CommentsRepository },
     { provide: ICommentsQueryRepository, useClass: CommentsQueryRepository },
@@ -64,6 +64,7 @@ import {
     },
   ],
   exports: [
+    ...CommandHandlers,
     PostsService,
     { provide: IPostsRepository, useClass: PostsRepository },
     { provide: IPostsQueryRepository, useClass: PostsQueryRepository },

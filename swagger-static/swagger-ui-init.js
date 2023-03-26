@@ -36,12 +36,12 @@ window.onload = function() {
           ]
         }
       },
-      "/blog-platform/blogs/{id}": {
+      "/blog-platform/blogs/{blogId}": {
         "get": {
           "operationId": "BlogsController_findOne",
           "parameters": [
             {
-              "name": "id",
+              "name": "blogId",
               "required": true,
               "in": "path",
               "schema": {
@@ -145,13 +145,13 @@ window.onload = function() {
           ]
         }
       },
-      "/blog-platform/blogger/blogs/{id}": {
+      "/blog-platform/blogger/blogs/{blogId}": {
         "put": {
           "operationId": "BloggerController_update",
           "summary": "Update existing Blog by id with InputModel",
           "parameters": [
             {
-              "name": "id",
+              "name": "blogId",
               "required": true,
               "in": "path",
               "schema": {
@@ -197,7 +197,7 @@ window.onload = function() {
           "summary": "Delete blog specified by id",
           "parameters": [
             {
-              "name": "id",
+              "name": "blogId",
               "required": true,
               "in": "path",
               "schema": {

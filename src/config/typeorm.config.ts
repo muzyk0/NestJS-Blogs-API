@@ -18,5 +18,5 @@ export default new DataSource({
   entities: entities,
   migrations: [__dirname, 'dist/migrations/**/*.js'],
   subscribers: [__dirname, 'dist/subscribers/**/*.js'],
-  logging: true,
+  logging: false,
 });
