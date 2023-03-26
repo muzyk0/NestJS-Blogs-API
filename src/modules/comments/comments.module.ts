@@ -1,4 +1,5 @@
 import { Module } from '@nestjs/common';
+import { CqrsModule } from '@nestjs/cqrs';
 import { TypeOrmModule } from '@nestjs/typeorm';
 
 import { AuthModule } from '../auth/auth.module';
@@ -14,7 +15,7 @@ import {
   CommentsService,
   ICommentsRepository,
 } from './application/comments.service';
-import { GetPostCommentsInsideCurrentUserBlogsHandler } from './application/use-cases/get-post-comments-inside-current-user-blogs.handler';
+import { CommandHandlers } from './application/use-cases';
 import { CommentsController } from './controllers/comments.controller';
 import { Comment } from './domain/entities/comment.entity';
 import {
@@ -23,10 +24,9 @@ import {
 } from './infrastructure/comments.query.sql.repository';
 import { CommentsRepository } from './infrastructure/comments.sql.repository';
 
-const CommandHandlers = [GetPostCommentsInsideCurrentUserBlogsHandler];
-
 @Module({
   imports: [
+    CqrsModule,
     TypeOrmModule.forFeature([Comment]),
     LikesModule,
     AuthModule,
@@ -41,5 +41,6 @@ const CommandHandlers = [GetPostCommentsInsideCurrentUserBlogsHandler];
     { provide: ICommentsRepository, useClass: CommentsRepository },
     { provide: ICommentsQueryRepository, useClass: CommentsQueryRepository },
   ],
+  exports: [...CommandHandlers],
 })
 export class CommentsModule {}

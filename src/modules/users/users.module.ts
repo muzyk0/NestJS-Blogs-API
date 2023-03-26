@@ -17,7 +17,7 @@ import { EmailModuleLocal } from '../email-local/email-local.module';
 import { PasswordRecoveryModule } from '../password-recovery/password-recovery.module';
 import { SecurityModule } from '../security/security.module';
 
-import { CommandHandlers } from './application/use-cases';
+import { CommandHandlers } from './application/use-cases/command-handlers';
 import { User } from './domain/entities/user.entity';
 import {
   IUsersQueryRepository,

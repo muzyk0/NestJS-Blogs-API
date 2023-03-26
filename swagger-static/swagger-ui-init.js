@@ -782,12 +782,12 @@ window.onload = function() {
           ]
         }
       },
-      "/blog-platform/posts/{id}/comments": {
+      "/blog-platform/posts/{postId}/comments": {
         "get": {
           "operationId": "PostsController_findPostComments",
           "parameters": [
             {
-              "name": "id",
+              "name": "postId",
               "required": true,
               "in": "path",
               "schema": {
@@ -808,7 +808,7 @@ window.onload = function() {
           "operationId": "PostsController_createPostComment",
           "parameters": [
             {
-              "name": "id",
+              "name": "postId",
               "required": true,
               "in": "path",
               "schema": {
