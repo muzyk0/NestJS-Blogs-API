@@ -1,8 +1,6 @@
 import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
 
 import { PageOptionsDto } from '../../../../shared/paginator/page-options.dto';
-import { IBlogsRepository } from '../../../blogs/infrastructure/blogs.sql.repository';
-import { IPostsRepository } from '../../../posts/infrastructure/posts.sql.repository';
 import { ICommentsQueryRepository } from '../../infrastructure/comments.query.sql.repository';
 
 export class GetPostCommentsInsideCurrentUserBlogsCommand {
@@ -18,8 +16,6 @@ export class GetPostCommentsInsideCurrentUserBlogsHandler
 {
   constructor(
     private readonly commentsQueryRepository: ICommentsQueryRepository,
-    private readonly blogsRepository: IBlogsRepository,
-    private readonly postsRepository: IPostsRepository,
   ) {}
 
   async execute({

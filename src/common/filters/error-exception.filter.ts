@@ -4,6 +4,7 @@ import {
   ExceptionFilter,
   HttpException,
 } from '@nestjs/common';
+import { CommandHandlerNotFoundException } from '@nestjs/cqrs';
 import { Response } from 'express';
 
 @Catch(Error)
@@ -12,13 +13,12 @@ export class ErrorExceptionFilter implements ExceptionFilter {
     const ctx = host.switchToHttp();
     const response = ctx.getResponse<Response>();
 
-    // if (process.env.NODE_ENV !== 'production') {
-    //   response
-    //     .status(500)
-    //     .send({ message: exception.message, stack: exception.stack });
-    // } else {
-    //   response.status(400).send('some error occurred');
-    // }
+    if (exception instanceof CommandHandlerNotFoundException) {
+      response
+        .status(500)
+        .send({ message: exception.message, stack: exception.stack });
+      return;
+    }
 
     response
       .status(418)

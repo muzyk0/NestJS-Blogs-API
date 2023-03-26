@@ -12,7 +12,7 @@ import { UsersModule } from '../users/users.module';
 
 import { CryptService } from './application/crypt.service';
 import { JwtService } from './application/jwt.service';
-import { CommandHandlers } from './application/use-cases';
+import { CommandHandlers } from './application/use-cases/command-handlers';
 import { AuthController } from './controllers/auth.controller';
 import { RevokeToken } from './domain/entities/revoked-token.entity';
 import {
