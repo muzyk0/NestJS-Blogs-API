@@ -2,11 +2,9 @@ import {
   Body,
   Controller,
   Delete,
-  ForbiddenException,
   Get,
   HttpCode,
   HttpStatus,
-  NotFoundException,
   Param,
   Post,
   Put,
@@ -33,17 +31,29 @@ import {
   PageOptionsDto,
   PageOptionsForUserDto,
 } from '../../../shared/paginator/page-options.dto';
+import { PageDto } from '../../../shared/paginator/page.dto';
 import { JwtATPayload } from '../../auth/application/interfaces/jwtPayload.type';
 import { JwtAuthGuard } from '../../auth/guards/jwt-auth.guard';
 import { UpdateBanUserForBlogCommand } from '../../bans/application/use-cases/update-ban-user-for-blog.handler';
 import { GetPostCommentsInsideCurrentUserBlogsCommand } from '../../comments/application/use-cases/get-post-comments-inside-current-user-blogs.handler';
+import { PostViewDto } from '../../posts/application/dto/post.view.dto';
 import { UpdatePostDto } from '../../posts/application/dto/update-post.dto';
 import { PostsService } from '../../posts/application/posts.service';
+import {
+  CreateBlogPostCommand,
+  UpdateBlogPostCommand,
+} from '../../posts/application/use-cases';
+import { DeleteBlogPostCommand } from '../../posts/application/use-cases/delete-blog-post.handler';
+import { GetAllBanUsersForBlogCommand } from '../../posts/application/use-cases/get-all-banned-users-for-blog.handler';
 import { IPostsQueryRepository } from '../../posts/infrastructure/posts.query.sql.repository';
+import { UserBloggerViewModel } from '../../users/infrastructure/dto/user.view';
 import { IUsersQueryRepository } from '../../users/infrastructure/users.query.repository.sql';
-import { BlogsService } from '../application/blogs.service';
 import { CreateBlogPostDto } from '../application/dto/create-blog-post.dto';
 import { UpdateBlogDto } from '../application/dto/update-blog.dto';
+import { CreateBlogCommand } from '../application/use-cases/create-blog.handler';
+import { DeleteBlogCommand } from '../application/use-cases/remove-blog.handler';
+import { UpdateBlogCommand } from '../application/use-cases/update-blog.handler';
+import { Blog } from '../domain/entities/blog.entity';
 import { IBlogsQueryRepository } from '../infrastructure/blogs.query.sql.repository';
 
 import { BanUserForBlogInput } from './dto/ban-user-for-blog.input';
@@ -55,7 +65,6 @@ import { CreateBlogInput } from './dto/create-blog.input';
 @Controller('blogger')
 export class BloggerController {
   constructor(
-    private readonly blogsService: BlogsService,
     private readonly blogsQueryRepository: IBlogsQueryRepository,
     private readonly postsService: PostsService,
     private readonly postsQueryRepository: IPostsQueryRepository,
@@ -81,12 +90,14 @@ export class BloggerController {
     @Body() createBlogInput: CreateBlogInput,
     @GetCurrentJwtContext() ctx: JwtATPayload,
   ) {
-    const blog = await this.blogsService.create({
-      ...createBlogInput,
-      userId: ctx.user.id,
-    });
+    const blogId = await this.commandBus.execute<CreateBlogCommand, Blog['id']>(
+      new CreateBlogCommand({
+        ...createBlogInput,
+        userId: ctx.user.id,
+      }),
+    );
 
-    return this.blogsQueryRepository.findOne(blog.id);
+    return this.blogsQueryRepository.findOne(blogId);
   }
 
   @ApiOperation({
@@ -126,26 +137,16 @@ export class BloggerController {
     description:
       "If user try to update blog that doesn't belong to current user",
   })
-  @Put('blogs/:id')
+  @Put('blogs/:blogId')
   @HttpCode(HttpStatus.NO_CONTENT)
   async update(
-    @Param('id') id: string,
+    @Param('blogId') blogId: string,
     @GetCurrentJwtContext() ctx: JwtATPayload,
     @Body() updateBlogDto: UpdateBlogDto,
   ) {
-    const blog = await this.blogsService.findOne(id);
-
-    if (!blog) {
-      throw new NotFoundException();
-    }
-
-    if (blog.userId !== ctx.user.id) {
-      throw new ForbiddenException();
-    }
-
-    await this.blogsService.update(id, updateBlogDto);
-
-    return;
+    return this.commandBus.execute(
+      new UpdateBlogCommand(blogId, ctx.user.id, updateBlogDto),
+    );
   }
 
   @ApiOperation({ summary: 'Delete blog specified by id' })
@@ -165,23 +166,13 @@ export class BloggerController {
     status: 404,
     description: 'Not Found',
   })
-  @Delete('blogs/:id')
+  @Delete('blogs/:blogId')
   @HttpCode(HttpStatus.NO_CONTENT)
   async remove(
-    @Param('id') id: string,
+    @Param('blogId') blogId: string,
     @GetCurrentJwtContext() ctx: JwtATPayload,
   ) {
-    const blog = await this.blogsService.findOne(id);
-
-    if (!blog) {
-      throw new NotFoundException();
-    }
-
-    if (blog.userId !== ctx.user.id) {
-      throw new ForbiddenException();
-    }
-
-    return await this.blogsService.remove(id);
+    return this.commandBus.execute(new DeleteBlogCommand(blogId, ctx.user.id));
   }
 
   @ApiOperation({ summary: 'Create new post for specific blog' })
@@ -210,27 +201,14 @@ export class BloggerController {
   @HttpCode(HttpStatus.CREATED)
   async createBlogPost(
     @Param('id') blogId: string,
-    @Body() { shortDescription, content, title }: CreateBlogPostDto,
+    @Body() createBlogPostDto: CreateBlogPostDto,
     @GetCurrentJwtContext() ctx: JwtATPayload,
-  ) {
-    const blog = await this.blogsService.findOne(blogId);
+  ): Promise<PostViewDto> {
+    const postId = await this.commandBus.execute(
+      new CreateBlogPostCommand(blogId, ctx.user.id, createBlogPostDto),
+    );
 
-    if (!blog) {
-      throw new NotFoundException();
-    }
-
-    if (blog.userId !== ctx.user.id) {
-      throw new ForbiddenException();
-    }
-
-    const post = await this.postsService.create({
-      blogId: blog.id,
-      shortDescription,
-      content,
-      title,
-    });
-
-    return this.postsQueryRepository.findOne(post.id);
+    return this.postsQueryRepository.findOne(postId);
   }
 
   @ApiOperation({ summary: 'Update existing post by id with InputModel' })
@@ -263,23 +241,9 @@ export class BloggerController {
     @Body() updatePostDto: UpdatePostDto,
     @GetCurrentJwtContext() ctx: JwtATPayload,
   ) {
-    const blog = await this.blogsService.findOne(blogId);
-
-    if (!blog) {
-      throw new NotFoundException();
-    }
-
-    if (blog.userId !== ctx.user.id) {
-      throw new ForbiddenException();
-    }
-
-    const post = await this.postsService.update(postId, blogId, updatePostDto);
-
-    if (!post) {
-      throw new NotFoundException();
-    }
-
-    return;
+    return this.commandBus.execute(
+      new UpdateBlogPostCommand(postId, blogId, ctx.user.id, updatePostDto),
+    );
   }
 
   @ApiOperation({ summary: 'Delete post specified by id' })
@@ -306,23 +270,9 @@ export class BloggerController {
     @Param('postId') postId: string,
     @GetCurrentJwtContext() ctx: JwtATPayload,
   ) {
-    const blog = await this.blogsService.findOne(blogId);
-
-    if (!blog) {
-      throw new NotFoundException();
-    }
-
-    if (blog.userId !== ctx.user.id) {
-      throw new ForbiddenException();
-    }
-
-    const isDeleted = await this.postsService.remove(postId);
-
-    if (!isDeleted) {
-      throw new NotFoundException();
-    }
-
-    return;
+    return this.commandBus.execute(
+      new DeleteBlogPostCommand(postId, blogId, ctx.user.id),
+    );
   }
 
   @ApiOperation({
@@ -392,19 +342,9 @@ export class BloggerController {
     @Query() pageOptionsDto: PageOptionsForUserDto,
     @Param('blogId') blogId: string,
     @GetCurrentJwtContext() ctx: JwtATPayload,
-  ) {
-    const blog = await this.blogsService.findOne(blogId);
-
-    if (!blog) {
-      throw new NotFoundException();
-    }
-
-    if (blog.userId !== ctx.user.id) {
-      throw new ForbiddenException();
-    }
-    return this.usersQueryRepository.getBannedUsersForBlog(
-      pageOptionsDto,
-      blogId,
+  ): Promise<PageDto<UserBloggerViewModel>> {
+    return this.commandBus.execute<GetAllBanUsersForBlogCommand>(
+      new GetAllBanUsersForBlogCommand(blogId, ctx.user.id, pageOptionsDto),
     );
   }
 }

@@ -26,7 +26,7 @@ export abstract class IUsersQueryRepository {
   abstract getBannedUsersForBlog(
     pageOptionsDto: PageOptionsForUserDto,
     blogId: string,
-  ): Promise<PageDto<unknown>>;
+  ): Promise<PageDto<UserBloggerViewModel>>;
 }
 
 @Injectable()

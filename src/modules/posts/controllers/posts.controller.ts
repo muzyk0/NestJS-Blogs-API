@@ -22,7 +22,6 @@ import { JwtATPayload } from '../../auth/application/interfaces/jwtPayload.type'
 import { AuthGuard } from '../../auth/guards/auth-guard';
 import { JwtAuthGuard } from '../../auth/guards/jwt-auth.guard';
 import { BansService } from '../../bans/application/bans.service';
-import { BlogsService } from '../../blogs/application/blogs.service';
 import { CommentsService } from '../../comments/application/comments.service';
 import { CommentInput } from '../../comments/application/dto/comment.input';
 import { ICommentsQueryRepository } from '../../comments/infrastructure/comments.query.sql.repository';
@@ -36,10 +35,8 @@ export class PostsController {
   constructor(
     private readonly postsService: PostsService,
     private readonly postsQueryRepository: IPostsQueryRepository,
-    private readonly blogsService: BlogsService,
     private readonly commentsService: CommentsService,
     private readonly commentsQueryRepository: ICommentsQueryRepository,
-    private readonly bansService: BansService,
   ) {}
 
   @UseGuards(AuthGuard)

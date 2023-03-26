@@ -5,7 +5,6 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { BlogExistsRule } from '../../shared/decorators/validations/check-blogId-if-exist.decorator';
 import { IsUserAlreadyExistConstraint } from '../../shared/decorators/validations/check-is-user-exist.decorator';
 import { AuthModule } from '../auth/auth.module';
-import { UpdateBanUserForBlogHandler } from '../bans/application/use-cases/update-ban-user-for-blog.handler';
 import {
   BloggersBanUsersRepository,
   IBloggersBanUsersRepository,
@@ -13,9 +12,7 @@ import {
 import { PostsModule } from '../posts/posts.module';
 import { UsersModule } from '../users/users.module';
 
-import { BlogsService } from './application/blogs.service';
-import { BindBlogOnUserHandler } from './application/use-cases/bind-blog-on-user.handler';
-import { GetBlogsForAdminHandler } from './application/use-cases/get-blogs-for-admin.handler';
+import { CommandHandlers } from './application/use-cases';
 import { BloggerController } from './controllers/blogger.controller';
 import { BlogsController } from './controllers/blogs.controller';
 import { Blog } from './domain/entities/blog.entity';
@@ -27,12 +24,6 @@ import {
   BlogsRepository,
   IBlogsRepository,
 } from './infrastructure/blogs.sql.repository';
-
-const CommandHandlers = [
-  GetBlogsForAdminHandler,
-  BindBlogOnUserHandler,
-  UpdateBanUserForBlogHandler,
-];
 
 @Module({
   imports: [
@@ -46,7 +37,6 @@ const CommandHandlers = [
   controllers: [BlogsController, BloggerController],
   providers: [
     ...CommandHandlers,
-    BlogsService,
     { provide: IBlogsQueryRepository, useClass: BlogsQueryRepository },
     { provide: IBlogsRepository, useClass: BlogsRepository },
     BlogExistsRule,
@@ -58,7 +48,6 @@ const CommandHandlers = [
   ],
   exports: [
     ...CommandHandlers,
-    BlogsService,
     { provide: IBlogsQueryRepository, useClass: BlogsQueryRepository },
     { provide: IBlogsRepository, useClass: BlogsRepository },
     BlogExistsRule,
