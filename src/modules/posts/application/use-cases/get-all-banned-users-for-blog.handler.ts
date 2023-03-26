@@ -4,10 +4,7 @@ import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
 import { PageOptionsForUserDto } from '../../../../shared/paginator/page-options.dto';
 import { PageDto } from '../../../../shared/paginator/page.dto';
 import { IBlogsRepository } from '../../../blogs/infrastructure/blogs.sql.repository';
-import {
-  UserBloggerViewModel,
-  UserViewModel,
-} from '../../../users/infrastructure/dto/user.view';
+import { UserBloggerViewModel } from '../../../users/infrastructure/dto/user.view';
 import { IUsersQueryRepository } from '../../../users/infrastructure/users.query.repository.sql';
 
 export class GetAllBanUsersForBlogCommand {

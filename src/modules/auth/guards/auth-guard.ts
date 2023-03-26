@@ -2,7 +2,6 @@ import { CanActivate, ExecutionContext, Injectable } from '@nestjs/common';
 import { Request } from 'express';
 import { Observable } from 'rxjs';
 
-import { CryptService } from '../application/crypt.service';
 import { JwtATPayload } from '../application/interfaces/jwtPayload.type';
 import { JwtService } from '../application/jwt.service';
 
