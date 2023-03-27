@@ -12,10 +12,7 @@ import {
   BlogsRepository,
   IBlogsRepository,
 } from '../blogs/infrastructure/blogs.sql.repository';
-import {
-  CommentsService,
-  ICommentsRepository,
-} from '../comments/application/comments.service';
+import { ICommentsRepository } from '../comments/application/interfaces/comment-repository.abstract-class';
 import {
   CommentsQueryRepository,
   ICommentsQueryRepository,
@@ -25,7 +22,6 @@ import { LikesModule } from '../likes/likes.module';
 import { SecurityModule } from '../security/security.module';
 import { UsersModule } from '../users/users.module';
 
-import { PostsService } from './application/posts.service';
 import { CommandHandlers } from './application/use-cases';
 import { PostsController } from './controllers/posts.controller';
 import { Post } from './domain/entities/post.entity';
@@ -50,11 +46,9 @@ import {
   controllers: [PostsController],
   providers: [
     ...CommandHandlers,
-    PostsService,
     { provide: IPostsRepository, useClass: PostsRepository },
     { provide: IPostsQueryRepository, useClass: PostsQueryRepository },
     { provide: IBlogsRepository, useClass: BlogsRepository },
-    CommentsService,
     { provide: ICommentsRepository, useClass: CommentsRepository },
     { provide: ICommentsQueryRepository, useClass: CommentsQueryRepository },
     BansService,
@@ -65,7 +59,6 @@ import {
   ],
   exports: [
     ...CommandHandlers,
-    PostsService,
     { provide: IPostsRepository, useClass: PostsRepository },
     { provide: IPostsQueryRepository, useClass: PostsQueryRepository },
   ],

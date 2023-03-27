@@ -4,7 +4,7 @@ import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
 import { IBlogsRepository } from '../../../blogs/infrastructure/blogs.sql.repository';
 import { CreateLikeInput } from '../../../likes/application/input/create-like.input';
 import { LikeStringStatus } from '../../../likes/application/interfaces/like-status.enum';
-import { LikesRepositorySql } from '../../../likes/infrastructure/likes.repository.sql';
+import { ILikesRepository } from '../../../likes/infrastructure/likes.repository.sql';
 import { formatLikeStatusToInt } from '../../../likes/utils/formatters';
 import { IPostsRepository } from '../../infrastructure/posts.sql.repository';
 
@@ -21,7 +21,7 @@ export class LikePostHandler implements ICommandHandler<LikePostCommand, void> {
   constructor(
     private readonly blogsRepository: IBlogsRepository,
     private readonly postsRepository: IPostsRepository,
-    private readonly likesRepositorySql: LikesRepositorySql,
+    private readonly likesRepositorySql: ILikesRepository,
   ) {}
 
   async execute({

@@ -919,11 +919,34 @@ window.onload = function() {
             "comments"
           ]
         },
+        "delete": {
+          "operationId": "CommentsController_remove",
+          "parameters": [
+            {
+              "name": "id",
+              "required": true,
+              "in": "path",
+              "schema": {
+                "type": "string"
+              }
+            }
+          ],
+          "responses": {
+            "204": {
+              "description": ""
+            }
+          },
+          "tags": [
+            "comments"
+          ]
+        }
+      },
+      "/blog-platform/comments/{commentId}": {
         "put": {
           "operationId": "CommentsController_update",
           "parameters": [
             {
-              "name": "id",
+              "name": "commentId",
               "required": true,
               "in": "path",
               "schema": {
@@ -941,27 +964,6 @@ window.onload = function() {
               }
             }
           },
-          "responses": {
-            "204": {
-              "description": ""
-            }
-          },
-          "tags": [
-            "comments"
-          ]
-        },
-        "delete": {
-          "operationId": "CommentsController_remove",
-          "parameters": [
-            {
-              "name": "id",
-              "required": true,
-              "in": "path",
-              "schema": {
-                "type": "string"
-              }
-            }
-          ],
           "responses": {
             "204": {
               "description": ""

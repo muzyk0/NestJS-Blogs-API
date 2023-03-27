@@ -3,8 +3,8 @@ import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
 
 import { IPostsRepository } from '../../../posts/infrastructure/posts.sql.repository';
 import { ICommentsQueryRepository } from '../../infrastructure/comments.query.sql.repository';
-import { ICommentsRepository } from '../comments.service';
 import { CommentInput } from '../dto/comment.input';
+import { ICommentsRepository } from '../interfaces/comment-repository.abstract-class';
 
 export class CreatePostCommentCommand {
   constructor(
