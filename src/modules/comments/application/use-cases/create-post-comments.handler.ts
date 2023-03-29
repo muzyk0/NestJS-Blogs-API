@@ -1,4 +1,8 @@
-import { BadRequestException, NotFoundException } from '@nestjs/common';
+import {
+  BadRequestException,
+  ForbiddenException,
+  NotFoundException,
+} from '@nestjs/common';
 import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
 
 import { IPostsRepository } from '../../../posts/infrastructure/posts.sql.repository';
@@ -42,7 +46,7 @@ export class CreatePostCommentHandler
     });
 
     if (!createdComment) {
-      throw new NotFoundException({
+      throw new ForbiddenException({
         field: '',
         message: 'You are banned for this blog',
       });
