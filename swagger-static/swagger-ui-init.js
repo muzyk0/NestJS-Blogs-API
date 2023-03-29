@@ -62,12 +62,12 @@ window.onload = function() {
           ]
         }
       },
-      "/blog-platform/blogs/{id}/posts": {
+      "/blog-platform/blogs/{blogId}/posts": {
         "get": {
           "operationId": "BlogsController_findBlogPosts",
           "parameters": [
             {
-              "name": "id",
+              "name": "blogId",
               "required": true,
               "in": "path",
               "schema": {
