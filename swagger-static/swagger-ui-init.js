@@ -62,12 +62,12 @@ window.onload = function() {
           ]
         }
       },
-      "/blog-platform/blogs/{id}/posts": {
+      "/blog-platform/blogs/{blogId}/posts": {
         "get": {
           "operationId": "BlogsController_findBlogPosts",
           "parameters": [
             {
-              "name": "id",
+              "name": "blogId",
               "required": true,
               "in": "path",
               "schema": {
@@ -672,30 +672,6 @@ window.onload = function() {
           ]
         }
       },
-      "/blog-platform/security": {
-        "post": {
-          "operationId": "SecurityController_create",
-          "parameters": [],
-          "requestBody": {
-            "required": true,
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/CreateSecurityDto"
-                }
-              }
-            }
-          },
-          "responses": {
-            "201": {
-              "description": ""
-            }
-          },
-          "tags": [
-            "securityDevices"
-          ]
-        }
-      },
       "/blog-platform/security/devices": {
         "get": {
           "operationId": "SecurityController_findAll",
@@ -722,12 +698,12 @@ window.onload = function() {
           ]
         }
       },
-      "/blog-platform/security/devices/{id}": {
+      "/blog-platform/security/devices/{deviceId}": {
         "delete": {
           "operationId": "SecurityController_remove",
           "parameters": [
             {
-              "name": "id",
+              "name": "deviceId",
               "required": true,
               "in": "path",
               "schema": {
@@ -918,12 +894,14 @@ window.onload = function() {
           "tags": [
             "comments"
           ]
-        },
+        }
+      },
+      "/blog-platform/comments/{commentId}": {
         "put": {
           "operationId": "CommentsController_update",
           "parameters": [
             {
-              "name": "id",
+              "name": "commentId",
               "required": true,
               "in": "path",
               "schema": {
@@ -954,7 +932,7 @@ window.onload = function() {
           "operationId": "CommentsController_remove",
           "parameters": [
             {
-              "name": "id",
+              "name": "commentId",
               "required": true,
               "in": "path",
               "schema": {
@@ -1334,10 +1312,6 @@ window.onload = function() {
           "properties": {}
         },
         "CreateRecoveryPasswordDto": {
-          "type": "object",
-          "properties": {}
-        },
-        "CreateSecurityDto": {
           "type": "object",
           "properties": {}
         },

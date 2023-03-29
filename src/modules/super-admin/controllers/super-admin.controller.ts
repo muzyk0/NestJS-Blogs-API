@@ -30,15 +30,16 @@ import {
 } from '../../../shared/paginator/page-options.dto';
 import { BaseAuthGuard } from '../../auth/guards/base-auth-guard';
 import { BindBlogOnUserCommand } from '../../blogs/application/use-cases';
-import { IBlogsQueryRepository } from '../../blogs/infrastructure/blogs.query.sql.repository';
+import { IBlogsQueryRepository } from '../../blogs/infrastructure';
 import { BanUnbanUserInput } from '../../users/application/dto/ban-unban-user.input';
 import { CreateUserDto } from '../../users/application/dto/create-user.dto';
-import { BanUnbanUserCommand } from '../../users/application/use-cases/ban-unban-user.handler';
-import { CreateUserCommand } from '../../users/application/use-cases/create-user.handler';
-import { GetUsersCommand } from '../../users/application/use-cases/get-users.handler';
-import { RemoveUserCommand } from '../../users/application/use-cases/remove-user.handler';
+import {
+  BanUnbanUserCommand,
+  CreateUserCommand,
+  GetUsersCommand,
+  RemoveUserCommand,
+} from '../../users/application/use-cases';
 import { BanBlogInput } from '../application/input-dto/ban-blog.input';
-import { SuperAdminService } from '../application/super-admin.service';
 import { BanBlogCommand } from '../application/use-cases/ban-blog.handler';
 
 @ApiTags('superAdmin')
@@ -47,7 +48,6 @@ import { BanBlogCommand } from '../application/use-cases/ban-blog.handler';
 @Controller('sa')
 export class SuperAdminController {
   constructor(
-    private readonly superAdminService: SuperAdminService,
     private readonly commandBus: CommandBus,
     private readonly blogsQueryRepository: IBlogsQueryRepository,
   ) {}

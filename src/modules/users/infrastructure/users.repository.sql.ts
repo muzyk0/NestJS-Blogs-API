@@ -2,8 +2,6 @@ import { Injectable } from '@nestjs/common';
 import { InjectDataSource } from '@nestjs/typeorm';
 import { DataSource } from 'typeorm';
 
-import { Bans } from '../../bans/domain/entity/bans.entity';
-import { BanUnbanUserInput } from '../application/dto/ban-unban-user.input';
 import { UserRawSqlDto } from '../application/dto/user.dto';
 import { UpdateConfirmationType } from '../application/interfaces/users.interface';
 import { User } from '../domain/entities/user.entity';

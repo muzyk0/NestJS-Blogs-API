@@ -3,9 +3,9 @@ import { InjectDataSource } from '@nestjs/typeorm';
 import { DataSource } from 'typeorm';
 
 import { UpdateOrDeleteEntityRawSqlResponse } from '../../../shared/interfaces/row-sql.types';
-import { ICommentsRepository } from '../application/comments.service';
 import { CreateCommentDto } from '../application/dto/create-comment.dto';
 import { UpdateCommentDto } from '../application/dto/update-comment.dto';
+import { ICommentsRepository } from '../application/interfaces/comment-repository.abstract-class';
 import { Comment } from '../domain/entities/comment.entity';
 
 @Injectable()
@@ -39,22 +39,8 @@ export class CommentsRepository implements ICommentsRepository {
           SELECT *
           FROM comments
           where id::text = $1
-`,
+      `,
       [id],
-    );
-
-    return comment;
-  }
-
-  async findOneWithUserId(id: string, userId: string): Promise<Comment> {
-    const [comment]: [Comment] = await this.dataSource.query(
-      `
-          SELECT *
-          FROM comments
-          where id::text = $1
-                AND "userId"::text = $2
-`,
-      [id, userId],
     );
 
     return comment;
@@ -67,11 +53,11 @@ export class CommentsRepository implements ICommentsRepository {
     const [[comment]]: UpdateOrDeleteEntityRawSqlResponse<Comment> =
       await this.dataSource.query(
         `
-          UPDATE comments
-          SET content = $2
-          WHERE id::text = $1
-          RETURNING *;
-      `,
+            UPDATE comments
+            SET content = $2
+            WHERE id::text = $1
+            RETURNING *;
+        `,
         [commentId, content],
       );
 
@@ -82,10 +68,10 @@ export class CommentsRepository implements ICommentsRepository {
     const [, deletedCount]: UpdateOrDeleteEntityRawSqlResponse =
       await this.dataSource.query(
         `
-          DELETE
-          FROM "comments"
-          WHERE id::text = $1
-      `,
+            DELETE
+            FROM "comments"
+            WHERE id::text = $1
+        `,
         [commentId],
       );
     return !!deletedCount;

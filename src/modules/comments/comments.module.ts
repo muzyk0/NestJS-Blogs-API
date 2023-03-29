@@ -11,10 +11,7 @@ import { LikesModule } from '../likes/likes.module';
 import { PostsModule } from '../posts/posts.module';
 import { UsersModule } from '../users/users.module';
 
-import {
-  CommentsService,
-  ICommentsRepository,
-} from './application/comments.service';
+import { ICommentsRepository } from './application/interfaces/comment-repository.abstract-class';
 import { CommandHandlers } from './application/use-cases';
 import { CommentsController } from './controllers/comments.controller';
 import { Comment } from './domain/entities/comment.entity';
@@ -37,7 +34,6 @@ import { CommentsRepository } from './infrastructure/comments.sql.repository';
   providers: [
     { provide: IBlogsRepository, useClass: BlogsRepository },
     ...CommandHandlers,
-    CommentsService,
     { provide: ICommentsRepository, useClass: CommentsRepository },
     { provide: ICommentsQueryRepository, useClass: CommentsQueryRepository },
   ],

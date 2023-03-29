@@ -1,7 +1,7 @@
 import { ForbiddenException, UnauthorizedException } from '@nestjs/common';
 import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
 
-import { SecurityService } from '../../../security/application/security.service';
+import { ISecurityRepository } from '../../../security/infrastructure/security.sql.repository';
 import { RevokeTokenInput } from '../../infrastructure/dto/revoke-token.input';
 import { IRevokeTokenRepository } from '../../infrastructure/revoke-token.repository.sql';
 import { JwtPayloadWithRt } from '../interfaces/jwt-payload-with-rt.type';
@@ -17,7 +17,7 @@ export class LogoutCommand {
 export class LogoutHandler implements ICommandHandler<LogoutCommand> {
   constructor(
     private readonly revokeTokenRepository: IRevokeTokenRepository,
-    private readonly securityService: SecurityService,
+    private readonly securityRepository: ISecurityRepository,
   ) {}
 
   async execute({ ctx, userAgent }: LogoutCommand) {
@@ -47,6 +47,6 @@ export class LogoutHandler implements ICommandHandler<LogoutCommand> {
       });
     }
 
-    await this.securityService.remove(ctx.deviceId);
+    await this.securityRepository.remove(ctx.deviceId);
   }
 }

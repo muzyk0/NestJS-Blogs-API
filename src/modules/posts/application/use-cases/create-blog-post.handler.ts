@@ -2,7 +2,7 @@ import { ForbiddenException, NotFoundException } from '@nestjs/common';
 import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
 
 import { CreateBlogPostDto } from '../../../blogs/application/dto/create-blog-post.dto';
-import { IBlogsRepository } from '../../../blogs/infrastructure/blogs.sql.repository';
+import { IBlogsRepository } from '../../../blogs/infrastructure';
 import { Post } from '../../domain/entities/post.entity';
 import { IPostsRepository } from '../../infrastructure/posts.sql.repository';
 

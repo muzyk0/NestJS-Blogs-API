@@ -16,7 +16,7 @@ import { AuthGuard } from '../../auth/guards/auth-guard';
 import { PostViewDto } from '../../posts/application/dto/post.view.dto';
 import { IPostsQueryRepository } from '../../posts/infrastructure/posts.query.sql.repository';
 import { BlogView } from '../application/dto/blog.dto';
-import { IBlogsQueryRepository } from '../infrastructure/blogs.query.sql.repository';
+import { IBlogsQueryRepository } from '../infrastructure';
 
 @ApiTags('blogs')
 @Controller('blogs')
@@ -58,17 +58,23 @@ export class BlogsController {
     description: 'If specificied blog is not exists',
   })
   @UseGuards(AuthGuard)
-  @Get(':id/posts')
+  @Get(':blogId/posts')
   async findBlogPosts(
     @GetCurrentJwtContextWithoutAuth() ctx: JwtATPayload | null,
     @Query() pageOptionsDto: PageOptionsDto,
-    @Param('id') id: string,
+    @Param('blogId') blogId: string,
   ): Promise<PageDto<PostViewDto>> {
+    const blog = await this.blogsQueryRepository.findOne(blogId);
+
+    if (!blog) {
+      throw new NotFoundException();
+    }
+
     return this.postsQueryRepository.findAll(
       {
         ...pageOptionsDto,
       },
-      { blogId: id, userId: ctx?.user.id },
+      { blogId: blogId, userId: ctx?.user.id },
     );
   }
 }

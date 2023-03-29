@@ -35,10 +35,9 @@ import { PageDto } from '../../../shared/paginator/page.dto';
 import { JwtATPayload } from '../../auth/application/interfaces/jwtPayload.type';
 import { JwtAuthGuard } from '../../auth/guards/jwt-auth.guard';
 import { UpdateBanUserForBlogCommand } from '../../bans/application/use-cases/update-ban-user-for-blog.handler';
-import { GetPostCommentsInsideCurrentUserBlogsCommand } from '../../comments/application/use-cases/get-post-comments-inside-current-user-blogs.handler';
+import { GetPostCommentsInsideCurrentUserBlogsCommand } from '../../comments/application/use-cases';
 import { PostViewDto } from '../../posts/application/dto/post.view.dto';
 import { UpdatePostDto } from '../../posts/application/dto/update-post.dto';
-import { PostsService } from '../../posts/application/posts.service';
 import {
   CreateBlogPostCommand,
   UpdateBlogPostCommand,
@@ -50,11 +49,13 @@ import { UserBloggerViewModel } from '../../users/infrastructure/dto/user.view';
 import { IUsersQueryRepository } from '../../users/infrastructure/users.query.repository.sql';
 import { CreateBlogPostDto } from '../application/dto/create-blog-post.dto';
 import { UpdateBlogDto } from '../application/dto/update-blog.dto';
-import { CreateBlogCommand } from '../application/use-cases/create-blog.handler';
-import { DeleteBlogCommand } from '../application/use-cases/remove-blog.handler';
-import { UpdateBlogCommand } from '../application/use-cases/update-blog.handler';
+import {
+  CreateBlogCommand,
+  DeleteBlogCommand,
+  UpdateBlogCommand,
+} from '../application/use-cases';
 import { Blog } from '../domain/entities/blog.entity';
-import { IBlogsQueryRepository } from '../infrastructure/blogs.query.sql.repository';
+import { IBlogsQueryRepository } from '../infrastructure';
 
 import { BanUserForBlogInput } from './dto/ban-user-for-blog.input';
 import { CreateBlogInput } from './dto/create-blog.input';
@@ -66,7 +67,6 @@ import { CreateBlogInput } from './dto/create-blog.input';
 export class BloggerController {
   constructor(
     private readonly blogsQueryRepository: IBlogsQueryRepository,
-    private readonly postsService: PostsService,
     private readonly postsQueryRepository: IPostsQueryRepository,
     private readonly usersQueryRepository: IUsersQueryRepository,
     private readonly commandBus: CommandBus,
