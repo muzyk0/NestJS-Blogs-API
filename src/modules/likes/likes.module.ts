@@ -5,12 +5,21 @@ import { UsersModule } from '../users/users.module';
 
 import { LikesService } from './application/likes.service';
 import { Like } from './domain/entity/like.entity';
-import { LikesRepositorySql } from './infrastructure/likes.repository.sql';
+import {
+  ILikesRepository,
+  LikesRepositorySql,
+} from './infrastructure/likes.repository.sql';
 
 @Module({
   imports: [TypeOrmModule.forFeature([Like]), UsersModule],
   controllers: [],
-  providers: [LikesService, LikesRepositorySql],
-  exports: [LikesService, LikesRepositorySql],
+  providers: [
+    LikesService,
+    { provide: ILikesRepository, useClass: LikesRepositorySql },
+  ],
+  exports: [
+    LikesService,
+    { provide: ILikesRepository, useClass: LikesRepositorySql },
+  ],
 })
 export class LikesModule {}

@@ -1,12 +1,6 @@
-import { BanUnbanUserHandler } from './ban-unban-user.handler';
-import { CreateUserHandler } from './create-user.handler';
-import { GetUsersHandler } from './get-users.handler';
-import { RemoveUserHandler } from './remove-user.handler';
+export * from './command-handlers';
 
-export const CommandHandlers = [
-  GetUsersHandler,
-  RemoveUserHandler,
-  CreateUserHandler,
-  BanUnbanUserHandler,
-  GetUsersHandler,
-];
+export * from './ban-unban-user.handler';
+export * from './create-user.handler';
+export * from './get-users.handler';
+export * from './remove-user.handler';

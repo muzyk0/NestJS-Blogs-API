@@ -1,7 +1,7 @@
 import { Module } from '@nestjs/common';
+import { CqrsModule } from '@nestjs/cqrs';
 import { TypeOrmModule } from '@nestjs/typeorm';
 
-import { SecurityService } from './application/security.service';
 import { SecurityController } from './controllers/security.controller';
 import { Device } from './domain/entities/security.entity';
 import {
@@ -14,15 +14,13 @@ import {
 } from './infrastructure/security.sql.repository';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([Device])],
+  imports: [TypeOrmModule.forFeature([Device]), CqrsModule],
   controllers: [SecurityController],
   providers: [
-    SecurityService,
     { provide: ISecurityRepository, useClass: SecurityRepository },
     { provide: ISecurityQueryRepository, useClass: SecurityQuerySqlRepository },
   ],
   exports: [
-    SecurityService,
     { provide: ISecurityRepository, useClass: SecurityRepository },
     { provide: ISecurityQueryRepository, useClass: SecurityQuerySqlRepository },
   ],

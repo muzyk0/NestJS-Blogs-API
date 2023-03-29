@@ -2,7 +2,7 @@ import { UnauthorizedException } from '@nestjs/common';
 import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
 import { v4 } from 'uuid';
 
-import { SecurityService } from '../../../security/application/security.service';
+import { ISecurityRepository } from '../../../security/infrastructure/security.sql.repository';
 import { IUsersRepository } from '../../../users/infrastructure/users.repository.sql';
 import { CryptService } from '../crypt.service';
 import {
@@ -27,7 +27,7 @@ export class LoginHandler implements ICommandHandler<LoginCommand> {
     private readonly usersRepository: IUsersRepository,
     private readonly authService: CryptService,
     private readonly jwtService: JwtService,
-    private readonly securityService: SecurityService,
+    private readonly securityRepository: ISecurityRepository,
   ) {}
 
   async execute({ loginOrEmail, password, userAgent, userIp }: LoginCommand) {
@@ -69,7 +69,7 @@ export class LoginHandler implements ICommandHandler<LoginCommand> {
         tokens.refreshToken,
       );
 
-    await this.securityService.createOrUpdate({
+    await this.securityRepository.createOrUpdate({
       userId: decodedAccessToken.user.id,
       ip: userIp,
       deviceId: decodedAccessToken.deviceId,

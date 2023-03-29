@@ -8,10 +8,20 @@ import { LikeStatus } from '../application/interfaces/like-status.enum';
 import { LikeInterface } from '../application/interfaces/like.interface';
 import { Like } from '../domain/entity/like.entity';
 
+export abstract class ILikesRepository {
+  abstract createOrUpdatePostLikeStatus(
+    createLike: Omit<LikeInterface, 'commentId'>,
+  ): Promise<Like | null>;
+
+  abstract createOrUpdateCommentLikeStatus(
+    createLike: Omit<LikeInterface, 'postId'>,
+  ): Promise<Like | null>;
+}
+
 @Injectable()
-export class LikesRepositorySql {
+export class LikesRepositorySql implements ILikesRepository {
   constructor(
-    private usersRepository: IUsersRepository,
+    private readonly usersRepository: IUsersRepository,
     @InjectDataSource() private readonly dataSource: DataSource,
   ) {}
 

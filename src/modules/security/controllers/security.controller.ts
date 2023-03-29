@@ -1,16 +1,13 @@
 import {
-  Body,
   Controller,
   Delete,
-  ForbiddenException,
   Get,
   HttpCode,
   HttpStatus,
-  NotFoundException,
   Param,
-  Post,
   UseGuards,
 } from '@nestjs/common';
+import { CommandBus } from '@nestjs/cqrs';
 import { ApiTags } from '@nestjs/swagger';
 
 import { GetCurrentUserId } from '../../../shared/decorators/get-current-user-id.decorator';
@@ -20,8 +17,8 @@ import {
   JwtRTPayload,
 } from '../../auth/application/interfaces/jwtPayload.type';
 import { JwtRefreshAuthGuard } from '../../auth/guards/jwt-refresh-auth.guard';
-import { CreateSecurityDto } from '../application/dto/create-security.dto';
-import { SecurityService } from '../application/security.service';
+import { RemoveAllDevicesWithoutMyDeviceCommand } from '../application/use-cases';
+import { RemoveSessionDeviceCommand } from '../application/use-cases/remove-session-device.handler';
 import { ISecurityQueryRepository } from '../infrastructure/security.query.sql.repository';
 
 @ApiTags('securityDevices')
@@ -29,42 +26,31 @@ import { ISecurityQueryRepository } from '../infrastructure/security.query.sql.r
 @Controller('security')
 export class SecurityController {
   constructor(
-    private readonly securityService: SecurityService,
     private readonly securityQueryRepository: ISecurityQueryRepository,
+    private readonly commandBus: CommandBus,
   ) {}
-
-  @Post()
-  create(@Body() createSecurityDto: CreateSecurityDto) {
-    return this.securityService.createOrUpdate(createSecurityDto);
-  }
 
   @Get('/devices')
   findAll(@GetCurrentJwtContext() ctx: JwtATPayload) {
     return this.securityQueryRepository.findAll(ctx.user.id);
   }
 
-  @Delete('/devices/:id')
+  @Delete('/devices/:deviceId')
   @HttpCode(HttpStatus.NO_CONTENT)
-  async remove(@Param('id') id: string, @GetCurrentUserId() userId: string) {
-    const session = await this.securityService.getSessionByDeviceId(id);
-
-    if (!session) {
-      throw new NotFoundException();
-    }
-
-    if (session.userId !== userId) {
-      throw new ForbiddenException();
-    }
-
-    return this.securityService.remove(id);
+  async remove(
+    @Param('deviceId') deviceId: string,
+    @GetCurrentUserId() userId: string,
+  ) {
+    return this.commandBus.execute(
+      new RemoveSessionDeviceCommand(deviceId, userId),
+    );
   }
 
   @Delete('/devices')
   @HttpCode(HttpStatus.NO_CONTENT)
   async removeAllWithoutMyDevice(@GetCurrentJwtContext() ctx: JwtRTPayload) {
-    return this.securityService.removeAllWithoutMyDevice(
-      ctx.user.id,
-      ctx.deviceId,
+    return this.commandBus.execute(
+      new RemoveAllDevicesWithoutMyDeviceCommand(ctx.deviceId, ctx.user.id),
     );
   }
 }

@@ -1,7 +1,7 @@
 import { ForbiddenException, UnauthorizedException } from '@nestjs/common';
 import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
 
-import { SecurityService } from '../../../security/application/security.service';
+import { ISecurityRepository } from '../../../security/infrastructure/security.sql.repository';
 import { IRevokeTokenRepository } from '../../infrastructure/revoke-token.repository.sql';
 import { JwtPayloadWithRt } from '../interfaces/jwt-payload-with-rt.type';
 import { DecodedJwtRTPayload } from '../interfaces/jwtPayload.type';
@@ -22,7 +22,7 @@ export class RefreshTokenHandler
   constructor(
     private readonly revokeTokenRepository: IRevokeTokenRepository,
     private readonly jwtService: JwtService,
-    private readonly securityService: SecurityService,
+    private readonly securityRepository: ISecurityRepository,
   ) {}
 
   async execute({ ctx, userAgent, userIp }: RefreshTokenCommand) {
@@ -67,7 +67,7 @@ export class RefreshTokenHandler
         tokens.refreshToken,
       );
 
-    await this.securityService.createOrUpdate({
+    await this.securityRepository.createOrUpdate({
       userId: decodedAccessToken.user.id,
       ip: userIp,
       deviceId: decodedAccessToken.deviceId,
