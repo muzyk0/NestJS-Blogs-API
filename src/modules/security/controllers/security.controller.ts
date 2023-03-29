@@ -17,8 +17,10 @@ import {
   JwtRTPayload,
 } from '../../auth/application/interfaces/jwtPayload.type';
 import { JwtRefreshAuthGuard } from '../../auth/guards/jwt-refresh-auth.guard';
-import { RemoveAllDevicesWithoutMyDeviceCommand } from '../application/use-cases';
-import { RemoveSessionDeviceCommand } from '../application/use-cases/remove-session-device.handler';
+import {
+  RemoveAllDevicesWithoutMyDeviceCommand,
+  RemoveSessionDeviceCommand,
+} from '../application/use-cases';
 import { ISecurityQueryRepository } from '../infrastructure/security.query.sql.repository';
 
 @ApiTags('securityDevices')
