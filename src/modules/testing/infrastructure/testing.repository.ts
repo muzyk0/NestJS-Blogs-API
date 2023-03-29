@@ -30,6 +30,8 @@ export class TestingRepository {
         FROM "blogs";
         DELETE
         FROM "users";
+        DELETE
+        FROM "password_recovery_attempts";
 
     `);
 

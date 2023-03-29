@@ -672,30 +672,6 @@ window.onload = function() {
           ]
         }
       },
-      "/blog-platform/security": {
-        "post": {
-          "operationId": "SecurityController_create",
-          "parameters": [],
-          "requestBody": {
-            "required": true,
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/CreateSecurityDto"
-                }
-              }
-            }
-          },
-          "responses": {
-            "201": {
-              "description": ""
-            }
-          },
-          "tags": [
-            "securityDevices"
-          ]
-        }
-      },
       "/blog-platform/security/devices": {
         "get": {
           "operationId": "SecurityController_findAll",
@@ -722,12 +698,12 @@ window.onload = function() {
           ]
         }
       },
-      "/blog-platform/security/devices/{id}": {
+      "/blog-platform/security/devices/{deviceId}": {
         "delete": {
           "operationId": "SecurityController_remove",
           "parameters": [
             {
-              "name": "id",
+              "name": "deviceId",
               "required": true,
               "in": "path",
               "schema": {
@@ -918,27 +894,6 @@ window.onload = function() {
           "tags": [
             "comments"
           ]
-        },
-        "delete": {
-          "operationId": "CommentsController_remove",
-          "parameters": [
-            {
-              "name": "id",
-              "required": true,
-              "in": "path",
-              "schema": {
-                "type": "string"
-              }
-            }
-          ],
-          "responses": {
-            "204": {
-              "description": ""
-            }
-          },
-          "tags": [
-            "comments"
-          ]
         }
       },
       "/blog-platform/comments/{commentId}": {
@@ -964,6 +919,27 @@ window.onload = function() {
               }
             }
           },
+          "responses": {
+            "204": {
+              "description": ""
+            }
+          },
+          "tags": [
+            "comments"
+          ]
+        },
+        "delete": {
+          "operationId": "CommentsController_remove",
+          "parameters": [
+            {
+              "name": "commentId",
+              "required": true,
+              "in": "path",
+              "schema": {
+                "type": "string"
+              }
+            }
+          ],
           "responses": {
             "204": {
               "description": ""
@@ -1336,10 +1312,6 @@ window.onload = function() {
           "properties": {}
         },
         "CreateRecoveryPasswordDto": {
-          "type": "object",
-          "properties": {}
-        },
-        "CreateSecurityDto": {
           "type": "object",
           "properties": {}
         },
