@@ -8,7 +8,7 @@ import { AuthModule } from '../auth/auth.module';
 import {
   BloggersBanUsersRepository,
   IBloggersBanUsersRepository,
-} from '../bans/infrastructure/bloggers-ban-users.repository.';
+} from '../bans/infrastructure/bloggers-ban-users.repository';
 import { PostsModule } from '../posts/posts.module';
 import { UsersModule } from '../users/users.module';
 

@@ -1,24 +1,33 @@
-import { Module } from '@nestjs/common';
+import { Module, Provider } from '@nestjs/common';
 import { CqrsModule } from '@nestjs/cqrs';
 import { TypeOrmModule } from '@nestjs/typeorm';
 
-import { BlogExistsRule } from '../../shared/decorators/validations/check-blogId-if-exist.decorator';
-import { IsUserAlreadyExistConstraint } from '../../shared/decorators/validations/check-is-user-exist.decorator';
+import {
+  BlogExistsRule,
+  IsUserAlreadyExistConstraint,
+} from '../../shared/decorators/validations';
 import { BlogsModule } from '../blogs/blogs.module';
 
-import { UpdateBanUserForBlogHandler } from './application/use-cases/update-ban-user-for-blog.handler';
-import { Bans } from './domain/entity/bans.entity';
-import { BloggerBanUser } from './domain/entity/blogger-ban-user';
+import { UpdateBanUserForBlogHandler } from './application/use-cases';
+import { Bans, BloggerBanUser } from './domain/entity';
 import {
   BloggersBanUsersRepository,
   IBloggersBanUsersRepository,
-} from './infrastructure/bloggers-ban-users.repository.';
-import {
   IUserBanRepository,
   UserBanRepository,
-} from './infrastructure/user-bans.repository.';
+} from './infrastructure';
 
 const CommandHandlers = [UpdateBanUserForBlogHandler];
+const Providers: Provider[] = [
+  {
+    provide: IBloggersBanUsersRepository,
+    useClass: BloggersBanUsersRepository,
+  },
+  {
+    provide: IUserBanRepository,
+    useClass: UserBanRepository,
+  },
+];
 
 @Module({
   imports: [
@@ -31,25 +40,8 @@ const CommandHandlers = [UpdateBanUserForBlogHandler];
     IsUserAlreadyExistConstraint,
     BlogExistsRule,
     ...CommandHandlers,
-    {
-      provide: IBloggersBanUsersRepository,
-      useClass: BloggersBanUsersRepository,
-    },
-    {
-      provide: IUserBanRepository,
-      useClass: UserBanRepository,
-    },
+    ...Providers,
   ],
-  exports: [
-    ...CommandHandlers,
-    {
-      provide: IBloggersBanUsersRepository,
-      useClass: BloggersBanUsersRepository,
-    },
-    {
-      provide: IUserBanRepository,
-      useClass: UserBanRepository,
-    },
-  ],
+  exports: [...CommandHandlers, ...Providers],
 })
 export class BansModule {}

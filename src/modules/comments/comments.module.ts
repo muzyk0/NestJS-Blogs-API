@@ -3,10 +3,6 @@ import { CqrsModule } from '@nestjs/cqrs';
 import { TypeOrmModule } from '@nestjs/typeorm';
 
 import { AuthModule } from '../auth/auth.module';
-import {
-  BlogsRepository,
-  IBlogsRepository,
-} from '../blogs/infrastructure/blogs.sql.repository';
 import { LikesModule } from '../likes/likes.module';
 import { PostsModule } from '../posts/posts.module';
 import { UsersModule } from '../users/users.module';
@@ -32,7 +28,6 @@ import { CommentsRepository } from './infrastructure/comments.sql.repository';
   ],
   controllers: [CommentsController],
   providers: [
-    { provide: IBlogsRepository, useClass: BlogsRepository },
     ...CommandHandlers,
     { provide: ICommentsRepository, useClass: CommentsRepository },
     { provide: ICommentsQueryRepository, useClass: CommentsQueryRepository },

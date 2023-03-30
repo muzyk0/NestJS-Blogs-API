@@ -7,7 +7,7 @@ import { BansService } from '../bans/application/bans.service';
 import {
   BloggersBanUsersRepository,
   IBloggersBanUsersRepository,
-} from '../bans/infrastructure/bloggers-ban-users.repository.';
+} from '../bans/infrastructure/bloggers-ban-users.repository';
 import {
   BlogsRepository,
   IBlogsRepository,

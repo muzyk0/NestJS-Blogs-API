@@ -25,6 +25,8 @@ import { LikesModule } from './modules/likes/likes.module';
 import typeOrmConfig from './config/typeorm.config';
 import { EmailModuleLocal } from './modules/email-local/email-local.module';
 import { SuperAdminModule } from './modules/super-admin/super-admin.module';
+import { IsUserAlreadyExistConstraint } from './shared/decorators/validations/check-is-user-exist.decorator';
+import { BlogExistsRule } from './shared/decorators/validations/check-blogId-if-exist.decorator';
 
 @Module({
   imports: [

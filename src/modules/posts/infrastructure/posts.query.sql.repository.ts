@@ -51,7 +51,6 @@ export class PostsQueryRepository implements IPostsQueryRepository {
                                       FROM likes l
                                                LEFT join bans ub on ub."userId" = l."userId"
                                       WHERE l."postId" = p.id
---                                         AND ub.banned IS NULL
                                         AND l.status = '1'::likes_status_enum
                                         AND case
                                                 when cast($5 as UUID) IS NOT NULL THEN ub.banned is null
@@ -60,7 +59,6 @@ export class PostsQueryRepository implements IPostsQueryRepository {
                                       FROM likes l
                                                LEFT join bans ub on ub."userId" = l."userId"
                                       WHERE l."postId" = p.id
---                                         AND ub.banned IS NULL
                                         AND l.status = '0'::likes_status_enum
                                         AND case
                                                 when cast($5 as UUID) IS NOT NULL THEN ub.banned is null
@@ -93,12 +91,6 @@ export class PostsQueryRepository implements IPostsQueryRepository {
                     AND case
                             when cast($4 as TEXT) IS NOT NULL THEN p.title ILIKE '%' || $4 || '%'
                             ELSE true END
---                     AND case
---                             when cast($5 as UUID) IS NOT NULL THEN u.id = $5
---                             ELSE true END
---                     AND case
---                             when cast($5 as UUID) IS NOT NULL THEN bans.banned is null
---                             ELSE true END
                     AND case
                             when cast($6 as UUID) IS NOT NULL THEN b.banned is null
                             ELSE true END

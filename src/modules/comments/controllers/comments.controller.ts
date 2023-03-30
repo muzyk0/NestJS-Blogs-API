@@ -19,7 +19,6 @@ import { JwtATPayload } from '../../auth/application/interfaces/jwtPayload.type'
 import { AuthGuard } from '../../auth/guards/auth-guard';
 import { JwtAuthGuard } from '../../auth/guards/jwt-auth.guard';
 import { CreateLikeInput } from '../../likes/application/input/create-like.input';
-import { IUsersRepository } from '../../users/infrastructure/users.repository.sql';
 import { CommentInput } from '../application/dto/comment.input';
 import { UpdateCommentCommand } from '../application/use-cases';
 import { LikeCommentCommand } from '../application/use-cases/like-comment.handler';
@@ -31,7 +30,6 @@ import { ICommentsQueryRepository } from '../infrastructure/comments.query.sql.r
 @Controller('comments')
 export class CommentsController {
   constructor(
-    private readonly usersRepository: IUsersRepository,
     private readonly commentsQueryRepository: ICommentsQueryRepository,
     private readonly commandBus: CommandBus,
   ) {}

@@ -8,11 +8,11 @@ import { AuthModule } from '../auth/auth.module';
 import {
   BloggersBanUsersRepository,
   IBloggersBanUsersRepository,
-} from '../bans/infrastructure/bloggers-ban-users.repository.';
+} from '../bans/infrastructure/bloggers-ban-users.repository';
 import {
   IUserBanRepository,
   UserBanRepository,
-} from '../bans/infrastructure/user-bans.repository.';
+} from '../bans/infrastructure/user-bans.repository';
 import { EmailModuleLocal } from '../email-local/email-local.module';
 import { PasswordRecoveryModule } from '../password-recovery/password-recovery.module';
 import { SecurityModule } from '../security/security.module';

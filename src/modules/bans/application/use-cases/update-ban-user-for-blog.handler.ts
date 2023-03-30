@@ -4,7 +4,7 @@ import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
 import { BanUserForBlogInput } from '../../../blogs/controllers/dto/ban-user-for-blog.input';
 import { IBlogsRepository } from '../../../blogs/infrastructure/blogs.sql.repository';
 import { IUsersRepository } from '../../../users/infrastructure/users.repository.sql';
-import { IBloggersBanUsersRepository } from '../../infrastructure/bloggers-ban-users.repository.';
+import { IBloggersBanUsersRepository } from '../../infrastructure/bloggers-ban-users.repository';
 import { CreateBanInput } from '../input/create-ban.input';
 
 export class UpdateBanUserForBlogCommand {
