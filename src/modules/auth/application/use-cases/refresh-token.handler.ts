@@ -1,7 +1,7 @@
 import { ForbiddenException, UnauthorizedException } from '@nestjs/common';
 import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
 
-import { ISecurityRepository } from '../../../security/infrastructure/security.sql.repository';
+import { ISecurityRepository } from '../../../security/application/inerfaces/ISecurityRepository';
 import { IRevokeTokenRepository } from '../../infrastructure/revoke-token.repository.sql';
 import { JwtPayloadWithRt } from '../interfaces/jwt-payload-with-rt.type';
 import { DecodedJwtRTPayload } from '../interfaces/jwtPayload.type';

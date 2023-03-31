@@ -2,7 +2,7 @@ import { UnauthorizedException } from '@nestjs/common';
 import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
 import { v4 } from 'uuid';
 
-import { ISecurityRepository } from '../../../security/infrastructure/security.sql.repository';
+import { ISecurityRepository } from '../../../security/application/inerfaces/ISecurityRepository';
 import { IUsersRepository } from '../../../users/infrastructure/users.repository.sql';
 import { CryptService } from '../crypt.service';
 import {
