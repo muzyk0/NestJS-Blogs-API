@@ -540,7 +540,7 @@ describe('Blogger (e2e)', () => {
         .send({
           content: '33333333333333333333333',
         })
-        .expect(404);
+        .expect(403);
 
       const postComments2 = await request(app.getHttpServer())
         .get(`/posts/${post.id}/comments`)

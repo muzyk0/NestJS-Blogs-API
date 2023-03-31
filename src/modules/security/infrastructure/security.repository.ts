@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
-import { InjectDataSource, InjectRepository } from '@nestjs/typeorm';
-import { DataSource, Not, Repository } from 'typeorm';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Not, Repository } from 'typeorm';
 
 import { CreateSecurityDto } from '../application/dto/create-security.dto';
 import { ISecurityRepository } from '../application/inerfaces/ISecurityRepository';
@@ -11,7 +11,6 @@ export class SecurityRepository implements ISecurityRepository {
   constructor(
     @InjectRepository(Device)
     private readonly deviceRepository: Repository<Device>,
-    @InjectDataSource() private readonly dataSource: DataSource,
   ) {}
 
   protected async getDevice(id: string): Promise<Device> {
@@ -65,7 +64,7 @@ export class SecurityRepository implements ISecurityRepository {
   }
 
   async removeAllDevices(userId: string): Promise<boolean> {
-    const devices = await this.deviceRepository.findOne({
+    const devices = await this.deviceRepository.find({
       where: { userId },
     });
     await this.deviceRepository.remove(devices);

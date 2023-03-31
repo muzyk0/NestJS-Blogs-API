@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { Cron } from '@nestjs/schedule';
 import { addMilliseconds } from 'date-fns';
 
-import { LimitsRepository } from '../infrastructure/limits.repository';
+import { ILimitsRepository } from '../infrastructure/limits.repository';
 
 import { CreateLimitsDto } from './dto/create-limits.dto';
 
@@ -16,7 +16,7 @@ export interface ILimitsService {
 
 @Injectable()
 export class LimitsService implements ILimitsService {
-  constructor(private limitsRepository: LimitsRepository) {}
+  constructor(private limitsRepository: ILimitsRepository) {}
 
   async checkLimits(
     { ip, login, url, deviceName }: CreateLimitsDto,

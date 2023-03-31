@@ -19,4 +19,7 @@ export class PasswordRecoveryAttempt extends BaseEntity {
 
   @Column()
   isValid: boolean;
+
+  @Column({ default: false })
+  isConfirmed: boolean;
 }
