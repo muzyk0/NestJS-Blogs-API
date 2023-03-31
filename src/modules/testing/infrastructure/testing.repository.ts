@@ -12,27 +12,7 @@ export class TestingRepository {
 
   private async clearSqlDatabase(): Promise<boolean> {
     await this.dataSource.query(`
-        DELETE
-        FROM "likes";
-        DELETE
-        FROM "revoke_tokens";
-        DELETE
-        FROM "bans";
-        DELETE
-        FROM "bloggers_ban_users";
-        DELETE
-        FROM "devices";
-        DELETE
-        FROM "comments";
-        DELETE
-        FROM "posts";
-        DELETE
-        FROM "blogs";
-        DELETE
-        FROM "users";
-        DELETE
-        FROM "password_recovery_attempts";
-
+       SELECT truncate_tables();
     `);
 
     return true;
