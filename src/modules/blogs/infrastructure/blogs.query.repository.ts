@@ -1,6 +1,6 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
-import { InjectDataSource } from '@nestjs/typeorm';
-import { DataSource } from 'typeorm';
+import { InjectDataSource, InjectRepository } from '@nestjs/typeorm';
+import { DataSource, Repository } from 'typeorm';
 
 import { PageOptionsDto } from '../../../shared/paginator/page-options.dto';
 import { PageDto } from '../../../shared/paginator/page.dto';
@@ -13,9 +13,13 @@ import { Blog } from '../domain/entities/blog.entity';
 import { BlogRawSqlDto } from '../interfaces/BlogRawSqlDto';
 
 @Injectable()
-export class BlogsQuerySqlRepository implements IBlogsQueryRepository {
-  constructor(@InjectDataSource() private readonly dataSource: DataSource) {}
+export class BlogsQueryRepository implements IBlogsQueryRepository {
+  constructor(
+    @InjectDataSource() private readonly dataSource: DataSource,
+    @InjectRepository(Blog) private readonly blogRepo: Repository<Blog>,
+  ) {}
 
+  // TODO: Maybe rewrite this to queryBuilder
   async findAll(
     pageOptionsDto: PageOptionsDto,
     userId?: string,
@@ -26,7 +30,8 @@ export class BlogsQuerySqlRepository implements IBlogsQueryRepository {
                   FROM blogs as b
                            lEFT JOIN users u ON b."userId" = u.id
                            LEFT JOIN bans ub on b."userId" = ub."userId"
-                  where b.banned IS NULL and ub.banned IS NULL
+                  where b.banned IS NULL
+                    and ub.banned IS NULL
                     AND case
                             when cast($5 as UUID) IS NOT NULL THEN b."userId" = $5
                             ELSE true END
@@ -110,27 +115,24 @@ export class BlogsQuerySqlRepository implements IBlogsQueryRepository {
   }
 
   async findOne(id: string): Promise<BlogView> {
-    try {
-      const [blog] = await this.dataSource.query(
-        `
-            SELECT b.*
-            FROM blogs as b
-                     LEFT JOIN bans ub on b."userId" = ub."userId"
-            where b.id = $1
-              and b.banned is null
-              and ub.banned is null
-            ORDER BY "createdAt";
-        `,
-        [id],
-      );
+    const blog = await this.blogRepo
+      .createQueryBuilder('b')
+      .leftJoin('b.user', 'u')
+      .leftJoin('u.bans', 'ub')
+      .where('b.id = :id', { id })
+      .andWhere('b.banned IS NULL')
+      .andWhere('ub.banned IS NULL')
+      .orderBy('b.createdAt', 'ASC')
+      .getOne();
 
-      return this.mapToDto(blog);
-    } catch {
+    if (!blog) {
       throw new NotFoundException();
     }
+
+    return this.mapToDto(blog);
   }
 
-  mapToDto(blog: Blog): BlogView {
+  private mapToDto(blog: Blog): BlogView {
     return {
       id: blog.id,
       name: blog.name,
@@ -141,7 +143,7 @@ export class BlogsQuerySqlRepository implements IBlogsQueryRepository {
     };
   }
 
-  mapToDtoForSuperAdmin(blog: BlogRawSqlDto): BlogViewDtoForSuperAdmin {
+  private mapToDtoForSuperAdmin(blog: BlogRawSqlDto): BlogViewDtoForSuperAdmin {
     return {
       id: blog.id,
       name: blog.name,

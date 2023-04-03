@@ -7,7 +7,7 @@ import { LoginNotExistRule } from '../../shared/decorators/validations/check-is-
 import { getRepositoryModule } from '../../shared/utils/get-repository.module-loader';
 import { AuthModule } from '../auth/auth.module';
 import { IBloggersBanUsersRepository } from '../bans/application/interfaces/bloggers-ban-users.abstract-class';
-import { IUserBanRepository } from '../bans/application/interfaces/i-user-ban.repository';
+import { IUserBanRepository } from '../bans/application/interfaces/user-ban.abstract-class';
 import { Bans } from '../bans/domain/entity/bans.entity';
 import { BloggerBanUser } from '../bans/domain/entity/blogger-ban-user.entity';
 import { BloggersBanUsersRepository } from '../bans/infrastructure/bloggers-ban-users.repository';

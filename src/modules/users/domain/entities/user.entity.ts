@@ -47,8 +47,8 @@ export class User extends BaseEntity {
   @OneToMany(() => Like, (like) => like.user)
   likes: Comment[];
 
-  @OneToMany(() => Bans, (like) => like.user)
-  bans: Bans[];
+  @OneToMany(() => Bans, (bans) => bans.user, { nullable: true })
+  bans: Bans[] | null;
 
   @OneToMany(
     () => PasswordRecoveryAttempt,

@@ -1,7 +1,7 @@
 import { BadRequestException } from '@nestjs/common';
 import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
 
-import { IUserBanRepository } from '../../../bans/application/interfaces/i-user-ban.repository';
+import { IUserBanRepository } from '../../../bans/application/interfaces/user-ban.abstract-class';
 import { ISecurityRepository } from '../../../security/application/inerfaces/ISecurityRepository';
 import { BanUnbanUserInput } from '../dto/ban-unban-user.input';
 

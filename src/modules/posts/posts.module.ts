@@ -8,7 +8,10 @@ import { IBloggersBanUsersRepository } from '../bans/application/interfaces/blog
 import { BloggerBanUser } from '../bans/domain/entity/blogger-ban-user.entity';
 import { BloggersBanUsersRepository } from '../bans/infrastructure/bloggers-ban-users.repository';
 import { BloggersBanUsersSqlRepository } from '../bans/infrastructure/bloggers-ban-users.sql.repository';
-import { BlogsRepository, IBlogsRepository } from '../blogs/infrastructure';
+import { BlogsModule } from '../blogs/blogs.module';
+import { Blog } from '../blogs/domain/entities/blog.entity';
+import { BlogsSqlRepository, IBlogsRepository } from '../blogs/infrastructure';
+import { BlogsRepository } from '../blogs/infrastructure/blogs.repository';
 import { ICommentsRepository } from '../comments/application/interfaces/comment-repository.abstract-class';
 import {
   CommentsQueryRepository,
@@ -43,13 +46,16 @@ const Providers = [
     SecurityModule,
     LikesModule,
     UsersModule,
-    TypeOrmModule.forFeature([Post, BloggerBanUser]),
+    TypeOrmModule.forFeature([Post, BloggerBanUser, Blog]),
   ],
   controllers: [PostsController],
   providers: [
     ...CommandHandlers,
     ...Providers,
-    { provide: IBlogsRepository, useClass: BlogsRepository },
+    {
+      provide: IBlogsRepository,
+      useClass: getRepositoryModule(BlogsRepository, BlogsSqlRepository),
+    },
     { provide: ICommentsRepository, useClass: CommentsRepository },
     { provide: ICommentsQueryRepository, useClass: CommentsQueryRepository },
     {

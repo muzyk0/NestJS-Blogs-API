@@ -1,7 +1,7 @@
 import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
 
 import { PageOptionsDto } from '../../../../shared/paginator/page-options.dto';
-import { IBlogsQueryRepository } from '../../infrastructure/blogs.query.sql.repository';
+import { IBlogsQueryRepository } from '../interfaces/blogs-query-repository.abstract-class';
 
 export class GetBlogsForAdminCommand {
   constructor(public readonly pageOptionsDto: PageOptionsDto) {}

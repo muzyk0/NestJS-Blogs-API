@@ -9,7 +9,7 @@ import { BlogsModule } from '../blogs/blogs.module';
 import { UsersModule } from '../users/users.module';
 
 import { IBloggersBanUsersRepository } from './application/interfaces/bloggers-ban-users.abstract-class';
-import { IUserBanRepository } from './application/interfaces/i-user-ban.repository';
+import { IUserBanRepository } from './application/interfaces/user-ban.abstract-class';
 import { UpdateBanUserForBlogHandler } from './application/use-cases/update-ban-user-for-blog.handler';
 import { Bans } from './domain/entity/bans.entity';
 import { BloggerBanUser } from './domain/entity/blogger-ban-user.entity';

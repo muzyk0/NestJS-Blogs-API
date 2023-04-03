@@ -18,11 +18,27 @@ import { BloggerController } from './controllers/blogger.controller';
 import { BlogsController } from './controllers/blogs.controller';
 import { Blog } from './domain/entities/blog.entity';
 import {
-  BlogsQueryRepository,
+  BlogsQuerySqlRepository,
+  BlogsSqlRepository,
   IBlogsQueryRepository,
-  BlogsRepository,
   IBlogsRepository,
 } from './infrastructure';
+import { BlogsQueryRepository } from './infrastructure/blogs.query.repository';
+import { BlogsRepository } from './infrastructure/blogs.repository';
+
+const RepositoryProviders = [
+  {
+    provide: IBlogsQueryRepository,
+    useClass: getRepositoryModule(
+      BlogsQueryRepository,
+      BlogsQuerySqlRepository,
+    ),
+  },
+  {
+    provide: IBlogsRepository,
+    useClass: getRepositoryModule(BlogsRepository, BlogsSqlRepository),
+  },
+];
 
 @Module({
   imports: [
@@ -36,8 +52,7 @@ import {
   controllers: [BlogsController, BloggerController],
   providers: [
     ...CommandHandlers,
-    { provide: IBlogsQueryRepository, useClass: BlogsQueryRepository },
-    { provide: IBlogsRepository, useClass: BlogsRepository },
+    ...RepositoryProviders,
     BlogExistsRule,
     IsUserAlreadyExistConstraint,
     {
@@ -48,12 +63,6 @@ import {
       ),
     },
   ],
-  exports: [
-    ...CommandHandlers,
-    { provide: IBlogsQueryRepository, useClass: BlogsQueryRepository },
-    { provide: IBlogsRepository, useClass: BlogsRepository },
-    BlogExistsRule,
-    IsUserAlreadyExistConstraint,
-  ],
+  exports: [...CommandHandlers, ...RepositoryProviders],
 })
 export class BlogsModule {}

@@ -1,7 +1,7 @@
 import { ForbiddenException, NotFoundException } from '@nestjs/common';
 import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
 
-import { IBlogsRepository } from '../../../blogs/infrastructure/blogs.sql.repository';
+import { IBlogsRepository } from '../../../blogs/application/interfaces/blog.abstract-class';
 import { IPostsRepository } from '../../infrastructure/posts.sql.repository';
 
 export class DeleteBlogPostCommand {

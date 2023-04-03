@@ -1,8 +1,8 @@
 import { ForbiddenException, NotFoundException } from '@nestjs/common';
 import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
 
-import { IBlogsRepository } from '../../infrastructure/blogs.sql.repository';
 import { UpdateBlogDto } from '../dto/update-blog.dto';
+import { IBlogsRepository } from '../interfaces/blog.abstract-class';
 
 export class UpdateBlogCommand {
   constructor(

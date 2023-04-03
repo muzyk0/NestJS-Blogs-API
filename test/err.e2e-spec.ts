@@ -1,8 +1,6 @@
 import { INestApplication } from '@nestjs/common';
-import { Test, TestingModule } from '@nestjs/testing';
 import request from 'supertest';
 
-import { AppModule } from '../src/app.module';
 import {
   BlogDto,
   BlogView,
@@ -12,50 +10,22 @@ import { CommentDto } from '../src/modules/comments/application/dto/comment.dto'
 import { PostViewDto } from '../src/modules/posts/application/dto/post.view.dto';
 import { PostDomain } from '../src/modules/posts/domain/post.domain';
 import { UserViewModel } from '../src/modules/users/infrastructure/dto/user.view';
-import { setupApp } from '../src/setup-app';
 import { PageDto } from '../src/shared/paginator/page.dto';
 
 import { FakeUser, FakeUserBuilder } from './utils/fake-user.builder';
+import { init } from './utils/init.test';
 
 jest.setTimeout(120000);
 
 describe('Blogger (e2e)', () => {
   let app: INestApplication;
 
-  // const emailService = { sendEmail: async () => undefined };
-
   beforeAll(async () => {
-    // Create a NestJS application
-    const module: TestingModule = await Test.createTestingModule({
-      imports: [AppModule],
-    })
-      // .overrideProvider(EmailService)
-      // .useValue(emailService)
-      .compile();
-    app = module.createNestApplication();
-    //created me
-    app = setupApp(app, '');
-
-    // Connect to the in-memory server
-    await app.init();
+    app = await init();
   });
   afterAll(async () => {
     await app.close();
   });
-
-  // describe(`Super admin API`, () => {
-  //   beforeAll(async () => {
-  //     await request(app.getHttpServer())
-  //       .delete(`/testing/all-data`)
-  //       .expect(204);
-  //   });
-  //   let user: UserViewModel;
-  //   let user2: UserViewModel;
-  //   let validAccessToken: { accessToken: string };
-  //   let validAccessToken2: { accessToken: string };
-  //   let blog: BlogDto;
-  //   let post: BlogDto;
-  //   let responseComment: CommentDto;
 
   describe('super admin should ban or unban user;', () => {
     let user: UserViewModel;

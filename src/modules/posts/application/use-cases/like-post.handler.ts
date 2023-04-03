@@ -1,7 +1,7 @@
 import { NotFoundException } from '@nestjs/common';
 import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
 
-import { IBlogsRepository } from '../../../blogs/infrastructure/blogs.sql.repository';
+import { IBlogsRepository } from '../../../blogs/application/interfaces/blog.abstract-class';
 import { CreateLikeInput } from '../../../likes/application/input/create-like.input';
 import { LikeStringStatus } from '../../../likes/application/interfaces/like-status.enum';
 import { ILikesRepository } from '../../../likes/infrastructure/likes.repository.sql';

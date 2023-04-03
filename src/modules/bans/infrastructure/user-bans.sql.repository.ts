@@ -3,7 +3,7 @@ import { InjectDataSource } from '@nestjs/typeorm';
 import { DataSource } from 'typeorm';
 
 import { BanUnbanUserInput } from '../../users/application/dto/ban-unban-user.input';
-import { IUserBanRepository } from '../application/interfaces/i-user-ban.repository';
+import { IUserBanRepository } from '../application/interfaces/user-ban.abstract-class';
 import { Bans } from '../domain/entity/bans.entity';
 
 @Injectable()
