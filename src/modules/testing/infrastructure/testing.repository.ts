@@ -19,10 +19,11 @@ export class TestingRepository {
   }
 
   async clearDatabase(): Promise<boolean> {
-    if (this.config.get('ENABLE_CLEAR_DB_ENDPOINT')) {
+    const isEnableClearDB = this.config.get('ENABLE_CLEAR_DB_ENDPOINT');
+    if (isEnableClearDB) {
       await this.clearSqlDatabase();
     }
 
-    return true;
+    return isEnableClearDB;
   }
 }

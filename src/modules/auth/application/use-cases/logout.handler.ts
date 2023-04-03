@@ -2,9 +2,9 @@ import { ForbiddenException, UnauthorizedException } from '@nestjs/common';
 import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
 
 import { ISecurityRepository } from '../../../security/application/inerfaces/ISecurityRepository';
-import { RevokeTokenInput } from '../../infrastructure/dto/revoke-token.input';
-import { IRevokeTokenRepository } from '../../infrastructure/revoke-token.repository.sql';
+import { RevokeTokenInput } from '../dto/revoke-token.input';
 import { JwtPayloadWithRt } from '../interfaces/jwt-payload-with-rt.type';
+import { IRevokeTokenRepository } from '../revoke-token.abstract-class';
 
 export class LogoutCommand {
   constructor(
@@ -26,10 +26,11 @@ export class LogoutHandler implements ICommandHandler<LogoutCommand> {
       userAgent,
     };
 
-    const isRevokedBefore = await this.revokeTokenRepository.checkRefreshToken(
-      ctx.user.id,
-      revokedToken,
-    );
+    const isRevokedBefore =
+      await this.revokeTokenRepository.checkRefreshTokenInBlackList(
+        ctx.user.id,
+        revokedToken,
+      );
 
     if (isRevokedBefore) {
       throw new UnauthorizedException();

@@ -2,27 +2,15 @@ import { Injectable } from '@nestjs/common';
 import { InjectDataSource } from '@nestjs/typeorm';
 import { DataSource } from 'typeorm';
 
+import { RevokeTokenInput } from '../application/dto/revoke-token.input';
+import { IRevokeTokenRepository } from '../application/revoke-token.abstract-class';
 import { RevokeToken } from '../domain/entities/revoked-token.entity';
 
-import { RevokeTokenInput } from './dto/revoke-token.input';
-
-export abstract class IRevokeTokenRepository {
-  abstract checkRefreshToken(
-    id: string,
-    revokeToken: RevokeTokenInput,
-  ): Promise<boolean>;
-
-  abstract revokeRefreshToken(
-    id: string,
-    revokeToken: RevokeTokenInput,
-  ): Promise<boolean>;
-}
-
 @Injectable()
-export class RevokeTokenRepository implements IRevokeTokenRepository {
+export class RevokeTokenSqlRepository implements IRevokeTokenRepository {
   constructor(@InjectDataSource() private dataSource: DataSource) {}
 
-  async checkRefreshToken(
+  async checkRefreshTokenInBlackList(
     userId: string,
     { token, userAgent }: RevokeTokenInput,
   ): Promise<boolean> {
