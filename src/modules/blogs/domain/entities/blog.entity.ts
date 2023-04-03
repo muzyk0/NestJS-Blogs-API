@@ -7,7 +7,7 @@ import {
 } from 'typeorm';
 
 import { BaseEntity } from '../../../../shared/base-entity/base.entity';
-import { BloggerBanUser } from '../../../bans/domain/entity/blogger-ban-user';
+import { BloggerBanUser } from '../../../bans/domain/entity/blogger-ban-user.entity';
 import { Post } from '../../../posts/domain/entities/post.entity';
 import { User } from '../../../users/domain/entities/user.entity';
 

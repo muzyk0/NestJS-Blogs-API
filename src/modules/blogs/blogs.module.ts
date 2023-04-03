@@ -4,11 +4,12 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 
 import { BlogExistsRule } from '../../shared/decorators/validations/check-blogId-if-exist.decorator';
 import { IsUserAlreadyExistConstraint } from '../../shared/decorators/validations/check-is-user-exist.decorator';
+import { getRepositoryModule } from '../../shared/utils/get-repository.module-loader';
 import { AuthModule } from '../auth/auth.module';
-import {
-  BloggersBanUsersRepository,
-  IBloggersBanUsersRepository,
-} from '../bans/infrastructure/bloggers-ban-users.repository.';
+import { IBloggersBanUsersRepository } from '../bans/application/interfaces/bloggers-ban-users.abstract-class';
+import { BloggerBanUser } from '../bans/domain/entity/blogger-ban-user.entity';
+import { BloggersBanUsersRepository } from '../bans/infrastructure/bloggers-ban-users.repository';
+import { BloggersBanUsersSqlRepository } from '../bans/infrastructure/bloggers-ban-users.sql.repository';
 import { PostsModule } from '../posts/posts.module';
 import { UsersModule } from '../users/users.module';
 
@@ -19,11 +20,9 @@ import { Blog } from './domain/entities/blog.entity';
 import {
   BlogsQueryRepository,
   IBlogsQueryRepository,
-} from './infrastructure/blogs.query.sql.repository';
-import {
   BlogsRepository,
   IBlogsRepository,
-} from './infrastructure/blogs.sql.repository';
+} from './infrastructure';
 
 @Module({
   imports: [
@@ -32,7 +31,7 @@ import {
     PostsModule,
     UsersModule,
 
-    TypeOrmModule.forFeature([Blog]),
+    TypeOrmModule.forFeature([Blog, BloggerBanUser]),
   ],
   controllers: [BlogsController, BloggerController],
   providers: [
@@ -43,7 +42,10 @@ import {
     IsUserAlreadyExistConstraint,
     {
       provide: IBloggersBanUsersRepository,
-      useClass: BloggersBanUsersRepository,
+      useClass: getRepositoryModule(
+        BloggersBanUsersRepository,
+        BloggersBanUsersSqlRepository,
+      ),
     },
   ],
   exports: [
