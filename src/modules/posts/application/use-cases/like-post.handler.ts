@@ -6,7 +6,7 @@ import { CreateLikeInput } from '../../../likes/application/input/create-like.in
 import { LikeStringStatus } from '../../../likes/application/interfaces/like-status.enum';
 import { ILikesRepository } from '../../../likes/application/interfaces/likes-repository.abstract-class';
 import { formatLikeStatusToInt } from '../../../likes/utils/formatters';
-import { IPostsRepository } from '../../infrastructure/posts.sql.repository';
+import { IPostsRepository } from '../interfaces/posts-repository.abstract-class';
 
 export class LikePostCommand {
   constructor(

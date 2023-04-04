@@ -2,7 +2,7 @@ import { NotFoundException } from '@nestjs/common';
 import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
 
 import { PageOptionsDto } from '../../../../shared/paginator/page-options.dto';
-import { IPostsRepository } from '../../../posts/infrastructure/posts.sql.repository';
+import { IPostsRepository } from '../../../posts/application/interfaces/posts-repository.abstract-class';
 import { ICommentsQueryRepository } from '../../controllers/interfaces/comments-query-repository.abstract-class';
 
 export class GetPostCommentsCommand {

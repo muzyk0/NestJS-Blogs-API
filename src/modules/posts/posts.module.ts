@@ -23,6 +23,7 @@ import { LikesModule } from '../likes/likes.module';
 import { SecurityModule } from '../security/security.module';
 import { UsersModule } from '../users/users.module';
 
+import { IPostsRepository } from './application/interfaces/posts-repository.abstract-class';
 import { CommandHandlers } from './application/use-cases';
 import { PostsController } from './controllers/posts.controller';
 import { Post } from './domain/entities/post.entity';
@@ -30,13 +31,14 @@ import {
   IPostsQueryRepository,
   PostsQueryRepository,
 } from './infrastructure/posts.query.sql.repository';
-import {
-  IPostsRepository,
-  PostsRepository,
-} from './infrastructure/posts.sql.repository';
+import { PostsRepository } from './infrastructure/posts.repository';
+import { PostsSqlRepository } from './infrastructure/posts.sql.repository';
 
 const Providers = [
-  { provide: IPostsRepository, useClass: PostsRepository },
+  {
+    provide: IPostsRepository,
+    useClass: getRepositoryModule(PostsRepository, PostsSqlRepository),
+  },
   { provide: IPostsQueryRepository, useClass: PostsQueryRepository },
 ];
 
