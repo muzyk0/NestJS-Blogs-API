@@ -12,7 +12,9 @@ export const getRepositoryModule = <T, R>(
   sqlModule: T,
   rawSqlModule: R,
 ): T | R => {
-  return configService.get<string>('MODE') !== 'rawSql'
-    ? sqlModule
-    : rawSqlModule;
+  if (configService.get<string>('MODE') === 'rawSql') {
+    return rawSqlModule;
+  } else {
+    return sqlModule;
+  }
 };

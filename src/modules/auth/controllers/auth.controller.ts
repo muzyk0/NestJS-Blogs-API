@@ -22,7 +22,7 @@ import { CreateRecoveryPasswordDto } from '../../password-recovery/application/d
 import { CreateUserDto } from '../../users/application/dto/create-user.dto';
 import { EmailConfirmationCodeDto } from '../../users/application/dto/email-confirmation-code.dto';
 import { Email } from '../../users/application/dto/email.dto';
-import { CreateUserCommand } from '../../users/application/use-cases/create-user.handler';
+import { CreateUserCommand } from '../../users/application/use-cases';
 import { IUsersQueryRepository } from '../../users/controllers/interfaces/users-query-repository.abstract-class';
 import { LoginDto } from '../application/dto/login.dto';
 import { JwtPayloadWithRt } from '../application/interfaces/jwt-payload-with-rt.type';

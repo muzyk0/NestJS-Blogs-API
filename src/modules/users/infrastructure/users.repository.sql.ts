@@ -61,7 +61,7 @@ export class UsersSqlRepository implements IUsersRepository {
     return users[0];
   }
 
-  async findOneByLogin(login: string): Promise<User> {
+  async findOneByLogin(login: string): Promise<User | null> {
     const users: User[] = await this.dataSource.query(
       `
           SELECT *
@@ -87,7 +87,7 @@ export class UsersSqlRepository implements IUsersRepository {
 
   async findOneByLoginOrEmailWithoutBanned(
     loginOrEmail: string,
-  ): Promise<User> {
+  ): Promise<User | null> {
     const users = await this.dataSource.query(
       `
           SELECT u.*

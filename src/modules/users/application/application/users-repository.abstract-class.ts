@@ -8,7 +8,7 @@ export abstract class IUsersRepository {
   abstract findOneByLoginOrEmailWithoutBanned(
     loginOrEmail: string,
     withBanned?: false,
-  ): Promise<User>;
+  ): Promise<User | null>;
 
   abstract findOneByEmail(email: string): Promise<User | null>;
 

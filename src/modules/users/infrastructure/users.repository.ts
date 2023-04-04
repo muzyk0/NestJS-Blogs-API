@@ -64,17 +64,20 @@ export class UsersRepository implements IUsersRepository {
 
   async findOneByLoginOrEmailWithoutBanned(
     loginOrEmail: string,
-  ): Promise<User> {
-    return this.usersRepo.findOne({
+  ): Promise<User | null> {
+    const user = await this.usersRepo.findOne({
       where: [{ login: loginOrEmail }, { email: loginOrEmail }],
       relations: {
-        bans: {
-          // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-          // @ts-ignore
-          banned: IsNull(),
-        },
+        bans: true,
       },
     });
+
+    console.log(user);
+
+    if (!user || user.bans?.[0]?.banned) {
+      return null;
+    }
+    return user;
   }
 
   async remove(id: string): Promise<boolean> {
@@ -84,7 +87,7 @@ export class UsersRepository implements IUsersRepository {
       return false;
     }
 
-    await this.usersRepo.delete(user);
+    await this.usersRepo.remove(user);
     return true;
   }
 
