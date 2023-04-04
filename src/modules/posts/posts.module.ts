@@ -13,11 +13,12 @@ import { Blog } from '../blogs/domain/entities/blog.entity';
 import { BlogsSqlRepository, IBlogsRepository } from '../blogs/infrastructure';
 import { BlogsRepository } from '../blogs/infrastructure/blogs.repository';
 import { ICommentsRepository } from '../comments/application/interfaces/comment-repository.abstract-class';
-import {
-  CommentsQueryRepository,
-  ICommentsQueryRepository,
-} from '../comments/infrastructure/comments.query.sql.repository';
-import { CommentsRepository } from '../comments/infrastructure/comments.sql.repository';
+import { CommentsModule } from '../comments/comments.module';
+import { ICommentsQueryRepository } from '../comments/controllers/interfaces/comments-query-repository.abstract-class';
+import { Comment } from '../comments/domain/entities/comment.entity';
+import { CommentsQueryRepository } from '../comments/infrastructure/comments.query.sql.repository';
+import { CommentsRepository } from '../comments/infrastructure/comments.repository';
+import { CommentsSqlRepository } from '../comments/infrastructure/comments.sql.repository';
 import { LikesModule } from '../likes/likes.module';
 import { SecurityModule } from '../security/security.module';
 import { UsersModule } from '../users/users.module';
@@ -46,7 +47,7 @@ const Providers = [
     SecurityModule,
     LikesModule,
     UsersModule,
-    TypeOrmModule.forFeature([Post, BloggerBanUser, Blog]),
+    TypeOrmModule.forFeature([Post, BloggerBanUser, Blog, Comment]),
   ],
   controllers: [PostsController],
   providers: [
@@ -56,7 +57,10 @@ const Providers = [
       provide: IBlogsRepository,
       useClass: getRepositoryModule(BlogsRepository, BlogsSqlRepository),
     },
-    { provide: ICommentsRepository, useClass: CommentsRepository },
+    {
+      provide: ICommentsRepository,
+      useClass: getRepositoryModule(CommentsRepository, CommentsSqlRepository),
+    },
     { provide: ICommentsQueryRepository, useClass: CommentsQueryRepository },
     {
       provide: IBloggersBanUsersRepository,

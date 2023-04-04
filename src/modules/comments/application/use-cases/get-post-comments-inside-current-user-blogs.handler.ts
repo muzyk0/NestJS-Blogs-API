@@ -1,7 +1,7 @@
 import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
 
 import { PageOptionsDto } from '../../../../shared/paginator/page-options.dto';
-import { ICommentsQueryRepository } from '../../infrastructure/comments.query.sql.repository';
+import { ICommentsQueryRepository } from '../../controllers/interfaces/comments-query-repository.abstract-class';
 
 export class GetPostCommentsInsideCurrentUserBlogsCommand {
   constructor(

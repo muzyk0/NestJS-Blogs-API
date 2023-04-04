@@ -6,7 +6,7 @@ import {
 import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
 
 import { IPostsRepository } from '../../../posts/infrastructure/posts.sql.repository';
-import { ICommentsQueryRepository } from '../../infrastructure/comments.query.sql.repository';
+import { ICommentsQueryRepository } from '../../controllers/interfaces/comments-query-repository.abstract-class';
 import { CommentInput } from '../dto/comment.input';
 import { ICommentsRepository } from '../interfaces/comment-repository.abstract-class';
 

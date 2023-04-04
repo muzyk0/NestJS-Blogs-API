@@ -25,7 +25,8 @@ import { UpdateCommentCommand } from '../application/use-cases';
 import { LikeCommentCommand } from '../application/use-cases/like-comment.handler';
 import { RemoveCommentCommand } from '../application/use-cases/remove-comment.handler';
 import { Comment } from '../domain/entities/comment.entity';
-import { ICommentsQueryRepository } from '../infrastructure/comments.query.sql.repository';
+
+import { ICommentsQueryRepository } from './interfaces/comments-query-repository.abstract-class';
 
 @ApiTags('comments')
 @Controller('comments')
