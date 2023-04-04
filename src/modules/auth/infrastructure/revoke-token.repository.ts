@@ -39,6 +39,8 @@ export class RevokeTokenRepository implements IRevokeTokenRepository {
       userAgent,
     });
 
+    await this.repo.save(revokeToken);
+
     if (revokeToken) {
       return true;
     }
