@@ -31,7 +31,7 @@ export class LikesRepository implements ILikesRepository {
       status: createLike.status,
     });
 
-    return this.likeRepository.create(createdLike);
+    return this.likeRepository.save(createdLike);
   }
 
   async createOrUpdateCommentLikeStatus(
@@ -53,6 +53,6 @@ export class LikesRepository implements ILikesRepository {
       status: createLike.status,
     });
 
-    return this.likeRepository.create(createdLike);
+    return this.likeRepository.save(createdLike);
   }
 }
