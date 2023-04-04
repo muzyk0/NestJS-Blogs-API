@@ -3,22 +3,11 @@ import { InjectDataSource } from '@nestjs/typeorm';
 import { DataSource } from 'typeorm';
 
 import { CreateSecurityDto } from '../application/dto/create-security.dto';
+import { ISecurityRepository } from '../application/inerfaces/ISecurityRepository';
 import { Device } from '../domain/entities/security.entity';
 
-export abstract class ISecurityRepository {
-  abstract createOrUpdate(securityDto: CreateSecurityDto): any;
-
-  abstract remove(id: string): Promise<boolean>;
-
-  abstract getSessionByDeviceId(deviceId: string): Promise<Device | undefined>;
-
-  abstract removeAllWithoutMyDevice(userId: string, deviceId: string): any;
-
-  abstract removeAllDevices(userId: string): any;
-}
-
 @Injectable()
-export class SecurityRepository implements ISecurityRepository {
+export class SecuritySqlRepository implements ISecurityRepository {
   constructor(@InjectDataSource() private readonly dataSource: DataSource) {}
 
   async createOrUpdate({
@@ -28,7 +17,7 @@ export class SecurityRepository implements ISecurityRepository {
     userId,
     issuedAt,
     expireAt,
-  }: CreateSecurityDto) {
+  }: CreateSecurityDto): Promise<Device> {
     const [userDevice] = await this.dataSource.query(
       `
           INSERT INTO devices (ip, "deviceName", "deviceId", "userId",
@@ -47,7 +36,7 @@ export class SecurityRepository implements ISecurityRepository {
     return userDevice;
   }
 
-  async remove(deviceId: string) {
+  async remove(deviceId: string): Promise<boolean> {
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const [_emptyArrayResult, countDeleted] = await this.dataSource.query(
       `DELETE
@@ -71,7 +60,10 @@ export class SecurityRepository implements ISecurityRepository {
     return userDevice;
   }
 
-  async removeAllWithoutMyDevice(userId: string, deviceId: string) {
+  async removeAllWithoutMyDevice(
+    userId: string,
+    deviceId: string,
+  ): Promise<boolean> {
     const result = await this.dataSource.query(
       `DELETE
        FROM devices
@@ -84,7 +76,7 @@ export class SecurityRepository implements ISecurityRepository {
     return result;
   }
 
-  async removeAllDevices(userId: string) {
+  async removeAllDevices(userId: string): Promise<boolean> {
     const result = await this.dataSource.query(
       `DELETE
        FROM devices

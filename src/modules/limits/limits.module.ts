@@ -1,11 +1,19 @@
 import { Module } from '@nestjs/common';
 
 import { LimitsService } from './application/limits.service';
-import { LimitsRepository } from './infrastructure/limits.repository';
+import {
+  ILimitsRepository,
+  LimitsRepository,
+} from './infrastructure/limits.repository';
+
+const Providers = [
+  LimitsService,
+  { provide: ILimitsRepository, useClass: LimitsRepository },
+];
 
 @Module({
   imports: [],
-  providers: [LimitsService, LimitsRepository],
-  exports: [LimitsService, LimitsRepository],
+  providers: [...Providers],
+  exports: [...Providers],
 })
 export class LimitsModule {}

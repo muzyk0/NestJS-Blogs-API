@@ -4,17 +4,17 @@ import { v4 } from 'uuid';
 import { CreateLimitsDto } from '../application/dto/create-limits.dto';
 import { LimitDto } from '../application/dto/limitDto';
 
-export interface ILimitsRepository {
-  addAttempt(requestAttempt: CreateLimitsDto): Promise<boolean>;
+export abstract class ILimitsRepository {
+  abstract addAttempt(requestAttempt: CreateLimitsDto): Promise<boolean>;
 
-  getAttempts(options: {
+  abstract getAttempts(options: {
     ip: string;
     login: string | undefined;
     url: string;
     fromDate: Date;
   }): Promise<number>;
 
-  removeLatestAttempts(toDate: Date): Promise<boolean>;
+  abstract removeLatestAttempts(toDate: Date): Promise<boolean>;
 }
 
 @Injectable()

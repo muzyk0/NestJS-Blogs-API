@@ -4,23 +4,13 @@ import { DataSource } from 'typeorm';
 
 import { UpdateOrDeleteEntityRawSqlResponse } from '../../../shared/interfaces/row-sql.types';
 import { CreateRecoveryPasswordDto } from '../application/dto/create-recovery-password.dto';
+import { IRecoveryPasswordRepository } from '../application/interfaces/recovery-password.abstract';
 import { PasswordRecoveryAttempt } from '../domain/entities/password-recovery.entity';
 
-export abstract class IRecoveryPasswordRepository {
-  abstract addPasswordRecovery(
-    userId: string,
-    { code }: CreateRecoveryPasswordDto,
-  ): Promise<PasswordRecoveryAttempt>;
-
-  abstract findByRecoveryCode(
-    recoveryCode: string,
-  ): Promise<PasswordRecoveryAttempt>;
-
-  abstract confirmPasswordRecovery(recoveryCode: string): Promise<boolean>;
-}
-
 @Injectable()
-export class RecoveryPasswordRepository implements IRecoveryPasswordRepository {
+export class RecoveryPasswordSqlRepository
+  implements IRecoveryPasswordRepository
+{
   constructor(@InjectDataSource() private readonly dataSource: DataSource) {}
 
   async addPasswordRecovery(
@@ -75,7 +65,8 @@ export class RecoveryPasswordRepository implements IRecoveryPasswordRepository {
       await this.dataSource.query(
         `
             UPDATE "password_recovery_attempts"
-            SET "isValid" = false
+            SET "isValid"     = false,
+                "isConfirmed" = true
             WHERE "code" = $1
               AND "isValid" IS TRUE
 

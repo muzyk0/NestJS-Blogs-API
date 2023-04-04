@@ -8,24 +8,12 @@ import {
   BlogView,
   BlogViewDtoForSuperAdmin,
 } from '../application/dto/blog.dto';
+import { IBlogsQueryRepository } from '../application/interfaces/blogs-query-repository.abstract-class';
 import { Blog } from '../domain/entities/blog.entity';
 import { BlogRawSqlDto } from '../interfaces/BlogRawSqlDto';
 
-export abstract class IBlogsQueryRepository {
-  abstract findOne(id: string): Promise<BlogView>;
-
-  abstract findAll(
-    pageOptionsDto: PageOptionsDto,
-    userId?: string,
-  ): Promise<PageDto<BlogView>>;
-
-  abstract findAllForAdmin(
-    pageOptionsDto: PageOptionsDto,
-  ): Promise<PageDto<BlogViewDtoForSuperAdmin>>;
-}
-
 @Injectable()
-export class BlogsQueryRepository implements IBlogsQueryRepository {
+export class BlogsQuerySqlRepository implements IBlogsQueryRepository {
   constructor(@InjectDataSource() private readonly dataSource: DataSource) {}
 
   async findAll(

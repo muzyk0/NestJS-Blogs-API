@@ -1,8 +1,8 @@
 import { BadRequestException } from '@nestjs/common';
 import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
 
-import { IUsersRepository } from '../../../users/infrastructure/users.repository.sql';
-import { IBlogsRepository } from '../../infrastructure/blogs.sql.repository';
+import { IUsersRepository } from '../../../users/application/application/users-repository.abstract-class';
+import { IBlogsRepository } from '../interfaces/blog.abstract-class';
 
 export class BindBlogOnUserCommand {
   constructor(public readonly blogId: string, public readonly userId: string) {}

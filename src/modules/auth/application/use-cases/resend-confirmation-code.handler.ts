@@ -4,7 +4,7 @@ import { addDays } from 'date-fns';
 import { v4 } from 'uuid';
 
 import { EmailServiceLocal } from '../../../email-local/application/email-local.service';
-import { IUsersRepository } from '../../../users/infrastructure/users.repository.sql';
+import { IUsersRepository } from '../../../users/application/application/users-repository.abstract-class';
 
 export class ResendConfirmationCodeCommand {
   constructor(public readonly email: string) {}

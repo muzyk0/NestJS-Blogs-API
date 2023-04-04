@@ -17,9 +17,12 @@ import {
   JwtRTPayload,
 } from '../../auth/application/interfaces/jwtPayload.type';
 import { JwtRefreshAuthGuard } from '../../auth/guards/jwt-refresh-auth.guard';
-import { RemoveAllDevicesWithoutMyDeviceCommand } from '../application/use-cases';
-import { RemoveSessionDeviceCommand } from '../application/use-cases/remove-session-device.handler';
-import { ISecurityQueryRepository } from '../infrastructure/security.query.sql.repository';
+import {
+  RemoveAllDevicesWithoutMyDeviceCommand,
+  RemoveSessionDeviceCommand,
+} from '../application/use-cases';
+
+import { ISecurityQueryRepository } from './interfaces/security-query-repository.abstract-class';
 
 @ApiTags('securityDevices')
 @UseGuards(JwtRefreshAuthGuard)

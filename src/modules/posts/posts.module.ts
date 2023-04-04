@@ -2,26 +2,28 @@ import { Module } from '@nestjs/common';
 import { CqrsModule } from '@nestjs/cqrs';
 import { TypeOrmModule } from '@nestjs/typeorm';
 
+import { getRepositoryModule } from '../../shared/utils/get-repository.module-loader';
 import { AuthModule } from '../auth/auth.module';
-import { BansService } from '../bans/application/bans.service';
-import {
-  BloggersBanUsersRepository,
-  IBloggersBanUsersRepository,
-} from '../bans/infrastructure/bloggers-ban-users.repository.';
-import {
-  BlogsRepository,
-  IBlogsRepository,
-} from '../blogs/infrastructure/blogs.sql.repository';
+import { IBloggersBanUsersRepository } from '../bans/application/interfaces/bloggers-ban-users.abstract-class';
+import { BloggerBanUser } from '../bans/domain/entity/blogger-ban-user.entity';
+import { BloggersBanUsersRepository } from '../bans/infrastructure/bloggers-ban-users.repository';
+import { BloggersBanUsersSqlRepository } from '../bans/infrastructure/bloggers-ban-users.sql.repository';
+import { BlogsModule } from '../blogs/blogs.module';
+import { Blog } from '../blogs/domain/entities/blog.entity';
+import { BlogsSqlRepository, IBlogsRepository } from '../blogs/infrastructure';
+import { BlogsRepository } from '../blogs/infrastructure/blogs.repository';
 import { ICommentsRepository } from '../comments/application/interfaces/comment-repository.abstract-class';
-import {
-  CommentsQueryRepository,
-  ICommentsQueryRepository,
-} from '../comments/infrastructure/comments.query.sql.repository';
-import { CommentsRepository } from '../comments/infrastructure/comments.sql.repository';
+import { CommentsModule } from '../comments/comments.module';
+import { ICommentsQueryRepository } from '../comments/controllers/interfaces/comments-query-repository.abstract-class';
+import { Comment } from '../comments/domain/entities/comment.entity';
+import { CommentsQueryRepository } from '../comments/infrastructure/comments.query.sql.repository';
+import { CommentsRepository } from '../comments/infrastructure/comments.repository';
+import { CommentsSqlRepository } from '../comments/infrastructure/comments.sql.repository';
 import { LikesModule } from '../likes/likes.module';
 import { SecurityModule } from '../security/security.module';
 import { UsersModule } from '../users/users.module';
 
+import { IPostsRepository } from './application/interfaces/posts-repository.abstract-class';
 import { CommandHandlers } from './application/use-cases';
 import { PostsController } from './controllers/posts.controller';
 import { Post } from './domain/entities/post.entity';
@@ -29,10 +31,16 @@ import {
   IPostsQueryRepository,
   PostsQueryRepository,
 } from './infrastructure/posts.query.sql.repository';
-import {
-  IPostsRepository,
-  PostsRepository,
-} from './infrastructure/posts.sql.repository';
+import { PostsRepository } from './infrastructure/posts.repository';
+import { PostsSqlRepository } from './infrastructure/posts.sql.repository';
+
+const Providers = [
+  {
+    provide: IPostsRepository,
+    useClass: getRepositoryModule(PostsRepository, PostsSqlRepository),
+  },
+  { provide: IPostsQueryRepository, useClass: PostsQueryRepository },
+];
 
 @Module({
   imports: [
@@ -41,26 +49,29 @@ import {
     SecurityModule,
     LikesModule,
     UsersModule,
-    TypeOrmModule.forFeature([Post]),
+    TypeOrmModule.forFeature([Post, BloggerBanUser, Blog, Comment]),
   ],
   controllers: [PostsController],
   providers: [
     ...CommandHandlers,
-    { provide: IPostsRepository, useClass: PostsRepository },
-    { provide: IPostsQueryRepository, useClass: PostsQueryRepository },
-    { provide: IBlogsRepository, useClass: BlogsRepository },
-    { provide: ICommentsRepository, useClass: CommentsRepository },
+    ...Providers,
+    {
+      provide: IBlogsRepository,
+      useClass: getRepositoryModule(BlogsRepository, BlogsSqlRepository),
+    },
+    {
+      provide: ICommentsRepository,
+      useClass: getRepositoryModule(CommentsRepository, CommentsSqlRepository),
+    },
     { provide: ICommentsQueryRepository, useClass: CommentsQueryRepository },
-    BansService,
     {
       provide: IBloggersBanUsersRepository,
-      useClass: BloggersBanUsersRepository,
+      useClass: getRepositoryModule(
+        BloggersBanUsersRepository,
+        BloggersBanUsersSqlRepository,
+      ),
     },
   ],
-  exports: [
-    ...CommandHandlers,
-    { provide: IPostsRepository, useClass: PostsRepository },
-    { provide: IPostsQueryRepository, useClass: PostsQueryRepository },
-  ],
+  exports: [...CommandHandlers, ...Providers],
 })
 export class PostsModule {}

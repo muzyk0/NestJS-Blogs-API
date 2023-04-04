@@ -2,49 +2,14 @@ import { Injectable } from '@nestjs/common';
 import { InjectDataSource } from '@nestjs/typeorm';
 import { DataSource } from 'typeorm';
 
-import { UserRawSqlDto } from '../application/dto/user.dto';
+import { IUsersRepository } from '../application/application/users-repository.abstract-class';
 import { UpdateConfirmationType } from '../application/interfaces/users.interface';
 import { User } from '../domain/entities/user.entity';
 
 import { CreateUserInput } from './dto/create-user.input';
 
-export abstract class IUsersRepository {
-  abstract create(createUserDto: CreateUserInput): Promise<User>;
-
-  abstract findOneByLoginOrEmail(
-    loginOrEmail: string,
-    withBanned?: false,
-  ): Promise<UserRawSqlDto>;
-
-  abstract findOneByEmail(email: string): Promise<User>;
-
-  abstract findOneByConfirmationCode(code: string): Promise<User>;
-
-  abstract findOneById(id: string): Promise<User | null>;
-
-  abstract findOneByLogin(login: string): Promise<User>;
-
-  abstract remove(id: string): Promise<boolean>;
-
-  abstract setIsConfirmedById(id: string): Promise<boolean>;
-
-  abstract updateConfirmationCode({
-    id,
-    code,
-    expirationDate,
-  }: UpdateConfirmationType): Promise<User>;
-
-  abstract updateUserPassword({
-    password,
-    id,
-  }: {
-    password: string;
-    id: string;
-  }): Promise<boolean>;
-}
-
 @Injectable()
-export class UsersRepository implements IUsersRepository {
+export class UsersSqlRepository implements IUsersRepository {
   constructor(@InjectDataSource() private dataSource: DataSource) {}
 
   async create({
@@ -72,7 +37,7 @@ export class UsersRepository implements IUsersRepository {
     return result[0];
   }
 
-  async findOneByConfirmationCode(code: string): Promise<User> {
+  async findOneByConfirmationCode(code: string): Promise<User | null> {
     const users: User[] = await this.dataSource.query(
       `
           SELECT *
@@ -84,7 +49,7 @@ export class UsersRepository implements IUsersRepository {
     return users[0];
   }
 
-  async findOneByEmail(email: string): Promise<User> {
+  async findOneByEmail(email: string): Promise<User | null> {
     const users: User[] = await this.dataSource.query(
       `
           SELECT *
@@ -96,7 +61,7 @@ export class UsersRepository implements IUsersRepository {
     return users[0];
   }
 
-  async findOneByLogin(login: string): Promise<User> {
+  async findOneByLogin(login: string): Promise<User | null> {
     const users: User[] = await this.dataSource.query(
       `
           SELECT *
@@ -120,19 +85,17 @@ export class UsersRepository implements IUsersRepository {
     return users[0];
   }
 
-  async findOneByLoginOrEmail(loginOrEmail: string): Promise<UserRawSqlDto> {
-    const users: UserRawSqlDto[] = await this.dataSource.query(
+  async findOneByLoginOrEmailWithoutBanned(
+    loginOrEmail: string,
+  ): Promise<User | null> {
+    const users = await this.dataSource.query(
       `
-          SELECT u.*, b.banned, b."banReason"
+          SELECT u.*
           FROM "users" as u
                    left join bans as b on b."userId" = u.id
           WHERE (u."login" = $1
               OR u."email" = $1)
             AND b.banned IS NULL
-          --             AND CASE
---                     WHEN $2 IS NOT NULL THEN b.banned IS NULL
---                     ELSE true
---               END
       `,
       [loginOrEmail],
     );

@@ -2,6 +2,7 @@ export default () => ({
   PORT: parseInt(process.env.PORT, 10) || 3000,
   BASE_PREFIX: process.env.BASE_PREFIX ?? '',
   BASE_URL: process.env.BASE_URL ?? 'http://localhost:3000',
+  MODE: process.env.MODE ?? 'sql',
   MONGO_URI: process.env.MONGO_URI,
   POSTGRESQL_URI: process.env.POSTGRESQL_URI,
   TYPEORM_SSL: Boolean(process.env.TYPEORM_SSL),

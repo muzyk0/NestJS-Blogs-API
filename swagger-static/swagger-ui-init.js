@@ -873,6 +873,20 @@ window.onload = function() {
           ]
         }
       },
+      "/blog-platform/testing/health-check": {
+        "get": {
+          "operationId": "TestingController_healthCheck",
+          "parameters": [],
+          "responses": {
+            "200": {
+              "description": ""
+            }
+          },
+          "tags": [
+            "testing"
+          ]
+        }
+      },
       "/blog-platform/comments/{id}": {
         "get": {
           "operationId": "CommentsController_findOne",
@@ -1235,7 +1249,7 @@ window.onload = function() {
     "info": {
       "title": "Blog platform",
       "description": "Sorry I'm working on new modules and don't have time to write swagger documentation. But in time it will be completely written",
-      "version": "0.20.1-sql.beta.2",
+      "version": "0.20.2-stable",
       "contact": {}
     },
     "tags": [

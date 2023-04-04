@@ -1,7 +1,10 @@
 import { Controller, Delete, Get, HttpStatus, Res } from '@nestjs/common';
+import { ConfigService } from '@nestjs/config';
 import { ApiTags } from '@nestjs/swagger';
 import { Response } from 'express';
 
+import { getRepositoryModule } from '../../../shared/utils/get-repository.module-loader';
+import { EmailServiceLocal } from '../../email-local/application/email-local.service';
 import { TestingService } from '../application/testing.service';
 
 @ApiTags('testing')
@@ -9,6 +12,7 @@ import { TestingService } from '../application/testing.service';
 export class TestingController {
   constructor(
     private readonly testingService: TestingService, // @Inject('MESSAGE_SENDER_SERVICE') private client: ClientProxy,
+    private readonly configService: ConfigService,
   ) {}
 
   // async onApplicationBootstrap() {
@@ -27,6 +31,14 @@ export class TestingController {
     const res = await this.testingService.sendTestEmail();
     return {
       rabbitMQMessageSender: JSON.stringify(res),
+    };
+  }
+
+  @Get('health-check')
+  async healthCheck() {
+    const mode = this.configService.get<string>('MODE');
+    return {
+      mode: mode,
     };
   }
 

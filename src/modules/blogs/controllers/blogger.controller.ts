@@ -41,12 +41,12 @@ import { UpdatePostDto } from '../../posts/application/dto/update-post.dto';
 import {
   CreateBlogPostCommand,
   UpdateBlogPostCommand,
+  DeleteBlogPostCommand,
+  GetAllBanUsersForBlogCommand,
 } from '../../posts/application/use-cases';
-import { DeleteBlogPostCommand } from '../../posts/application/use-cases/delete-blog-post.handler';
-import { GetAllBanUsersForBlogCommand } from '../../posts/application/use-cases/get-all-banned-users-for-blog.handler';
 import { IPostsQueryRepository } from '../../posts/infrastructure/posts.query.sql.repository';
+import { IUsersQueryRepository } from '../../users/controllers/interfaces/users-query-repository.abstract-class';
 import { UserBloggerViewModel } from '../../users/infrastructure/dto/user.view';
-import { IUsersQueryRepository } from '../../users/infrastructure/users.query.repository.sql';
 import { CreateBlogPostDto } from '../application/dto/create-blog-post.dto';
 import { UpdateBlogDto } from '../application/dto/update-blog.dto';
 import {

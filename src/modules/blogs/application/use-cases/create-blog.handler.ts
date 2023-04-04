@@ -1,8 +1,8 @@
 import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
 
 import { Blog } from '../../domain/entities/blog.entity';
-import { IBlogsRepository } from '../../infrastructure/blogs.sql.repository';
 import { CreateBlogDto } from '../dto/create-blog.dto';
+import { IBlogsRepository } from '../interfaces/blog.abstract-class';
 
 export class CreateBlogCommand {
   constructor(public readonly createBlogDto: CreateBlogDto) {}
@@ -21,8 +21,8 @@ export class CreateBlogHandler
       websiteUrl: createBlogDto.websiteUrl,
       userId: createBlogDto.userId,
     };
-    const { id: blogId } = await this.blogsRepository.create(newBlog);
+    const blog = await this.blogsRepository.create(newBlog);
 
-    return blogId;
+    return blog.id;
   }
 }
