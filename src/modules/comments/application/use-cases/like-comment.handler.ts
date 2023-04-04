@@ -2,7 +2,7 @@ import { NotFoundException } from '@nestjs/common';
 import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
 
 import { CreateLikeInput } from '../../../likes/application/input/create-like.input';
-import { ILikesRepository } from '../../../likes/infrastructure/likes.repository.sql';
+import { ILikesRepository } from '../../../likes/application/interfaces/likes-repository.abstract-class';
 import { formatLikeStatusToInt } from '../../../likes/utils/formatters';
 import { ICommentsRepository } from '../interfaces/comment-repository.abstract-class';
 
