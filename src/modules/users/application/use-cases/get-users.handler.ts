@@ -1,7 +1,7 @@
 import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
 
 import { PageOptionsForUserDto } from '../../../../shared/paginator/page-options.dto';
-import { IUsersQueryRepository } from '../../infrastructure/users.query.repository.sql';
+import { IUsersQueryRepository } from '../../controllers/interfaces/users-query-repository.abstract-class';
 
 export class GetUsersCommand {
   constructor(public readonly pageOptionsDto: PageOptionsForUserDto) {}

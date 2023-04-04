@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
-import { InjectDataSource } from '@nestjs/typeorm';
-import { DataSource } from 'typeorm';
+import { InjectDataSource, InjectRepository } from '@nestjs/typeorm';
+import { DataSource, Repository } from 'typeorm';
 
 import { PageOptionsForUserDto } from '../../../shared/paginator/page-options.dto';
 import { PageDto } from '../../../shared/paginator/page.dto';
@@ -16,20 +16,19 @@ import {
 } from './dto/user.view';
 
 @Injectable()
-export class UsersQuerySqlRepository implements IUsersQueryRepository {
-  constructor(@InjectDataSource() private dataSource: DataSource) {}
+export class UsersQueryRepository implements IUsersQueryRepository {
+  constructor(
+    @InjectDataSource() private readonly dataSource: DataSource,
+    @InjectRepository(User) private readonly repo: Repository<User>,
+  ) {}
 
   async findOneForMeQuery(id: string): Promise<UserMeQueryViewModel | null> {
-    const [user]: User[] = await this.dataSource.query(
-      `
-          SELECT u.*
-          FROM "users" u
-                   LEFT JOIN bans b ON b."userId" = u.id
-          WHERE u.id = $1
-            and b.banned is null
-      `,
-      [id],
-    );
+    const user: User = await this.repo
+      .createQueryBuilder('u')
+      .leftJoinAndSelect('bans', 'b', 'b.userId = u.id')
+      .where('u.id = :userId', { userId: id })
+      .andWhere('b.banned is null')
+      .getOne();
 
     if (!user) {
       return null;
@@ -42,15 +41,11 @@ export class UsersQuerySqlRepository implements IUsersQueryRepository {
   }
 
   async findOne(id: string): Promise<UserViewModel | null> {
-    const [user]: UserRawSqlDto[] = await this.dataSource.query(
-      `
-          SELECT u.*, b.banned, b."banReason"
-          FROM "users" u
-                   LEFT JOIN bans b ON b."userId" = u.id
-          WHERE u.id = $1
-      `,
-      [id],
-    );
+    const user: User = await this.repo
+      .createQueryBuilder('u')
+      .leftJoinAndSelect('bans', 'b', 'b.userId = u.id')
+      .where('u.id = :userId', { userId: id })
+      .getOne();
 
     if (!user) {
       return null;
@@ -114,7 +109,7 @@ export class UsersQuerySqlRepository implements IUsersQueryRepository {
         .then((res) => res[0]?.data);
 
     return new PageDto({
-      items: users.items?.map(this.mapToDto) ?? [],
+      items: users.items?.map(this.mapToDtoForRawSql) ?? [],
       itemsCount: users.total,
       pageOptionsDto,
     });
@@ -167,7 +162,21 @@ export class UsersQuerySqlRepository implements IUsersQueryRepository {
     });
   }
 
-  mapToDto(user: UserRawSqlDto): UserViewModel {
+  private mapToDto(user: User): UserViewModel {
+    return {
+      id: user.id,
+      login: user.login,
+      email: user.email,
+      createdAt: new Date(user.createdAt).toISOString(),
+      banInfo: {
+        isBanned: Boolean(user.bans[0].banned),
+        banDate: user.bans[0].banned.toISOString(),
+        banReason: user.bans[0].banReason ?? null,
+      },
+    };
+  }
+
+  private mapToDtoForRawSql(user: UserRawSqlDto): UserViewModel {
     return {
       id: user.id,
       login: user.login,
@@ -181,7 +190,7 @@ export class UsersQuerySqlRepository implements IUsersQueryRepository {
     };
   }
 
-  mapToBloggerViewDto(
+  private mapToBloggerViewDto(
     user: UserWithBannedInfoForBlogView,
   ): UserBloggerViewModel {
     return {

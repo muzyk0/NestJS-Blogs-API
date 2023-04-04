@@ -18,16 +18,28 @@ import { EmailModuleLocal } from '../email-local/email-local.module';
 import { PasswordRecoveryModule } from '../password-recovery/password-recovery.module';
 import { SecurityModule } from '../security/security.module';
 
+import { IUsersRepository } from './application/application/users-repository.abstract-class';
 import { CommandHandlers } from './application/use-cases';
+import { IUsersQueryRepository } from './controllers/interfaces/users-query-repository.abstract-class';
 import { User } from './domain/entities/user.entity';
-import {
-  IUsersQueryRepository,
-  UsersQueryRepository,
-} from './infrastructure/users.query.repository.sql';
-import {
-  IUsersRepository,
-  UsersRepository,
-} from './infrastructure/users.repository.sql';
+import { UsersQueryRepository } from './infrastructure/users.query.repository';
+import { UsersQuerySqlRepository } from './infrastructure/users.query.repository.sql';
+import { UsersRepository } from './infrastructure/users.repository';
+import { UsersSqlRepository } from './infrastructure/users.repository.sql';
+
+const RepositoryProvider = [
+  {
+    provide: IUsersRepository,
+    useClass: getRepositoryModule(UsersRepository, UsersSqlRepository),
+  },
+  {
+    provide: IUsersQueryRepository,
+    useClass: getRepositoryModule(
+      UsersQueryRepository,
+      UsersQuerySqlRepository,
+    ),
+  },
+];
 
 @Module({
   imports: [
@@ -44,9 +56,8 @@ import {
     EmailNotExistRule,
     LoginNotExistRule,
     ...CommandHandlers,
-    UsersRepository,
-    { provide: IUsersRepository, useClass: UsersRepository },
-    { provide: IUsersQueryRepository, useClass: UsersQueryRepository },
+    ...RepositoryProvider,
+    UsersSqlRepository,
     {
       provide: IBloggersBanUsersRepository,
       useClass: getRepositoryModule(
@@ -59,10 +70,6 @@ import {
       useClass: getRepositoryModule(UserBanRepository, UserBanSqlRepository),
     },
   ],
-  exports: [
-    ...CommandHandlers,
-    { provide: IUsersRepository, useClass: UsersRepository },
-    { provide: IUsersQueryRepository, useClass: UsersQueryRepository },
-  ],
+  exports: [...CommandHandlers, ...RepositoryProvider],
 })
 export class UsersModule {}

@@ -19,7 +19,7 @@ import { JwtATPayload } from '../../auth/application/interfaces/jwtPayload.type'
 import { AuthGuard } from '../../auth/guards/auth-guard';
 import { JwtAuthGuard } from '../../auth/guards/jwt-auth.guard';
 import { CreateLikeInput } from '../../likes/application/input/create-like.input';
-import { IUsersRepository } from '../../users/infrastructure/users.repository.sql';
+import { IUsersRepository } from '../../users/application/application/users-repository.abstract-class';
 import { CommentInput } from '../application/dto/comment.input';
 import { UpdateCommentCommand } from '../application/use-cases';
 import { LikeCommentCommand } from '../application/use-cases/like-comment.handler';

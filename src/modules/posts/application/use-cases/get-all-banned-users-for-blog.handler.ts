@@ -4,8 +4,8 @@ import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
 import { PageOptionsForUserDto } from '../../../../shared/paginator/page-options.dto';
 import { PageDto } from '../../../../shared/paginator/page.dto';
 import { IBlogsRepository } from '../../../blogs/application/interfaces/blog.abstract-class';
+import { IUsersQueryRepository } from '../../../users/controllers/interfaces/users-query-repository.abstract-class';
 import { UserBloggerViewModel } from '../../../users/infrastructure/dto/user.view';
-import { IUsersQueryRepository } from '../../../users/infrastructure/users.query.repository.sql';
 
 export class GetAllBanUsersForBlogCommand {
   constructor(

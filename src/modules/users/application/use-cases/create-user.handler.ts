@@ -4,8 +4,8 @@ import { v4 } from 'uuid';
 
 import { CryptService } from '../../../auth/application/crypt.service';
 import { EmailServiceLocal } from '../../../email-local/application/email-local.service';
-import { IUsersQueryRepository } from '../../infrastructure/users.query.repository.sql';
-import { IUsersRepository } from '../../infrastructure/users.repository.sql';
+import { IUsersQueryRepository } from '../../controllers/interfaces/users-query-repository.abstract-class';
+import { IUsersRepository } from '../application/users-repository.abstract-class';
 import { CreateUserDto } from '../dto/create-user.dto';
 
 export class CreateUserCommand {

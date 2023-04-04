@@ -10,7 +10,7 @@ import {
   ValidatorConstraintInterface,
 } from 'class-validator';
 
-import { IUsersRepository } from '../../../modules/users/infrastructure/users.repository.sql';
+import { IUsersRepository } from '../../../modules/users/application/application/users-repository.abstract-class';
 
 @ValidatorConstraint({ name: 'EmailNotExist', async: true })
 @Injectable()
