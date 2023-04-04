@@ -2,8 +2,8 @@ import { BadRequestException } from '@nestjs/common';
 import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
 import { isAfter } from 'date-fns';
 
+import { IUsersRepository } from '../../../users/application/application/users-repository.abstract-class';
 import { User } from '../../../users/domain/entities/user.entity';
-import { IUsersRepository } from '../../../users/infrastructure/users.repository.sql';
 
 export class ConfirmAccountCommand {
   constructor(public readonly code: string) {}

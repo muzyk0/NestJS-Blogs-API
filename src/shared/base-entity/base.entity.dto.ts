@@ -1,4 +1,4 @@
-import { IsDate, IsOptional } from 'class-validator';
+import { IsDate } from 'class-validator';
 
 export class BaseEntityDto {
   @IsDate()
@@ -6,8 +6,4 @@ export class BaseEntityDto {
 
   @IsDate()
   updatedAt: Date;
-
-  @IsDate()
-  @IsOptional()
-  deleted: Date;
 }

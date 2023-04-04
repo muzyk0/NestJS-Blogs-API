@@ -1,38 +1,15 @@
 import { Injectable } from '@nestjs/common';
 import { InjectDataSource } from '@nestjs/typeorm';
-import { IsInt, IsOptional } from 'class-validator';
 import { DataSource } from 'typeorm';
 
 import { UpdateOrDeleteEntityRawSqlResponse } from '../../../shared/interfaces/row-sql.types';
-import { PageOptionsDto } from '../../../shared/paginator/page-options.dto';
 import { CreatePostDbDto } from '../application/dto/create-post-db.dto';
-import { CreatePostDto } from '../application/dto/create-post.dto';
 import { UpdatePostDto } from '../application/dto/update-post.dto';
+import { IPostsRepository } from '../application/interfaces/posts-repository.abstract-class';
 import { PostDomain } from '../domain/post.domain';
 
-export class FindAllPostsOptions extends PageOptionsDto {
-  @IsInt()
-  @IsOptional()
-  blogId?: string;
-}
-
-export abstract class IPostsRepository {
-  abstract create(createPostDto: CreatePostDto): Promise<PostDomain>;
-
-  abstract findOne(postId: string): Promise<PostDomain>;
-
-  abstract update(
-    postId: string,
-    updatePostDto: UpdatePostDto,
-  ): Promise<PostDomain>;
-
-  abstract remove(postId: string): Promise<boolean>;
-
-  abstract findManyByBlogsIds(blogsIds: string[]): Promise<PostDomain[]>;
-}
-
 @Injectable()
-export class PostsRepository implements IPostsRepository {
+export class PostsSqlRepository implements IPostsRepository {
   constructor(@InjectDataSource() private readonly dataSource: DataSource) {}
 
   async create({
@@ -52,7 +29,7 @@ export class PostsRepository implements IPostsRepository {
     return post;
   }
 
-  async findOne(id: string): Promise<PostDomain> {
+  async findOne(id: string): Promise<PostDomain | null> {
     const [post]: [PostDomain] = await this.dataSource.query(
       `
           SELECT p.*
@@ -96,18 +73,5 @@ export class PostsRepository implements IPostsRepository {
         [postId],
       );
     return !!deletedCount;
-  }
-
-  async findManyByBlogsIds(blogsIds: string[]): Promise<PostDomain[]> {
-    const posts: PostDomain[] = await this.dataSource.query(
-      `
-          SELECT p.*
-          FROM posts as p
-          where p."blogId" IN ($1)
-`,
-      [blogsIds.join(', ')],
-    );
-
-    return posts;
   }
 }

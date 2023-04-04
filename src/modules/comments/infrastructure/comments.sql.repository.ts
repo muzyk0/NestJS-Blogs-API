@@ -9,7 +9,7 @@ import { ICommentsRepository } from '../application/interfaces/comment-repositor
 import { Comment } from '../domain/entities/comment.entity';
 
 @Injectable()
-export class CommentsRepository implements ICommentsRepository {
+export class CommentsSqlRepository implements ICommentsRepository {
   constructor(@InjectDataSource() private readonly dataSource: DataSource) {}
 
   async create({

@@ -2,8 +2,8 @@ import { UnauthorizedException } from '@nestjs/common';
 import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
 import { v4 } from 'uuid';
 
-import { ISecurityRepository } from '../../../security/infrastructure/security.sql.repository';
-import { IUsersRepository } from '../../../users/infrastructure/users.repository.sql';
+import { ISecurityRepository } from '../../../security/application/inerfaces/ISecurityRepository';
+import { IUsersRepository } from '../../../users/application/application/users-repository.abstract-class';
 import { CryptService } from '../crypt.service';
 import {
   DecodedJwtRTPayload,
@@ -31,9 +31,11 @@ export class LoginHandler implements ICommandHandler<LoginCommand> {
   ) {}
 
   async execute({ loginOrEmail, password, userAgent, userIp }: LoginCommand) {
-    const user = await this.usersRepository.findOneByLoginOrEmail(loginOrEmail);
+    const user = await this.usersRepository.findOneByLoginOrEmailWithoutBanned(
+      loginOrEmail,
+    );
 
-    if (!user || Boolean(user?.banned)) {
+    if (!user) {
       return null;
     }
 

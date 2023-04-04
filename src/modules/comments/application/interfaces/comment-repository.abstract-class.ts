@@ -9,12 +9,12 @@ export abstract class ICommentsRepository {
     postId,
   }: CreateCommentDto): Promise<Comment | null>;
 
-  abstract findOne(id: string): Promise<Comment>;
+  abstract findOne(id: string): Promise<Comment | null>;
 
   abstract update(
     commentId: string,
     { content }: UpdateCommentDto,
-  ): Promise<Comment>;
+  ): Promise<Comment | null>;
 
   abstract remove(commentId: string): Promise<boolean>;
 }

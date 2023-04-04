@@ -1,7 +1,7 @@
 import { ForbiddenException, NotFoundException } from '@nestjs/common';
 import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
 
-import { ISecurityRepository } from '../../infrastructure/security.sql.repository';
+import { ISecurityRepository } from '../inerfaces/ISecurityRepository';
 
 export class RemoveSessionDeviceCommand {
   constructor(

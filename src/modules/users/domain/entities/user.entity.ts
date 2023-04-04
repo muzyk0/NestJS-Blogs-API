@@ -1,4 +1,10 @@
-import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
+import {
+  Column,
+  Entity,
+  OneToMany,
+  PrimaryGeneratedColumn,
+  Unique,
+} from 'typeorm';
 
 import { BaseEntity } from '../../../../shared/base-entity/base.entity';
 import { RevokeToken } from '../../../auth/domain/entities/revoked-token.entity';
@@ -10,6 +16,7 @@ import { PasswordRecoveryAttempt } from '../../../password-recovery/domain/entit
 import { Device } from '../../../security/domain/entities/security.entity';
 
 @Entity('users')
+@Unique(['email', 'login'])
 export class User extends BaseEntity {
   @PrimaryGeneratedColumn('uuid')
   id: string;
@@ -47,8 +54,8 @@ export class User extends BaseEntity {
   @OneToMany(() => Like, (like) => like.user)
   likes: Comment[];
 
-  @OneToMany(() => Bans, (like) => like.user)
-  bans: Bans[];
+  @OneToMany(() => Bans, (bans) => bans.user, { nullable: true })
+  bans: Bans[] | null;
 
   @OneToMany(
     () => PasswordRecoveryAttempt,

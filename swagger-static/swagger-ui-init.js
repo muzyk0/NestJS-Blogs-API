@@ -873,6 +873,20 @@ window.onload = function() {
           ]
         }
       },
+      "/blog-platform/testing/health-check": {
+        "get": {
+          "operationId": "TestingController_healthCheck",
+          "parameters": [],
+          "responses": {
+            "200": {
+              "description": ""
+            }
+          },
+          "tags": [
+            "testing"
+          ]
+        }
+      },
       "/blog-platform/comments/{id}": {
         "get": {
           "operationId": "CommentsController_findOne",

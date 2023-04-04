@@ -21,7 +21,8 @@ import {
   RemoveAllDevicesWithoutMyDeviceCommand,
   RemoveSessionDeviceCommand,
 } from '../application/use-cases';
-import { ISecurityQueryRepository } from '../infrastructure/security.query.sql.repository';
+
+import { ISecurityQueryRepository } from './interfaces/security-query-repository.abstract-class';
 
 @ApiTags('securityDevices')
 @UseGuards(JwtRefreshAuthGuard)

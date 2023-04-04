@@ -5,31 +5,14 @@ import { DataSource } from 'typeorm';
 import { PageOptionsDto } from '../../../shared/paginator/page-options.dto';
 import { PageDto } from '../../../shared/paginator/page.dto';
 import { LikeStringStatus } from '../../likes/application/interfaces/like-status.enum';
-import { Like } from '../../likes/domain/entity/like.entity';
 import { getStringLikeStatus } from '../../likes/utils/formatters';
-import {
-  CommentDto,
-  CommentForBloggerSqlDto,
-} from '../application/dto/comment.dto';
+import { CommentForBloggerSqlDto } from '../application/dto/comment.dto';
 import {
   CommentForBloggerViewDto,
   CommentInputViewDto,
   CommentViewDto,
 } from '../application/dto/comment.view.dto';
-
-export abstract class ICommentsQueryRepository {
-  abstract findOne(id: string, userId?: string): Promise<CommentViewDto>;
-
-  abstract findPostComments(
-    findAllCommentsOptions: PageOptionsDto,
-    { postId, userId }: { postId: string; userId: string },
-  ): Promise<PageDto<CommentViewDto>>;
-
-  abstract findPostCommentsInsideUserBlogs(
-    pageOptionsDto: PageOptionsDto,
-    userId: string,
-  ): Promise<PageDto<unknown>>;
-}
+import { ICommentsQueryRepository } from '../controllers/interfaces/comments-query-repository.abstract-class';
 
 @Injectable()
 export class CommentsQueryRepository implements ICommentsQueryRepository {
@@ -213,28 +196,6 @@ export class CommentsQueryRepository implements ICommentsQueryRepository {
       itemsCount: comments.total,
       pageOptionsDto: pageOptionsDto,
     });
-  }
-
-  private mapToViewDto(
-    comment: CommentDto,
-    likesCount,
-    dislikesCount,
-    myStatus: Like,
-  ): CommentViewDto {
-    return {
-      id: comment.id,
-      content: comment.content,
-      commentatorInfo: {
-        userId: comment.userId,
-        userLogin: comment.userLogin,
-      },
-      createdAt: new Date(comment.createdAt).toISOString(),
-      likesInfo: {
-        likesCount,
-        dislikesCount,
-        myStatus: getStringLikeStatus(myStatus.status),
-      },
-    };
   }
 
   private mapToViewDtoForRawSqlMapper(

@@ -3,27 +3,14 @@ import { InjectDataSource } from '@nestjs/typeorm';
 import { DataSource } from 'typeorm';
 
 import { UpdateOrDeleteEntityRawSqlResponse } from '../../../shared/interfaces/row-sql.types';
-import { IUsersRepository } from '../../users/infrastructure/users.repository.sql';
 import { LikeStatus } from '../application/interfaces/like-status.enum';
 import { LikeInterface } from '../application/interfaces/like.interface';
+import { ILikesRepository } from '../application/interfaces/likes-repository.abstract-class';
 import { Like } from '../domain/entity/like.entity';
-
-export abstract class ILikesRepository {
-  abstract createOrUpdatePostLikeStatus(
-    createLike: Omit<LikeInterface, 'commentId'>,
-  ): Promise<Like | null>;
-
-  abstract createOrUpdateCommentLikeStatus(
-    createLike: Omit<LikeInterface, 'postId'>,
-  ): Promise<Like | null>;
-}
 
 @Injectable()
 export class LikesRepositorySql implements ILikesRepository {
-  constructor(
-    private readonly usersRepository: IUsersRepository,
-    @InjectDataSource() private readonly dataSource: DataSource,
-  ) {}
+  constructor(@InjectDataSource() private readonly dataSource: DataSource) {}
 
   async createOrUpdatePostLikeStatus(
     createLike: Omit<LikeInterface, 'commentId'>,

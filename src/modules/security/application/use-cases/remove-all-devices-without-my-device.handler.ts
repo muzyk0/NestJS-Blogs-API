@@ -1,6 +1,6 @@
 import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
 
-import { ISecurityRepository } from '../../infrastructure/security.sql.repository';
+import { ISecurityRepository } from '../inerfaces/ISecurityRepository';
 
 export class RemoveAllDevicesWithoutMyDeviceCommand {
   constructor(

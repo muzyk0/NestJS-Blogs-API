@@ -1,7 +1,7 @@
 import { BadRequestException } from '@nestjs/common';
 import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
 
-import { IBlogsRepository } from '../../../blogs/infrastructure/blogs.sql.repository';
+import { IBlogsRepository } from '../../../blogs/application/interfaces/blog.abstract-class';
 
 export class BanBlogCommand {
   constructor(

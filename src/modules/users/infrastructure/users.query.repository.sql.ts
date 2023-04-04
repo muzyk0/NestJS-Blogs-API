@@ -5,6 +5,7 @@ import { DataSource } from 'typeorm';
 import { PageOptionsForUserDto } from '../../../shared/paginator/page-options.dto';
 import { PageDto } from '../../../shared/paginator/page.dto';
 import { UserRawSqlDto } from '../application/dto/user.dto';
+import { IUsersQueryRepository } from '../controllers/interfaces/users-query-repository.abstract-class';
 import { User } from '../domain/entities/user.entity';
 
 import { UserWithBannedInfoForBlogView } from './dto/user-with-banned-info-for-blog.view';
@@ -14,23 +15,8 @@ import {
   UserViewModel,
 } from './dto/user.view';
 
-export abstract class IUsersQueryRepository {
-  abstract findOneForMeQuery(id: string): Promise<UserMeQueryViewModel>;
-
-  abstract findOne(id: string): Promise<UserViewModel>;
-
-  abstract findAll(
-    pageOptionsDto: PageOptionsForUserDto,
-  ): Promise<PageDto<UserViewModel>>;
-
-  abstract getBannedUsersForBlog(
-    pageOptionsDto: PageOptionsForUserDto,
-    blogId: string,
-  ): Promise<PageDto<UserBloggerViewModel>>;
-}
-
 @Injectable()
-export class UsersQueryRepository implements IUsersQueryRepository {
+export class UsersQuerySqlRepository implements IUsersQueryRepository {
   constructor(@InjectDataSource() private dataSource: DataSource) {}
 
   async findOneForMeQuery(id: string): Promise<UserMeQueryViewModel | null> {
@@ -134,34 +120,6 @@ export class UsersQueryRepository implements IUsersQueryRepository {
     });
   }
 
-  mapToDto(user: UserRawSqlDto): UserViewModel {
-    return {
-      id: user.id,
-      login: user.login,
-      email: user.email,
-      createdAt: new Date(user.createdAt).toISOString(),
-      banInfo: {
-        isBanned: Boolean(user.banned),
-        banDate: user.banned ? new Date(user.banned).toISOString() : null,
-        banReason: user.banReason ?? null,
-      },
-    };
-  }
-
-  mapToBloggerViewDto(
-    user: UserWithBannedInfoForBlogView,
-  ): UserBloggerViewModel {
-    return {
-      id: user.id,
-      login: user.login,
-      banInfo: {
-        isBanned: Boolean(user.bannedDateForBlog),
-        banDate: new Date(user.updatedAtForBlog).toISOString(),
-        banReason: user.banReasonForBlog,
-      },
-    };
-  }
-
   async getBannedUsersForBlog(
     pageOptionsDto: PageOptionsForUserDto,
     blogId: string,
@@ -207,5 +165,33 @@ export class UsersQueryRepository implements IUsersQueryRepository {
       itemsCount: posts.total,
       pageOptionsDto,
     });
+  }
+
+  mapToDto(user: UserRawSqlDto): UserViewModel {
+    return {
+      id: user.id,
+      login: user.login,
+      email: user.email,
+      createdAt: new Date(user.createdAt).toISOString(),
+      banInfo: {
+        isBanned: Boolean(user.banned),
+        banDate: user.banned ? new Date(user.banned).toISOString() : null,
+        banReason: user.banReason ?? null,
+      },
+    };
+  }
+
+  mapToBloggerViewDto(
+    user: UserWithBannedInfoForBlogView,
+  ): UserBloggerViewModel {
+    return {
+      id: user.id,
+      login: user.login,
+      banInfo: {
+        isBanned: Boolean(user.bannedDateForBlog),
+        banDate: new Date(user.updatedAtForBlog).toISOString(),
+        banReason: user.banReasonForBlog,
+      },
+    };
   }
 }
