@@ -55,7 +55,11 @@ export class PostsRepository implements IPostsRepository {
   async remove(postId: string): Promise<boolean> {
     const post = await this.repo.findOneById(postId);
 
-    this.repo.remove(post);
+    if (!post) {
+      return false;
+    }
+
+    await this.repo.remove(post);
 
     return true;
   }
