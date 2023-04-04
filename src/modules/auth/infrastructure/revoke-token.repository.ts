@@ -18,7 +18,7 @@ export class RevokeTokenRepository implements IRevokeTokenRepository {
     userId: string,
     { token, userAgent }: RevokeTokenInput,
   ): Promise<boolean> {
-    const revokeToken = this.repo.findOne({
+    const revokeToken = await this.repo.findOne({
       where: { userId, token, userAgent },
     });
 
