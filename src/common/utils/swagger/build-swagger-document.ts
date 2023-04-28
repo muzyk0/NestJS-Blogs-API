@@ -19,6 +19,8 @@ export const buildSwaggerDocument = (
     .addTag('securityDevices')
     .addTag('testing')
     .addTag('superAdmin')
+    .addTag('QuizQuestions')
+    .addBasicAuth()
     .build();
   const document = SwaggerModule.createDocument(app, config);
   SwaggerModule.setup('', app, document, {

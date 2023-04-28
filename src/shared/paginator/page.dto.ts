@@ -1,14 +1,19 @@
+import { ApiProperty } from '@nestjs/swagger';
 import { IsArray } from 'class-validator';
 
 import { PageMetaDtoParameters } from './interfaces';
 
 export class PageDto<T> {
+  @ApiProperty()
   readonly page: number;
 
+  @ApiProperty()
   readonly pageSize: number;
 
+  @ApiProperty()
   readonly totalCount: number;
 
+  @ApiProperty()
   readonly pagesCount: number;
 
   // readonly hasPreviousPage: boolean;

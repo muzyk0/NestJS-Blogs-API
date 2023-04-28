@@ -6,6 +6,7 @@ import { Comment } from '../modules/comments/domain/entities/comment.entity';
 import { Like } from '../modules/likes/domain/entity/like.entity';
 import { PasswordRecoveryAttempt } from '../modules/password-recovery/domain/entities/password-recovery.entity';
 import { Post } from '../modules/posts/domain/entities/post.entity';
+import { QuizQuestion } from '../modules/quiz/domain/entity/quiz-question.entity';
 import { Device } from '../modules/security/domain/entities/security.entity';
 import { User } from '../modules/users/domain/entities/user.entity';
 
@@ -20,4 +21,5 @@ export const entities = [
   Post,
   Comment,
   PasswordRecoveryAttempt,
+  QuizQuestion,
 ];

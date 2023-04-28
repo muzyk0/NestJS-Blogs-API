@@ -25,7 +25,57 @@ window.onload = function() {
       "/blog-platform/blogs": {
         "get": {
           "operationId": "BlogsController_findAll",
-          "parameters": [],
+          "parameters": [
+            {
+              "name": "sortBy",
+              "required": false,
+              "in": "query",
+              "schema": {
+                "default": "createdAt",
+                "type": "string"
+              }
+            },
+            {
+              "name": "sortDirection",
+              "required": false,
+              "in": "query",
+              "schema": {
+                "default": "desc",
+                "enum": [
+                  "asc",
+                  "desc"
+                ],
+                "type": "string"
+              }
+            },
+            {
+              "name": "pageNumber",
+              "required": false,
+              "in": "query",
+              "schema": {
+                "default": 1,
+                "type": "number"
+              }
+            },
+            {
+              "name": "pageSize",
+              "required": false,
+              "in": "query",
+              "schema": {
+                "default": 10,
+                "type": "number"
+              }
+            },
+            {
+              "name": "searchNameTerm",
+              "required": false,
+              "in": "query",
+              "schema": {
+                "nullable": true,
+                "type": "string"
+              }
+            }
+          ],
           "responses": {
             "200": {
               "description": "Success"
@@ -66,6 +116,55 @@ window.onload = function() {
         "get": {
           "operationId": "BlogsController_findBlogPosts",
           "parameters": [
+            {
+              "name": "sortBy",
+              "required": false,
+              "in": "query",
+              "schema": {
+                "default": "createdAt",
+                "type": "string"
+              }
+            },
+            {
+              "name": "sortDirection",
+              "required": false,
+              "in": "query",
+              "schema": {
+                "default": "desc",
+                "enum": [
+                  "asc",
+                  "desc"
+                ],
+                "type": "string"
+              }
+            },
+            {
+              "name": "pageNumber",
+              "required": false,
+              "in": "query",
+              "schema": {
+                "default": 1,
+                "type": "number"
+              }
+            },
+            {
+              "name": "pageSize",
+              "required": false,
+              "in": "query",
+              "schema": {
+                "default": 10,
+                "type": "number"
+              }
+            },
+            {
+              "name": "searchNameTerm",
+              "required": false,
+              "in": "query",
+              "schema": {
+                "nullable": true,
+                "type": "string"
+              }
+            },
             {
               "name": "blogId",
               "required": true,
@@ -126,7 +225,57 @@ window.onload = function() {
         "get": {
           "operationId": "BloggerController_findAll",
           "summary": "Returns blogs (for which current user is owner) with paging",
-          "parameters": [],
+          "parameters": [
+            {
+              "name": "sortBy",
+              "required": false,
+              "in": "query",
+              "schema": {
+                "default": "createdAt",
+                "type": "string"
+              }
+            },
+            {
+              "name": "sortDirection",
+              "required": false,
+              "in": "query",
+              "schema": {
+                "default": "desc",
+                "enum": [
+                  "asc",
+                  "desc"
+                ],
+                "type": "string"
+              }
+            },
+            {
+              "name": "pageNumber",
+              "required": false,
+              "in": "query",
+              "schema": {
+                "default": 1,
+                "type": "number"
+              }
+            },
+            {
+              "name": "pageSize",
+              "required": false,
+              "in": "query",
+              "schema": {
+                "default": 10,
+                "type": "number"
+              }
+            },
+            {
+              "name": "searchNameTerm",
+              "required": false,
+              "in": "query",
+              "schema": {
+                "nullable": true,
+                "type": "string"
+              }
+            }
+          ],
           "responses": {
             "200": {
               "description": "No Content"
@@ -387,7 +536,57 @@ window.onload = function() {
         "get": {
           "operationId": "BloggerController_findBlogComments",
           "summary": "Returns all comments for all posts inside all current user blogs",
-          "parameters": [],
+          "parameters": [
+            {
+              "name": "sortBy",
+              "required": false,
+              "in": "query",
+              "schema": {
+                "default": "createdAt",
+                "type": "string"
+              }
+            },
+            {
+              "name": "sortDirection",
+              "required": false,
+              "in": "query",
+              "schema": {
+                "default": "desc",
+                "enum": [
+                  "asc",
+                  "desc"
+                ],
+                "type": "string"
+              }
+            },
+            {
+              "name": "pageNumber",
+              "required": false,
+              "in": "query",
+              "schema": {
+                "default": 1,
+                "type": "number"
+              }
+            },
+            {
+              "name": "pageSize",
+              "required": false,
+              "in": "query",
+              "schema": {
+                "default": 10,
+                "type": "number"
+              }
+            },
+            {
+              "name": "searchNameTerm",
+              "required": false,
+              "in": "query",
+              "schema": {
+                "nullable": true,
+                "type": "string"
+              }
+            }
+          ],
           "responses": {
             "200": {
               "description": "Success"
@@ -456,6 +655,55 @@ window.onload = function() {
           "operationId": "BloggerController_allBanUsersForBlog",
           "summary": "Returns all banned users for blog",
           "parameters": [
+            {
+              "name": "sortBy",
+              "required": false,
+              "in": "query",
+              "schema": {
+                "default": "createdAt",
+                "type": "string"
+              }
+            },
+            {
+              "name": "sortDirection",
+              "required": false,
+              "in": "query",
+              "schema": {
+                "default": "desc",
+                "enum": [
+                  "asc",
+                  "desc"
+                ],
+                "type": "string"
+              }
+            },
+            {
+              "name": "pageNumber",
+              "required": false,
+              "in": "query",
+              "schema": {
+                "default": 1,
+                "type": "number"
+              }
+            },
+            {
+              "name": "pageSize",
+              "required": false,
+              "in": "query",
+              "schema": {
+                "default": 10,
+                "type": "number"
+              }
+            },
+            {
+              "name": "searchNameTerm",
+              "required": false,
+              "in": "query",
+              "schema": {
+                "nullable": true,
+                "type": "string"
+              }
+            },
             {
               "name": "blogId",
               "required": true,
@@ -724,7 +972,57 @@ window.onload = function() {
       "/blog-platform/posts": {
         "get": {
           "operationId": "PostsController_findAll",
-          "parameters": [],
+          "parameters": [
+            {
+              "name": "sortBy",
+              "required": false,
+              "in": "query",
+              "schema": {
+                "default": "createdAt",
+                "type": "string"
+              }
+            },
+            {
+              "name": "sortDirection",
+              "required": false,
+              "in": "query",
+              "schema": {
+                "default": "desc",
+                "enum": [
+                  "asc",
+                  "desc"
+                ],
+                "type": "string"
+              }
+            },
+            {
+              "name": "pageNumber",
+              "required": false,
+              "in": "query",
+              "schema": {
+                "default": 1,
+                "type": "number"
+              }
+            },
+            {
+              "name": "pageSize",
+              "required": false,
+              "in": "query",
+              "schema": {
+                "default": 10,
+                "type": "number"
+              }
+            },
+            {
+              "name": "searchNameTerm",
+              "required": false,
+              "in": "query",
+              "schema": {
+                "nullable": true,
+                "type": "string"
+              }
+            }
+          ],
           "responses": {
             "200": {
               "description": ""
@@ -767,6 +1065,55 @@ window.onload = function() {
               "required": true,
               "in": "path",
               "schema": {
+                "type": "string"
+              }
+            },
+            {
+              "name": "sortBy",
+              "required": false,
+              "in": "query",
+              "schema": {
+                "default": "createdAt",
+                "type": "string"
+              }
+            },
+            {
+              "name": "sortDirection",
+              "required": false,
+              "in": "query",
+              "schema": {
+                "default": "desc",
+                "enum": [
+                  "asc",
+                  "desc"
+                ],
+                "type": "string"
+              }
+            },
+            {
+              "name": "pageNumber",
+              "required": false,
+              "in": "query",
+              "schema": {
+                "default": 1,
+                "type": "number"
+              }
+            },
+            {
+              "name": "pageSize",
+              "required": false,
+              "in": "query",
+              "schema": {
+                "default": 10,
+                "type": "number"
+              }
+            },
+            {
+              "name": "searchNameTerm",
+              "required": false,
+              "in": "query",
+              "schema": {
+                "nullable": true,
                 "type": "string"
               }
             }
@@ -1001,7 +1348,57 @@ window.onload = function() {
         "get": {
           "operationId": "SuperAdminController_findBlogs",
           "summary": "Returns blogs with paging",
-          "parameters": [],
+          "parameters": [
+            {
+              "name": "sortBy",
+              "required": false,
+              "in": "query",
+              "schema": {
+                "default": "createdAt",
+                "type": "string"
+              }
+            },
+            {
+              "name": "sortDirection",
+              "required": false,
+              "in": "query",
+              "schema": {
+                "default": "desc",
+                "enum": [
+                  "asc",
+                  "desc"
+                ],
+                "type": "string"
+              }
+            },
+            {
+              "name": "pageNumber",
+              "required": false,
+              "in": "query",
+              "schema": {
+                "default": 1,
+                "type": "number"
+              }
+            },
+            {
+              "name": "pageSize",
+              "required": false,
+              "in": "query",
+              "schema": {
+                "default": 10,
+                "type": "number"
+              }
+            },
+            {
+              "name": "searchNameTerm",
+              "required": false,
+              "in": "query",
+              "schema": {
+                "nullable": true,
+                "type": "string"
+              }
+            }
+          ],
           "responses": {
             "200": {
               "description": "No Content"
@@ -1191,7 +1588,57 @@ window.onload = function() {
         "get": {
           "operationId": "SuperAdminController_findUsers",
           "summary": "Returns blogs users",
-          "parameters": [],
+          "parameters": [
+            {
+              "name": "sortBy",
+              "required": false,
+              "in": "query",
+              "schema": {
+                "default": "createdAt",
+                "type": "string"
+              }
+            },
+            {
+              "name": "sortDirection",
+              "required": false,
+              "in": "query",
+              "schema": {
+                "default": "desc",
+                "enum": [
+                  "asc",
+                  "desc"
+                ],
+                "type": "string"
+              }
+            },
+            {
+              "name": "pageNumber",
+              "required": false,
+              "in": "query",
+              "schema": {
+                "default": 1,
+                "type": "number"
+              }
+            },
+            {
+              "name": "pageSize",
+              "required": false,
+              "in": "query",
+              "schema": {
+                "default": 10,
+                "type": "number"
+              }
+            },
+            {
+              "name": "searchNameTerm",
+              "required": false,
+              "in": "query",
+              "schema": {
+                "nullable": true,
+                "type": "string"
+              }
+            }
+          ],
           "responses": {
             "200": {
               "description": "Success"
@@ -1244,12 +1691,105 @@ window.onload = function() {
             }
           ]
         }
+      },
+      "/blog-platform/sa/quiz/questions": {
+        "get": {
+          "operationId": "SAQuizQuestionsController_getAllQuizQuestions",
+          "parameters": [
+            {
+              "name": "sortBy",
+              "required": false,
+              "in": "query",
+              "schema": {
+                "default": "createdAt",
+                "type": "string"
+              }
+            },
+            {
+              "name": "sortDirection",
+              "required": false,
+              "in": "query",
+              "schema": {
+                "default": "desc",
+                "enum": [
+                  "asc",
+                  "desc"
+                ],
+                "type": "string"
+              }
+            },
+            {
+              "name": "pageNumber",
+              "required": false,
+              "in": "query",
+              "schema": {
+                "default": 1,
+                "type": "number"
+              }
+            },
+            {
+              "name": "pageSize",
+              "required": false,
+              "in": "query",
+              "schema": {
+                "default": 10,
+                "type": "number"
+              }
+            },
+            {
+              "name": "bodySearchTerm",
+              "required": false,
+              "in": "query",
+              "schema": {
+                "nullable": true,
+                "type": "string"
+              }
+            },
+            {
+              "name": "publishedStatus",
+              "required": false,
+              "in": "query",
+              "schema": {
+                "default": "all",
+                "enum": [
+                  "all",
+                  "published",
+                  "notPublished"
+                ],
+                "type": "string"
+              }
+            }
+          ],
+          "responses": {
+            "200": {
+              "description": "Success",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "$ref": "#/components/schemas/QuizQuestionSwaggerViewModel"
+                  }
+                }
+              }
+            },
+            "401": {
+              "description": "Unauthorized"
+            }
+          },
+          "tags": [
+            "QuizQuestions"
+          ],
+          "security": [
+            {
+              "basic": []
+            }
+          ]
+        }
       }
     },
     "info": {
       "title": "Blog platform",
       "description": "Sorry I'm working on new modules and don't have time to write swagger documentation. But in time it will be completely written",
-      "version": "0.20.2-stable",
+      "version": "0.22.0-stable",
       "contact": {}
     },
     "tags": [
@@ -1284,10 +1824,20 @@ window.onload = function() {
       {
         "name": "superAdmin",
         "description": ""
+      },
+      {
+        "name": "QuizQuestions",
+        "description": ""
       }
     ],
     "servers": [],
     "components": {
+      "securitySchemes": {
+        "basic": {
+          "type": "http",
+          "scheme": "basic"
+        }
+      },
       "schemas": {
         "CreateBlogInput": {
           "type": "object",
@@ -1344,6 +1894,70 @@ window.onload = function() {
         "BanUnbanUserInput": {
           "type": "object",
           "properties": {}
+        },
+        "QuizQuestionViewModel": {
+          "type": "object",
+          "properties": {
+            "id": {
+              "type": "string"
+            },
+            "body": {
+              "type": "string"
+            },
+            "correctAnswers": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            "published": {
+              "type": "boolean"
+            },
+            "createdAt": {
+              "type": "string"
+            },
+            "updatedAt": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "id",
+            "body",
+            "correctAnswers",
+            "published",
+            "createdAt",
+            "updatedAt"
+          ]
+        },
+        "QuizQuestionSwaggerViewModel": {
+          "type": "object",
+          "properties": {
+            "page": {
+              "type": "number"
+            },
+            "pageSize": {
+              "type": "number"
+            },
+            "totalCount": {
+              "type": "number"
+            },
+            "pagesCount": {
+              "type": "number"
+            },
+            "items": {
+              "type": "array",
+              "items": {
+                "$ref": "#/components/schemas/QuizQuestionViewModel"
+              }
+            }
+          },
+          "required": [
+            "page",
+            "pageSize",
+            "totalCount",
+            "pagesCount",
+            "items"
+          ]
         }
       }
     }
