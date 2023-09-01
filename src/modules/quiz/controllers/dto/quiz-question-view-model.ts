@@ -9,11 +9,11 @@ export class QuizQuestionViewModel {
   body: string;
   @ApiProperty()
   correctAnswers: string[];
-  @ApiProperty()
+  @ApiProperty({ default: false })
   published: boolean;
-  @ApiProperty()
+  @ApiProperty({ type: Date })
   createdAt: string;
-  @ApiProperty()
+  @ApiProperty({ type: Date })
   updatedAt: string;
 }
 

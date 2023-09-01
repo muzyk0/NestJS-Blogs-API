@@ -1783,6 +1783,53 @@ window.onload = function() {
               "basic": []
             }
           ]
+        },
+        "post": {
+          "operationId": "SAQuizQuestionsController_createQuestion",
+          "parameters": [],
+          "requestBody": {
+            "required": true,
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CreateQuizQuestionCommand"
+                }
+              }
+            }
+          },
+          "responses": {
+            "201": {
+              "description": "Created",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "$ref": "#/components/schemas/QuizQuestionViewModel"
+                  }
+                }
+              }
+            },
+            "400": {
+              "description": "If the inputModel has incorrect values",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "$ref": "#/components/schemas/ErrorViewResultModel"
+                  }
+                }
+              }
+            },
+            "401": {
+              "description": "Unauthorized"
+            }
+          },
+          "tags": [
+            "QuizQuestions"
+          ],
+          "security": [
+            {
+              "basic": []
+            }
+          ]
         }
       }
     },
@@ -1911,12 +1958,15 @@ window.onload = function() {
               }
             },
             "published": {
-              "type": "boolean"
+              "type": "boolean",
+              "default": false
             },
             "createdAt": {
+              "format": "date-time",
               "type": "string"
             },
             "updatedAt": {
+              "format": "date-time",
               "type": "string"
             }
           },
@@ -1957,6 +2007,55 @@ window.onload = function() {
             "totalCount",
             "pagesCount",
             "items"
+          ]
+        },
+        "CreateQuizQuestionCommand": {
+          "type": "object",
+          "properties": {
+            "body": {
+              "type": "string",
+              "minLength": 10,
+              "maxLength": 500
+            },
+            "correctAnswers": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            }
+          },
+          "required": [
+            "body",
+            "correctAnswers"
+          ]
+        },
+        "ErrorMessage": {
+          "type": "object",
+          "properties": {
+            "message": {
+              "type": "string"
+            },
+            "field": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "message",
+            "field"
+          ]
+        },
+        "ErrorViewResultModel": {
+          "type": "object",
+          "properties": {
+            "errorsMessages": {
+              "type": "array",
+              "items": {
+                "$ref": "#/components/schemas/ErrorMessage"
+              }
+            }
+          },
+          "required": [
+            "errorsMessages"
           ]
         }
       }

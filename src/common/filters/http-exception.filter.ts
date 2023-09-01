@@ -6,6 +6,8 @@ import {
 } from '@nestjs/common';
 import { Request, Response } from 'express';
 
+import { ErrorViewResultModel } from './interfaces/error-view-result.model';
+
 @Catch(HttpException)
 export class HttpExceptionFilter implements ExceptionFilter {
   catch(exception: HttpException, host: ArgumentsHost) {
@@ -19,7 +21,7 @@ export class HttpExceptionFilter implements ExceptionFilter {
         const message = (exception.getResponse() as any).message;
         const errors = Array.isArray(message) ? message.flat(1) : message;
 
-        response.status(status).json({
+        response.status(status).json(<ErrorViewResultModel>{
           errorsMessages: errors,
         });
         break;

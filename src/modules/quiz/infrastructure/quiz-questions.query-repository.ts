@@ -26,4 +26,17 @@ export class QuizQuestionsQueryRepository
       pageOptionsDto: dto,
     });
   }
+
+  async getOneById(id: string): Promise<QuizQuestionViewModel> {
+    const question = await this.repo.findOne({ where: { id } });
+
+    return {
+      id: question.id,
+      body: question.id,
+      correctAnswers: question.answers,
+      published: question.published,
+      createdAt: question.createdAt.toISOString(),
+      updatedAt: question.updatedAt.toISOString(),
+    };
+  }
 }
