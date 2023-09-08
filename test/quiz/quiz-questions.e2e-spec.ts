@@ -100,19 +100,19 @@ describe('Quiz questions controller (e2e)', () => {
       expect(quizQuestion.id).toBeDefined();
 
       await request(app.getHttpServer())
-        .delete(`/sa/quiz/questions${quizQuestion.id}`)
+        .delete(`/sa/quiz/questions/${quizQuestion.id}`)
         .auth(BaseAuthPayload.login, `${BaseAuthPayload.password}-invalid`)
         .expect(HttpStatus.UNAUTHORIZED)
         .then((response) => response.body);
 
       await request(app.getHttpServer())
-        .delete(`/sa/quiz/questions${quizQuestion.id}`)
+        .delete(`/sa/quiz/questions/${quizQuestion.id}`)
         .auth(BaseAuthPayload.login, BaseAuthPayload.password)
         .expect(HttpStatus.NO_CONTENT)
         .then((response) => response.body);
 
       await request(app.getHttpServer())
-        .delete(`/sa/quiz/questions${quizQuestion.id}`)
+        .delete(`/sa/quiz/questions/${quizQuestion.id}`)
         .auth(BaseAuthPayload.login, BaseAuthPayload.password)
         .expect(HttpStatus.NOT_FOUND)
         .then((response) => response.body);
@@ -132,7 +132,7 @@ describe('Quiz questions controller (e2e)', () => {
       expect(quizQuestion.id).toBeDefined();
 
       await request(app.getHttpServer())
-        .put(`/sa/quiz/questions${quizQuestion.id}`)
+        .put(`/sa/quiz/questions/${quizQuestion.id}`)
         .auth(BaseAuthPayload.login, `${BaseAuthPayload.password}-invalid`)
         .send({
           body: 'How many apples do you have left if your girlfriend took an apple out of her backpack and there were three',
@@ -142,7 +142,7 @@ describe('Quiz questions controller (e2e)', () => {
         .then((response) => response.body);
 
       await request(app.getHttpServer())
-        .put(`/sa/quiz/questions${quizQuestion.id}`)
+        .put(`/sa/quiz/questions/${quizQuestion.id}`)
         .auth(BaseAuthPayload.login, BaseAuthPayload.password)
         .send({
           body: 'How?',
@@ -162,7 +162,7 @@ describe('Quiz questions controller (e2e)', () => {
         .then((response) => response.body);
 
       await request(app.getHttpServer())
-        .put(`/sa/quiz/questions${quizQuestion.id}`)
+        .put(`/sa/quiz/questions/${quizQuestion.id}`)
         .auth(BaseAuthPayload.login, BaseAuthPayload.password)
         .send({
           body: 'How many apples do you have left if your girlfriend took an apple out of her backpack and there were three',
@@ -186,7 +186,7 @@ describe('Quiz questions controller (e2e)', () => {
       expect(quizQuestion.id).toBeDefined();
 
       await request(app.getHttpServer())
-        .put(`/sa/quiz/questions${quizQuestion.id}/publish`)
+        .put(`/sa/quiz/questions/${quizQuestion.id}/publish`)
         .auth(BaseAuthPayload.login, `${BaseAuthPayload.password}-invalid`)
         .send({
           published: true,
@@ -195,7 +195,7 @@ describe('Quiz questions controller (e2e)', () => {
         .then((response) => response.body);
 
       await request(app.getHttpServer())
-        .put(`/sa/quiz/questions${quizQuestion.id}/publish`)
+        .put(`/sa/quiz/questions/${quizQuestion.id}/publish`)
         .auth(BaseAuthPayload.login, BaseAuthPayload.password)
         .send({
           body: 'incorrect payload',
@@ -214,13 +214,41 @@ describe('Quiz questions controller (e2e)', () => {
         .then((response) => response.body);
 
       await request(app.getHttpServer())
-        .put(`/sa/quiz/questions${quizQuestion.id}/publish`)
+        .put(`/sa/quiz/questions/${quizQuestion.id}/publish`)
+        .auth(BaseAuthPayload.login, BaseAuthPayload.password)
+        .send({
+          published: false,
+        })
+        .expect(HttpStatus.NO_CONTENT)
+        .then((response) => response.body);
+
+      await request(app.getHttpServer())
+        .put(`/sa/quiz/questions/${quizQuestion.id}`)
         .auth(BaseAuthPayload.login, BaseAuthPayload.password)
         .send({
           body: 'How many apples do you have left if your girlfriend took an apple out of her backpack and there were three',
           correctAnswers: ['2', 'two'],
         })
         .expect(HttpStatus.NO_CONTENT)
+        .then((response) => response.body);
+
+      await request(app.getHttpServer())
+        .put(`/sa/quiz/questions/${quizQuestion.id}/publish`)
+        .auth(BaseAuthPayload.login, BaseAuthPayload.password)
+        .send({
+          published: true,
+        })
+        .expect(HttpStatus.NO_CONTENT)
+        .then((response) => response.body);
+
+      await request(app.getHttpServer())
+        .put(`/sa/quiz/questions/${quizQuestion.id}`)
+        .auth(BaseAuthPayload.login, BaseAuthPayload.password)
+        .send({
+          body: 'How many apples do you have left if your girlfriend took an apple out of her backpack and there were three',
+          correctAnswers: ['2', 'two'],
+        })
+        .expect(HttpStatus.BAD_REQUEST)
         .then((response) => response.body);
     });
   });
@@ -278,6 +306,53 @@ describe('Quiz questions controller (e2e)', () => {
         createdAt: expect.any(String),
         updatedAt: expect.any(String),
       });
+
+      const payload2 = {
+        body: 'What is know "DTO"?',
+        correctAnswers: ['data transfer object'],
+      };
+      const quizQuestion2 = await request(app.getHttpServer())
+        .post(`/sa/quiz/questions`)
+        .auth(BaseAuthPayload.login, BaseAuthPayload.password)
+        .send(payload2)
+        .expect(HttpStatus.CREATED)
+        .then((response) => response.body);
+
+      await request(app.getHttpServer())
+        .put(`/sa/quiz/questions/${quizQuestion2.id}/publish`)
+        .auth(BaseAuthPayload.login, BaseAuthPayload.password)
+        .send({
+          published: true,
+        })
+        .expect(HttpStatus.NO_CONTENT)
+        .then((response) => response.body);
+
+      const quizQuestionsResponse2 = await request(app.getHttpServer())
+        .get(`/sa/quiz/questions`)
+        .auth(BaseAuthPayload.login, BaseAuthPayload.password)
+        .expect(HttpStatus.OK)
+        .then((response) => response.body);
+
+      expect(quizQuestionsResponse2.totalCount).toBe(2);
+      expect(quizQuestionsResponse2.items).toHaveLength(2);
+      expect(quizQuestionsResponse2.items).toStrictEqual([
+        {
+          id: expect.any(String),
+          body: quizQuestion.body,
+          correctAnswers: quizQuestion.correctAnswers,
+          published: false,
+          createdAt: expect.any(String),
+          updatedAt: expect.any(String),
+        },
+        {
+          id: expect.any(String),
+          body: quizQuestion2.body,
+          correctAnswers: quizQuestion2.correctAnswers,
+          published: true,
+          createdAt: expect.any(String),
+          updatedAt: expect.any(String),
+        },
+      ]);
     });
 
     it('should delete quiz question', async () => {
@@ -294,7 +369,7 @@ describe('Quiz questions controller (e2e)', () => {
       expect(quizQuestion.id).toBeDefined();
 
       await request(app.getHttpServer())
-        .delete(`/sa/quiz/questions${quizQuestion.id}`)
+        .delete(`/sa/quiz/questions/${quizQuestion.id}`)
         .auth(BaseAuthPayload.login, BaseAuthPayload.password)
         .expect(HttpStatus.NO_CONTENT)
         .then((response) => response.body);
@@ -314,7 +389,7 @@ describe('Quiz questions controller (e2e)', () => {
       expect(quizQuestion.id).toBeDefined();
 
       await request(app.getHttpServer())
-        .put(`/sa/quiz/questions${quizQuestion.id}`)
+        .put(`/sa/quiz/questions/${quizQuestion.id}`)
         .auth(BaseAuthPayload.login, BaseAuthPayload.password)
         .send({
           body: 'How many apples do you have left if your girlfriend took an apple out of her backpack and there were three',
@@ -336,12 +411,12 @@ describe('Quiz questions controller (e2e)', () => {
         .then((response) => response.body);
 
       await request(app.getHttpServer())
-        .put(`/sa/quiz/questions${quizQuestion.id}/publish`)
+        .put(`/sa/quiz/questions/${quizQuestion.id}/publish`)
         .auth(BaseAuthPayload.login, BaseAuthPayload.password)
         .send({
           published: true,
         })
-        .expect(HttpStatus.NOT_FOUND)
+        .expect(HttpStatus.NO_CONTENT)
         .then((response) => response.body);
 
       const quizQuestionsResponse = await request(app.getHttpServer())

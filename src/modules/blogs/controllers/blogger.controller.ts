@@ -5,6 +5,7 @@ import {
   Get,
   HttpCode,
   HttpStatus,
+  NotFoundException,
   Param,
   Post,
   Put,
@@ -40,9 +41,9 @@ import { PostViewDto } from '../../posts/application/dto/post.view.dto';
 import { UpdatePostDto } from '../../posts/application/dto/update-post.dto';
 import {
   CreateBlogPostCommand,
-  UpdateBlogPostCommand,
   DeleteBlogPostCommand,
   GetAllBanUsersForBlogCommand,
+  UpdateBlogPostCommand,
 } from '../../posts/application/use-cases';
 import { IPostsQueryRepository } from '../../posts/infrastructure/posts.query.sql.repository';
 import { IUsersQueryRepository } from '../../users/controllers/interfaces/users-query-repository.abstract-class';
@@ -208,7 +209,12 @@ export class BloggerController {
       new CreateBlogPostCommand(blogId, ctx.user.id, createBlogPostDto),
     );
 
-    return this.postsQueryRepository.findOne(postId);
+    const blogPost = await this.postsQueryRepository.findOne(postId);
+
+    if (!blogPost) {
+      throw new NotFoundException();
+    }
+    return blogPost;
   }
 
   @ApiOperation({ summary: 'Update existing post by id with InputModel' })

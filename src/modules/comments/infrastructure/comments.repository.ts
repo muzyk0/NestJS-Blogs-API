@@ -39,8 +39,8 @@ export class CommentsRepository implements ICommentsRepository {
     return this.commentsRepo.save(comment);
   }
 
-  async findOne(id: string): Promise<Comment> {
-    return this.commentsRepo.findOneById(id);
+  async findOne(id: string): Promise<Comment | null> {
+    return this.commentsRepo.findOneBy({ id });
   }
 
   async update(

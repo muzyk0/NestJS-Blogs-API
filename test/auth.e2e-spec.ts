@@ -41,16 +41,16 @@ describe('Auth controller (e2e)', () => {
 
       FakeUser.checkViewDto(localFakeUser.user);
 
-      expect(localFakeUser.user.login).toBe(localFakeUser.credentials.login);
+      expect(localFakeUser.user!.login).toBe(localFakeUser.credentials!.login);
       expect(localFakeUser.accessToken).toBeDefined();
 
       const response = await request(app.getHttpServer())
         .get(`/auth/me`)
-        .auth(localFakeUser.accessToken, { type: 'bearer' })
+        .auth(localFakeUser.accessToken!, { type: 'bearer' })
         .expect(200);
 
-      expect(response.body.login).toBe(localFakeUser.credentials.login);
-      expect(response.body.email).toBe(localFakeUser.credentials.email);
+      expect(response.body.login).toBe(localFakeUser.credentials!.login);
+      expect(response.body.email).toBe(localFakeUser.credentials!.email);
       expect(response.body.userId).toBeDefined();
     });
 
@@ -88,7 +88,7 @@ describe('Auth controller (e2e)', () => {
       await request(app.getHttpServer())
         .post(`/auth/login`)
         .send({
-          loginOrEmail: localFakeUser.credentials.login,
+          loginOrEmail: localFakeUser.credentials!.login,
           password: 'some-password',
         })
         .expect(401);
@@ -97,7 +97,7 @@ describe('Auth controller (e2e)', () => {
         .post(`/auth/login`)
         .send({
           loginOrEmail: 'incorrect',
-          password: localFakeUser.credentials.password,
+          password: localFakeUser.credentials!.password,
         })
         .expect(401);
     });

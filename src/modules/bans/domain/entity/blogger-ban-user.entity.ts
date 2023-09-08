@@ -9,7 +9,7 @@ export class BloggerBanUser extends BaseEntity {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
-  @Column({ nullable: true })
+  @Column({ type: 'timestamp', nullable: true })
   banned: Date;
 
   @Column({ nullable: true })

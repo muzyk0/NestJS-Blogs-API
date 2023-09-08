@@ -5,7 +5,7 @@ import { ConfigService } from '@nestjs/config';
 export class AppService {
   constructor(private readonly config: ConfigService) {}
 
-  getHello(host: string): string {
+  getHello(host?: string): string {
     const isDev = this.config.get('IS_DEV');
 
     return `<div>

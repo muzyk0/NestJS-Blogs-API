@@ -80,7 +80,7 @@ export class FakeUserBuilder {
     const response00 = await request(this.app.getHttpServer())
       .post(`/sa/users`)
       .auth('admin', 'qwerty', { type: 'basic' })
-      .send(this.credentials)
+      .send(this.credentials!)
       .expect(201);
 
     this.user = response00.body;
@@ -91,8 +91,8 @@ export class FakeUserBuilder {
       .post(`/auth/login`)
       .set(`User-Agent`, `for test`)
       .send({
-        loginOrEmail: this.credentials.login,
-        password: this.credentials.password,
+        loginOrEmail: this.credentials!.login,
+        password: this.credentials!.password,
       })
       .expect(200);
     this.token = responseToken.body.accessToken;

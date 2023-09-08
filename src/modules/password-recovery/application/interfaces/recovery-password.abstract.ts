@@ -9,7 +9,7 @@ export abstract class IRecoveryPasswordRepository {
 
   abstract findByRecoveryCode(
     recoveryCode: string,
-  ): Promise<PasswordRecoveryAttempt>;
+  ): Promise<PasswordRecoveryAttempt | null>;
 
   abstract confirmPasswordRecovery(recoveryCode: string): Promise<boolean>;
 }

@@ -9,7 +9,7 @@ export const rabbitMQModule = ClientsModule.registerAsync([
       return {
         transport: Transport.RMQ,
         options: {
-          urls: configService.get<string>('RMQ_URLS').split(', '),
+          urls: configService.get<string>('RMQ_URLS')!.split(', '),
           queue: 'message_sender_queue',
           queueOptions: {
             durable: false,

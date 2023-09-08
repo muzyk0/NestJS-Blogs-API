@@ -20,19 +20,35 @@ export class QuizQuestionsQueryRepository
   async getAll(
     dto: QuizPageOptionsDto,
   ): Promise<PageDto<QuizQuestionViewModel>> {
+    const builder = this.repo.createQueryBuilder('qq');
+
+    builder
+      .select('qq.id', 'id')
+      .addSelect('qq.body', 'body')
+      .addSelect('qq.answers', 'correctAnswers')
+      .addSelect('qq.createdAt', 'createdAt')
+      .addSelect('qq.published', 'published')
+      .addSelect('qq.updatedAt', 'updatedAt');
+
+    console.log(builder.getSql());
+
+    const result = await builder.getRawMany();
+
+    const totalItems = await this.repo.count();
+
     return new PageDto({
-      items: [],
-      itemsCount: 10,
+      items: result as never as QuizQuestionViewModel[],
+      itemsCount: totalItems,
       pageOptionsDto: dto,
     });
   }
 
   async getOneById(id: string): Promise<QuizQuestionViewModel> {
-    const question = await this.repo.findOne({ where: { id } });
+    const question = await this.repo.findOneOrFail({ where: { id } });
 
     return {
       id: question.id,
-      body: question.id,
+      body: question.body,
       correctAnswers: question.answers,
       published: question.published,
       createdAt: question.createdAt.toISOString(),

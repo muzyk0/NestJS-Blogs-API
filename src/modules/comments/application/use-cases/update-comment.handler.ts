@@ -19,11 +19,7 @@ export class UpdateCommentCommand {
 export class UpdateCommentHandler
   implements ICommandHandler<UpdateCommentCommand, Comment>
 {
-  constructor(
-    private readonly commentsQueryRepository: ICommentsQueryRepository,
-    private readonly postsRepository: IPostsRepository,
-    private readonly commentsRepository: ICommentsRepository,
-  ) {}
+  constructor(private readonly commentsRepository: ICommentsRepository) {}
 
   async execute({
     commentId,
@@ -45,6 +41,6 @@ export class UpdateCommentHandler
       updateCommentDto,
     );
 
-    return updatedComment;
+    return updatedComment!;
   }
 }

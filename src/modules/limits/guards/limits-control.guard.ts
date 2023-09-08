@@ -12,7 +12,7 @@ export class LimitsControlGuard implements CanActivate {
     private readonly config: ConfigService,
   ) {}
 
-  async canActivate(context: ExecutionContext): Promise<boolean> | null {
+  async canActivate(context: ExecutionContext): Promise<boolean> {
     const request = context.switchToHttp().getRequest();
     const { ip, url } = request;
 

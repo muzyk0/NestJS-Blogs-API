@@ -1831,6 +1831,146 @@ window.onload = function() {
             }
           ]
         }
+      },
+      "/blog-platform/sa/quiz/questions/{id}": {
+        "delete": {
+          "operationId": "SAQuizQuestionsController_deleteQuestion",
+          "parameters": [
+            {
+              "name": "id",
+              "required": true,
+              "in": "path",
+              "schema": {
+                "type": "string"
+              }
+            }
+          ],
+          "responses": {
+            "204": {
+              "description": "No Content"
+            },
+            "401": {
+              "description": "Unauthorized"
+            },
+            "404": {
+              "description": "Not Found"
+            }
+          },
+          "tags": [
+            "QuizQuestions"
+          ],
+          "security": [
+            {
+              "basic": []
+            }
+          ]
+        },
+        "put": {
+          "operationId": "SAQuizQuestionsController_updateQuestion",
+          "parameters": [
+            {
+              "name": "id",
+              "required": true,
+              "in": "path",
+              "schema": {
+                "type": "string"
+              }
+            }
+          ],
+          "requestBody": {
+            "required": true,
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CreateOrUpdateQuizQuestionDto"
+                }
+              }
+            }
+          },
+          "responses": {
+            "204": {
+              "description": "No Content"
+            },
+            "400": {
+              "description": "If the inputModel has incorrect values or property 'correctAnswers' are not passed but property 'published' is true",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "$ref": "#/components/schemas/ErrorViewResultModel"
+                  }
+                }
+              }
+            },
+            "401": {
+              "description": "Unauthorized"
+            },
+            "404": {
+              "description": "Not Found"
+            }
+          },
+          "tags": [
+            "QuizQuestions"
+          ],
+          "security": [
+            {
+              "basic": []
+            }
+          ]
+        }
+      },
+      "/blog-platform/sa/quiz/questions/{id}/publish": {
+        "put": {
+          "operationId": "SAQuizQuestionsController_publishQuestion",
+          "parameters": [
+            {
+              "name": "id",
+              "required": true,
+              "in": "path",
+              "schema": {
+                "type": "string"
+              }
+            }
+          ],
+          "requestBody": {
+            "required": true,
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PublishQuizQuestionDto"
+                }
+              }
+            }
+          },
+          "responses": {
+            "204": {
+              "description": "No Content"
+            },
+            "400": {
+              "description": "If the inputModel has incorrect values or property 'correctAnswers' are not passed but property 'published' is true",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "$ref": "#/components/schemas/ErrorViewResultModel"
+                  }
+                }
+              }
+            },
+            "401": {
+              "description": "Unauthorized"
+            },
+            "404": {
+              "description": "Not Found"
+            }
+          },
+          "tags": [
+            "QuizQuestions"
+          ],
+          "security": [
+            {
+              "basic": []
+            }
+          ]
+        }
       }
     },
     "info": {
@@ -2056,6 +2196,37 @@ window.onload = function() {
           },
           "required": [
             "errorsMessages"
+          ]
+        },
+        "CreateOrUpdateQuizQuestionDto": {
+          "type": "object",
+          "properties": {
+            "body": {
+              "type": "string",
+              "minLength": 10,
+              "maxLength": 500
+            },
+            "correctAnswers": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            }
+          },
+          "required": [
+            "body",
+            "correctAnswers"
+          ]
+        },
+        "PublishQuizQuestionDto": {
+          "type": "object",
+          "properties": {
+            "published": {
+              "type": "boolean"
+            }
+          },
+          "required": [
+            "published"
           ]
         }
       }

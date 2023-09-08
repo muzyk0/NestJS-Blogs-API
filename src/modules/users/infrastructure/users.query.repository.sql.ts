@@ -178,6 +178,15 @@ export class UsersQuerySqlRepository implements IUsersQueryRepository {
         banDate: user.banned ? new Date(user.banned).toISOString() : null,
         banReason: user.banReason ?? null,
       },
+      // ...(Boolean(user.banned)
+      //   ? {
+      //       banInfo: {
+      //         isBanned: Boolean(user.banned),
+      //         banDate: new Date(user.banned).toISOString(),
+      //         banReason: user.banReason ?? null,
+      //       },
+      //     }
+      //   : {}),
     };
   }
 

@@ -49,7 +49,7 @@ export class SecuritySqlRepository implements ISecurityRepository {
     return !!countDeleted;
   }
 
-  async getSessionByDeviceId(deviceId: string): Promise<Device | undefined> {
+  async getSessionByDeviceId(deviceId: string): Promise<Device | null> {
     const [userDevice] = await this.dataSource.query(
       `SELECT *
        FROM devices

@@ -33,10 +33,10 @@ export class User extends BaseEntity {
   @Column({ default: false })
   isConfirmed: boolean;
 
-  @Column({ nullable: true })
+  @Column({ type: 'varchar', nullable: true })
   confirmationCode: string | null;
 
-  @Column({ nullable: true })
+  @Column({ type: 'timestamp', nullable: true })
   expirationDate: Date | null;
 
   @OneToMany(() => RevokeToken, (photo) => photo.user)

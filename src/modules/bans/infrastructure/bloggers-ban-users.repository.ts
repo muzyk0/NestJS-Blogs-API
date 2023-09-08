@@ -16,7 +16,7 @@ export class BloggersBanUsersRepository implements IBloggersBanUsersRepository {
   async updateOrCreateBan(
     createBanInput: CreateBanInput,
   ): Promise<BloggerBanUser> {
-    const banned = createBanInput.isBanned ? new Date() : null;
+    const banned = createBanInput.isBanned ? new Date() : undefined;
 
     const ban = await this.repo.upsert(
       {
@@ -28,6 +28,6 @@ export class BloggersBanUsersRepository implements IBloggersBanUsersRepository {
       ['id'],
     );
 
-    return this.repo.findOne({ where: { id: ban.identifiers[0].id } });
+    return this.repo.findOneOrFail({ where: { id: ban.identifiers[0].id } });
   }
 }

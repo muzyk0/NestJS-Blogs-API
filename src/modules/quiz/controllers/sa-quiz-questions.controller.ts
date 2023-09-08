@@ -1,9 +1,14 @@
 import {
   Body,
   Controller,
+  Delete,
   Get,
+  HttpCode,
   HttpStatus,
+  NotFoundException,
+  Param,
   Post,
+  Put,
   Query,
   UseGuards,
 } from '@nestjs/common';
@@ -12,6 +17,8 @@ import {
   ApiBadRequestResponse,
   ApiBasicAuth,
   ApiCreatedResponse,
+  ApiNoContentResponse,
+  ApiNotFoundResponse,
   ApiOkResponse,
   ApiTags,
   ApiUnauthorizedResponse,
@@ -23,8 +30,13 @@ import { PageDto } from '../../../shared/paginator/page.dto';
 import { BaseAuthGuard } from '../../auth/guards/base-auth-guard';
 import { IQuizQuestionsQueryRepository } from '../application/interfaces/quiz-questions-query-repository.abstract-class';
 import { CreateQuizQuestionCommand } from '../application/use-cases/create-quiz-question.handler';
+import { DeleteQuizQuestionCommand } from '../application/use-cases/delete-quiz-question.handler';
+import { PublishQuizQuestionCommand } from '../application/use-cases/publish-quiz-question.handler';
+import { UpdateQuizQuestionCommand } from '../application/use-cases/update-quiz-question.handler';
 import { QuizQuestion } from '../domain/entity/quiz-question.entity';
 
+import { CreateOrUpdateQuizQuestionDto } from './dto/create-or-update-quiz-question.dto';
+import { PublishQuizQuestionDto } from './dto/publish-quiz-question.dto';
 import {
   QuizQuestionSwaggerViewModel,
   QuizQuestionViewModel,
@@ -80,5 +92,93 @@ export class SAQuizQuestionsController {
     >(command);
 
     return this.queryRepo.getOneById(result.id);
+  }
+
+  @ApiNoContentResponse({
+    status: HttpStatus.NO_CONTENT,
+    description: 'No Content',
+  })
+  @ApiUnauthorizedResponse({
+    status: HttpStatus.UNAUTHORIZED,
+    description: 'Unauthorized',
+  })
+  @ApiNotFoundResponse({
+    status: HttpStatus.NOT_FOUND,
+    description: 'Not Found',
+  })
+  @Delete(':id')
+  @HttpCode(HttpStatus.NO_CONTENT)
+  async deleteQuestion(@Param('id') id: string): Promise<boolean> {
+    const isDeleted = await this.commandBus.execute<
+      DeleteQuizQuestionCommand,
+      boolean
+    >(new DeleteQuizQuestionCommand(id));
+
+    if (!isDeleted) {
+      throw new NotFoundException({
+        field: '',
+        message: "Question doesn't exist",
+      });
+    }
+
+    return true;
+  }
+
+  @ApiNoContentResponse({
+    status: HttpStatus.NO_CONTENT,
+    description: 'No Content',
+  })
+  @ApiBadRequestResponse({
+    status: HttpStatus.BAD_REQUEST,
+    description:
+      "If the inputModel has incorrect values or property 'correctAnswers' are not passed but property 'published' is true",
+    type: ErrorViewResultModel,
+  })
+  @ApiUnauthorizedResponse({
+    status: HttpStatus.UNAUTHORIZED,
+    description: 'Unauthorized',
+  })
+  @ApiNotFoundResponse({
+    status: HttpStatus.NOT_FOUND,
+    description: 'Not Found',
+  })
+  @Put(':id')
+  @HttpCode(HttpStatus.NO_CONTENT)
+  async updateQuestion(
+    @Param('id') id: string,
+    @Body() dto: CreateOrUpdateQuizQuestionDto,
+  ): Promise<boolean> {
+    return await this.commandBus.execute<UpdateQuizQuestionCommand, boolean>(
+      new UpdateQuizQuestionCommand(id, dto.body, dto.correctAnswers),
+    );
+  }
+
+  @ApiNoContentResponse({
+    status: HttpStatus.NO_CONTENT,
+    description: 'No Content',
+  })
+  @ApiBadRequestResponse({
+    status: HttpStatus.BAD_REQUEST,
+    description:
+      "If the inputModel has incorrect values or property 'correctAnswers' are not passed but property 'published' is true",
+    type: ErrorViewResultModel,
+  })
+  @ApiUnauthorizedResponse({
+    status: HttpStatus.UNAUTHORIZED,
+    description: 'Unauthorized',
+  })
+  @ApiNotFoundResponse({
+    status: HttpStatus.NOT_FOUND,
+    description: 'Not Found',
+  })
+  @Put(':id/publish')
+  @HttpCode(HttpStatus.NO_CONTENT)
+  async publishQuestion(
+    @Param('id') id: string,
+    @Body() dto: PublishQuizQuestionDto,
+  ): Promise<boolean> {
+    return await this.commandBus.execute<PublishQuizQuestionCommand, boolean>(
+      new PublishQuizQuestionCommand(id, dto.published),
+    );
   }
 }

@@ -40,7 +40,7 @@ export class ResendConfirmationCodeHandler
       expirationDate: addDays(new Date(), 1),
     });
 
-    if (!updatedUser) {
+    if (!updatedUser || !updatedUser?.confirmationCode) {
       return false;
     }
 

@@ -4,14 +4,15 @@ import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
 import { ISecurityRepository } from '../../../security/application/inerfaces/ISecurityRepository';
 import { JwtPayloadWithRt } from '../interfaces/jwt-payload-with-rt.type';
 import { DecodedJwtRTPayload } from '../interfaces/jwtPayload.type';
+import { TokensType } from '../interfaces/tokens.type';
 import { JwtService } from '../jwt.service';
 import { IRevokeTokenRepository } from '../revoke-token.abstract-class';
 
 export class RefreshTokenCommand {
   constructor(
     public readonly ctx: JwtPayloadWithRt,
-    public readonly userAgent: string,
-    public readonly userIp: string,
+    public readonly userAgent?: string,
+    public readonly userIp?: string,
   ) {}
 }
 
@@ -25,7 +26,11 @@ export class RefreshTokenHandler
     private readonly securityRepository: ISecurityRepository,
   ) {}
 
-  async execute({ ctx, userAgent, userIp }: RefreshTokenCommand) {
+  async execute({
+    ctx,
+    userAgent,
+    userIp,
+  }: RefreshTokenCommand): Promise<TokensType | null> {
     const revokedToken = {
       token: ctx.refreshToken,
       userAgent,
@@ -67,6 +72,10 @@ export class RefreshTokenHandler
       await this.jwtService.decodeJwtToken<DecodedJwtRTPayload>(
         tokens.refreshToken,
       );
+
+    if (!decodedAccessToken) {
+      return null;
+    }
 
     await this.securityRepository.createOrUpdate({
       userId: decodedAccessToken.user.id,

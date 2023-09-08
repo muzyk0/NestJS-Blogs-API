@@ -10,14 +10,15 @@ import {
   JwtATPayload,
   JwtRTPayload,
 } from '../interfaces/jwtPayload.type';
+import { TokensType } from '../interfaces/tokens.type';
 import { JwtService } from '../jwt.service';
 
 export class LoginCommand {
   constructor(
     public readonly loginOrEmail: string,
     public readonly password: string,
-    public readonly userAgent: string,
-    public readonly userIp: string,
+    public readonly userIp?: string,
+    public readonly userAgent?: string,
   ) {}
 }
 
@@ -30,7 +31,12 @@ export class LoginHandler implements ICommandHandler<LoginCommand> {
     private readonly securityRepository: ISecurityRepository,
   ) {}
 
-  async execute({ loginOrEmail, password, userAgent, userIp }: LoginCommand) {
+  async execute({
+    loginOrEmail,
+    password,
+    userAgent,
+    userIp,
+  }: LoginCommand): Promise<TokensType | null> {
     const user = await this.usersRepository.findOneByLoginOrEmailWithoutBanned(
       loginOrEmail,
     );
@@ -70,6 +76,10 @@ export class LoginHandler implements ICommandHandler<LoginCommand> {
       await this.jwtService.decodeJwtToken<DecodedJwtRTPayload>(
         tokens.refreshToken,
       );
+
+    if (!decodedAccessToken) {
+      return null;
+    }
 
     await this.securityRepository.createOrUpdate({
       userId: decodedAccessToken.user.id,

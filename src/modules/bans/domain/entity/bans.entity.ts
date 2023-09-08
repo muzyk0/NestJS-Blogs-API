@@ -14,9 +14,9 @@ export class Bans extends BaseEntity {
   @Column({ nullable: true, type: 'uuid', unique: true })
   userId: string;
 
-  @Column({ default: null })
+  @Column({ type: 'timestamp', default: null })
   banned: Date | null;
 
-  @Column({ nullable: true })
+  @Column({ type: 'varchar', nullable: true })
   banReason: string | null;
 }

@@ -13,8 +13,8 @@ export class SecurityRepository implements ISecurityRepository {
     private readonly deviceRepository: Repository<Device>,
   ) {}
 
-  protected async getDevice(id: string): Promise<Device> {
-    return await this.deviceRepository.findOneById(id);
+  protected async getDevice(id: string): Promise<Device | null> {
+    return await this.deviceRepository.findOneBy({ id });
   }
 
   async createOrUpdate({
@@ -24,7 +24,7 @@ export class SecurityRepository implements ISecurityRepository {
     userId,
     issuedAt,
     expireAt,
-  }: CreateSecurityDto): Promise<Device> {
+  }: CreateSecurityDto): Promise<Device | null> {
     const result = await this.deviceRepository.upsert(
       {
         ip,
@@ -42,12 +42,16 @@ export class SecurityRepository implements ISecurityRepository {
 
   async remove(deviceId: string): Promise<boolean> {
     const device = await this.deviceRepository.findOne({ where: { deviceId } });
-    await this.deviceRepository.remove(device);
 
-    return true;
+    if (device) {
+      await this.deviceRepository.remove(device);
+      return true;
+    }
+
+    return false;
   }
 
-  async getSessionByDeviceId(deviceId: string): Promise<Device | undefined> {
+  async getSessionByDeviceId(deviceId: string): Promise<Device | null> {
     return this.deviceRepository.findOne({ where: { deviceId } });
   }
 

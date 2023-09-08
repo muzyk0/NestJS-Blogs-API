@@ -25,7 +25,7 @@ export class RecoveryPasswordRepository implements IRecoveryPasswordRepository {
 
   async findByRecoveryCode(
     recoveryCode: string,
-  ): Promise<PasswordRecoveryAttempt> {
+  ): Promise<PasswordRecoveryAttempt | null> {
     return this.repo.findOne({ where: { code: recoveryCode, isValid: true } });
   }
 
