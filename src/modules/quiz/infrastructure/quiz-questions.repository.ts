@@ -51,10 +51,6 @@ export class QuizQuestionsRepository implements IQuizQuestionsRepository {
   async publish(id: string, dto: PublishQuizQuestionDto): Promise<boolean> {
     const result = await this.repo.update({ id }, { published: dto.published });
 
-    const question = await this.findOneById(id);
-
-    console.log(result, question);
-
     return !!result.affected;
   }
 }

@@ -29,7 +29,6 @@ export class UpdateQuizQuestionHandler
         message: "Question doesn't exist",
       });
     }
-    console.log(question);
 
     if (question.published) {
       throw new BadRequestException({

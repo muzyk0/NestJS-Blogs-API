@@ -30,8 +30,6 @@ export class QuizQuestionsQueryRepository
       .addSelect('qq.published', 'published')
       .addSelect('qq.updatedAt', 'updatedAt');
 
-    console.log(builder.getSql());
-
     const result = await builder.getRawMany();
 
     const totalItems = await this.repo.count();
