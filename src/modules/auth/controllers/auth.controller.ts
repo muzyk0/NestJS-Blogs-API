@@ -14,6 +14,7 @@ import { CommandBus } from '@nestjs/cqrs';
 import { ApiTags } from '@nestjs/swagger';
 import { Request, Response } from 'express';
 
+import { ConfigurationType } from '../../../config/configuration';
 import { GetCurrentUserId } from '../../../shared/decorators/get-current-user-id.decorator';
 import { GetCurrentJwtContext } from '../../../shared/decorators/get-current-user.decorator';
 import { LimitsControlWithIpAndLoginGuard } from '../../limits/guards/limits-control-with-ip-and-login-guard.service';
@@ -46,9 +47,9 @@ export class AuthController {
   constructor(
     private readonly usersQueryRepository: IUsersQueryRepository,
     private readonly commandBus: CommandBus,
-    private readonly config: ConfigService,
+    private readonly config: ConfigService<ConfigurationType>,
   ) {
-    this.isDev = config.get<boolean>('IS_DEV');
+    this.isDev = config.get<boolean>('IS_DEV', { infer: true });
   }
 
   @UseGuards(LimitsControlWithIpAndLoginGuard, LocalAuthGuard)
@@ -65,8 +66,8 @@ export class AuthController {
       new LoginCommand(
         loginDto.loginOrEmail,
         loginDto.password,
-        userAgent,
         req.ip,
+        userAgent,
       ),
     );
 

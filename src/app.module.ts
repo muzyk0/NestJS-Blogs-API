@@ -25,6 +25,7 @@ import { LikesModule } from './modules/likes/likes.module';
 import typeOrmConfig from './config/typeorm.config';
 import { EmailModuleLocal } from './modules/email-local/email-local.module';
 import { SuperAdminModule } from './modules/super-admin/super-admin.module';
+import { QuizModule } from './modules/quiz/quiz.module';
 
 @Module({
   imports: [
@@ -74,6 +75,7 @@ import { SuperAdminModule } from './modules/super-admin/super-admin.module';
     PasswordRecoveryModule,
     LikesModule,
     SuperAdminModule,
+    QuizModule,
   ],
   controllers: [AppController],
   providers: [AppService],

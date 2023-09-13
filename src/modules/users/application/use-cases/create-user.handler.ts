@@ -41,7 +41,7 @@ export class CreateUserHandler implements ICommandHandler<CreateUserCommand> {
       isConfirmed: false,
     });
 
-    if (!createdUser) {
+    if (!createdUser || !createdUser.confirmationCode) {
       return null;
     }
 

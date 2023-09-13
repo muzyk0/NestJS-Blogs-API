@@ -18,7 +18,10 @@ import { ICommentsQueryRepository } from '../controllers/interfaces/comments-que
 export class CommentsQueryRepository implements ICommentsQueryRepository {
   constructor(@InjectDataSource() private readonly dataSource: DataSource) {}
 
-  async findOne(commentId: string, userId?: string): Promise<CommentViewDto> {
+  async findOne(
+    commentId: string,
+    userId?: string,
+  ): Promise<CommentViewDto | null> {
     const [comment]: [CommentInputViewDto] = await this.dataSource.query(
       `
           SELECT c.id,
@@ -60,7 +63,7 @@ export class CommentsQueryRepository implements ICommentsQueryRepository {
     );
 
     if (!comment) {
-      return;
+      return null;
     }
 
     return this.mapToViewDtoForRawSqlMapper(comment);

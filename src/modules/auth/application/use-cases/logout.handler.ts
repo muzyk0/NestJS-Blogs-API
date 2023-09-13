@@ -9,7 +9,7 @@ import { IRevokeTokenRepository } from '../revoke-token.abstract-class';
 export class LogoutCommand {
   constructor(
     public readonly ctx: JwtPayloadWithRt,
-    public readonly userAgent: string,
+    public readonly userAgent?: string,
   ) {}
 }
 
@@ -20,7 +20,7 @@ export class LogoutHandler implements ICommandHandler<LogoutCommand> {
     private readonly securityRepository: ISecurityRepository,
   ) {}
 
-  async execute({ ctx, userAgent }: LogoutCommand) {
+  async execute({ ctx, userAgent }: LogoutCommand): Promise<void> {
     const revokedToken: RevokeTokenInput = {
       token: ctx.refreshToken,
       userAgent,

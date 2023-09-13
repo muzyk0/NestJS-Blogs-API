@@ -19,12 +19,12 @@ export class RecoveryPasswordSqlRepository
   ): Promise<PasswordRecoveryAttempt> {
     await this.dataSource.query(
       `
-            UPDATE "password_recovery_attempts"
-            SET "isValid" = false
-            WHERE "userId" = $1
-              AND "isValid" IS TRUE
+          UPDATE "password_recovery_attempts"
+          SET "isValid" = false
+          WHERE "userId" = $1
+            AND "isValid" IS TRUE
 
-        `,
+      `,
       [userId],
     );
 
@@ -42,16 +42,17 @@ export class RecoveryPasswordSqlRepository
 
   async findByRecoveryCode(
     recoveryCode: string,
-  ): Promise<PasswordRecoveryAttempt> {
-    const [attempt]: [PasswordRecoveryAttempt] = await this.dataSource.query(
-      `
+  ): Promise<PasswordRecoveryAttempt | null> {
+    const [attempt]: [PasswordRecoveryAttempt | null] =
+      await this.dataSource.query(
+        `
           SELECT *
           FROM "password_recovery_attempts"
           WHERE "code" = $1
             AND "isValid" is true
       `,
-      [recoveryCode],
-    );
+        [recoveryCode],
+      );
 
     return attempt;
   }

@@ -11,7 +11,6 @@ import { PostDomain } from '../domain/post.domain';
 @Injectable()
 export class PostsRepository implements IPostsRepository {
   constructor(
-    @InjectDataSource() private readonly dataSource: DataSource,
     @InjectRepository(Post) private readonly repo: Repository<Post>,
   ) {}
 
@@ -21,7 +20,7 @@ export class PostsRepository implements IPostsRepository {
     content,
     blogId,
   }: CreatePostDbDto): Promise<PostDomain> {
-    const post = await this.repo.create({
+    const post = this.repo.create({
       title,
       shortDescription,
       content,
@@ -32,14 +31,14 @@ export class PostsRepository implements IPostsRepository {
   }
 
   async findOne(id: string): Promise<PostDomain | null> {
-    return this.repo.findOneById(id);
+    return this.repo.findOneBy({ id });
   }
 
   async update(
     id: string,
     { title, shortDescription, content }: UpdatePostDto,
   ): Promise<PostDomain | null> {
-    const post = await this.repo.findOneById(id);
+    const post = await this.repo.findOneBy({ id });
 
     if (!post) {
       return null;
@@ -53,7 +52,7 @@ export class PostsRepository implements IPostsRepository {
   }
 
   async remove(postId: string): Promise<boolean> {
-    const post = await this.repo.findOneById(postId);
+    const post = await this.repo.findOneBy({ id: postId });
 
     if (!post) {
       return false;

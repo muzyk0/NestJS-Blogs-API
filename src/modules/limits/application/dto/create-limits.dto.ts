@@ -3,7 +3,7 @@ import { IsOptional, IsString } from 'class-validator';
 export class CreateLimitsDto {
   @IsOptional()
   @IsString()
-  ip?: string;
+  ip: string;
 
   @IsString()
   @IsOptional()

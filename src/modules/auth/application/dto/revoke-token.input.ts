@@ -2,7 +2,7 @@ import { IsString } from 'class-validator';
 
 export class RevokeTokenInput {
   @IsString()
-  userAgent: string;
+  userAgent?: string;
 
   @IsString()
   token: string;

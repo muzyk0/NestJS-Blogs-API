@@ -22,7 +22,7 @@ export class LimitsRepository implements ILimitsRepository {
   limitsItems: LimitDto[] = [];
 
   async addAttempt({ login, url, ip, deviceName }: CreateLimitsDto) {
-    const limit = {
+    const limit: LimitDto = {
       id: v4(),
       url,
       ip,

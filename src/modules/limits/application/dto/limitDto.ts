@@ -5,7 +5,7 @@ export class LimitDto {
   id: string;
 
   @IsString()
-  deviceName: string;
+  deviceName?: string;
 
   @IsString()
   @IsOptional()

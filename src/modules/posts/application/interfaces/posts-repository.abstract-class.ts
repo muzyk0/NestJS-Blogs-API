@@ -10,7 +10,7 @@ export abstract class IPostsRepository {
   abstract update(
     postId: string,
     updatePostDto: UpdatePostDto,
-  ): Promise<PostDomain>;
+  ): Promise<PostDomain | null>;
 
   abstract remove(postId: string): Promise<boolean>;
 }

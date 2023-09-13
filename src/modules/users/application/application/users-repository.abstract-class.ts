@@ -26,7 +26,7 @@ export abstract class IUsersRepository {
     id,
     code,
     expirationDate,
-  }: UpdateConfirmationType): Promise<User>;
+  }: UpdateConfirmationType): Promise<User | null>;
 
   abstract updateUserPassword({
     password,

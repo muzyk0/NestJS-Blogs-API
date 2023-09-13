@@ -8,10 +8,10 @@ export class CreateSecurityDto {
   expireAt: Date;
 
   @IsString()
-  ip: string;
+  ip?: string;
 
   @IsString()
-  deviceName: string;
+  deviceName?: string;
 
   @IsString()
   deviceId: string;

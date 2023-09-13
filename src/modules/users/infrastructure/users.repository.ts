@@ -50,7 +50,7 @@ export class UsersRepository implements IUsersRepository {
     });
   }
 
-  async findOneByLogin(login: string): Promise<User> {
+  async findOneByLogin(login: string): Promise<User | null> {
     return this.usersRepo.findOne({
       where: {
         login,
@@ -59,7 +59,7 @@ export class UsersRepository implements IUsersRepository {
   }
 
   async findOneById(id: string): Promise<User | null> {
-    return this.usersRepo.findOneById(id);
+    return this.usersRepo.findOneBy({ id });
   }
 
   async findOneByLoginOrEmailWithoutBanned(
@@ -72,8 +72,6 @@ export class UsersRepository implements IUsersRepository {
       },
     });
 
-    console.log(user);
-
     if (!user || user.bans?.[0]?.banned) {
       return null;
     }
@@ -81,7 +79,7 @@ export class UsersRepository implements IUsersRepository {
   }
 
   async remove(id: string): Promise<boolean> {
-    const user = await this.usersRepo.findOneById(id);
+    const user = await this.usersRepo.findOneBy({ id });
 
     if (!user) {
       return false;
@@ -104,14 +102,14 @@ export class UsersRepository implements IUsersRepository {
     id,
     code,
     expirationDate,
-  }: UpdateConfirmationType): Promise<User> {
+  }: UpdateConfirmationType): Promise<User | null> {
     const result = await this.usersRepo.update(
       { id },
       { confirmationCode: code, expirationDate },
     );
 
     if (result.affected) {
-      return this.usersRepo.findOneById(id);
+      return this.usersRepo.findOneBy({ id });
     }
     return null;
   }
@@ -123,7 +121,7 @@ export class UsersRepository implements IUsersRepository {
     password: string;
     id: string;
   }): Promise<boolean> {
-    const user = await this.usersRepo.findOneById(id);
+    const user = await this.usersRepo.findOneBy({ id });
 
     if (!user) {
       return false;

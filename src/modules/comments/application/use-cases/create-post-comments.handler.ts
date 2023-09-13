@@ -14,7 +14,7 @@ export class CreatePostCommentCommand {
   constructor(
     public readonly createCommentDto: CommentInput,
     public readonly postId: string,
-    public readonly userId?: string,
+    public readonly userId: string,
   ) {}
 }
 

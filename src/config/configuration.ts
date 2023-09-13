@@ -1,4 +1,4 @@
-export default () => ({
+const getConfiguration = () => ({
   PORT: parseInt(process.env.PORT, 10) || 3000,
   BASE_PREFIX: process.env.BASE_PREFIX ?? '',
   BASE_URL: process.env.BASE_URL ?? 'http://localhost:3000',
@@ -26,3 +26,6 @@ export default () => ({
   MESSAGE_SENDER_PORT: process.env.MESSAGE_SENDER_PORT,
   APP_VERSION: process.env.npm_package_version,
 });
+export default getConfiguration;
+
+export type ConfigurationType = ReturnType<typeof getConfiguration>;

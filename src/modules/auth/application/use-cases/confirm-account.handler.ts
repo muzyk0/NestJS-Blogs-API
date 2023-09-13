@@ -24,11 +24,14 @@ export class ConfirmAccountHandler
       ]);
     }
 
-    return this.usersRepository.setIsConfirmedById(user.id);
+    return this.usersRepository.setIsConfirmedById(user!.id);
   }
 
-  private isAvailableConfirmAccount(user: User, code: string) {
-    if (!user || this.isConfirmed(user)) {
+  private isAvailableConfirmAccount(user: User | null, code: string) {
+    if (!user) {
+      return false;
+    }
+    if (this.isConfirmed(user)) {
       return false;
     }
 
@@ -48,6 +51,9 @@ export class ConfirmAccountHandler
   }
 
   private isExpired(user: User) {
+    if (!user.expirationDate) {
+      return false;
+    }
     return isAfter(new Date(), user.expirationDate);
   }
 

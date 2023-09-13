@@ -7,6 +7,8 @@ import {
   Matches,
 } from 'class-validator';
 
+import { Nullable } from '../../../../shared/interfaces/common-types';
+
 import { websiteURLPattern } from './create-blog.dto';
 
 export class BlogDto {
@@ -27,11 +29,11 @@ export class BlogDto {
 
   @IsDate()
   @IsOptional()
-  createdAt?: Date;
+  createdAt: Date;
 
   @IsDate()
   @IsOptional()
-  updatedAt?: Date;
+  updatedAt: Date;
 }
 
 export class BlogView {
@@ -55,6 +57,6 @@ export class BlogViewDtoForSuperAdmin extends BlogView {
   };
   banInfo: {
     isBanned: boolean;
-    banDate: string;
+    banDate: Nullable<string>;
   };
 }

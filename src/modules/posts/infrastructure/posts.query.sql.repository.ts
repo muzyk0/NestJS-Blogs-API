@@ -5,12 +5,8 @@ import { DataSource } from 'typeorm';
 
 import { PageOptionsDto } from '../../../shared/paginator/page-options.dto';
 import { PageDto } from '../../../shared/paginator/page.dto';
-import {
-  LikeStatus,
-  LikeStringStatus,
-} from '../../likes/application/interfaces/like-status.enum';
+import { LikeStatus } from '../../likes/application/interfaces/like-status.enum';
 import { getStringLikeStatus } from '../../likes/utils/formatters';
-import { PostWithBlogNameDto } from '../application/dto/post-with-blog-name.dto';
 import { PostViewDto } from '../application/dto/post.view.dto';
 
 export abstract class IPostsQueryRepository {
@@ -19,7 +15,7 @@ export abstract class IPostsQueryRepository {
     options?: FindAllPostsOptions,
   ): Promise<PageDto<PostViewDto>>;
 
-  abstract findOne(id: string, userId?: string): Promise<PostViewDto>;
+  abstract findOne(id: string, userId?: string): Promise<PostViewDto | null>;
 }
 
 export class FindAllPostsOptions {

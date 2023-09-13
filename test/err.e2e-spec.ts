@@ -274,8 +274,8 @@ describe('Blogger (e2e)', () => {
 
       expect(fakeUser.user).toEqual({
         id: expect.any(String),
-        login: fakeUser.credentials.login,
-        email: fakeUser.credentials.email,
+        login: fakeUser.credentials!.login,
+        email: fakeUser.credentials!.email,
         createdAt: expect.any(String),
         banInfo: {
           isBanned: false,
@@ -284,11 +284,11 @@ describe('Blogger (e2e)', () => {
         },
       });
 
-      expect(fakeUser.accessToken).toEqual(expect.any(String));
+      expect(fakeUser.accessToken!).toEqual(expect.any(String));
 
       const responseBlog = await request(app.getHttpServer())
         .post(`/blogger/blogs/`)
-        .auth(fakeUser.accessToken, { type: 'bearer' })
+        .auth(fakeUser.accessToken!, { type: 'bearer' })
         .send({
           name: 'Mongoose',
           description:
@@ -309,7 +309,7 @@ describe('Blogger (e2e)', () => {
 
       const responsePost = await request(app.getHttpServer())
         .post(`/blogger/blogs/${blog.id}/posts`)
-        .auth(fakeUser.accessToken, { type: 'bearer' })
+        .auth(fakeUser.accessToken!, { type: 'bearer' })
         .send({
           title: 'string113231423',
           shortDescription: 'fasdfdsfsd',
@@ -337,8 +337,8 @@ describe('Blogger (e2e)', () => {
         blogs.body as PageDto<BlogViewDtoForSuperAdmin>
       ).items.find((b) => b.id === blog.id);
 
-      expect(currentBlog.banInfo.isBanned).toBeTruthy();
-      expect(currentBlog.banInfo.banDate).not.toBeNull();
+      expect(currentBlog!.banInfo.isBanned).toBeTruthy();
+      expect(currentBlog!.banInfo.banDate).not.toBeNull();
     });
 
     it('should hide posts for banned blog', async () => {
@@ -379,7 +379,7 @@ describe('Blogger (e2e)', () => {
 
       expect(blogs.items).toHaveLength(1);
       expect(currentPost).not.toBeUndefined();
-      expect(currentPost.banInfo.isBanned).toBeTruthy();
+      expect(currentPost!.banInfo.isBanned).toBeTruthy();
     });
 
     it('should unban blog', async () => {
@@ -400,8 +400,8 @@ describe('Blogger (e2e)', () => {
         blogs.body as PageDto<BlogViewDtoForSuperAdmin>
       ).items.find((b) => b.id === blog.id);
 
-      expect(currentBlog.banInfo.isBanned).toBeFalsy();
-      expect(currentBlog.banInfo.banDate).toBeNull();
+      expect(currentBlog!.banInfo.isBanned).toBeFalsy();
+      expect(currentBlog!.banInfo.banDate).toBeNull();
     });
 
     it('should show posts for unbanned blog', async () => {
@@ -434,8 +434,8 @@ describe('Blogger (e2e)', () => {
 
       expect(fakeUser.user).toEqual({
         id: expect.any(String),
-        login: fakeUser.credentials.login,
-        email: fakeUser.credentials.email,
+        login: fakeUser.credentials!.login,
+        email: fakeUser.credentials!.email,
         createdAt: expect.any(String),
         banInfo: {
           isBanned: false,
@@ -444,11 +444,11 @@ describe('Blogger (e2e)', () => {
         },
       });
 
-      expect(fakeUser.accessToken).toEqual(expect.any(String));
+      expect(fakeUser.accessToken!).toEqual(expect.any(String));
 
       const responseBlog = await request(app.getHttpServer())
         .post(`/blogger/blogs/`)
-        .auth(fakeUser.accessToken, { type: 'bearer' })
+        .auth(fakeUser.accessToken!, { type: 'bearer' })
         .send({
           name: 'Mongoose',
           description:
@@ -469,7 +469,7 @@ describe('Blogger (e2e)', () => {
 
       const responsePost = await request(app.getHttpServer())
         .post(`/blogger/blogs/${blog.id}/posts`)
-        .auth(fakeUser.accessToken, { type: 'bearer' })
+        .auth(fakeUser.accessToken!, { type: 'bearer' })
         .send({
           title: 'string113231423',
           shortDescription: 'fasdfdsfsd',
@@ -482,7 +482,7 @@ describe('Blogger (e2e)', () => {
     it('should bad created comment for blog post by banned user for blog', async () => {
       await request(app.getHttpServer())
         .post(`/posts/${post.id}/comments`)
-        .auth(fakeUser2.accessToken, { type: 'bearer' })
+        .auth(fakeUser2.accessToken!, { type: 'bearer' })
         .send({
           content: '33333333333333333333333',
         })
@@ -495,8 +495,8 @@ describe('Blogger (e2e)', () => {
       expect(postComments.body.items).toHaveLength(1);
 
       await request(app.getHttpServer())
-        .put(`/blogger/users/${fakeUser2.user.id}/ban`)
-        .auth(fakeUser.accessToken, { type: 'bearer' })
+        .put(`/blogger/users/${fakeUser2.user!.id}/ban`)
+        .auth(fakeUser.accessToken!, { type: 'bearer' })
         .send({
           isBanned: true,
           banReason: 'stringstringstringst',
@@ -506,7 +506,7 @@ describe('Blogger (e2e)', () => {
 
       await request(app.getHttpServer())
         .post(`/posts/${post.id}/comments`)
-        .auth(fakeUser2.accessToken, { type: 'bearer' })
+        .auth(fakeUser2.accessToken!, { type: 'bearer' })
         .send({
           content: '33333333333333333333333',
         })

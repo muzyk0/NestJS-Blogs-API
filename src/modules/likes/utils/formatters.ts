@@ -10,6 +10,6 @@ export const getStringLikeStatus = (status: LikeStatus): LikeStringStatus => {
 
 export const formatLikeStatusToInt = (
   likeStatus: LikeStringStatus,
-): LikeStatus | null => {
+): LikeStatus => {
   return intLikeStatuses[likeStatus] ?? intLikeStatuses[LikeStringStatus.NONE];
 };

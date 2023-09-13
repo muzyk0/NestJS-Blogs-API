@@ -7,9 +7,9 @@ import {
 } from '../../infrastructure/dto/user.view';
 
 export abstract class IUsersQueryRepository {
-  abstract findOneForMeQuery(id: string): Promise<UserMeQueryViewModel>;
+  abstract findOneForMeQuery(id: string): Promise<UserMeQueryViewModel | null>;
 
-  abstract findOne(id: string): Promise<UserViewModel>;
+  abstract findOne(id: string): Promise<UserViewModel | null>;
 
   abstract findAll(
     pageOptionsDto: PageOptionsForUserDto,

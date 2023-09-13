@@ -46,13 +46,17 @@ export class BlogsRepository implements IBlogsRepository {
       throw new Error('Blog not found');
     }
 
-    return this.blogRepo.findOne({
+    return this.blogRepo.findOneOrFail({
       where: { id: blogId },
     });
   }
 
   async remove(id: string): Promise<boolean> {
     const blog = await this.blogRepo.findOne({ where: { id } });
+
+    if (!blog) {
+      return false;
+    }
 
     const result = await this.blogRepo.remove(blog);
     return !!result;
@@ -65,7 +69,7 @@ export class BlogsRepository implements IBlogsRepository {
       throw new Error('Blog not found');
     }
 
-    return this.blogRepo.findOne({ where: { id: blogId } });
+    return this.blogRepo.findOneOrFail({ where: { id: blogId } });
   }
 
   async updateBanStatus(

@@ -25,7 +25,7 @@ export class LikesRepository implements ILikesRepository {
       return this.likeRepository.save(like);
     }
 
-    const createdLike = await this.likeRepository.create({
+    const createdLike = this.likeRepository.create({
       userId: createLike.userId,
       postId: createLike.postId,
       status: createLike.status,
@@ -47,7 +47,7 @@ export class LikesRepository implements ILikesRepository {
       return this.likeRepository.save(like);
     }
 
-    const createdLike = await this.likeRepository.create({
+    const createdLike = this.likeRepository.create({
       userId: createLike.userId,
       commentId: createLike.commentId,
       status: createLike.status,

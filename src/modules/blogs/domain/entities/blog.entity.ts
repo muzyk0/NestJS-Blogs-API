@@ -25,7 +25,7 @@ export class Blog extends BaseEntity {
   @Column()
   websiteUrl: string;
 
-  @Column({ nullable: true })
+  @Column({ type: 'timestamp', nullable: true })
   banned: Date | null;
 
   @ManyToOne(() => User, (user) => user.blogs, { nullable: true })

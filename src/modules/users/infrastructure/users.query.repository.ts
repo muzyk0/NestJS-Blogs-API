@@ -23,7 +23,7 @@ export class UsersQueryRepository implements IUsersQueryRepository {
   ) {}
 
   async findOneForMeQuery(id: string): Promise<UserMeQueryViewModel | null> {
-    const user: User = await this.repo
+    const user = await this.repo
       .createQueryBuilder('u')
       .leftJoinAndSelect('bans', 'b', 'b.userId = u.id')
       .where('u.id = :userId', { userId: id })
@@ -41,7 +41,7 @@ export class UsersQueryRepository implements IUsersQueryRepository {
   }
 
   async findOne(id: string): Promise<UserViewModel | null> {
-    const user: User = await this.repo
+    const user = await this.repo
       .createQueryBuilder('u')
       .leftJoinAndSelect('bans', 'b', 'b.userId = u.id')
       .where('u.id = :userId', { userId: id })
@@ -170,7 +170,9 @@ export class UsersQueryRepository implements IUsersQueryRepository {
       createdAt: new Date(user.createdAt).toISOString(),
       banInfo: {
         isBanned: user.bans?.[0] ? Boolean(user.bans[0].banned) : false,
-        banDate: user.bans?.[0] ? user.bans[0].banned.toISOString() : null,
+        banDate: user.bans?.[0].banned
+          ? user.bans[0].banned?.toISOString()
+          : null,
         banReason: user.bans?.[0]?.banReason ?? null,
       },
     };
@@ -185,7 +187,7 @@ export class UsersQueryRepository implements IUsersQueryRepository {
       banInfo: {
         isBanned: Boolean(user.banned),
         banDate: user.banned ? new Date(user.banned).toISOString() : null,
-        banReason: user.banReason ?? null,
+        banReason: user.banReason,
       },
     };
   }

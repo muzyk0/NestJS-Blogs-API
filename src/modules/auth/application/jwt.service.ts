@@ -31,7 +31,7 @@ export class JwtService {
     };
   }
 
-  async decodeJwtToken<T>(token: string): Promise<T> {
+  async decodeJwtToken<T>(token: string): Promise<T | null> {
     try {
       const accessToken = this.jwtService.decode(token) as T;
 
