@@ -13,8 +13,8 @@ export class QuizQuestionViewModel {
   published: boolean;
   @ApiProperty({ type: Date })
   createdAt: string;
-  @ApiProperty({ type: Date })
-  updatedAt: string;
+  @ApiProperty({ type: Date, nullable: true })
+  updatedAt: string | null;
 }
 
 export class QuizQuestionSwaggerViewModel

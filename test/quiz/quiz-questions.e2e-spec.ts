@@ -2,11 +2,9 @@ import { randomUUID } from 'crypto';
 
 import { expect } from '@jest/globals';
 import { HttpStatus, INestApplication } from '@nestjs/common';
-import { response } from 'express';
 import request from 'supertest';
 
 import { BaseAuthPayload } from '../../src/constants';
-import { FakeUserBuilder } from '../utils/fake-user.builder';
 import { init } from '../utils/init.test';
 
 jest.setTimeout(120000);
@@ -274,7 +272,7 @@ describe('Quiz questions controller (e2e)', () => {
         correctAnswers: quizQuestion.correctAnswers,
         published: false,
         createdAt: expect.any(String),
-        updatedAt: expect.any(String),
+        updatedAt: null,
       });
     });
 
@@ -304,7 +302,7 @@ describe('Quiz questions controller (e2e)', () => {
         correctAnswers: quizQuestion.correctAnswers,
         published: false,
         createdAt: expect.any(String),
-        updatedAt: expect.any(String),
+        updatedAt: null,
       });
 
       const payload2 = {
@@ -342,7 +340,7 @@ describe('Quiz questions controller (e2e)', () => {
           correctAnswers: quizQuestion.correctAnswers,
           published: false,
           createdAt: expect.any(String),
-          updatedAt: expect.any(String),
+          updatedAt: null,
         },
         {
           id: expect.any(String),
@@ -388,15 +386,33 @@ describe('Quiz questions controller (e2e)', () => {
 
       expect(quizQuestion.id).toBeDefined();
 
+      const updatePayload = {
+        body: 'How many apples do you have left if your girlfriend took an apple out of her backpack and there were three',
+        correctAnswers: ['2'],
+      };
       await request(app.getHttpServer())
         .put(`/sa/quiz/questions/${quizQuestion.id}`)
         .auth(BaseAuthPayload.login, BaseAuthPayload.password)
-        .send({
-          body: 'How many apples do you have left if your girlfriend took an apple out of her backpack and there were three',
-          correctAnswers: ['2', 'two'],
-        })
+        .send(updatePayload)
         .expect(HttpStatus.NO_CONTENT)
         .then((response) => response.body);
+
+      const quizQuestionsResponse = await request(app.getHttpServer())
+        .get(`/sa/quiz/questions`)
+        .auth(BaseAuthPayload.login, BaseAuthPayload.password)
+        .expect(HttpStatus.OK)
+        .then((response) => response.body);
+
+      expect(quizQuestionsResponse.totalCount).toBe(1);
+      expect(quizQuestionsResponse.items).toHaveLength(1);
+      expect(quizQuestionsResponse.items[0]).toStrictEqual({
+        id: expect.any(String),
+        body: updatePayload.body,
+        correctAnswers: updatePayload.correctAnswers,
+        published: false,
+        createdAt: expect.any(String),
+        updatedAt: expect.any(String),
+      });
     });
 
     it('should public quiz question', async () => {

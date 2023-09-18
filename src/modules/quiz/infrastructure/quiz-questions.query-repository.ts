@@ -50,7 +50,7 @@ export class QuizQuestionsQueryRepository
       correctAnswers: question.answers,
       published: question.published,
       createdAt: question.createdAt.toISOString(),
-      updatedAt: question.updatedAt.toISOString(),
+      updatedAt: question.updatedAt?.toISOString() ?? null,
     };
   }
 }
