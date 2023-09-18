@@ -28,7 +28,10 @@ export class QuizQuestionsQueryRepository
       .addSelect('qq.answers', 'correctAnswers')
       .addSelect('qq.createdAt', 'createdAt')
       .addSelect('qq.published', 'published')
-      .addSelect('qq.updatedAt', 'updatedAt');
+      .addSelect('qq.updatedAt', 'updatedAt')
+      .orderBy(`qq.${dto.sortBy!}`, dto.sortDirection)
+      .limit(dto.pageSize)
+      .skip(dto.skip);
 
     const result = await builder.getRawMany();
 

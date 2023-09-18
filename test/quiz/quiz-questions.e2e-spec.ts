@@ -246,7 +246,7 @@ describe('Quiz questions controller (e2e)', () => {
           body: 'How many apples do you have left if your girlfriend took an apple out of her backpack and there were three',
           correctAnswers: ['2', 'two'],
         })
-        .expect(HttpStatus.BAD_REQUEST)
+        .expect(HttpStatus.NOT_FOUND)
         .then((response) => response.body);
     });
   });
@@ -336,19 +336,19 @@ describe('Quiz questions controller (e2e)', () => {
       expect(quizQuestionsResponse2.items).toStrictEqual([
         {
           id: expect.any(String),
-          body: quizQuestion.body,
-          correctAnswers: quizQuestion.correctAnswers,
-          published: false,
-          createdAt: expect.any(String),
-          updatedAt: null,
-        },
-        {
-          id: expect.any(String),
           body: quizQuestion2.body,
           correctAnswers: quizQuestion2.correctAnswers,
           published: true,
           createdAt: expect.any(String),
           updatedAt: expect.any(String),
+        },
+        {
+          id: expect.any(String),
+          body: quizQuestion.body,
+          correctAnswers: quizQuestion.correctAnswers,
+          published: false,
+          createdAt: expect.any(String),
+          updatedAt: null,
         },
       ]);
     });
