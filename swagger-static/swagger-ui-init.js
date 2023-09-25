@@ -40,10 +40,10 @@ window.onload = function() {
               "required": false,
               "in": "query",
               "schema": {
-                "default": "desc",
+                "default": "DESC",
                 "enum": [
-                  "asc",
-                  "desc"
+                  "ASC",
+                  "DESC"
                 ],
                 "type": "string"
               }
@@ -130,10 +130,10 @@ window.onload = function() {
               "required": false,
               "in": "query",
               "schema": {
-                "default": "desc",
+                "default": "DESC",
                 "enum": [
-                  "asc",
-                  "desc"
+                  "ASC",
+                  "DESC"
                 ],
                 "type": "string"
               }
@@ -240,10 +240,10 @@ window.onload = function() {
               "required": false,
               "in": "query",
               "schema": {
-                "default": "desc",
+                "default": "DESC",
                 "enum": [
-                  "asc",
-                  "desc"
+                  "ASC",
+                  "DESC"
                 ],
                 "type": "string"
               }
@@ -551,10 +551,10 @@ window.onload = function() {
               "required": false,
               "in": "query",
               "schema": {
-                "default": "desc",
+                "default": "DESC",
                 "enum": [
-                  "asc",
-                  "desc"
+                  "ASC",
+                  "DESC"
                 ],
                 "type": "string"
               }
@@ -669,10 +669,10 @@ window.onload = function() {
               "required": false,
               "in": "query",
               "schema": {
-                "default": "desc",
+                "default": "DESC",
                 "enum": [
-                  "asc",
-                  "desc"
+                  "ASC",
+                  "DESC"
                 ],
                 "type": "string"
               }
@@ -987,10 +987,10 @@ window.onload = function() {
               "required": false,
               "in": "query",
               "schema": {
-                "default": "desc",
+                "default": "DESC",
                 "enum": [
-                  "asc",
-                  "desc"
+                  "ASC",
+                  "DESC"
                 ],
                 "type": "string"
               }
@@ -1082,10 +1082,10 @@ window.onload = function() {
               "required": false,
               "in": "query",
               "schema": {
-                "default": "desc",
+                "default": "DESC",
                 "enum": [
-                  "asc",
-                  "desc"
+                  "ASC",
+                  "DESC"
                 ],
                 "type": "string"
               }
@@ -1363,10 +1363,10 @@ window.onload = function() {
               "required": false,
               "in": "query",
               "schema": {
-                "default": "desc",
+                "default": "DESC",
                 "enum": [
-                  "asc",
-                  "desc"
+                  "ASC",
+                  "DESC"
                 ],
                 "type": "string"
               }
@@ -1603,10 +1603,10 @@ window.onload = function() {
               "required": false,
               "in": "query",
               "schema": {
-                "default": "desc",
+                "default": "DESC",
                 "enum": [
-                  "asc",
-                  "desc"
+                  "ASC",
+                  "DESC"
                 ],
                 "type": "string"
               }
@@ -1710,10 +1710,10 @@ window.onload = function() {
               "required": false,
               "in": "query",
               "schema": {
-                "default": "desc",
+                "default": "DESC",
                 "enum": [
-                  "asc",
-                  "desc"
+                  "ASC",
+                  "DESC"
                 ],
                 "type": "string"
               }
@@ -2107,7 +2107,8 @@ window.onload = function() {
             },
             "updatedAt": {
               "format": "date-time",
-              "type": "string"
+              "type": "string",
+              "nullable": true
             }
           },
           "required": [

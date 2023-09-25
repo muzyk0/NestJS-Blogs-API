@@ -11,5 +11,5 @@ export class QuizQuestion extends BaseEntity {
   published: boolean;
 
   @Column({ type: 'jsonb', default: [] })
-  answers: string[];
+  correctAnswers: string[];
 }

@@ -23,22 +23,22 @@ export class QuizQuestionsQueryRepository
     const builder = this.repo.createQueryBuilder('qq');
 
     builder
-      .select('qq.id', 'id')
-      .addSelect('qq.body', 'body')
-      .addSelect('qq.answers', 'correctAnswers')
-      .addSelect('qq.createdAt', 'createdAt')
-      .addSelect('qq.published', 'published')
-      .addSelect('qq.updatedAt', 'updatedAt')
+      .select('qq.id')
+      .addSelect('qq.body')
+      .addSelect('qq.correctAnswers')
+      .addSelect('qq.createdAt')
+      .addSelect('qq.published')
+      .addSelect('qq.updatedAt')
       .orderBy(`qq.${dto.sortBy!}`, dto.sortDirection)
-      .limit(dto.pageSize)
+      .take(dto.pageSize)
       .skip(dto.skip);
 
-    const result = await builder.getRawMany();
+    console.log(builder.getSql());
 
-    const totalItems = await this.repo.count();
+    const [questions, totalItems] = await builder.getManyAndCount();
 
     return new PageDto({
-      items: result as never as QuizQuestionViewModel[],
+      items: questions.map(this.mapToViewModel),
       itemsCount: totalItems,
       pageOptionsDto: dto,
     });
@@ -47,10 +47,14 @@ export class QuizQuestionsQueryRepository
   async getOneById(id: string): Promise<QuizQuestionViewModel> {
     const question = await this.repo.findOneOrFail({ where: { id } });
 
+    return this.mapToViewModel(question);
+  }
+
+  mapToViewModel(question: QuizQuestion): QuizQuestionViewModel {
     return {
       id: question.id,
       body: question.body,
-      correctAnswers: question.answers,
+      correctAnswers: question.correctAnswers,
       published: question.published,
       createdAt: question.createdAt.toISOString(),
       updatedAt: question.updatedAt?.toISOString() ?? null,

@@ -85,7 +85,7 @@ export class BlogsQueryRepository implements IBlogsQueryRepository {
 
         select row_to_json(t1) as data
         from (select c.total,
-                     jsonb_agg(row_to_json(sub)) as "items"
+                     jsonb_agg(row_to_json(sub)) filter (where sub.id is not null) as "items"
               from (table blogs
                   order by
                       case when $1 = 'desc' then "${pageOptionsDto.sortBy}" end desc,

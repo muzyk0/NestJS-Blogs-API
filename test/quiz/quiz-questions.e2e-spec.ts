@@ -1,11 +1,14 @@
 import { randomUUID } from 'crypto';
 
-import { expect } from '@jest/globals';
+import _ from 'lodash';
+
+import { beforeAll, beforeEach, expect } from '@jest/globals';
 import { HttpStatus, INestApplication } from '@nestjs/common';
 import request from 'supertest';
 
 import { BaseAuthPayload } from '../../src/constants';
 import { init } from '../utils/init.test';
+import { wait } from '../utils/utils';
 
 jest.setTimeout(120000);
 

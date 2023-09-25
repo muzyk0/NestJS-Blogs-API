@@ -22,7 +22,7 @@ export class QuizQuestionsRepository implements IQuizQuestionsRepository {
   async create(dto: CreateQuizQuestionCommand): Promise<QuizQuestion> {
     const question = this.repo.create({
       body: dto.body,
-      answers: dto.correctAnswers,
+      correctAnswers: dto.correctAnswers,
     });
 
     return this.repo.save(question);
@@ -49,7 +49,7 @@ export class QuizQuestionsRepository implements IQuizQuestionsRepository {
     const toSaveQuestion = this.repo.create({
       ...question,
       body: dto.body,
-      answers: dto.correctAnswers,
+      correctAnswers: dto.correctAnswers,
     });
 
     return await this.repo.save(toSaveQuestion);
