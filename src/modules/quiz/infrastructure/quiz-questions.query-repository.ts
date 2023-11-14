@@ -2,7 +2,10 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 
-import { QuizPageOptionsDto } from '../../../shared/paginator/page-options.dto';
+import {
+  PublishQuizQuestionEnum,
+  QuizPageOptionsDto,
+} from '../../../shared/paginator/page-options.dto';
 import { PageDto } from '../../../shared/paginator/page.dto';
 import { IQuizQuestionsQueryRepository } from '../application/interfaces/quiz-questions-query-repository.abstract-class';
 import { QuizQuestionViewModel } from '../controllers/dto/quiz-question-view-model';
@@ -12,6 +15,11 @@ import { QuizQuestion } from '../domain/entity/quiz-question.entity';
 export class QuizQuestionsQueryRepository
   implements IQuizQuestionsQueryRepository
 {
+  mappedPublishedStatus = {
+    [PublishQuizQuestionEnum.PUBLISHED]: true,
+    [PublishQuizQuestionEnum.NOT_PUBLISHED]: false,
+  };
+
   constructor(
     @InjectRepository(QuizQuestion)
     private readonly repo: Repository<QuizQuestion>,
@@ -29,9 +37,24 @@ export class QuizQuestionsQueryRepository
       .addSelect('qq.createdAt')
       .addSelect('qq.published')
       .addSelect('qq.updatedAt')
-      .orderBy(`qq.${dto.sortBy!}`, dto.sortDirection)
+      .orderBy(`qq."${dto.sortBy!}"`, dto.sortDirection)
       .take(dto.pageSize)
       .skip(dto.skip);
+
+    if (dto.bodySearchTerm) {
+      builder.andWhere(`qq.body ilike '%' || :searchTerm || '%'`, {
+        searchTerm: dto.bodySearchTerm,
+      });
+    }
+
+    if (
+      dto.publishedStatus &&
+      this.mappedPublishedStatus[dto.publishedStatus] !== undefined
+    ) {
+      builder.andWhere(`qq.published = :publishedStatus`, {
+        publishedStatus: this.mappedPublishedStatus[dto.publishedStatus],
+      });
+    }
 
     console.log(builder.getSql());
 
