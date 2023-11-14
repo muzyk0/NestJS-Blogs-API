@@ -23,17 +23,10 @@ export class UpdateQuizQuestionHandler
   async execute({ id, ...dto }: UpdateQuizQuestionCommand): Promise<boolean> {
     const question = await this.repo.findOneById(id);
 
-    if (!question) {
+    if (!question || question.published) {
       throw new NotFoundException({
         field: '',
         message: "Question doesn't exist",
-      });
-    }
-
-    if (question.published) {
-      throw new BadRequestException({
-        field: '',
-        message: "property 'published' is true",
       });
     }
 

@@ -179,16 +179,19 @@ export class UsersQueryRepository implements IUsersQueryRepository {
   }
 
   private mapToDtoForRawSql(user: UserRawSqlDto): UserViewModel {
+    // TODO: Remove this
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+    // @ts-ignore
     return {
       id: user.id,
       login: user.login,
       email: user.email,
       createdAt: new Date(user.createdAt).toISOString(),
-      banInfo: {
-        isBanned: Boolean(user.banned),
-        banDate: user.banned ? new Date(user.banned).toISOString() : null,
-        banReason: user.banReason,
-      },
+      // banInfo: {
+      //   isBanned: Boolean(user.banned),
+      //   banDate: user.banned ? new Date(user.banned).toISOString() : null,
+      //   banReason: user.banReason,
+      // },
     };
   }
 
