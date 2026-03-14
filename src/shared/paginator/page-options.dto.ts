@@ -81,6 +81,9 @@ export enum PublishQuizQuestionEnum {
 }
 
 export class QuizPageOptionsDto extends BasePageOptionsDto {
+  constructor() {
+    super();
+  }
   @ApiProperty({
     type: 'string',
     required: false,
@@ -98,7 +101,7 @@ export class QuizPageOptionsDto extends BasePageOptionsDto {
   })
   @IsString()
   @IsOptional()
-  publishedStatus?: string | null = null;
+  publishedStatus?: string | null = PublishQuizQuestionEnum.ALL;
 }
 
 export enum UserBanStatus {

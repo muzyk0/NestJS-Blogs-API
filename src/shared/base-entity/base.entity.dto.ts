@@ -5,5 +5,5 @@ export class BaseEntityDto {
   createdAt: Date;
 
   @IsDate()
-  updatedAt: Date;
+  updatedAt: Date | null;
 }

@@ -1,4 +1,4 @@
-import { BadRequestException } from '@nestjs/common';
+import { BadRequestException, NotFoundException } from '@nestjs/common';
 import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
 
 import { PublishQuizQuestionDto } from '../../controllers/dto/publish-quiz-question.dto';
@@ -20,7 +20,7 @@ export class PublishQuizQuestionHandler
     const question = await this.repo.findOneById(id);
 
     if (!question) {
-      throw new BadRequestException({
+      throw new NotFoundException({
         field: '',
         message: "Question doesn't exist",
       });

@@ -69,7 +69,7 @@ export class SAQuizQuestionsController {
   }
 
   @ApiCreatedResponse({
-    status: HttpStatus.OK,
+    status: HttpStatus.CREATED,
     description: 'Created',
     type: QuizQuestionViewModel,
   })

@@ -22,7 +22,7 @@ export class QuizQuestionsRepository implements IQuizQuestionsRepository {
   async create(dto: CreateQuizQuestionCommand): Promise<QuizQuestion> {
     const question = this.repo.create({
       body: dto.body,
-      answers: dto.correctAnswers,
+      correctAnswers: dto.correctAnswers,
     });
 
     return this.repo.save(question);
@@ -40,17 +40,35 @@ export class QuizQuestionsRepository implements IQuizQuestionsRepository {
     id: string,
     dto: CreateOrUpdateQuizQuestionDto,
   ): Promise<QuizQuestion | null> {
-    await this.repo.update(
-      { id, published: false },
-      { body: dto.body, answers: dto.correctAnswers },
-    );
+    const question = await this.repo.findOneBy({ id, published: false });
 
-    return await this.repo.findOneBy({ id });
+    if (!question) {
+      return null;
+    }
+
+    const toSaveQuestion = this.repo.create({
+      ...question,
+      body: dto.body,
+      correctAnswers: dto.correctAnswers,
+    });
+
+    return await this.repo.save(toSaveQuestion);
   }
 
   async publish(id: string, dto: PublishQuizQuestionDto): Promise<boolean> {
-    const result = await this.repo.update({ id }, { published: dto.published });
+    const question = await this.repo.findOneBy({ id });
 
-    return !!result.affected;
+    if (!question) {
+      return false;
+    }
+
+    const toSaveQuestion = this.repo.create({
+      ...question,
+      published: dto.published,
+    });
+
+    await this.repo.save(toSaveQuestion);
+
+    return true;
   }
 }
